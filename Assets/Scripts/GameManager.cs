@@ -1,53 +1,55 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+public enum GamePhase { Setup, Draw, Place, Resolve, End }
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
+    public static GameManager Instance { get; private set; }
 
-    public enum GameState { Menu, Running, Paused, Resetting }
-    public GameState CurrentState = GameState.Menu;
+    [Header("Scene References")]
+    public Transform player1SlotContainer;
+    public Transform player2SlotContainer;
+    public Button endTurnButton;
+    public TextMeshProUGUI phaseText;
+
+    [Header("Debug")]
+    public GamePhase currentPhase = GamePhase.Setup;
 
     private void Awake()
     {
-        // Simple singleton setup
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance != null && Instance != this) Destroy(gameObject);
+        else Instance = this;
     }
 
-    private void Update()
+    void Start()
     {
-        if (CurrentState == GameState.Running)
-        {
-            // This is your simulation update loop later
-        }
-
-        // Quick pause toggle for testing
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TogglePause();
-        }
+        Debug.Log("[GameManager] Initialized in Phase: " + currentPhase);
+        if (endTurnButton != null) endTurnButton.onClick.AddListener(OnEndTurnClicked);
+        UpdatePhaseLabel();
     }
 
-    public void StartSimulation()
+    void OnDestroy()
     {
-        CurrentState = GameState.Running;
-        Debug.Log("Simulation Started");
+        if (endTurnButton != null) endTurnButton.onClick.RemoveListener(OnEndTurnClicked);
     }
 
-    public void TogglePause()
+    void OnEndTurnClicked()
     {
-        if (CurrentState == GameState.Running)
-            CurrentState = GameState.Paused;
-        else if (CurrentState == GameState.Paused)
-            CurrentState = GameState.Running;
-
-        Debug.Log("Simulation state: " + CurrentState);
+        AdvancePhase();
     }
 
-    public void ResetSimulation()
+    void AdvancePhase()
     {
-        CurrentState = GameState.Resetting;
-        // For now, you can just reload the scene
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        currentPhase = (GamePhase)(((int)currentPhase + 1) % System.Enum.GetValues(typeof(GamePhase)).Length);
+        Debug.Log("[GameManager] New Phase: " + currentPhase);
+        UpdatePhaseLabel();
+    }
+
+    void UpdatePhaseLabel()
+    {
+        if (phaseText != null)
+            phaseText.text = $"Phase: {currentPhase}";
     }
 }
