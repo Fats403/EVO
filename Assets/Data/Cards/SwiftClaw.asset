@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 682606d033f1e429389946c7a4048058, type: 3}
   m_Name: SwiftClaw
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  cardName: 
+  cardName: Swift Claw
   description: 
-  artwork: {fileID: 0}
-  type: 0
-  background: {fileID: 0}
-  size: 1
-  speed: 1
-  tier: 1
+  artwork: {fileID: 6219750613437473718, guid: c2bfbdc29e9d041cf883db4d1eec6587, type: 3}
+  type: 1
+  background: {fileID: 8672234943274757738, guid: bd9a39ca82f444385a0460116ca02909, type: 3}
+  size: 2
+  speed: 2
+  tier: 2

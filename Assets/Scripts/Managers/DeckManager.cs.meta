@@ -6,6 +6,7 @@ MonoImporter:
   defaultReferences:
   - cardPrefab: {fileID: 6378225315708850401, guid: 91ac1c24a6a3b45edba80f553a10afe5, type: 3}
   - handPanel: {instanceID: 0}
+  - creaturePrefab: {fileID: 5765744327105739345, guid: df2ced5fde386438bb251dfc723d9caf, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

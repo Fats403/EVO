@@ -1,41 +1,91 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System;
+using UnityEngine.EventSystems;
 
-public class CardUI : MonoBehaviour
+public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    public CardData Data { get; private set; }
+
     [Header("UI References")]
-    public Image backgroundImage;
     public Image artworkImage;
-    public TMP_Text nameText;
-    public TMP_Text statsText;
+    public Image backgroundImage;
+    public Text nameText;
+    public Text statsText;
 
-    [HideInInspector] public CardData Data;
+    private Vector3 originalPosition;
+    private Transform originalParent;
+    private RectTransform rectTransform;
+    private Canvas canvas;
+    private CanvasGroup canvasGroup;
 
-    private Action<CardUI> onClick;
-
-    public void Initialize(CardData data, Action<CardUI> onClickCallback)
+    public void Initialize(CardData data)
     {
         Data = data;
-        onClick = onClickCallback;
+
+        rectTransform = GetComponent<RectTransform>();
+        canvasGroup = GetComponent<CanvasGroup>();
+        canvas = GetComponentInParent<Canvas>();
 
         if (nameText != null) nameText.text = data.cardName;
         if (statsText != null) statsText.text = $"Size: {data.size} | Speed: {data.speed} | Tier: {data.tier}";
         if (artworkImage != null) artworkImage.sprite = data.artwork;
+        if (backgroundImage != null) backgroundImage.sprite = data.background;
+    }
 
-        // Use background based on card type (Herbivore, Carnivore, Avian)
-        if (backgroundImage != null)
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        originalParent = transform.parent;
+        originalPosition = transform.localPosition;
+        transform.SetParent(canvas.transform, true);
+        if (canvasGroup != null) canvasGroup.blocksRaycasts = false;
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        rectTransform.position = eventData.position;
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        if (canvasGroup != null) canvasGroup.blocksRaycasts = true;
+
+        // Find closest board slot (world-space)
+        BoardSlot closest = FindClosestSlot(eventData.position);
+		bool placed = false;
+		if (closest != null && Vector2.Distance(closest.ScreenPosition, eventData.position) < 100f)
+		{
+			if (closest.owner == SlotOwner.Player1)
+				placed = DeckManager.Instance.SpawnCreature(Data, closest);
+		}
+
+		if (placed)
+		{
+			Destroy(gameObject);
+		}
+		else
+		{
+			// Return card to hand
+			transform.SetParent(originalParent, false);
+			transform.localPosition = originalPosition;
+		}
+    }
+
+    private BoardSlot FindClosestSlot(Vector2 screenPos)
+    {
+        BoardSlot[] slots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None);
+        float best = float.MaxValue;
+        BoardSlot nearest = null;
+
+        foreach (var s in slots)
         {
-            backgroundImage.sprite = data.background;
+            float d = Vector2.Distance(s.ScreenPosition, screenPos);
+            if (d < best)
+            {
+                best = d;
+                nearest = s;
+            }
         }
 
-        // Attach click listener
-        var button = GetComponent<Button>();
-        if (button != null)
-        {
-            button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => onClick?.Invoke(this));
-        }
+        return nearest;
     }
 }

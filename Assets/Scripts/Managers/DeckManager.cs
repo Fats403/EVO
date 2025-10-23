@@ -1,15 +1,27 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class DeckManager : MonoBehaviour
 {
-    [Header("Deck Setup")]
-    public List<CardData> allCards;     // Assign via Inspector
-    public GameObject cardPrefab;       // Card_UI prefab
-    public Transform handPanel;         // HandPanel reference
-    public int startingHandSize = 3;
+    public static DeckManager Instance;
 
-    private List<CardData> currentDeck = new List<CardData>();
+    [Header("Deck Setup")]
+    public List<CardData> allCards;
+    public GameObject cardPrefab;
+    public Transform handPanel;
+    public GameObject creaturePrefab;
+    public int startingHandSize = 3;
+    
+    [Header("Deck UI")]
+    public Text deckCountText;
+
+    private readonly List<CardData> currentDeck = new List<CardData>();
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -20,7 +32,8 @@ public class DeckManager : MonoBehaviour
     void BuildDeck()
     {
         currentDeck.Clear();
-        currentDeck.AddRange(allCards); // In a real version: shuffle / select subset
+        currentDeck.AddRange(allCards);
+        UpdateDeckUI();
     }
 
     void DrawStartingHand()
@@ -31,9 +44,12 @@ public class DeckManager : MonoBehaviour
 
     public void DrawCard()
     {
-        if (currentDeck.Count == 0) return;
-
-        CardData data = currentDeck[Random.Range(0, currentDeck.Count)];
+        if (currentDeck.Count == 0)
+            return;
+        int idx = Random.Range(0, currentDeck.Count);
+        CardData data = currentDeck[idx];
+        currentDeck.RemoveAt(idx);
+        UpdateDeckUI();
         CreateCardUI(data);
     }
 
@@ -41,12 +57,33 @@ public class DeckManager : MonoBehaviour
     {
         GameObject cardObj = Instantiate(cardPrefab, handPanel);
         CardUI ui = cardObj.GetComponent<CardUI>();
-        ui.Initialize(data, OnCardClicked);
+        ui.Initialize(data);
     }
 
-    void OnCardClicked(CardUI clickedCard)
+    public bool SpawnCreature(CardData data, BoardSlot slot)
     {
-        Debug.Log($"Clicked: {clickedCard.Data.cardName} | Type: {clickedCard.Data.type} | Size: {clickedCard.Data.size}");
-        // Will trigger placement logic in Phase 3
+        if (creaturePrefab == null)
+        {
+            Debug.LogError("Creature prefab not assigned!");
+            return false;
+        }
+
+        if (slot == null)
+            return false;
+
+        if (slot.occupied)
+            return false;
+
+        GameObject creatureObj = Instantiate(creaturePrefab, slot.transform.position, Quaternion.identity);
+        Creature creature = creatureObj.GetComponent<Creature>();
+        creature.Initialize(data);
+        slot.Occupy(creature);
+        return true;
+    }
+
+    void UpdateDeckUI()
+    {
+        if (deckCountText != null)
+            deckCountText.text = $"Deck: {currentDeck.Count}";
     }
 }
