@@ -13,9 +13,13 @@ public class GameManager : MonoBehaviour
     public Transform player2SlotContainer;
     public Button endTurnButton;
     public TextMeshProUGUI phaseText;
+    public ResolutionManager resolutionManager;
+    public FoodPile foodPile;
 
     [Header("Debug")]
     public GamePhase currentPhase = GamePhase.Setup;
+    public int rngSeed = 0;
+    private System.Random rng;
 
     private void Awake()
     {
@@ -25,9 +29,17 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("[GameManager] Initialized in Phase: " + currentPhase);
+        if (rngSeed == 0)
+        {
+            rngSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        }
+        rng = new System.Random(rngSeed);
+        UnityEngine.Random.InitState(rngSeed);
+
+        Debug.Log("[GameManager] Initialized in Phase: " + currentPhase + " | Seed: " + rngSeed);
         if (endTurnButton != null) endTurnButton.onClick.AddListener(OnEndTurnClicked);
         UpdatePhaseLabel();
+        BeginSetup();
     }
 
     void OnDestroy()
@@ -45,11 +57,86 @@ public class GameManager : MonoBehaviour
         currentPhase = (GamePhase)(((int)currentPhase + 1) % System.Enum.GetValues(typeof(GamePhase)).Length);
         Debug.Log("[GameManager] New Phase: " + currentPhase);
         UpdatePhaseLabel();
+
+        switch (currentPhase)
+        {
+            case GamePhase.Draw:
+                BeginDraw();
+                break;
+            case GamePhase.Place:
+                BeginPlace();
+                break;
+            case GamePhase.Resolve:
+                BeginResolve();
+                break;
+            case GamePhase.End:
+                BeginEndRound();
+                break;
+        }
     }
 
     void UpdatePhaseLabel()
     {
         if (phaseText != null)
             phaseText.text = $"Phase: {currentPhase}";
+    }
+
+    void BeginSetup()
+    {
+        // Seed already set; move to Draw
+        currentPhase = GamePhase.Draw;
+        UpdatePhaseLabel();
+        BeginDraw();
+    }
+
+    void BeginDraw()
+    {
+        // Simple: draw up to a hand size of 5
+        var dm = DeckManager.Instance;
+        if (dm != null)
+        {
+            int toDraw = Mathf.Max(0, 5 - dm.CurrentHandCount());
+            for (int i = 0; i < toDraw; i++) dm.DrawCard();
+        }
+        if (foodPile != null) foodPile.RefillStartOfRound();
+        currentPhase = GamePhase.Place;
+        UpdatePhaseLabel();
+        BeginPlace();
+    }
+
+    void BeginPlace()
+    {
+        // Wait for player to place pending cards, then player hits End Turn to reveal
+    }
+
+    void BeginResolve()
+    {
+        if (resolutionManager == null)
+        {
+            Debug.LogError("ResolutionManager not assigned to GameManager");
+            return;
+        }
+        StartCoroutine(ResolveRoundCoroutine());
+    }
+
+    System.Collections.IEnumerator ResolveRoundCoroutine()
+    {
+        yield return StartCoroutine(resolutionManager.RevealAndResolveRound());
+        currentPhase = GamePhase.End;
+        UpdatePhaseLabel();
+        BeginEndRound();
+    }
+
+    void BeginEndRound()
+    {
+        // After resolution, prepare next round
+        currentPhase = GamePhase.Draw;
+        UpdatePhaseLabel();
+        BeginDraw();
+    }
+
+    public int NextRandomInt(int minInclusive, int maxExclusive)
+    {
+        return rng.Next(minInclusive, maxExclusive);
     }
 }

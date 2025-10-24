@@ -77,8 +77,15 @@ public class DeckManager : MonoBehaviour
         GameObject creatureObj = Instantiate(creaturePrefab, slot.transform.position, Quaternion.identity);
         Creature creature = creatureObj.GetComponent<Creature>();
         creature.Initialize(data);
+        creature.owner = slot.owner;
         slot.Occupy(creature);
         return true;
+    }
+
+    public int CurrentHandCount()
+    {
+        if (handPanel == null) return 0;
+        return handPanel.childCount;
     }
 
     void UpdateDeckUI()

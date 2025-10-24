@@ -239,11 +239,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
-  slotId: p2_2
-  isOccupied: 0
-  highlightImage: {fileID: 0}
-  defaultSprite: {fileID: 0}
-  highlightedSprite: {fileID: 0}
+  occupied: 0
+  currentCreature: {fileID: 0}
+  owner: 1
+  hasPending: 0
+  pendingCard: {fileID: 0}
 --- !u!1 &70742230
 GameObject:
   m_ObjectHideFlags: 0
@@ -332,11 +332,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
-  slotId: p2_1
-  isOccupied: 0
-  highlightImage: {fileID: 0}
-  defaultSprite: {fileID: 0}
-  highlightedSprite: {fileID: 0}
+  occupied: 0
+  currentCreature: {fileID: 0}
+  owner: 1
+  hasPending: 0
+  pendingCard: {fileID: 0}
 --- !u!1 &82361406
 GameObject:
   m_ObjectHideFlags: 0
@@ -425,11 +425,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
-  slotId: p1_1
-  isOccupied: 0
-  highlightImage: {fileID: 0}
-  defaultSprite: {fileID: 0}
-  highlightedSprite: {fileID: 0}
+  occupied: 0
+  currentCreature: {fileID: 0}
+  owner: 0
+  hasPending: 0
+  pendingCard: {fileID: 0}
 --- !u!1 &225743147
 GameObject:
   m_ObjectHideFlags: 0
@@ -518,11 +518,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
-  slotId: p1_2
-  isOccupied: 0
-  highlightImage: {fileID: 0}
-  defaultSprite: {fileID: 0}
-  highlightedSprite: {fileID: 0}
+  occupied: 0
+  currentCreature: {fileID: 0}
+  owner: 0
+  hasPending: 0
+  pendingCard: {fileID: 0}
 --- !u!1 &260260353
 GameObject:
   m_ObjectHideFlags: 0
@@ -611,11 +611,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
-  slotId: p1_3
-  isOccupied: 0
-  highlightImage: {fileID: 0}
-  defaultSprite: {fileID: 0}
-  highlightedSprite: {fileID: 0}
+  occupied: 0
+  currentCreature: {fileID: 0}
+  owner: 0
+  hasPending: 0
+  pendingCard: {fileID: 0}
 --- !u!1 &501445959
 GameObject:
   m_ObjectHideFlags: 0
@@ -1009,7 +1009,10 @@ MonoBehaviour:
   player2SlotContainer: {fileID: 821395420}
   endTurnButton: {fileID: 1785638421}
   phaseText: {fileID: 895446171}
+  resolutionManager: {fileID: 0}
+  foodPile: {fileID: 0}
   currentPhase: 0
+  rngSeed: 0
 --- !u!4 &815865959
 Transform:
   m_ObjectHideFlags: 0
@@ -1287,11 +1290,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
-  slotId: p2_3
-  isOccupied: 0
-  highlightImage: {fileID: 0}
-  defaultSprite: {fileID: 0}
-  highlightedSprite: {fileID: 0}
+  occupied: 0
+  currentCreature: {fileID: 0}
+  owner: 1
+  hasPending: 0
+  pendingCard: {fileID: 0}
 --- !u!1 &1185440467
 GameObject:
   m_ObjectHideFlags: 0
@@ -1714,8 +1717,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a8396a124a906425a9c24e0ab2a927c5, type: 2}
   cardPrefab: {fileID: 6378225315708850401, guid: 91ac1c24a6a3b45edba80f553a10afe5, type: 3}
   handPanel: {fileID: 2128517701}
+  creaturePrefab: {fileID: 5765744327105739345, guid: df2ced5fde386438bb251dfc723d9caf, type: 3}
   startingHandSize: 3
-  creaturePrefab: {fileID: 0}
+  deckCountText: {fileID: 0}
 --- !u!4 &2017726961
 Transform:
   m_ObjectHideFlags: 0
@@ -1973,7 +1977,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2037,8 +2041,8 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 619394802}
-  - {fileID: 2118664156}
   - {fileID: 557953993}
+  - {fileID: 2118664156}
   - {fileID: 49608289}
   - {fileID: 815865959}
   - {fileID: 2017726961}

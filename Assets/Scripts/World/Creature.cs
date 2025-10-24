@@ -5,6 +5,10 @@ public class Creature : MonoBehaviour
     public CardData data;
     private SpriteRenderer sr;
     [SerializeField] private float fixedScale = 0.1f;
+    public int body;
+    public int speed;
+    public int eaten;
+    public SlotOwner owner;
 
     public void Initialize(CardData cardData)
     {
@@ -20,5 +24,8 @@ public class Creature : MonoBehaviour
             else if (data.type == CardType.Carnivore) sr.color = new Color(1f, 0.9f, 0.9f);
             else if (data.type == CardType.Avian) sr.color = new Color(0.9f, 0.95f, 1f);
         }
+        body = data.size;
+        speed = data.speed;
+        eaten = 0;
     }
 }

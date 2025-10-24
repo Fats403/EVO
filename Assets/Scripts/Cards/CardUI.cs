@@ -55,7 +55,13 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 		if (closest != null && Vector2.Distance(closest.ScreenPosition, eventData.position) < 100f)
 		{
 			if (closest.owner == SlotOwner.Player1)
-				placed = DeckManager.Instance.SpawnCreature(Data, closest);
+			{
+				// Phase 1 pending placement: only mark pending during Place phase
+				if (GameManager.Instance != null && GameManager.Instance.currentPhase == GamePhase.Place)
+				{
+					placed = closest.SetPending(Data);
+				}
+			}
 		}
 
 		if (placed)

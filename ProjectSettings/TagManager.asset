@@ -44,14 +44,14 @@ TagManager:
   - name: Background
     uniqueID: 2700476215
     locked: 0
-  - name: Creatures
-    uniqueID: 2997224213
-    locked: 0
   - name: UI
     uniqueID: 2320091223
     locked: 0
   - name: Board
     uniqueID: 1470497587
+    locked: 0
+  - name: Creatures
+    uniqueID: 2997224213
     locked: 0
   m_RenderingLayers:
   - Default
