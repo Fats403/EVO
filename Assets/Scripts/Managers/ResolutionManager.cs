@@ -14,6 +14,18 @@ public class ResolutionManager : MonoBehaviour
 		RevealPendings();
 		yield return new WaitForSeconds(stepDelay);
 
+		// Round start hooks
+		foreach (var c in AllCreatures())
+		{
+			c.defendedThisRound = false;
+			c.tempSpeedMod = 0;
+			if (c.traits == null) continue;
+			foreach (var t in c.traits) { if (t != null) t.OnRoundStart(c); }
+		}
+
+		// Pre-herbivore trait steals (e.g., Peregrine)
+		yield return StartCoroutine(ResolvePreHerbivoreSteals());
+
 		// Resolve Herbivores eating
 		yield return StartCoroutine(ResolveHerbivores());
 
@@ -22,6 +34,13 @@ public class ResolutionManager : MonoBehaviour
 
 		// Starvation and scoring
 		yield return StartCoroutine(ResolveStarvationAndScoring());
+
+		// Round end hooks
+		foreach (var c in AllCreatures())
+		{
+			if (c.traits == null) continue;
+			foreach (var t in c.traits) { if (t != null) t.OnRoundEnd(c); }
+		}
 	}
 
 	void RevealPendings()
@@ -40,8 +59,30 @@ public class ResolutionManager : MonoBehaviour
 	IEnumerable<Creature> AllCreatures()
 	{
 		return FindObjectsByType<Creature>(FindObjectsSortMode.None)
-			.OrderByDescending(c => c.speed)
+			.OrderByDescending(c => c.speed + c.tempSpeedMod + (c.traits?.Sum(t => t != null ? t.SpeedBonus(c) : 0) ?? 0))
 			.ThenBy(c => c.transform.position.x);
+	}
+
+	IEnumerator ResolvePreHerbivoreSteals()
+	{
+		if (foodPile == null) yield break;
+		foreach (var c in AllCreatures())
+		{
+			if (c.traits == null) continue;
+			int steal = 0;
+			foreach (var t in c.traits)
+			{
+				if (t == null) continue;
+				steal += Mathf.Max(0, t.PreHerbivorePileSteal(c, foodPile));
+			}
+			if (steal > 0)
+			{
+				int taken = foodPile.Take(steal);
+				c.eaten += taken;
+				if (taken > 0) Debug.Log($"[PreEat] {c.name} stole {taken}. Pile: {foodPile.count}");
+			}
+			yield return new WaitForSeconds(stepDelay * 0.3f);
+		}
 	}
 
 	IEnumerator ResolveHerbivores()
@@ -53,7 +94,17 @@ public class ResolutionManager : MonoBehaviour
 			if (c.data.type != CardType.Herbivore) continue;
 			int need = Mathf.Max(0, c.body - c.eaten);
 			if (need <= 0) continue;
-			int taken = foodPile.Take(need);
+			int desired = need;
+			if (c.traits != null)
+			{
+				foreach (var t in c.traits)
+				{
+					if (t == null) continue;
+					desired = t.ModifyHerbivoreEatAmount(c, desired, foodPile);
+				}
+				desired = Mathf.Max(0, desired);
+			}
+			int taken = foodPile.Take(desired);
 			c.eaten += taken;
 			if (taken > 0) Debug.Log($"[Eat] {c.name} ate {taken}. Pile: {foodPile.count}");
 			yield return new WaitForSeconds(stepDelay);
@@ -71,11 +122,38 @@ public class ResolutionManager : MonoBehaviour
 			var candidates = creatures
 				.Where(c => c != null && c.data != null && c.data.type == CardType.Herbivore)
 				.Where(c => c.owner != predator.owner)
-				.Where(c => c.body < predator.body)
+				.Where(c => IsValidPrey(predator, c))
 				.OrderBy(c => Vector3.SqrMagnitude(c.transform.position - predator.transform.position))
 				.ToList();
+	bool IsValidPrey(Creature predator, Creature prey)
+	{
+		if (prey.body < predator.body) return true;
+		if (prey.body == predator.body)
+		{
+			// allow equal-body if any trait grants it
+			if (predator.traits != null)
+			{
+				foreach (var t in predator.traits)
+				{
+					if (t != null && t.CanTargetEqualBody(predator, prey)) return true;
+				}
+			}
+		}
+		return false;
+	}
 			if (candidates.Count == 0) continue;
 			var target = candidates[0];
+			// Check target defense traits – may negate attack
+			bool negated = false;
+			if (target.traits != null)
+			{
+				foreach (var tr in target.traits)
+				{
+					if (tr != null && tr.TryNegateAttack(target, predator)) { negated = true; break; }
+				}
+			}
+			if (negated) { Debug.Log($"[Attack] {predator.name} attack negated by {target.name}"); yield return new WaitForSeconds(stepDelay * 0.5f); continue; }
+
 			// Remove target
 			var targetSlot = FindSlotOf(target);
 			if (targetSlot != null)
@@ -83,8 +161,35 @@ public class ResolutionManager : MonoBehaviour
 				Debug.Log($"[Attack] {predator.name} eats {target.name}");
 				Object.Destroy(target.gameObject);
 				targetSlot.Vacate();
+				// Notify predator traits
+				if (predator.traits != null)
+				{
+					foreach (var tr in predator.traits) { if (tr != null) tr.OnAfterKill(predator, target); }
+				}
+				// Notify all about death (for scavengers)
+				foreach (var c2 in AllCreatures())
+				{
+					if (c2 == null || c2 == target) continue;
+					if (c2.traits == null) continue;
+					foreach (var tr in c2.traits) { if (tr != null) tr.OnAnyDeath(c2, target); }
+				}
 			}
 			yield return new WaitForSeconds(stepDelay);
+		}
+	}
+
+	IEnumerator ResolveAfterCarnivorePhase()
+	{
+		if (foodPile == null) yield break;
+		foreach (var c in AllCreatures())
+		{
+			if (c.traits == null) continue;
+			foreach (var t in c.traits)
+			{
+				if (t == null) continue;
+				t.OnAfterCarnivorePhase(c, foodPile);
+			}
+			yield return new WaitForSeconds(stepDelay * 0.3f);
 		}
 	}
 

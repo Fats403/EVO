@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
@@ -9,8 +10,8 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     [Header("UI References")]
     public Image artworkImage;
     public Image backgroundImage;
-    public Text nameText;
-    public Text statsText;
+    public TextMeshProUGUI nameText;
+    public TextMeshProUGUI statsText;
 
     private Vector3 originalPosition;
     private Transform originalParent;
@@ -56,10 +57,9 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 		{
 			if (closest.owner == SlotOwner.Player1)
 			{
-				// Phase 1 pending placement: only mark pending during Place phase
 				if (GameManager.Instance != null && GameManager.Instance.currentPhase == GamePhase.Place)
 				{
-					placed = closest.SetPending(Data);
+					placed = DeckManager.Instance.SpawnCreature(Data, closest);
 				}
 			}
 		}

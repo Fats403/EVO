@@ -4,11 +4,13 @@ public class Creature : MonoBehaviour
 {
     public CardData data;
     private SpriteRenderer sr;
-    [SerializeField] private float fixedScale = 0.1f;
     public int body;
     public int speed;
     public int eaten;
     public SlotOwner owner;
+    public System.Collections.Generic.List<Trait> traits = new System.Collections.Generic.List<Trait>();
+    public int tempSpeedMod;
+    public bool defendedThisRound;
 
     public void Initialize(CardData cardData)
     {
@@ -27,5 +29,12 @@ public class Creature : MonoBehaviour
         body = data.size;
         speed = data.speed;
         eaten = 0;
+
+        traits.Clear();
+        if (data.baseTraits != null && data.baseTraits.Length > 0)
+            traits.AddRange(data.baseTraits);
+
+        tempSpeedMod = 0;
+        defendedThisRound = false;
     }
 }

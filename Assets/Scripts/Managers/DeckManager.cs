@@ -17,6 +17,7 @@ public class DeckManager : MonoBehaviour
     public Text deckCountText;
 
     private readonly List<CardData> currentDeck = new List<CardData>();
+    private readonly List<CardData> drawPile = new List<CardData>();
 
     private void Awake()
     {
@@ -33,6 +34,15 @@ public class DeckManager : MonoBehaviour
     {
         currentDeck.Clear();
         currentDeck.AddRange(allCards);
+        drawPile.Clear();
+        drawPile.AddRange(currentDeck);
+        for (int i = drawPile.Count - 1; i > 0; i--)
+        {
+            int j = (GameManager.Instance != null) ? GameManager.Instance.NextRandomInt(0, i + 1) : Random.Range(0, i + 1);
+            var temp = drawPile[i];
+            drawPile[i] = drawPile[j];
+            drawPile[j] = temp;
+        }
         UpdateDeckUI();
     }
 
@@ -44,12 +54,8 @@ public class DeckManager : MonoBehaviour
 
     public void DrawCard()
     {
-        if (currentDeck.Count == 0)
-            return;
-        int idx = Random.Range(0, currentDeck.Count);
-        CardData data = currentDeck[idx];
-        currentDeck.RemoveAt(idx);
-        UpdateDeckUI();
+        CardData data = DrawCardData();
+        if (data == null) return;
         CreateCardUI(data);
     }
 
@@ -88,9 +94,19 @@ public class DeckManager : MonoBehaviour
         return handPanel.childCount;
     }
 
+    public CardData DrawCardData()
+    {
+        if (drawPile.Count == 0) return null;
+        int last = drawPile.Count - 1;
+        CardData c = drawPile[last];
+        drawPile.RemoveAt(last);
+        UpdateDeckUI();
+        return c;
+    }
+
     void UpdateDeckUI()
     {
         if (deckCountText != null)
-            deckCountText.text = $"Deck: {currentDeck.Count}";
+            deckCountText.text = $"Deck: {drawPile.Count}";
     }
 }

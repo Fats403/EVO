@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 682606d033f1e429389946c7a4048058, type: 3}
-  m_Name: FeatherClaw
+  m_Name: Kite Raptor
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardName: Carrion Claw
   description: 

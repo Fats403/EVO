@@ -25,17 +25,17 @@ public class GameManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
-    }
 
-    void Start()
-    {
         if (rngSeed == 0)
         {
             rngSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
         }
         rng = new System.Random(rngSeed);
         UnityEngine.Random.InitState(rngSeed);
+    }
 
+    void Start()
+    {
         Debug.Log("[GameManager] Initialized in Phase: " + currentPhase + " | Seed: " + rngSeed);
         if (endTurnButton != null) endTurnButton.onClick.AddListener(OnEndTurnClicked);
         UpdatePhaseLabel();
@@ -106,7 +106,11 @@ public class GameManager : MonoBehaviour
 
     void BeginPlace()
     {
-        // Wait for player to place pending cards, then player hits End Turn to reveal
+        // Trigger simple AI placement for Player2
+        if (AIManager.Instance != null)
+        {
+            AIManager.Instance.TakeTurnPlace();
+        }
     }
 
     void BeginResolve()
