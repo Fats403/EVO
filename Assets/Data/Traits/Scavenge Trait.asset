@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 907a664d0057b4a65b3d1e80b12e63b2, type: 3}
   m_Name: Scavenge Trait
   m_EditorClassIdentifier: Assembly-CSharp::ScavengeTrait
-  traitName: 
-  icon: {fileID: 0}
+  traitName: Scavenge
+  icon: {fileID: 8287793400891561834, guid: 863a5e09e92ae486f87bd48329da1b1f, type: 3}

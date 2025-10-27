@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ddff16f8f65349b7a6b0bf2679545a2, type: 3}
   m_Name: Pursuit Trait
   m_EditorClassIdentifier: Assembly-CSharp::PursuitTrait
-  traitName: 
+  traitName: Pursuit
   icon: {fileID: 0}

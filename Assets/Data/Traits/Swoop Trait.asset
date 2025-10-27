@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a2cf343eaf6c4fd58a2017f3af7e201, type: 3}
   m_Name: Swoop Trait
   m_EditorClassIdentifier: Assembly-CSharp::SwoopTrait
-  traitName: 
-  icon: {fileID: 0}
+  traitName: Swoop
+  icon: {fileID: 8287793400891561834, guid: 863a5e09e92ae486f87bd48329da1b1f, type: 3}
   stealAmount: 1

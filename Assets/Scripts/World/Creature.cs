@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Creature : MonoBehaviour
 {
@@ -8,14 +9,14 @@ public class Creature : MonoBehaviour
     public int speed;
     public int eaten;
     public SlotOwner owner;
-    public System.Collections.Generic.List<Trait> traits = new System.Collections.Generic.List<Trait>();
+    public List<Trait> traits = new List<Trait>();
     public int tempSpeedMod;
     public bool defendedThisRound;
 
     public void Initialize(CardData cardData)
     {
         data = cardData;
-        name = $"Creature_{data.cardName}";
+        name = $"{data.cardName}";
 
         sr = GetComponent<SpriteRenderer>();
         if (sr != null && data.artwork != null)
@@ -37,4 +38,41 @@ public class Creature : MonoBehaviour
         tempSpeedMod = 0;
         defendedThisRound = false;
     }
+
+	public System.Collections.IEnumerator PlayAttackBump(float distance = 0.3f, float duration = 0.2f)
+	{
+		Vector3 start = transform.position;
+		float dir = (owner == SlotOwner.Player1) ? 1f : -1f;
+		Vector3 offset = Vector3.up * dir * distance;
+		Vector3 mid = start + offset;
+		float half = duration * 0.5f;
+		float t = 0f;
+		while (t < half)
+		{
+			t += Time.deltaTime;
+			float u = Mathf.Clamp01(t / half);
+			transform.position = Vector3.Lerp(start, mid, u);
+			yield return null;
+		}
+		t = 0f;
+		while (t < half)
+		{
+			t += Time.deltaTime;
+			float u = Mathf.Clamp01(t / half);
+			transform.position = Vector3.Lerp(mid, start, u);
+			yield return null;
+		}
+	}
+
+	public System.Collections.IEnumerator FlashDamage(float duration = 0.12f)
+	{
+		if (sr == null) sr = GetComponent<SpriteRenderer>();
+		if (sr != null)
+		{
+			Color original = sr.color;
+			sr.color = new Color(1f, 0.3f, 0.3f);
+			yield return new WaitForSeconds(duration);
+			sr.color = original;
+		}
+	}
 }

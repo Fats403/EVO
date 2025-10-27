@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fc15b470112546e2ace34fc7656f970, type: 3}
   m_Name: Burrow Trait
   m_EditorClassIdentifier: Assembly-CSharp::BurrowTrait
-  traitName: 
-  icon: {fileID: 0}
+  traitName: Burrow
+  icon: {fileID: 8287793400891561834, guid: 863a5e09e92ae486f87bd48329da1b1f, type: 3}

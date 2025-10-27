@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd9b3596c5cf464b88a1815e66d2d2d, type: 3}
   m_Name: Herding Trait
   m_EditorClassIdentifier: Assembly-CSharp::HerdingTrait
-  traitName: 
-  icon: {fileID: 0}
+  traitName: Herding
+  icon: {fileID: 8287793400891561834, guid: 863a5e09e92ae486f87bd48329da1b1f, type: 3}

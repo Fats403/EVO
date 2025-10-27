@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c31c3877319284445b5999338c36ca60, type: 3}
   m_Name: Long Neck Trait
   m_EditorClassIdentifier: Assembly-CSharp::LongNeckTrait
-  traitName: 
-  icon: {fileID: 0}
+  traitName: Long Neck
+  icon: {fileID: 8287793400891561834, guid: 863a5e09e92ae486f87bd48329da1b1f, type: 3}

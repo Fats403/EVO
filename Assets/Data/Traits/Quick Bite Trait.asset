@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a58c58bac039c4be28849f4a65535c74, type: 3}
   m_Name: Quick Bite Trait
   m_EditorClassIdentifier: Assembly-CSharp::QuickBiteTrait
-  traitName: 
-  icon: {fileID: 0}
+  traitName: Quick Bite
+  icon: {fileID: 8287793400891561834, guid: 863a5e09e92ae486f87bd48329da1b1f, type: 3}

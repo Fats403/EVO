@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf5179a6dd5d745bf8f92c4fac7bb0f6, type: 3}
   m_Name: Demoralize Trait
   m_EditorClassIdentifier: Assembly-CSharp::DemoralizeTrait
-  traitName: 
-  icon: {fileID: 0}
+  traitName: Demoralize
+  icon: {fileID: 8287793400891561834, guid: 863a5e09e92ae486f87bd48329da1b1f, type: 3}

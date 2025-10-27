@@ -9,6 +9,8 @@ public class AIManager : MonoBehaviour
 	[Header("AI Deck Setup")]
 	public List<CardData> allCards;
 	public int cardsPerTurn = 1;
+	[Header("Visuals")]
+	public GameObject cardBackPrefab;
 
 	private readonly List<CardData> drawPile = new List<CardData>();
 
@@ -48,9 +50,13 @@ public class AIManager : MonoBehaviour
 			if (card == null) break;
 			BoardSlot slot = ChooseSlot(freeSlots);
 			if (slot == null) break;
-			bool ok = DeckManager.Instance.SpawnCreature(card, slot);
-			freeSlots.Remove(slot);
-			if (!ok)
+			bool ok = slot.SetPending(card);
+			if (ok)
+			{
+				if (cardBackPrefab != null) slot.ShowPendingVisual(cardBackPrefab);
+				freeSlots.Remove(slot);
+			}
+			else
 			{
 				// if failed, put card back to bottom
 				drawPile.Insert(0, card);

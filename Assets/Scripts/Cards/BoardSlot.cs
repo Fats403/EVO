@@ -9,6 +9,7 @@ public class BoardSlot : MonoBehaviour
 	public SlotOwner owner = SlotOwner.Player1;
 	public bool hasPending;
 	public CardData pendingCard;
+	public GameObject pendingVisual;
 
 	public Vector2 ScreenPosition => Camera.main.WorldToScreenPoint(transform.position);
 
@@ -36,5 +37,17 @@ public class BoardSlot : MonoBehaviour
 	{
 		hasPending = false;
 		pendingCard = null;
+		if (pendingVisual != null)
+		{
+			UnityEngine.Object.Destroy(pendingVisual);
+			pendingVisual = null;
+		}
+	}
+
+	public void ShowPendingVisual(GameObject prefab)
+	{
+		if (prefab == null || pendingVisual != null) return;
+		pendingVisual = UnityEngine.Object.Instantiate(prefab, transform);
+		pendingVisual.transform.localPosition = Vector3.zero;
 	}
 }

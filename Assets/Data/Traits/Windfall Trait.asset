@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86ae2f3402e3d465a88ab44be4eb78cd, type: 3}
   m_Name: Windfall Trait
   m_EditorClassIdentifier: Assembly-CSharp::WindfallTrait
-  traitName: 
-  icon: {fileID: 0}
+  traitName: Windfall
+  icon: {fileID: 8287793400891561834, guid: 863a5e09e92ae486f87bd48329da1b1f, type: 3}

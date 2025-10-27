@@ -20,3 +20,5 @@ MonoBehaviour:
   size: 1
   speed: 4
   tier: 1
+  baseTraits:
+  - {fileID: 11400000, guid: 280198c9f79464f0392d918399746610, type: 2}
