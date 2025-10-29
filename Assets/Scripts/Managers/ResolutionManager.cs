@@ -7,8 +7,8 @@ public class ResolutionManager : MonoBehaviour
 {
 	public FoodPile foodPile;
 	[Header("Timing")]
-	public float preStealDelay = 0.8f;
-	public float eatDelay = 1.2f;
+	public float preStealDelay = 0.3f;
+	public float eatDelay = 1.0f;
 	public float attackWindup = 0.25f;
 	public float attackResolvePause = 0.6f;
 	public float afterCarnivoreDelay = 0.8f;
@@ -19,7 +19,6 @@ public class ResolutionManager : MonoBehaviour
 	{
 		// Reveal pending cards into creatures
 		RevealPendings();
-		yield return null;
 
 		// Round start hooks
 		foreach (var c in AllCreatures())
@@ -59,7 +58,6 @@ public class ResolutionManager : MonoBehaviour
 			{
 				DeckManager.Instance.SpawnCreature(s.pendingCard, s);
 				s.ClearPending();
-				// no floating text for reveal
 			}
 		}
 	}
@@ -87,7 +85,7 @@ public class ResolutionManager : MonoBehaviour
 			{
 				int taken = foodPile.Take(steal);
 				c.eaten += taken;
-				if (taken > 0) Debug.Log($"[PreEat] {c.name} stole {taken}. Pile: {foodPile.count}");
+				if (taken > 0) Debug.Log($"[PreEat] {c.name} stole {taken}.");
 			}
 			yield return new WaitForSeconds(preStealDelay);
 		}
@@ -117,7 +115,7 @@ public class ResolutionManager : MonoBehaviour
 			if (taken > 0)
 			{
 				FeedbackManager.Instance?.ShowFloatingText($"+{taken} food", c.transform.position, new Color(0.3f, 1f, 0.3f));
-				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} [Eat] {c.name} ate {taken}. Pile: {foodPile.count}");
+				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} ate {taken}.");
 			}
 			yield return new WaitForSeconds(eatDelay);
 		}
@@ -174,7 +172,7 @@ public class ResolutionManager : MonoBehaviour
 			if (negated)
 			{
 				FeedbackManager.Instance?.ShowFloatingText("Blocked", target.transform.position, new Color(1f, 0.8f, 0.2f));
-				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(predator.owner)} [Attack] {predator.name} attack negated by {target.name}");
+				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(predator.owner)} {predator.name} attack negated by {target.name}");
 				yield return new WaitForSeconds(statusEffectDelay);
 				continue;
 			}
@@ -195,7 +193,7 @@ public class ResolutionManager : MonoBehaviour
             {
                 predator.eaten += gain;
                 FeedbackManager.Instance?.ShowFloatingText($"+{gain} food", predator.transform.position, new Color(0.9f, 0.6f, 0.3f));
-                FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(predator.owner)} [Feed] {predator.name} gains {gain} from {target.name}");
+                FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(predator.owner)} {predator.name} gains {gain} from {target.name}");
             }
 
             // Remove target
@@ -203,7 +201,7 @@ public class ResolutionManager : MonoBehaviour
 			if (targetSlot != null)
 			{
 				FeedbackManager.Instance?.ShowFloatingText("EAT", target.transform.position, new Color(1f, 0.4f, 0.4f));
-				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(predator.owner)} [Attack] {predator.name} eats {target.name}");
+				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(predator.owner)} {predator.name} eats {target.name}");
 				Object.Destroy(target.gameObject);
 				targetSlot.Vacate();
 				// Notify predator traits
@@ -242,7 +240,7 @@ public class ResolutionManager : MonoBehaviour
                 if (tkn > 0)
                 {
                     FeedbackManager.Instance?.ShowFloatingText("+1 food", c.transform.position, new Color(0.5f, 0.8f, 1f));
-                    FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} [Avian] {c.name} gained 1 after carnivores. Pile: {foodPile.count}");
+                    FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} gained 1 after carnivores.");
                 }
             }
 			yield return new WaitForSeconds(afterCarnivoreDelay);
@@ -258,7 +256,7 @@ public class ResolutionManager : MonoBehaviour
             if (c.eaten == 0)
 			{
 				FeedbackManager.Instance?.ShowFloatingText("Starved", c.transform.position, Color.gray);
-				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} [Starve] {c.name} died");
+				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} died of starvation");
 				var s = FindSlotOf(c);
 				Object.Destroy(c.gameObject);
 				if (s != null) s.Vacate();
@@ -273,7 +271,7 @@ public class ResolutionManager : MonoBehaviour
                     {
                         ScoreManager.Add(c.owner, gainScore);
                         FeedbackManager.Instance?.ShowFloatingText($"Score +{gainScore}", c.transform.position, new Color(1f, 0.7f, 0.3f));
-                        FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} [Score] {c.name} partial scores {gainScore}");
+                        FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} partial scores {gainScore}");
                     }
                     int deficit = c.body - c.eaten;
                     c.body = Mathf.Max(0, c.body - deficit);
@@ -281,7 +279,7 @@ public class ResolutionManager : MonoBehaviour
                     if (c.body == 0)
                     {
                         FeedbackManager.Instance?.ShowFloatingText("Collapsed", c.transform.position, Color.red);
-                        FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} [Death] {c.name} collapsed after underfeeding");
+                        FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} collapsed after underfeeding");
                         var s = FindSlotOf(c);
                         Object.Destroy(c.gameObject);
                         if (s != null) s.Vacate();
@@ -289,13 +287,13 @@ public class ResolutionManager : MonoBehaviour
                     else
                     {
                         FeedbackManager.Instance?.ShowFloatingText("Underfed (shrunk)", c.transform.position, Color.yellow);
-                        FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} [Underfed] {c.name} shrinks to body {c.body}");
+                        FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} shrinks to body {c.body}");
                     }
                 }
                 else
                 {
                     FeedbackManager.Instance?.ShowFloatingText("Underfed", c.transform.position, Color.yellow);
-                    FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} [Starve] {c.name} underfed, loses {c.eaten}");
+                    FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} underfed, loses {c.eaten}");
                     c.eaten = 0;
                 }
 			}
@@ -304,7 +302,7 @@ public class ResolutionManager : MonoBehaviour
 				int gain = c.eaten;
 				ScoreManager.Add(c.owner, gain);
 				FeedbackManager.Instance?.ShowFloatingText($"Score +{gain}", c.transform.position, Color.cyan);
-				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} [Score] {c.name} scores {gain}");
+				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} scores {gain}");
 				c.eaten = 0;
 			}
 			yield return new WaitForSeconds(starveDelay);

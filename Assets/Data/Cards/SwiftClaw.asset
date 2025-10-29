@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardName: Swift Claw
   description: 
-  artwork: {fileID: 6219750613437473718, guid: c2bfbdc29e9d041cf883db4d1eec6587, type: 3}
+  artwork: {fileID: -1949027447614673129, guid: eecb0d33c29d1441aba21987726c52fa, type: 3}
   type: 1
   background: {fileID: 8672234943274757738, guid: bd9a39ca82f444385a0460116ca02909, type: 3}
   size: 2

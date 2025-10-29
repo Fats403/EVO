@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardName: Long Neck
   description: 
-  artwork: {fileID: 6219750613437473718, guid: c2bfbdc29e9d041cf883db4d1eec6587, type: 3}
+  artwork: {fileID: -6267084115559449085, guid: 5a3bce2d8e2574b48ae832060c351435, type: 3}
   type: 0
   background: {fileID: -5427023051636740020, guid: a11409278440543abafdd8bd9b00a7d5, type: 3}
   size: 3

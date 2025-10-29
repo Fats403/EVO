@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardName: Peregrine
   description: 
-  artwork: {fileID: 6219750613437473718, guid: c2bfbdc29e9d041cf883db4d1eec6587, type: 3}
+  artwork: {fileID: -6617869101370643124, guid: 8f4b6b8b700574170a662753e9c42bc8, type: 3}
   type: 2
   background: {fileID: 1774903548118216732, guid: dd15032ff45804f28be6c0377e76c7ef, type: 3}
   size: 1
