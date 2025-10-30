@@ -1,0 +1,1690 @@
+fileFormatVersion: 2
+guid: 2b77e69f6b09d40fcb66575f3d22afbb
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8802195600312914176
+    second: CreatureBackground_0
+  - first:
+      213: 8439262865989954595
+    second: CreatureBackground_1
+  - first:
+      213: -2088281791691070688
+    second: CreatureBackground_2
+  - first:
+      213: -6335214357196940033
+    second: CreatureBackground_3
+  - first:
+      213: -405775624532602962
+    second: CreatureBackground_4
+  - first:
+      213: -7406027751317248903
+    second: CreatureBackground_5
+  - first:
+      213: 7126546208617667433
+    second: CreatureBackground_6
+  - first:
+      213: 52300630040676794
+    second: CreatureBackground_7
+  - first:
+      213: -1348824066971556547
+    second: CreatureBackground_8
+  - first:
+      213: 6545712130520990166
+    second: CreatureBackground_9
+  - first:
+      213: 8516789348499492258
+    second: CreatureBackground_10
+  - first:
+      213: -1714373195420227056
+    second: CreatureBackground_11
+  - first:
+      213: 3516662560197360187
+    second: CreatureBackground_12
+  - first:
+      213: -6865277099480475612
+    second: CreatureBackground_13
+  - first:
+      213: -2515744344705382872
+    second: CreatureBackground_14
+  - first:
+      213: 7568447362074255528
+    second: CreatureBackground_15
+  - first:
+      213: 1536389943664540464
+    second: CreatureBackground_16
+  - first:
+      213: 6097282448107178785
+    second: CreatureBackground_17
+  - first:
+      213: -1031669822562725613
+    second: CreatureBackground_18
+  - first:
+      213: 9169240873774542141
+    second: CreatureBackground_19
+  - first:
+      213: -8025303057317696156
+    second: CreatureBackground_20
+  - first:
+      213: -6641842400167990799
+    second: CreatureBackground_21
+  - first:
+      213: -7624783813641011840
+    second: CreatureBackground_22
+  - first:
+      213: 4805619706245888446
+    second: CreatureBackground_23
+  - first:
+      213: 7371927197008301254
+    second: CreatureBackground_24
+  - first:
+      213: 4033000900436969742
+    second: CreatureBackground_25
+  - first:
+      213: -7854972429470675026
+    second: CreatureBackground_26
+  - first:
+      213: 7491189188168381392
+    second: CreatureBackground_27
+  - first:
+      213: -3127878312537671189
+    second: CreatureBackground_28
+  - first:
+      213: 2826128239631211992
+    second: CreatureBackground_29
+  - first:
+      213: 7473415325744828095
+    second: CreatureBackground_30
+  - first:
+      213: 5464849803179989750
+    second: CreatureBackground_31
+  - first:
+      213: 5986300022336216863
+    second: CreatureBackground_32
+  - first:
+      213: 7153033005587350415
+    second: CreatureBackground_33
+  - first:
+      213: -7347901852608822913
+    second: CreatureBackground_34
+  - first:
+      213: 8125894217797471063
+    second: CreatureBackground_35
+  - first:
+      213: 8387591760086317259
+    second: CreatureBackground_36
+  - first:
+      213: 8827188578461451317
+    second: CreatureBackground_37
+  - first:
+      213: 1324402223471739026
+    second: CreatureBackground_38
+  - first:
+      213: 5359994797475621866
+    second: CreatureBackground_39
+  - first:
+      213: 109322894766542573
+    second: CreatureBackground_40
+  - first:
+      213: 2008727198858594273
+    second: CreatureBackground_41
+  - first:
+      213: 8815782299049061649
+    second: CreatureBackground_42
+  - first:
+      213: 5072295154064870965
+    second: CreatureBackground_43
+  - first:
+      213: 7802999536637475126
+    second: CreatureBackground_44
+  - first:
+      213: 4407770142345079872
+    second: CreatureBackground_45
+  - first:
+      213: 2608769365874960836
+    second: CreatureBackground_46
+  - first:
+      213: 1947962161165650602
+    second: CreatureBackground_47
+  - first:
+      213: -9099483961201963603
+    second: CreatureBackground_48
+  - first:
+      213: 2432569742883489871
+    second: CreatureBackground_49
+  - first:
+      213: 847818762800361075
+    second: CreatureBackground_50
+  - first:
+      213: 4995119238968461348
+    second: CreatureBackground_51
+  - first:
+      213: -1943067698968756093
+    second: CreatureBackground_52
+  - first:
+      213: -7030216716593424333
+    second: CreatureBackground_53
+  - first:
+      213: -2898941834004000733
+    second: CreatureBackground_54
+  - first:
+      213: -400724434429820520
+    second: CreatureBackground_55
+  - first:
+      213: -5464219117458026498
+    second: CreatureBackground_56
+  - first:
+      213: 7181553781003529961
+    second: CreatureBackground_57
+  - first:
+      213: -4887284190797954655
+    second: CreatureBackground_58
+  - first:
+      213: -2065805217311712665
+    second: CreatureBackground_59
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: CreatureBackground_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1024
+        height: 1536
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00fa7dfccb158d580800000000000000
+      internalID: -8802195600312914176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_1
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 1403
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32ce97d0dd84e1570800000000000000
+      internalID: 8439262865989954595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_2
+      rect:
+        serializedVersion: 2
+        x: 992
+        y: 1402
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 023665f46cee403e0800000000000000
+      internalID: -2088281791691070688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_3
+      rect:
+        serializedVersion: 2
+        x: 1001
+        y: 1403
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffc52578b1cc418a0800000000000000
+      internalID: -6335214357196940033
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_4
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 1352
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eafc83928356e5af0800000000000000
+      internalID: -405775624532602962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_5
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 1355
+        width: 11
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 974ec0ebff0883990800000000000000
+      internalID: -7406027751317248903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_6
+      rect:
+        serializedVersion: 2
+        x: 989
+        y: 1352
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96b1018c40496e260800000000000000
+      internalID: 7126546208617667433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_7
+      rect:
+        serializedVersion: 2
+        x: 998
+        y: 1352
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab98a1b552fc9b000800000000000000
+      internalID: 52300630040676794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_8
+      rect:
+        serializedVersion: 2
+        x: 1005
+        y: 1352
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d35a9af48a3084de0800000000000000
+      internalID: -1348824066971556547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_9
+      rect:
+        serializedVersion: 2
+        x: 1013
+        y: 1353
+        width: 11
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d14ba5808a07da50800000000000000
+      internalID: 6545712130520990166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_10
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 1259
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ad8420e9c6b13670800000000000000
+      internalID: 8516789348499492258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_11
+      rect:
+        serializedVersion: 2
+        x: 1002
+        y: 1259
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01aa68279a25538e0800000000000000
+      internalID: -1714373195420227056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_12
+      rect:
+        serializedVersion: 2
+        x: 1009
+        y: 1259
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3aba7767f1bdc030800000000000000
+      internalID: 3516662560197360187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_13
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1210
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42897d01ad2a9b0a0800000000000000
+      internalID: -6865277099480475612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_14
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 1209
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8264324f8d7461dd0800000000000000
+      internalID: -2515744344705382872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_15
+      rect:
+        serializedVersion: 2
+        x: 989
+        y: 1209
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a0ada5c6c6880960800000000000000
+      internalID: 7568447362074255528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_16
+      rect:
+        serializedVersion: 2
+        x: 1016
+        y: 1209
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03b7b9c738a525510800000000000000
+      internalID: 1536389943664540464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_17
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 1160
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12b07aee416ed9450800000000000000
+      internalID: 6097282448107178785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_18
+      rect:
+        serializedVersion: 2
+        x: 1002
+        y: 1115
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31198ac23c5cea1f0800000000000000
+      internalID: -1031669822562725613
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_19
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 1039
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3de2557effaf3f70800000000000000
+      internalID: 9169240873774542141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_20
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 1019
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46de8b5a36560a090800000000000000
+      internalID: -8025303057317696156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_21
+      rect:
+        serializedVersion: 2
+        x: 1002
+        y: 1019
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f9ebdbe68f63d3a0800000000000000
+      internalID: -6641842400167990799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_22
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 415
+        width: 11
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08d77c2f4835f2690800000000000000
+      internalID: -7624783813641011840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_23
+      rect:
+        serializedVersion: 2
+        x: 992
+        y: 415
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb9376c59adf0b240800000000000000
+      internalID: 4805619706245888446
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_24
+      rect:
+        serializedVersion: 2
+        x: 1001
+        y: 415
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cc88bf3ab85e4660800000000000000
+      internalID: 7371927197008301254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_25
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 107
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e09406183f818f730800000000000000
+      internalID: 4033000900436969742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_26
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 107
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eafc9ec51388df290800000000000000
+      internalID: -7854972429470675026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_27
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 107
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d3f50a60ec06f760800000000000000
+      internalID: 7491189188168381392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_28
+      rect:
+        serializedVersion: 2
+        x: 993
+        y: 107
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be93b883f3b8794d0800000000000000
+      internalID: -3127878312537671189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_29
+      rect:
+        serializedVersion: 2
+        x: 1001
+        y: 107
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8dd1be419ac683720800000000000000
+      internalID: 2826128239631211992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_30
+      rect:
+        serializedVersion: 2
+        x: 1016
+        y: 107
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbe0bf594a7e6b760800000000000000
+      internalID: 7473415325744828095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_31
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 81
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fa186521fb07db40800000000000000
+      internalID: 5464849803179989750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_32
+      rect:
+        serializedVersion: 2
+        x: 996
+        y: 81
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1f534e472c931350800000000000000
+      internalID: 5986300022336216863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_33
+      rect:
+        serializedVersion: 2
+        x: 1005
+        y: 81
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f83cda4ce9da44360800000000000000
+      internalID: 7153033005587350415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_34
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 31
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7101d62232070a90800000000000000
+      internalID: -7347901852608822913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_35
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 31
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75b083efcb9f4c070800000000000000
+      internalID: 8125894217797471063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_36
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 31
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc830f43446b66470800000000000000
+      internalID: 8387591760086317259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_37
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 31
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53484906e39708a70800000000000000
+      internalID: 8827188578461451317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_38
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 30
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29045c52ec8316210800000000000000
+      internalID: 1324402223471739026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_39
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 31
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aebe97daed6826a40800000000000000
+      internalID: 5359994797475621866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_40
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 31
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dee8064f794648100800000000000000
+      internalID: 109322894766542573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_41
+      rect:
+        serializedVersion: 2
+        x: 481
+        y: 31
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e7c1a2aebe60eb10800000000000000
+      internalID: 2008727198858594273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_42
+      rect:
+        serializedVersion: 2
+        x: 674
+        y: 31
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11deefffa43f75a70800000000000000
+      internalID: 8815782299049061649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_43
+      rect:
+        serializedVersion: 2
+        x: 754
+        y: 31
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53ec8f58199646640800000000000000
+      internalID: 5072295154064870965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_44
+      rect:
+        serializedVersion: 2
+        x: 802
+        y: 31
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63970db8cb2d94c60800000000000000
+      internalID: 7802999536637475126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_45
+      rect:
+        serializedVersion: 2
+        x: 874
+        y: 29
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04c2d02579b8b2d30800000000000000
+      internalID: 4407770142345079872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_46
+      rect:
+        serializedVersion: 2
+        x: 882
+        y: 31
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c9e5e99ae5343420800000000000000
+      internalID: 2608769365874960836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_47
+      rect:
+        serializedVersion: 2
+        x: 892
+        y: 31
+        width: 6
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aaa4e2cc34d880b10800000000000000
+      internalID: 1947962161165650602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_48
+      rect:
+        serializedVersion: 2
+        x: 929
+        y: 31
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dad41356c8328b180800000000000000
+      internalID: -9099483961201963603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_49
+      rect:
+        serializedVersion: 2
+        x: 966
+        y: 27
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f480fe7fa4932c120800000000000000
+      internalID: 2432569742883489871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_50
+      rect:
+        serializedVersion: 2
+        x: 986
+        y: 31
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37e60ae3cae04cb00800000000000000
+      internalID: 847818762800361075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_51
+      rect:
+        serializedVersion: 2
+        x: 996
+        y: 27
+        width: 11
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4284f698b7a325540800000000000000
+      internalID: 4995119238968461348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_52
+      rect:
+        serializedVersion: 2
+        x: 351
+        y: 11
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3808e6cf836d805e0800000000000000
+      internalID: -1943067698968756093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_53
+      rect:
+        serializedVersion: 2
+        x: 375
+        y: 11
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3389f69d427af6e90800000000000000
+      internalID: -7030216716593424333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_54
+      rect:
+        serializedVersion: 2
+        x: 530
+        y: 11
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3201cafd2c3e4c7d0800000000000000
+      internalID: -2898941834004000733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_55
+      rect:
+        serializedVersion: 2
+        x: 615
+        y: 11
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 891cdf00047507af0800000000000000
+      internalID: -400724434429820520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_56
+      rect:
+        serializedVersion: 2
+        x: 791
+        y: 8
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eff0401d9a13b24b0800000000000000
+      internalID: -5464219117458026498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_57
+      rect:
+        serializedVersion: 2
+        x: 802
+        y: 11
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ee24144d110aa360800000000000000
+      internalID: 7181553781003529961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_58
+      rect:
+        serializedVersion: 2
+        x: 935
+        y: 8
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a10b132ce0ec2cb0800000000000000
+      internalID: -4887284190797954655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CreatureBackground_59
+      rect:
+        serializedVersion: 2
+        x: 962
+        y: 11
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76a9cf69919c453e0800000000000000
+      internalID: -2065805217311712665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      CreatureBackground_0: -8802195600312914176
+      CreatureBackground_1: 8439262865989954595
+      CreatureBackground_10: 8516789348499492258
+      CreatureBackground_11: -1714373195420227056
+      CreatureBackground_12: 3516662560197360187
+      CreatureBackground_13: -6865277099480475612
+      CreatureBackground_14: -2515744344705382872
+      CreatureBackground_15: 7568447362074255528
+      CreatureBackground_16: 1536389943664540464
+      CreatureBackground_17: 6097282448107178785
+      CreatureBackground_18: -1031669822562725613
+      CreatureBackground_19: 9169240873774542141
+      CreatureBackground_2: -2088281791691070688
+      CreatureBackground_20: -8025303057317696156
+      CreatureBackground_21: -6641842400167990799
+      CreatureBackground_22: -7624783813641011840
+      CreatureBackground_23: 4805619706245888446
+      CreatureBackground_24: 7371927197008301254
+      CreatureBackground_25: 4033000900436969742
+      CreatureBackground_26: -7854972429470675026
+      CreatureBackground_27: 7491189188168381392
+      CreatureBackground_28: -3127878312537671189
+      CreatureBackground_29: 2826128239631211992
+      CreatureBackground_3: -6335214357196940033
+      CreatureBackground_30: 7473415325744828095
+      CreatureBackground_31: 5464849803179989750
+      CreatureBackground_32: 5986300022336216863
+      CreatureBackground_33: 7153033005587350415
+      CreatureBackground_34: -7347901852608822913
+      CreatureBackground_35: 8125894217797471063
+      CreatureBackground_36: 8387591760086317259
+      CreatureBackground_37: 8827188578461451317
+      CreatureBackground_38: 1324402223471739026
+      CreatureBackground_39: 5359994797475621866
+      CreatureBackground_4: -405775624532602962
+      CreatureBackground_40: 109322894766542573
+      CreatureBackground_41: 2008727198858594273
+      CreatureBackground_42: 8815782299049061649
+      CreatureBackground_43: 5072295154064870965
+      CreatureBackground_44: 7802999536637475126
+      CreatureBackground_45: 4407770142345079872
+      CreatureBackground_46: 2608769365874960836
+      CreatureBackground_47: 1947962161165650602
+      CreatureBackground_48: -9099483961201963603
+      CreatureBackground_49: 2432569742883489871
+      CreatureBackground_5: -7406027751317248903
+      CreatureBackground_50: 847818762800361075
+      CreatureBackground_51: 4995119238968461348
+      CreatureBackground_52: -1943067698968756093
+      CreatureBackground_53: -7030216716593424333
+      CreatureBackground_54: -2898941834004000733
+      CreatureBackground_55: -400724434429820520
+      CreatureBackground_56: -5464219117458026498
+      CreatureBackground_57: 7181553781003529961
+      CreatureBackground_58: -4887284190797954655
+      CreatureBackground_59: -2065805217311712665
+      CreatureBackground_6: 7126546208617667433
+      CreatureBackground_7: 52300630040676794
+      CreatureBackground_8: -1348824066971556547
+      CreatureBackground_9: 6545712130520990166
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

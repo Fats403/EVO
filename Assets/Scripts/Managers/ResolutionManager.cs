@@ -27,6 +27,7 @@ public class ResolutionManager : MonoBehaviour
 			c.tempSpeedMod = 0;
 			if (c.traits == null) continue;
 			foreach (var t in c.traits) { if (t != null) t.OnRoundStart(c); }
+			c.RefreshStatsUI();
 		}
 
 		// Pre-herbivore trait steals (e.g., Peregrine)
@@ -288,6 +289,7 @@ public class ResolutionManager : MonoBehaviour
                     {
                         FeedbackManager.Instance?.ShowFloatingText("Underfed (shrunk)", c.transform.position, Color.yellow);
                         FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} shrinks to body {c.body}");
+						c.RefreshStatsUI();
                     }
                 }
                 else
