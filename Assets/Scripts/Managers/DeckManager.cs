@@ -11,6 +11,8 @@ public class DeckManager : MonoBehaviour
     public GameObject cardPrefab;
     public Transform handPanel;
     public GameObject creaturePrefab;
+	[Tooltip("Prefab to show as a hover/highlight indicator on a BoardSlot while dragging a card")]
+	public GameObject hoverIndicatorPrefab;
     public int startingHandSize = 3;
     
     [Header("Deck UI")]
@@ -64,6 +66,8 @@ public class DeckManager : MonoBehaviour
         GameObject cardObj = Instantiate(cardPrefab, handPanel);
         CardUI ui = cardObj.GetComponent<CardUI>();
         ui.Initialize(data);
+		var layout = handPanel != null ? handPanel.GetComponentInParent<HandLayoutController>() : null;
+		if (layout != null) layout.RequestLayout();
     }
 
     public bool SpawnCreature(CardData data, BoardSlot slot)

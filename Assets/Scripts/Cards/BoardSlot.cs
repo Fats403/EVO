@@ -10,6 +10,7 @@ public class BoardSlot : MonoBehaviour
 	public bool hasPending;
 	public CardData pendingCard;
 	public GameObject pendingVisual;
+	public GameObject hoverVisual;
 
 	public Vector2 ScreenPosition => Camera.main.WorldToScreenPoint(transform.position);
 
@@ -49,5 +50,22 @@ public class BoardSlot : MonoBehaviour
 		if (prefab == null || pendingVisual != null) return;
 		pendingVisual = UnityEngine.Object.Instantiate(prefab, transform);
 		pendingVisual.transform.localPosition = Vector3.zero;
+	}
+
+	// Hover indicator (does not change state)
+	public void ShowHoverIndicator(GameObject prefab)
+	{
+		if (prefab == null || hoverVisual != null) return;
+		hoverVisual = UnityEngine.Object.Instantiate(prefab, transform);
+		hoverVisual.transform.localPosition = Vector3.zero;
+	}
+
+	public void HideHoverIndicator()
+	{
+		if (hoverVisual != null)
+		{
+			UnityEngine.Object.Destroy(hoverVisual);
+			hoverVisual = null;
+		}
 	}
 }

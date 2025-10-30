@@ -205,6 +205,101 @@ MonoBehaviour:
   hasPending: 0
   pendingCard: {fileID: 0}
   pendingVisual: {fileID: 0}
+  hoverVisual: {fileID: 0}
+--- !u!1 &191556713
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 191556714}
+  - component: {fileID: 191556715}
+  m_Layer: 5
+  m_Name: Player1Deck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &191556714
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 191556713}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 150, y: 150, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 557953993}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 1152, y: -384}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!212 &191556715
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 191556713}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 1470497587
+  m_SortingLayer: 3
+  m_SortingOrder: 0
+  m_Sprite: {fileID: -8622259438476403829, guid: ebdeae6953bd14883bee47afc64eaf73, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1.2, y: 1.91}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &205482814
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,6 +354,7 @@ MonoBehaviour:
   hasPending: 0
   pendingCard: {fileID: 0}
   pendingVisual: {fileID: 0}
+  hoverVisual: {fileID: 0}
 --- !u!1 &446720763
 GameObject:
   m_ObjectHideFlags: 0
@@ -313,6 +409,7 @@ MonoBehaviour:
   hasPending: 0
   pendingCard: {fileID: 0}
   pendingVisual: {fileID: 0}
+  hoverVisual: {fileID: 0}
 --- !u!1 &508416460
 GameObject:
   m_ObjectHideFlags: 0
@@ -729,6 +826,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 585839366}
+  - {fileID: 191556714}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -820,7 +918,7 @@ Transform:
   m_GameObject: {fileID: 585839364}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 30, y: 328, z: 0}
+  m_LocalPosition: {x: -24, y: 321, z: 0}
   m_LocalScale: {x: 120.054, y: 139.568, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1059,7 +1157,7 @@ MonoBehaviour:
   resolutionManager: {fileID: 648372067}
   foodPile: {fileID: 508416461}
   currentPhase: 0
-  rngSeed: 3
+  rngSeed: 0
 --- !u!4 &815865959
 Transform:
   m_ObjectHideFlags: 0
@@ -1110,7 +1208,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0.75}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &895446169
@@ -1390,6 +1488,7 @@ MonoBehaviour:
   hasPending: 0
   pendingCard: {fileID: 0}
   pendingVisual: {fileID: 0}
+  hoverVisual: {fileID: 0}
 --- !u!1 &1432409513
 GameObject:
   m_ObjectHideFlags: 0
@@ -1839,6 +1938,7 @@ MonoBehaviour:
   hasPending: 0
   pendingCard: {fileID: 0}
   pendingVisual: {fileID: 0}
+  hoverVisual: {fileID: 0}
 --- !u!1 &1980473699
 GameObject:
   m_ObjectHideFlags: 0
@@ -2038,9 +2138,19 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b2b77bcae1c804e2d986ede0b56ec675, type: 2}
   - {fileID: 11400000, guid: 054a67bb9f65b443a872648cd78d5ca7, type: 2}
   - {fileID: 11400000, guid: a8396a124a906425a9c24e0ab2a927c5, type: 2}
+  - {fileID: 11400000, guid: 4ad1258c0b2b443cdb2cbfbe2f814449, type: 2}
+  - {fileID: 11400000, guid: eb819f8d9b04f40d2aab30eddf47dd42, type: 2}
+  - {fileID: 11400000, guid: 890d351220a254f9888629830656f078, type: 2}
+  - {fileID: 11400000, guid: 4d9b5a877e8f04d99878e2d9573881a1, type: 2}
+  - {fileID: 11400000, guid: dc668e514ff594ad1ae5055f3b2de472, type: 2}
+  - {fileID: 11400000, guid: bcabb2e58b4ab43dea3e9b69d55ad4c6, type: 2}
+  - {fileID: 11400000, guid: 8f7ce7ed6f22f49b9b61fe68a8e75b51, type: 2}
+  - {fileID: 11400000, guid: a8cfef073eca74b3ca0278e70edc04f8, type: 2}
+  - {fileID: 11400000, guid: 8e55c4960f3dd4fb7a19c4793acff3b1, type: 2}
   cardPrefab: {fileID: 6378225315708850401, guid: 91ac1c24a6a3b45edba80f553a10afe5, type: 3}
   handPanel: {fileID: 2128517701}
   creaturePrefab: {fileID: 5765744327105739345, guid: df2ced5fde386438bb251dfc723d9caf, type: 3}
+  hoverIndicatorPrefab: {fileID: 895323091584285675, guid: 60a0e7314dc02499d8a7ca1e95b37f98, type: 3}
   startingHandSize: 3
   deckCountText: {fileID: 0}
 --- !u!4 &2017726961
@@ -2112,6 +2222,7 @@ MonoBehaviour:
   hasPending: 0
   pendingCard: {fileID: 0}
   pendingVisual: {fileID: 0}
+  hoverVisual: {fileID: 0}
 --- !u!1 &2101015291
 GameObject:
   m_ObjectHideFlags: 0
@@ -2310,6 +2421,7 @@ GameObject:
   - component: {fileID: 2128517702}
   - component: {fileID: 2128517705}
   - component: {fileID: 2128517704}
+  - component: {fileID: 2128517706}
   m_Layer: 5
   m_Name: HandPanel
   m_TagString: Untagged
@@ -2414,6 +2526,51 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &2128517706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128517700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b887d0ec89b34c278ef0bac091887b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HandLayoutController
+  maxTotalArcDegrees: 40
+  degreesPerCard: 8
+  overlapFactor: 0.25
+  curveDepth: 40
+  handYOffset: 125
+  hoverScale: 1.15
+  hoverLift: 60
+  hoverSortingOrder: 1000
+  animationDuration: 0.18
+  easing:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
