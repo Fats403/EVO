@@ -1,0 +1,650 @@
+fileFormatVersion: 2
+guid: 0fa3ab5055816459f8415952222ef861
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5167248770055930999
+    second: CardHoverFrame_0
+  - first:
+      213: 1406007433020693835
+    second: CardHoverFrame_1
+  - first:
+      213: 6045607951390228580
+    second: CardHoverFrame_2
+  - first:
+      213: 5118870771588114230
+    second: CardHoverFrame_3
+  - first:
+      213: -6673642505810705597
+    second: CardHoverFrame_4
+  - first:
+      213: 8479031230831354692
+    second: CardHoverFrame_5
+  - first:
+      213: 5447320355006898878
+    second: CardHoverFrame_6
+  - first:
+      213: 4253385007207161751
+    second: CardHoverFrame_7
+  - first:
+      213: -2403402257300151166
+    second: CardHoverFrame_8
+  - first:
+      213: 7556813507229443049
+    second: CardHoverFrame_9
+  - first:
+      213: 5439609167651625478
+    second: CardHoverFrame_10
+  - first:
+      213: -2477892622415678481
+    second: CardHoverFrame_11
+  - first:
+      213: -7028879481440024857
+    second: CardHoverFrame_12
+  - first:
+      213: -9000628642288717285
+    second: CardHoverFrame_13
+  - first:
+      213: -9206826576537089627
+    second: CardHoverFrame_14
+  - first:
+      213: -6740772912786421845
+    second: CardHoverFrame_15
+  - first:
+      213: 4611825878701440707
+    second: CardHoverFrame_16
+  - first:
+      213: -8388861820756255482
+    second: CardHoverFrame_17
+  - first:
+      213: -4329655205231396979
+    second: CardHoverFrame_18
+  - first:
+      213: -2311841922192555660
+    second: CardHoverFrame_19
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: CardHoverFrame_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1024
+        height: 1531
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98bfdb2fe9e3a48b0800000000000000
+      internalID: -5167248770055930999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_1
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 1353
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4dd1cc9f44238310800000000000000
+      internalID: 1406007433020693835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_2
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 1352
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46044e9966056e350800000000000000
+      internalID: 6045607951390228580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_3
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 1352
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 637a3a788d1e90740800000000000000
+      internalID: 5118870771588114230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_4
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 1352
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 343843bdf757263a0800000000000000
+      internalID: -6673642505810705597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_5
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 1354
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44365290bf19ba570800000000000000
+      internalID: 8479031230831354692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_6
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 1352
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb2e0f17005c89b40800000000000000
+      internalID: 5447320355006898878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_7
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 1351
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79f1e8fe02f070b30800000000000000
+      internalID: 4253385007207161751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_8
+      rect:
+        serializedVersion: 2
+        x: 182
+        y: 1353
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 284a049716665aed0800000000000000
+      internalID: -2403402257300151166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_9
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 1353
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e3e84cd8d13fd860800000000000000
+      internalID: 7556813507229443049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_10
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 1351
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60a55dab7bf5d7b40800000000000000
+      internalID: 5439609167651625478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_11
+      rect:
+        serializedVersion: 2
+        x: 302
+        y: 1351
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe33a51d9c1cc9dd0800000000000000
+      internalID: -2477892622415678481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_12
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 1353
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e64cbb2a57647e90800000000000000
+      internalID: -7028879481440024857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_13
+      rect:
+        serializedVersion: 2
+        x: 550
+        y: 1353
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b12bc2defe7571380800000000000000
+      internalID: -9000628642288717285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_14
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 1351
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a981ec2208ca3080800000000000000
+      internalID: -9206826576537089627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_15
+      rect:
+        serializedVersion: 2
+        x: 694
+        y: 1353
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba74acdffb6f372a0800000000000000
+      internalID: -6740772912786421845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_16
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 225
+        width: 277
+        height: 1056
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cef3f1c33f700040800000000000000
+      internalID: 4611825878701440707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_17
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 1275
+        width: 13
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60d9cffbe96c49b80800000000000000
+      internalID: -8388861820756255482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_18
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 208
+        width: 615
+        height: 1079
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d87f244c789f9e3c0800000000000000
+      internalID: -4329655205231396979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CardHoverFrame_19
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 466
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4714bda3500baefd0800000000000000
+      internalID: -2311841922192555660
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      CardHoverFrame_0: -5167248770055930999
+      CardHoverFrame_1: 1406007433020693835
+      CardHoverFrame_10: 5439609167651625478
+      CardHoverFrame_11: -2477892622415678481
+      CardHoverFrame_12: -7028879481440024857
+      CardHoverFrame_13: -9000628642288717285
+      CardHoverFrame_14: -9206826576537089627
+      CardHoverFrame_15: -6740772912786421845
+      CardHoverFrame_16: 4611825878701440707
+      CardHoverFrame_17: -8388861820756255482
+      CardHoverFrame_18: -4329655205231396979
+      CardHoverFrame_19: -2311841922192555660
+      CardHoverFrame_2: 6045607951390228580
+      CardHoverFrame_3: 5118870771588114230
+      CardHoverFrame_4: -6673642505810705597
+      CardHoverFrame_5: 8479031230831354692
+      CardHoverFrame_6: 5447320355006898878
+      CardHoverFrame_7: 4253385007207161751
+      CardHoverFrame_8: -2403402257300151166
+      CardHoverFrame_9: 7556813507229443049
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

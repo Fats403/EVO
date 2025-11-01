@@ -120,8 +120,7 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 			// Return card to hand, preserving world position, then layout will animate back
 			transform.SetParent(originalParent, true);
 			transform.SetSiblingIndex(originalSiblingIndex); // go back to original slot
-			if (handLayout == null && originalParent != null)
-				handLayout = originalParent.GetComponentInParent<HandLayoutController>();
+
 			if (handLayout == null && originalParent != null)
 				handLayout = originalParent.GetComponentInParent<HandLayoutController>();
 			if (handLayout != null) handLayout.NotifyDragEnd(this, true);

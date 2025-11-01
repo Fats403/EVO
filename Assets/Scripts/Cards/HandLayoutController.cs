@@ -131,7 +131,7 @@ public class HandLayoutController : MonoBehaviour
 			// Circular baseline: center of circle at (0, -radius); take upper arc and offset down by sagitta
 			float underRoot = Mathf.Max(0f, radius * radius - x * x);
 			float yOnCircle = -radius + Mathf.Sqrt(underRoot);
-			float y = yOnCircle - sagitta - handYOffset; // positive handYOffset moves down
+			float y = yOnCircle - sagitta - handYOffset;
 
 			Vector2 baselinePos = new Vector2(x, y);
 			float targetRot = angle;

@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public Transform player1SlotContainer;
     public Transform player2SlotContainer;
     public Button endTurnButton;
+    public Button toggleLogButton;
     public TextMeshProUGUI phaseText;
     public ResolutionManager resolutionManager;
     public FoodPile foodPile;
@@ -38,6 +39,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("[GameManager] Initialized in Phase: " + currentPhase + " | Seed: " + rngSeed);
         if (endTurnButton != null) endTurnButton.onClick.AddListener(OnEndTurnClicked);
+        if (toggleLogButton != null) toggleLogButton.onClick.AddListener(OnToggleLogClicked);
         UpdatePhaseLabel();
         BeginSetup();
     }
@@ -45,11 +47,20 @@ public class GameManager : MonoBehaviour
     void OnDestroy()
     {
         if (endTurnButton != null) endTurnButton.onClick.RemoveListener(OnEndTurnClicked);
+        if (toggleLogButton != null) toggleLogButton.onClick.RemoveListener(OnToggleLogClicked);
     }
 
     void OnEndTurnClicked()
     {
         AdvancePhase();
+    }
+
+    void OnToggleLogClicked()
+    {
+        if (FeedbackManager.Instance != null)
+        {
+            FeedbackManager.Instance.ToggleLogPanel();
+        }
     }
 
     void AdvancePhase()

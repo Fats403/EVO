@@ -14,13 +14,20 @@ public class FeedbackManager : MonoBehaviour
 
 	[Header("Log UI")]
 	public TextMeshProUGUI logText;
+	public GameObject logPanel;
 	public int maxLines = 20;
+	public bool logPanelVisible = false;
 
 	private System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
 	void Awake()
 	{
 		Instance = this;
+		// Set initial visibility
+		if (logPanel != null)
+		{
+			logPanel.SetActive(logPanelVisible);
+		}
 	}
 
 	public void Log(string message)
@@ -39,6 +46,15 @@ public class FeedbackManager : MonoBehaviour
 			logText.text = str;
 		}
 		Debug.Log(message);
+	}
+
+	public void ToggleLogPanel()
+	{
+		logPanelVisible = !logPanelVisible;
+		if (logPanel != null)
+		{
+			logPanel.SetActive(logPanelVisible);
+		}
 	}
 
 	public static string TagOwner(SlotOwner owner)
