@@ -18,6 +18,15 @@ public abstract class Trait : ScriptableObject
 	public virtual bool TryNegateAttack(Creature self, Creature attacker) { return false; }
 	public virtual int PredatorBodyBonusForTargeting(Creature self) { return 0; }
 	public virtual void OnAnyDeath(Creature self, Creature dead) {}
+
+    // New combat/health hooks
+    public virtual int ModifyOutgoingDamage(Creature self, Creature target, int baseDamage) { return baseDamage; }
+    public virtual int ModifyIncomingDamage(Creature self, Creature attacker, int baseDamage) { return baseDamage; }
+    public virtual void OnDamageDealt(Creature self, Creature target, int finalDamage) {}
+    public virtual void OnDamageTaken(Creature self, Creature attacker, int finalDamage) {}
+    public virtual void OnWoundedRoundTick(Creature self) {}
+    public virtual bool CanAttack(Creature self) { return self != null && self.data != null && self.data.type != CardType.Herbivore; }
+    public virtual bool CanTarget(Creature self, Creature target) { return true; }
 }
 
 

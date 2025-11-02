@@ -17,6 +17,9 @@ public class CardData : ScriptableObject
     [Range(1, 6)] public int speed = 1; // Feeding order priority
     [Range(1, 3)] public int tier = 1;  // Evolution stage
     
+    [Header("Vitals")]
+    [Range(1, 10)] public int maxHealth = 3;
+    
     [Header("Base Traits")]
     public Trait[] baseTraits;
 }

@@ -18,7 +18,15 @@ public class FoodPile : MonoBehaviour
 
 	public void RefillStartOfRound()
 	{
-		count = Mathf.Min(maxCap, refillPerRound);
+		int players = 2; // current game supports 2 players
+		int rollSum = 0;
+		for (int i = 0; i < players; i++)
+		{
+			int die = (GameManager.Instance != null) ? GameManager.Instance.NextRandomInt(1, 7) : Random.Range(1, 7);
+			rollSum += die;
+		}
+		int newFood = 3 * players + rollSum; // no carryover; discard leftovers
+		count = newFood;
 		UpdateUI();
 	}
 

@@ -3,11 +3,11 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Traits/Swoop")]
 public class SwoopTrait : Trait
 {
-	public int stealAmount = 1;
-	public override int PreHerbivorePileSteal(Creature self, FoodPile pile)
-	{
-		return stealAmount;
-	}
+    public override int ModifyOutgoingDamage(Creature self, Creature target, int baseDamage)
+    {
+        if (target != null && target.IsWounded) return baseDamage + 1;
+        return baseDamage;
+    }
 }
 
 

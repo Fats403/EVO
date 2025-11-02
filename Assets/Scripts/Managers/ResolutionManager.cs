@@ -7,13 +7,13 @@ public class ResolutionManager : MonoBehaviour
 {
 	public FoodPile foodPile;
 	[Header("Timing")]
-	public float preStealDelay = 0.3f;
-	public float eatDelay = 1.0f;
-	public float attackWindup = 0.25f;
-	public float attackResolvePause = 0.6f;
-	public float afterCarnivoreDelay = 0.8f;
-	public float starveDelay = 0.8f;
-    public float statusEffectDelay = 0.8f;
+    public float preStealDelay = 0.4f;
+    public float eatDelay = 0.5f;
+    public float attackWindup = 0.2f;
+    public float attackResolvePause = 0.35f;
+    public float afterCarnivoreDelay = 0.4f;
+    public float starveDelay = 0.5f;
+    public float statusEffectDelay = 0.4f;
 
 	public IEnumerator RevealAndResolveRound()
 	{
@@ -21,13 +21,20 @@ public class ResolutionManager : MonoBehaviour
 		RevealPendings();
 
 		// Round start hooks
-		foreach (var c in AllCreatures())
+        foreach (var c in AllCreatures())
 		{
 			c.defendedThisRound = false;
 			c.tempSpeedMod = 0;
 			if (c.traits == null) continue;
 			foreach (var t in c.traits) { if (t != null) t.OnRoundStart(c); }
 			c.RefreshStatsUI();
+            // Fatigue penalty applied at round start
+            if (c.fatigued)
+            {
+                c.tempSpeedMod -= 1;
+                c.fatigued = false;
+            }
+            c.ResetRoundBookkeeping();
 		}
 
 		// Pre-herbivore trait steals (e.g., Peregrine)
@@ -36,8 +43,8 @@ public class ResolutionManager : MonoBehaviour
 		// Resolve Herbivores eating
 		yield return StartCoroutine(ResolveHerbivores());
 
-		// Resolve Carnivores attacks
-		yield return StartCoroutine(ResolveCarnivores());
+        // Resolve Attacks (Carnivores and Avians)
+        yield return StartCoroutine(ResolveAttacks());
 
 		// Starvation and scoring
 		yield return StartCoroutine(ResolveStarvationAndScoring());
@@ -122,193 +129,174 @@ public class ResolutionManager : MonoBehaviour
 		}
 	}
 
-	IEnumerator ResolveCarnivores()
+    IEnumerator ResolveAttacks()
 	{
-		var creatures = AllCreatures().ToList();
-		foreach (var predator in creatures)
+        var creatures = AllCreatures().ToList();
+        foreach (var attacker in creatures)
 		{
-			if (predator == null || predator.data == null) continue;
-			if (predator.data.type != CardType.Carnivore) continue;
-			// Choose a target herbivore on the opposing side with smaller body
-			var candidates = creatures
-				.Where(c => c != null && c.data != null && c.data.type == CardType.Herbivore)
-				.Where(c => c.owner != predator.owner)
-				.Where(c => IsValidPrey(predator, c))
-				.OrderBy(c => Vector3.SqrMagnitude(c.transform.position - predator.transform.position))
-				.ToList();
-
-            bool IsValidPrey(Creature predator, Creature prey)
+            if (attacker == null || attacker.data == null) continue;
+            if (attacker.data.type == CardType.Herbivore)
             {
-                // Avian require speed advantage to be targeted
-                if (prey.data != null && prey.data.type == CardType.Avian)
+                bool traitAllows = attacker.traits != null && attacker.traits.Any(t => t != null && t.CanAttack(attacker));
+                if (!traitAllows) continue; // herbivores don't attack by default
+            }
+            // Candidates: opponent, cannot target Carnivores
+            var candidates = creatures
+                .Where(c => c != null && c.data != null && c.owner != attacker.owner)
+                .Where(c => c.data.type != CardType.Carnivore)
+                .Where(c => IsValidTarget(attacker, c))
+                .OrderBy(c => Vector3.SqrMagnitude(c.transform.position - attacker.transform.position))
+                .ToList();
+
+            bool IsValidTarget(Creature atk, Creature tgt)
+            {
+                // Carnivore attacking Avian requires speed >= target
+                if (tgt.data != null && tgt.data.type == CardType.Avian && atk.data.type == CardType.Carnivore)
                 {
-                    if (predator.speed <= prey.speed) return false;
+                    if (atk.speed < tgt.speed) return false;
                 }
-                if (prey.body < predator.body) return true;
-                if (prey.body == predator.body)
+                int bodyBonus = 0;
+                if (atk.traits != null)
+                {
+                    foreach (var t in atk.traits)
+                    {
+                        if (t != null) bodyBonus += t.PredatorBodyBonusForTargeting(atk);
+                    }
+                }
+                int effAtkBody = atk.body + bodyBonus;
+                if (tgt.body < effAtkBody) return true;
+                if (tgt.body == effAtkBody)
                 {
                     // allow equal-body if any trait grants it
-                    if (predator.traits != null)
+                    if (atk.traits != null)
                     {
-                        foreach (var t in predator.traits)
+                        foreach (var t in atk.traits)
                         {
-                            if (t != null && t.CanTargetEqualBody(predator, prey)) return true;
+                            if (t != null && t.CanTargetEqualBody(atk, tgt)) return true;
                         }
+                    }
+                }
+                // Additional target gating via traits (e.g., camouflage)
+                if (atk.traits != null)
+                {
+                    foreach (var t in atk.traits)
+                    {
+                        if (t != null && !t.CanTarget(atk, tgt)) return false;
                     }
                 }
                 return false;
             }
             
 			if (candidates.Count == 0) continue;
-			var target = candidates[0];
+            var target = candidates[0];
 			// Check target defense traits – may negate attack
 			bool negated = false;
 			if (target.traits != null)
 			{
 				foreach (var tr in target.traits)
 				{
-					if (tr != null && tr.TryNegateAttack(target, predator)) { negated = true; break; }
+                    if (tr != null && tr.TryNegateAttack(target, attacker)) { negated = true; break; }
 				}
 			}
 			if (negated)
 			{
 				FeedbackManager.Instance?.ShowFloatingText("Blocked", target.transform.position, new Color(1f, 0.8f, 0.2f));
-				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(predator.owner)} {predator.name} attack negated by {target.name}");
+                FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(attacker.owner)} {attacker.name} attack negated by {target.name}");
 				yield return new WaitForSeconds(statusEffectDelay);
 				continue;
 			}
 
 			// Attack bump tween on creature
-			var predCreature = predator;
-			if (predCreature != null)
-				yield return predCreature.StartCoroutine(predCreature.PlayAttackBump(0.35f, attackWindup));
+            var atkCreature = attacker;
+            if (atkCreature != null)
+                yield return atkCreature.StartCoroutine(atkCreature.PlayAttackBump(0.35f, attackWindup));
 
 			// Brief red flash on target
 			if (target != null)
 				yield return target.StartCoroutine(target.FlashDamage(0.12f));
 
-            // Predator gains food from prey up to its need
-            int need = Mathf.Max(0, predator.body - predator.eaten);
-            int gain = Mathf.Min(need, target.body);
-            if (gain > 0)
+            // Damage calculation
+            int baseDmg = Mathf.Max(1, attacker.body - target.body + 1);
+            if (attacker.traits != null)
             {
-                predator.eaten += gain;
-                FeedbackManager.Instance?.ShowFloatingText($"+{gain} food", predator.transform.position, new Color(0.9f, 0.6f, 0.3f));
-                FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(predator.owner)} {predator.name} gains {gain} from {target.name}");
+                foreach (var tr in attacker.traits) { if (tr != null) baseDmg = tr.ModifyOutgoingDamage(attacker, target, baseDmg); }
             }
+            if (target.traits != null)
+            {
+                foreach (var tr in target.traits) { if (tr != null) baseDmg = tr.ModifyIncomingDamage(target, attacker, baseDmg); }
+            }
+            baseDmg = Mathf.Max(0, baseDmg);
+            if (baseDmg > 0) target.ApplyDamage(baseDmg, attacker);
 
-            // Remove target
-			var targetSlot = FindSlotOf(target);
-			if (targetSlot != null)
+            // Remove target if dead
+            if (target == null)
 			{
-				FeedbackManager.Instance?.ShowFloatingText("EAT", target.transform.position, new Color(1f, 0.4f, 0.4f));
-				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(predator.owner)} {predator.name} eats {target.name}");
-				Object.Destroy(target.gameObject);
-				targetSlot.Vacate();
-				// Notify predator traits
-				if (predator.traits != null)
-				{
-					foreach (var tr in predator.traits) { if (tr != null) tr.OnAfterKill(predator, target); }
-				}
-				// Notify all about death (for scavengers)
-				foreach (var c2 in AllCreatures())
-				{
-					if (c2 == null || c2 == target) continue;
-					if (c2.traits == null) continue;
-					foreach (var tr in c2.traits) { if (tr != null) tr.OnAnyDeath(c2, target); }
-				}
+                // target destroyed by ApplyDamage -> Kill, send death notifications
+            }
+            else if (target.currentHealth == 0)
+            {
+                // Notify attacker traits
+                if (attacker.traits != null)
+                {
+                    foreach (var tr in attacker.traits) { if (tr != null) tr.OnAfterKill(attacker, target); }
+                }
+                // Notify all about death (for scavengers)
+                foreach (var c2 in AllCreatures())
+                {
+                    if (c2 == null || c2 == target) continue;
+                    if (c2.traits == null) continue;
+                    foreach (var tr in c2.traits) { if (tr != null) tr.OnAnyDeath(c2, target); }
+                }
 			}
 			yield return new WaitForSeconds(attackResolvePause);
 		}
 	}
 
-	IEnumerator ResolveAfterCarnivorePhase()
-	{
-		if (foodPile == null) yield break;
-		foreach (var c in AllCreatures())
-		{
-			if (c.traits == null) continue;
-			foreach (var t in c.traits)
-			{
-				if (t == null) continue;
-				t.OnAfterCarnivorePhase(c, foodPile);
-			}
-            // Baseline avian survival: take 1 from pile after carnivore phase if not full
-            if (c.data != null && c.data.type == CardType.Avian && c.eaten < c.body && foodPile.count > 0)
-            {
-                int tkn = foodPile.Take(1);
-                c.eaten += tkn;
-                if (tkn > 0)
-                {
-                    FeedbackManager.Instance?.ShowFloatingText("+1 food", c.transform.position, new Color(0.5f, 0.8f, 1f));
-                    FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} gained 1 after carnivores.");
-                }
-            }
-			yield return new WaitForSeconds(afterCarnivoreDelay);
-		}
-	}
+    
 
-	IEnumerator ResolveStarvationAndScoring()
+    IEnumerator ResolveStarvationAndScoring()
 	{
-		var creatures = FindObjectsByType<Creature>(FindObjectsSortMode.None);
-		foreach (var c in creatures)
-		{
-			if (c == null) continue;
+        var creatures = FindObjectsByType<Creature>(FindObjectsSortMode.None);
+        foreach (var c in creatures)
+        {
+            if (c == null) continue;
+            // Food scoring for herbivores only
+            if (c.data != null && c.data.type == CardType.Herbivore && c.eaten > 0)
+            {
+                int gain = c.eaten;
+                ScoreManager.Add(c.owner, gain);
+                FeedbackManager.Instance?.ShowFloatingText($"Score +{gain}", c.transform.position, Color.cyan);
+                FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} scores {gain} from food");
+            }
+            // Starvation chip if ate nothing
             if (c.eaten == 0)
-			{
-				FeedbackManager.Instance?.ShowFloatingText("Starved", c.transform.position, Color.gray);
-				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} died of starvation");
-				var s = FindSlotOf(c);
-				Object.Destroy(c.gameObject);
-				if (s != null) s.Vacate();
-			}
-            else if (c.eaten < c.body)
-			{
-                if (c.data != null && c.data.type == CardType.Carnivore)
-                {
-                    // Carnivores score partial, then shrink by deficit
-                    int gainScore = c.eaten;
-                    if (gainScore > 0)
-                    {
-                        ScoreManager.Add(c.owner, gainScore);
-                        FeedbackManager.Instance?.ShowFloatingText($"Score +{gainScore}", c.transform.position, new Color(1f, 0.7f, 0.3f));
-                        FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} partial scores {gainScore}");
-                    }
-                    int deficit = c.body - c.eaten;
-                    c.body = Mathf.Max(0, c.body - deficit);
-                    c.eaten = 0;
-                    if (c.body == 0)
-                    {
-                        FeedbackManager.Instance?.ShowFloatingText("Collapsed", c.transform.position, Color.red);
-                        FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} collapsed after underfeeding");
-                        var s = FindSlotOf(c);
-                        Object.Destroy(c.gameObject);
-                        if (s != null) s.Vacate();
-                    }
-                    else
-                    {
-                        FeedbackManager.Instance?.ShowFloatingText("Underfed (shrunk)", c.transform.position, Color.yellow);
-                        FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} shrinks to body {c.body}");
-						c.RefreshStatsUI();
-                    }
-                }
-                else
-                {
-                    FeedbackManager.Instance?.ShowFloatingText("Underfed", c.transform.position, Color.yellow);
-                    FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} underfed, loses {c.eaten}");
-                    c.eaten = 0;
-                }
-			}
-			else
-			{
-				int gain = c.eaten;
-				ScoreManager.Add(c.owner, gain);
-				FeedbackManager.Instance?.ShowFloatingText($"Score +{gain}", c.transform.position, Color.cyan);
-				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} scores {gain}");
-				c.eaten = 0;
-			}
-			yield return new WaitForSeconds(starveDelay);
-		}
+            {
+                c.ApplyDamage(2, null);
+                FeedbackManager.Instance?.ShowFloatingText("Starved -2 HP", c.transform.position, Color.gray);
+                FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} takes 2 starvation damage");
+            }
+            // Fatigue if partially fed
+            if (c.eaten > 0 && c.eaten < c.body)
+            {
+                c.fatigued = true;
+                FeedbackManager.Instance?.ShowFloatingText("Fatigued", c.transform.position, Color.yellow);
+            }
+            c.eaten = 0;
+            yield return new WaitForSeconds(starveDelay);
+        }
+
+        // Net damage scoring after processing food/starvation
+        foreach (var c in AllCreatures())
+        {
+            if (c == null) continue;
+            int net = Mathf.Max(0, c.roundDamageDealt - c.roundHealingUndone);
+            if (net > 0)
+            {
+                ScoreManager.Add(c.owner, net);
+                FeedbackManager.Instance?.ShowFloatingText($"Damage +{net}", c.transform.position, new Color(1f, 0.7f, 0.3f));
+                FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} nets {net} from combat");
+            }
+        }
 	}
 
 	BoardSlot FindSlotOf(Creature c)
