@@ -18,7 +18,8 @@ MonoBehaviour:
   type: 2
   background: {fileID: 1774903548118216732, guid: dd15032ff45804f28be6c0377e76c7ef, type: 3}
   size: 1
-  speed: 2
+  speed: 4
   tier: 1
+  maxHealth: 3
   baseTraits:
   - {fileID: 11400000, guid: a168c9dce910f49bdaf3e677dcdbb920, type: 2}

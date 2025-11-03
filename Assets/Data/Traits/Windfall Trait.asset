@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WindfallTrait
   traitName: Windfall
   icon: {fileID: 8287793400891561834, guid: 863a5e09e92ae486f87bd48329da1b1f, type: 3}
+  description: Before herbivores feed, steal up to +1 food from the pile.
+  stealAmount: 1

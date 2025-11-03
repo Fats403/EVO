@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HerdingTrait
   traitName: Herding
   icon: {fileID: 8287793400891561834, guid: 863a5e09e92ae486f87bd48329da1b1f, type: 3}
+  description: If adjacent ally present, reduce incoming damage by 1.
+  adjacencySqrDist: 4

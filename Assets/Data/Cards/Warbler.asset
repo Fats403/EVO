@@ -17,8 +17,9 @@ MonoBehaviour:
   artwork: {fileID: 7800034495825576039, guid: fdc622310e00f48e98979b6d150b0b98, type: 3}
   type: 0
   background: {fileID: -5427023051636740020, guid: a11409278440543abafdd8bd9b00a7d5, type: 3}
-  size: 2
-  speed: 2
+  size: 3
+  speed: 3
   tier: 1
+  maxHealth: 5
   baseTraits:
   - {fileID: 11400000, guid: 0c1b57311e65a498585267a06bb9610c, type: 2}

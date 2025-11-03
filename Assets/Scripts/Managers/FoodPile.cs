@@ -5,7 +5,7 @@ public class FoodPile : MonoBehaviour
 {
 	public int count = 10;
 	public int refillPerRound = 10;
-	public int maxCap = 12;
+	public int maxCap = 13;
 	public TextMeshProUGUI label;
 
 	public int Take(int amount)
@@ -26,7 +26,7 @@ public class FoodPile : MonoBehaviour
 			rollSum += die;
 		}
 		int newFood = 3 * players + rollSum; // no carryover; discard leftovers
-		count = newFood;
+		count = Mathf.Min(maxCap, newFood);
 		UpdateUI();
 	}
 

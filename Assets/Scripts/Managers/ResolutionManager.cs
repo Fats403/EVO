@@ -7,13 +7,13 @@ public class ResolutionManager : MonoBehaviour
 {
 	public FoodPile foodPile;
 	[Header("Timing")]
-    public float preStealDelay = 0.4f;
-    public float eatDelay = 0.5f;
-    public float attackWindup = 0.2f;
-    public float attackResolvePause = 0.35f;
-    public float afterCarnivoreDelay = 0.4f;
-    public float starveDelay = 0.5f;
-    public float statusEffectDelay = 0.4f;
+    public float preStealDelay = 0.6f;
+    public float eatDelay = 0.7f;
+    public float attackWindup = 0.35f;
+    public float attackResolvePause = 0.6f;
+    public float afterCarnivoreDelay = 0.6f;
+    public float starveDelay = 0.7f;
+    public float statusEffectDelay = 0.6f;
 
 	public IEnumerator RevealAndResolveRound()
 	{
@@ -24,17 +24,20 @@ public class ResolutionManager : MonoBehaviour
         foreach (var c in AllCreatures())
 		{
 			c.defendedThisRound = false;
-			c.tempSpeedMod = 0;
-			if (c.traits == null) continue;
-			foreach (var t in c.traits) { if (t != null) t.OnRoundStart(c); }
-			c.RefreshStatsUI();
-            // Fatigue penalty applied at round start
+            c.tempSpeedMod = 0;
+            // Apply fatigue penalty for this round before trait start hooks
             if (c.fatigued)
             {
                 c.tempSpeedMod -= 1;
-                c.fatigued = false;
+            }
+            if (c.traits != null)
+            {
+                foreach (var t in c.traits) { if (t != null) t.OnRoundStart(c); }
             }
             c.ResetRoundBookkeeping();
+            c.RefreshStatsUI();
+            // Clear fatigue flag after it has been applied for this round
+            c.fatigued = false;
 		}
 
 		// Pre-herbivore trait steals (e.g., Peregrine)
@@ -70,12 +73,17 @@ public class ResolutionManager : MonoBehaviour
 		}
 	}
 
-	IEnumerable<Creature> AllCreatures()
-	{
-		return FindObjectsByType<Creature>(FindObjectsSortMode.None)
-			.OrderByDescending(c => c.speed + c.tempSpeedMod + (c.traits?.Sum(t => t != null ? t.SpeedBonus(c) : 0) ?? 0))
-			.ThenBy(c => c.transform.position.x);
-	}
+    IEnumerable<Creature> AllCreatures()
+    {
+        var q = FindObjectsByType<Creature>(FindObjectsSortMode.None)
+            .OrderByDescending(c => c.speed + c.tempSpeedMod + (c.traits?.Sum(t => t != null ? t.SpeedBonus(c) : 0) ?? 0));
+        // Deterministic tie-breaker: RNG-based shuffle for equals
+        int Rand()
+        {
+            return GameManager.Instance != null ? GameManager.Instance.NextRandomInt(0, int.MaxValue) : UnityEngine.Random.Range(0, int.MaxValue);
+        }
+        return q.ThenBy(_ => Rand());
+    }
 
 	IEnumerator ResolvePreHerbivoreSteals()
 	{
@@ -189,27 +197,27 @@ public class ResolutionManager : MonoBehaviour
             
 			if (candidates.Count == 0) continue;
             var target = candidates[0];
-			// Check target defense traits – may negate attack
-			bool negated = false;
-			if (target.traits != null)
-			{
-				foreach (var tr in target.traits)
-				{
-                    if (tr != null && tr.TryNegateAttack(target, attacker)) { negated = true; break; }
-				}
-			}
-			if (negated)
-			{
-				FeedbackManager.Instance?.ShowFloatingText("Blocked", target.transform.position, new Color(1f, 0.8f, 0.2f));
-                FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(attacker.owner)} {attacker.name} attack negated by {target.name}");
-				yield return new WaitForSeconds(statusEffectDelay);
-				continue;
-			}
-
-			// Attack bump tween on creature
+            // Attack bump tween on creature (always perform to show attempted attack)
             var atkCreature = attacker;
             if (atkCreature != null)
                 yield return atkCreature.StartCoroutine(atkCreature.PlayAttackBump(0.35f, attackWindup));
+
+            // Check target defense traits – may negate attack (after windup to still show attempt)
+            bool negated = false;
+            if (target.traits != null)
+            {
+                foreach (var tr in target.traits)
+                {
+                    if (tr != null && tr.TryNegateAttack(target, attacker)) { negated = true; break; }
+                }
+            }
+            if (negated)
+            {
+                FeedbackManager.Instance?.ShowFloatingText("Blocked", target.transform.position, new Color(1f, 0.8f, 0.2f));
+                FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(attacker.owner)} {attacker.name} attack negated by {target.name}");
+                yield return new WaitForSeconds(statusEffectDelay);
+                continue;
+            }
 
 			// Brief red flash on target
 			if (target != null)
@@ -226,7 +234,11 @@ public class ResolutionManager : MonoBehaviour
                 foreach (var tr in target.traits) { if (tr != null) baseDmg = tr.ModifyIncomingDamage(target, attacker, baseDmg); }
             }
             baseDmg = Mathf.Max(0, baseDmg);
-            if (baseDmg > 0) target.ApplyDamage(baseDmg, attacker);
+            if (baseDmg > 0)
+            {
+                target.ApplyDamage(baseDmg, attacker);
+                FeedbackManager.Instance?.ShowFloatingText($"-{baseDmg} HP", target.transform.position, new Color(1f, 0.3f, 0.3f));
+            }
 
             // Remove target if dead
             if (target == null)
@@ -267,21 +279,36 @@ public class ResolutionManager : MonoBehaviour
                 ScoreManager.Add(c.owner, gain);
                 FeedbackManager.Instance?.ShowFloatingText($"Score +{gain}", c.transform.position, Color.cyan);
                 FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} scores {gain} from food");
+                // small spacing before other texts for this creature
+                yield return new WaitForSeconds(0.25f);
             }
             // Starvation chip if ate nothing
             if (c.eaten == 0)
             {
+                // Cache position/name/owner in case the creature dies and is destroyed
+                Vector3 pos = c.transform.position;
+                string cname = c.name;
+                var owner = c.owner;
                 c.ApplyDamage(2, null);
-                FeedbackManager.Instance?.ShowFloatingText("Starved -2 HP", c.transform.position, Color.gray);
-                FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} takes 2 starvation damage");
+                // allow damage text to show first
+                yield return new WaitForSeconds(0.25f);
+                FeedbackManager.Instance?.ShowFloatingText("Starved -2 HP", pos, Color.gray);
+                FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(owner)} {cname} takes 2 starvation damage");
+                // If the creature died, skip further per-creature steps
+                if (c == null || c.currentHealth == 0)
+                {
+                    yield return new WaitForSeconds(starveDelay);
+                    continue;
+                }
             }
             // Fatigue if partially fed
             if (c.eaten > 0 && c.eaten < c.body)
             {
                 c.fatigued = true;
                 FeedbackManager.Instance?.ShowFloatingText("Fatigued", c.transform.position, Color.yellow);
+                yield return new WaitForSeconds(0.25f);
             }
-            c.eaten = 0;
+            if (c != null) c.eaten = 0;
             yield return new WaitForSeconds(starveDelay);
         }
 

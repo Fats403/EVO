@@ -9,8 +9,8 @@ public class FeedbackManager : MonoBehaviour
 
 	[Header("Floating Text")]
 	public GameObject floatingTextPrefab; // prefab with TMP Text
-	public float floatUpDistance = 1f;
-	public float floatDuration = 0.7f;
+    public float floatUpDistance = 1.2f;
+    public float floatDuration = 1.25f;
 
 	[Header("Log UI")]
 	public TextMeshProUGUI logText;
@@ -18,16 +18,13 @@ public class FeedbackManager : MonoBehaviour
 	public int maxLines = 20;
 	public bool logPanelVisible = false;
 
-	private System.Text.StringBuilder sb = new System.Text.StringBuilder();
+	private readonly System.Text.StringBuilder sb = new(1024);
 
 	void Awake()
 	{
 		Instance = this;
-		// Set initial visibility
-		if (logPanel != null)
-		{
-			logPanel.SetActive(logPanelVisible);
-		}
+        // Set initial visibility
+        logPanel?.SetActive(logPanelVisible);
 	}
 
 	public void Log(string message)
@@ -80,9 +77,8 @@ public class FeedbackManager : MonoBehaviour
 		var start = go.transform.position;
 		var end = start + Vector3.up * floatUpDistance;
 		var t = 0f;
-		var canvasGroup = go.GetComponent<CanvasGroup>();
-		if (canvasGroup == null) canvasGroup = go.AddComponent<CanvasGroup>();
-		while (t < floatDuration)
+		var canvasGroup = go.GetComponent<CanvasGroup>() ?? go.AddComponent<CanvasGroup>();
+        while (t < floatDuration)
 		{
 			t += Time.deltaTime;
 			float u = Mathf.Clamp01(t / floatDuration);

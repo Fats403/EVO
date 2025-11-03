@@ -10,8 +10,12 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     [Header("UI References")]
     public Image artworkImage;
     public Image backgroundImage;
-    public TextMeshProUGUI nameText;
-    public TextMeshProUGUI statsText;
+    public TMP_Text nameText;
+    public TMP_Text tierText;
+    public TMP_Text speedText;
+    public TMP_Text bodyText;
+    public TMP_Text healthText;
+    public TMP_Text traitDescText;
 
 	private Vector3 originalPosition;
 	private Transform originalParent;
@@ -21,7 +25,7 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 	private CanvasGroup canvasGroup;
 	private HandLayoutController handLayout;
 	private BoardSlot hoverSlot;
-	[SerializeField] private float highlightRadius = 100f;
+	[SerializeField] private readonly float highlightRadius = 100f;
 
 	// Drag smoothing (canvas local space)
 	private bool isDragging;
@@ -37,12 +41,28 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 		rectTransform = GetComponent<RectTransform>();
 		canvasGroup = GetComponent<CanvasGroup>();
 		canvas = GetComponentInParent<Canvas>();
-		handLayout = transform.parent != null ? transform.parent.GetComponentInParent<HandLayoutController>() : null;
+		handLayout = transform.parent?.GetComponentInParent<HandLayoutController>();
 
         if (nameText != null) nameText.text = data.cardName;
-        if (statsText != null) statsText.text = $"Size: {data.size} | Speed: {data.speed} | Tier: {data.tier}";
+        if (tierText != null) tierText.text = $"Tier: {data.tier}";
+        if (speedText != null) speedText.text = $"Speed: {data.speed}";
+        if (bodyText != null) bodyText.text = $"Size: {data.size}";
+        if (healthText != null) healthText.text = $"{data.maxHealth}";
         if (artworkImage != null) artworkImage.sprite = data.artwork;
         if (backgroundImage != null) backgroundImage.sprite = data.background;
+
+        if (traitDescText != null)
+        {
+            string traitLine = "";
+            if (data.baseTraits != null && data.baseTraits.Length > 0 && data.baseTraits[0] != null)
+            {
+                var t = data.baseTraits[0];
+                string tName = string.IsNullOrEmpty(t.traitName) ? t.name : t.traitName;
+                if (!string.IsNullOrEmpty(t.description)) traitLine = $"{tName}: {t.description}";
+                else traitLine = tName;
+            }
+            traitDescText.text = traitLine;
+        }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -50,7 +70,7 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         originalParent = transform.parent;
         originalPosition = transform.localPosition;
 		originalSiblingIndex = transform.GetSiblingIndex();
-		if (handLayout != null) handLayout.NotifyDragStart(this);
+		handLayout?.NotifyDragStart(this);
 		// move to top-level canvas to avoid being laid out by the hand while dragging
 		transform.SetParent(canvas.transform, true); // preserve world position
 		// rotate upright and set natural scale for dragging
@@ -58,13 +78,9 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 		rectTransform.localScale = Vector3.one;
 		// compute pointer offset so we keep the grab point consistent (in canvas local space)
 		RectTransform canvasRT = canvas.transform as RectTransform;
-		Vector2 pointerLocal;
-		RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRT, eventData.position, canvas.worldCamera, out pointerLocal);
-		Vector2 cardPivotLocal;
-		{
-			Vector2 cardScreen = RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, rectTransform.position);
-			RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRT, cardScreen, canvas.worldCamera, out cardPivotLocal);
-		}
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRT, eventData.position, canvas.worldCamera, out Vector2 pointerLocal);
+        Vector2 cardScreen = RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, rectTransform.position);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRT, cardScreen, canvas.worldCamera, out Vector2 cardPivotLocal);
 		pointerGrabOffset = cardPivotLocal - pointerLocal;
 		// start drag smoothing from the exact grab point to avoid 1-frame snap
 		dragTargetAnchoredPosition = pointerLocal + pointerGrabOffset;
@@ -78,9 +94,8 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     {
 		// set target under the mouse with the original grab offset; Update() will ease towards it
 		RectTransform canvasRT = canvas.transform as RectTransform;
-		Vector2 pointerLocal;
-		RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRT, eventData.position, canvas.worldCamera, out pointerLocal);
-		dragTargetAnchoredPosition = pointerLocal + pointerGrabOffset;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRT, eventData.position, canvas.worldCamera, out Vector2 pointerLocal);
+        dragTargetAnchoredPosition = pointerLocal + pointerGrabOffset;
 
 		// update slot highlight
 		UpdateHoverSlot(eventData.position);
@@ -107,7 +122,7 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
 		if (placed)
 		{
-			if (handLayout != null) handLayout.NotifyDragEnd(this, false);
+			handLayout?.NotifyDragEnd(this, false);
 			if (hoverSlot != null)
 			{
 				hoverSlot.HideHoverIndicator();
@@ -123,7 +138,9 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
 			if (handLayout == null && originalParent != null)
 				handLayout = originalParent.GetComponentInParent<HandLayoutController>();
-			if (handLayout != null) handLayout.NotifyDragEnd(this, true);
+
+			handLayout?.NotifyDragEnd(this, true);
+			
 			if (hoverSlot != null)
 			{
 				hoverSlot.HideHoverIndicator();
@@ -155,20 +172,15 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 	{
 		if (handLayout == null)
 		{
-			handLayout = transform.parent != null ? transform.parent.GetComponentInParent<HandLayoutController>() : null;
+			handLayout = transform.parent?.GetComponentInParent<HandLayoutController>();
 		}
-		if (handLayout != null)
-		{
-			handLayout.NotifyHoverEnter(this);
-		}
+		
+		handLayout?.NotifyHoverEnter(this);
 	}
 
 	public void OnPointerExit(PointerEventData eventData)
 	{
-		if (handLayout != null)
-		{
-			handLayout.NotifyHoverExit(this);
-		}
+		handLayout?.NotifyHoverExit(this);
 	}
 
 	void Update()
@@ -210,7 +222,7 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
 		if (closest != hoverSlot)
 		{
-			var prefab = DeckManager.Instance != null ? DeckManager.Instance.hoverIndicatorPrefab : null;
+			var prefab = DeckManager.Instance?.hoverIndicatorPrefab;
 			closest.ShowHoverIndicator(prefab);
 			hoverSlot = closest;
 		}

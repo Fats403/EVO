@@ -5,6 +5,8 @@ public abstract class Trait : ScriptableObject
 	[Header("Trait")]
 	public string traitName;
 	public Sprite icon;
+    [TextArea]
+    public string description;
 
 	public virtual int SpeedBonus(Creature self) { return 0; }
 	public virtual bool CanTargetEqualBody(Creature self, Creature target) { return false; }
