@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a11409278440543abafdd8bd9b00a7d5
+guid: 73fab4132f4c54c57a3d2d9ef56cd4c7
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5427023051636740020
-    second: HerbivoreCardBack_0
+      213: -4489101798992069991
+    second: AvianCard_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: HerbivoreCardBack_0
+      name: AvianCard_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 120
-        height: 191
+        width: 1024
+        height: 1536
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c40f553c9475fa4b0800000000000000
-      internalID: -5427023051636740020
+      spriteID: 99ab286b2b183b1c0800000000000000
+      internalID: -4489101798992069991
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      HerbivoreCardBack_0: -5427023051636740020
+      AvianCard_0: -4489101798992069991
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

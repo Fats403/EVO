@@ -239,7 +239,7 @@ public class ResolutionManager : MonoBehaviour
 
 			// Brief red flash on target
 			if (target != null)
-				yield return target.StartCoroutine(target.FlashDamage(0.12f));
+				yield return target.StartCoroutine(target.FlashDamage(0.25f));
 
             // Determine if this is an avian harass (baseline poke)
             bool isAvian = attacker.data != null && attacker.data.type == CardType.Avian;

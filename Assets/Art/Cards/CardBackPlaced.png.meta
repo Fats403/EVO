@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: bd9a39ca82f444385a0460116ca02909
+guid: dcbecc945ea9e4117aeaed68b801bb09
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8672234943274757738
-    second: CarnivoreCardBack_0
+      213: 7053750682231082865
+    second: CardBackPlaced_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CarnivoreCardBack_0
+      name: CardBackPlaced_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 1
-        width: 120
-        height: 194
+        y: 0
+        width: 1024
+        height: 1536
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a6e2f92cbb7f95870800000000000000
-      internalID: 8672234943274757738
+      spriteID: 17f8d848fd4f3e160800000000000000
+      internalID: 7053750682231082865
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      CarnivoreCardBack_0: 8672234943274757738
+      CardBackPlaced_0: 7053750682231082865
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
