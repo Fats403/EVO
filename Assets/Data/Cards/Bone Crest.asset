@@ -22,4 +22,4 @@ MonoBehaviour:
   tier: 1
   maxHealth: 7
   baseTraits:
-  - {fileID: 11400000, guid: 96b2c5ed870904de1a8a6cfbbb863279, type: 2}
+  - {fileID: 11400000, guid: a168c9dce910f49bdaf3e677dcdbb920, type: 2}

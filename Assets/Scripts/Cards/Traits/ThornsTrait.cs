@@ -11,7 +11,7 @@ public class ThornsTrait : Trait
         if (finalDamage <= 0) return;
         // Apply reflected damage without scoring/loops (source null)
         attacker.ApplyDamage(reflectDamage, null);
-        FeedbackManager.Instance?.ShowFloatingText($"-{reflectDamage} Thorns", attacker.transform.position, new Color(1f, 0.5f, 0.2f));
+        FeedbackManager.Instance?.ShowFloatingText($"-{reflectDamage} HP [Thorns]", attacker.transform.position, new Color(1f, 0.5f, 0.2f));
     }
 
     private void OnValidate()

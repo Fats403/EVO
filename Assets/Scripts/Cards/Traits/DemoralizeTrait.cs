@@ -12,8 +12,7 @@ public class DemoralizeTrait : Trait
             .ToList();
         if (enemies.Count > 0)
         {
-            // Queue fatigue so it shows now and applies next round
-            enemies[0].QueueFatigue(1, true);
+            enemies[0].ApplyFatigue(1, true);
         }
     }
 
@@ -21,7 +20,7 @@ public class DemoralizeTrait : Trait
     {
         if (string.IsNullOrEmpty(description))
         {
-            description = "At round start, the nearest enemy becomes Fatigued (applies next round).";
+            description = "At round start, the nearest enemy becomes Fatigued (−1 speed).";
         }
     }
 }

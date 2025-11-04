@@ -16,7 +16,8 @@ public class QuickBiteTrait : Trait
         if (target == null) return;
         if (!usedThisRound.Contains(self))
         {
-            target.QueueFatigue(1, true);
+            target.ApplyFatigue(1, false);
+            FeedbackManager.Instance?.ShowFloatingText($"Fatigued [{traitName}]", target.transform.position, Color.yellow);
             usedThisRound.Add(self);
         }
     }

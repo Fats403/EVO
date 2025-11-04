@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI phaseText;
     public ResolutionManager resolutionManager;
     public FoodPile foodPile;
+    public WeatherManager weatherManager;
+    public WeatherVideoBackgroundController weatherVideoBackground;
 
     [Header("Debug")]
     public GamePhase currentPhase = GamePhase.Setup;
@@ -41,6 +43,7 @@ public class GameManager : MonoBehaviour
         if (endTurnButton != null) endTurnButton.onClick.AddListener(OnEndTurnClicked);
         if (toggleLogButton != null) toggleLogButton.onClick.AddListener(OnToggleLogClicked);
         UpdatePhaseLabel();
+        if (weatherVideoBackground != null) weatherVideoBackground.ForceTo(WeatherType.Clear);
         BeginSetup();
     }
 
@@ -110,6 +113,13 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < toDraw; i++) dm.DrawCard();
         }
         if (foodPile != null) foodPile.RefillStartOfRound();
+        // Weather: roll (first call keeps Clear), then apply start-of-round effects
+        if (weatherManager != null)
+        {
+            var next = weatherManager.RollNextWeather();
+            if (weatherVideoBackground != null) StartCoroutine(weatherVideoBackground.CrossfadeTo(next, 0.7f));
+            weatherManager.ApplyRoundStartEffects(foodPile);
+        }
         currentPhase = GamePhase.Place;
         UpdatePhaseLabel();
         BeginPlace();

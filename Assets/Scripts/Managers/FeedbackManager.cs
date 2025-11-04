@@ -10,7 +10,9 @@ public class FeedbackManager : MonoBehaviour
 	[Header("Floating Text")]
 	public GameObject floatingTextPrefab; // prefab with TMP Text
     public float floatUpDistance = 1.2f;
-    public float floatDuration = 1.25f;
+	public float floatDuration = 1.75f; // fade-out duration
+	[Tooltip("Time to hold at full alpha before fading starts")]
+	public float alphaHold = 0.75f;
 
 	[Header("Log UI")]
 	public TextMeshProUGUI logText;
@@ -78,12 +80,21 @@ public class FeedbackManager : MonoBehaviour
 		var end = start + Vector3.up * floatUpDistance;
 		var t = 0f;
 		var canvasGroup = go.GetComponent<CanvasGroup>() ?? go.AddComponent<CanvasGroup>();
-        while (t < floatDuration)
+		float total = Mathf.Max(0.01f, alphaHold + Mathf.Max(0.01f, floatDuration));
+		while (t < total)
 		{
 			t += Time.deltaTime;
-			float u = Mathf.Clamp01(t / floatDuration);
-			go.transform.position = Vector3.Lerp(start, end, u);
-			canvasGroup.alpha = 1f - u;
+			float uMove = Mathf.Clamp01(t / total);
+			go.transform.position = Vector3.Lerp(start, end, uMove);
+			if (t <= alphaHold)
+			{
+				canvasGroup.alpha = 1f;
+			}
+			else
+			{
+				float uFade = Mathf.Clamp01((t - alphaHold) / Mathf.Max(0.01f, floatDuration));
+				canvasGroup.alpha = 1f - uFade;
+			}
 			yield return null;
 		}
 		Destroy(go);

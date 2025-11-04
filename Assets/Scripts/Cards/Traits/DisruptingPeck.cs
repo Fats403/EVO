@@ -16,7 +16,8 @@ public class DisruptingPeckTrait : Trait
         if (target == null) return;
         if (!usedThisRound.Contains(self))
         {
-            target.fatigued = true;
+            target.ApplyFatigue(1, false);
+            FeedbackManager.Instance?.ShowFloatingText($"Fatigued [{traitName}]", target.transform.position, Color.yellow);
             usedThisRound.Add(self);
         }
     }
@@ -26,7 +27,7 @@ public class DisruptingPeckTrait : Trait
         if (string.IsNullOrEmpty(traitName)) traitName = "Disrupting Peck";
         if (string.IsNullOrEmpty(description))
         {
-            description = "Your first harass each round inflicts Fatigued next round (speed −1).";
+            description = "Your first hit each round inflicts Fatigued immediately (−1 speed).";
         }
     }
 }

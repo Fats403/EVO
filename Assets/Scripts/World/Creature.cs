@@ -17,8 +17,7 @@ public class Creature : MonoBehaviour
     public bool defendedThisRound;
     public int maxHealth;
     public int currentHealth;
-    public bool fatigued; // legacy flag; prefer fatigueStacksNextRound
-    public int fatigueStacksNextRound;
+    public int fatigueStacks;
     public bool isDying;
 
     public int roundDamageDealt;
@@ -56,8 +55,7 @@ public class Creature : MonoBehaviour
         eaten = 0;
         maxHealth = Mathf.Max(1, data != null ? data.maxHealth : 1);
         currentHealth = maxHealth;
-        fatigued = false;
-        fatigueStacksNextRound = 0;
+        fatigueStacks = 0;
         isDying = false;
         roundDamageDealt = 0;
         roundHealingUndone = 0;
@@ -178,9 +176,9 @@ public class Creature : MonoBehaviour
         StartCoroutine(FadeAndDestroy(0.5f));
     }
 
-    public void QueueFatigue(int stacks = 1, bool showText = true)
+    public void ApplyFatigue(int stacks = 1, bool showText = true)
     {
-        fatigueStacksNextRound += Mathf.Max(0, stacks);
+        fatigueStacks += Mathf.Max(0, stacks);
         if (showText)
         {
             FeedbackManager.Instance?.ShowFloatingText("Fatigued", transform.position, Color.yellow);
@@ -233,7 +231,7 @@ public class Creature : MonoBehaviour
         if (speedText != null)
         {
             int traitSpeed = (traits != null) ? traits.Sum(t => t != null ? t.SpeedBonus(this) : 0) : 0;
-            int displaySpeed = speed + tempSpeedMod + traitSpeed;
+            int displaySpeed = speed + tempSpeedMod - fatigueStacks + traitSpeed;
             speedText.text = displaySpeed.ToString();
             if (displaySpeed > baseSpeed) speedText.color = Color.green;
             else if (displaySpeed < baseSpeed) speedText.color = Color.red;
