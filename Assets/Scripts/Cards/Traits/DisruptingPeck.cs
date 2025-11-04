@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 [CreateAssetMenu(menuName = "Traits/Disrupting Peck")]
-public class QuickBiteTrait : Trait
+public class DisruptingPeckTrait : Trait
 {
     private readonly static HashSet<Creature> usedThisRound = new();
 
@@ -16,7 +16,7 @@ public class QuickBiteTrait : Trait
         if (target == null) return;
         if (!usedThisRound.Contains(self))
         {
-            target.QueueFatigue(1, true);
+            target.fatigued = true;
             usedThisRound.Add(self);
         }
     }

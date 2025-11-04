@@ -17,7 +17,9 @@ public class Creature : MonoBehaviour
     public bool defendedThisRound;
     public int maxHealth;
     public int currentHealth;
-    public bool fatigued;
+    public bool fatigued; // legacy flag; prefer fatigueStacksNextRound
+    public int fatigueStacksNextRound;
+    public bool isDying;
 
     public int roundDamageDealt;
     public int roundHealingUndone;
@@ -55,6 +57,8 @@ public class Creature : MonoBehaviour
         maxHealth = Mathf.Max(1, data != null ? data.maxHealth : 1);
         currentHealth = maxHealth;
         fatigued = false;
+        fatigueStacksNextRound = 0;
+        isDying = false;
         roundDamageDealt = 0;
         roundHealingUndone = 0;
         damagedTargetsThisRound.Clear();
@@ -137,6 +141,15 @@ public class Creature : MonoBehaviour
             if (!source.damagedTargetsThisRound.Contains(this)) source.damagedTargetsThisRound.Add(this);
         }
         StartCoroutine(FlashDamage(0.12f));
+        // Trait hooks
+        if (source != null && source.traits != null)
+        {
+            foreach (var tr in source.traits) { if (tr != null) tr.OnDamageDealt(source, this, dmg); }
+        }
+        if (traits != null)
+        {
+            foreach (var tr in traits) { if (tr != null) tr.OnDamageTaken(this, source, dmg); }
+        }
         RefreshStatsUI();
         if (currentHealth == 0)
         {
@@ -158,8 +171,52 @@ public class Creature : MonoBehaviour
 
     public void Kill(string reason)
     {
+        if (isDying) return;
+        isDying = true;
         var s = FindSlotOf(this);
         if (s != null) s.Vacate();
+        StartCoroutine(FadeAndDestroy(0.5f));
+    }
+
+    public void QueueFatigue(int stacks = 1, bool showText = true)
+    {
+        fatigueStacksNextRound += Mathf.Max(0, stacks);
+        if (showText)
+        {
+            FeedbackManager.Instance?.ShowFloatingText("Fatigued", transform.position, Color.yellow);
+        }
+        RefreshStatsUI();
+    }
+
+    private System.Collections.IEnumerator FadeAndDestroy(float duration)
+    {
+        float t = 0f;
+        var renderers = GetComponentsInChildren<SpriteRenderer>(true);
+        var texts = GetComponentsInChildren<TMP_Text>(true);
+        // capture original colors
+        var srColors = renderers.Select(r => r != null ? r.color : Color.white).ToArray();
+        var txtColors = texts.Select(txt => txt != null ? txt.color : Color.white).ToArray();
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float u = Mathf.Clamp01(t / duration);
+            float a = 1f - u;
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                if (renderers[i] != null)
+                {
+                    var c = srColors[i]; c.a = a; renderers[i].color = c;
+                }
+            }
+            for (int i = 0; i < texts.Length; i++)
+            {
+                if (texts[i] != null)
+                {
+                    var c = txtColors[i]; c.a = a; texts[i].color = c;
+                }
+            }
+            yield return null;
+        }
         Destroy(gameObject);
     }
 

@@ -7,6 +7,14 @@ public class AerialPredatorTrait : Trait
 	{
 		return self.speed > target.speed;
 	}
+
+    private void OnValidate()
+    {
+        if (string.IsNullOrEmpty(description))
+        {
+            description = "May target equal-body prey even if slower; if faster and equal-body, resolve as a normal hit.";
+        }
+    }
 }
 
 

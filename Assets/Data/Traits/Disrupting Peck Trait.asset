@@ -9,9 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a58c58bac039c4be28849f4a65535c74, type: 3}
-  m_Name: Quick Bite Trait
+  m_Script: {fileID: 11500000, guid: 1ac796b2084af4ccfaf888e4c36c16f3, type: 3}
+  m_Name: Disrupting Peck Trait
   m_EditorClassIdentifier: Assembly-CSharp::QuickBiteTrait
-  traitName: Quick Bite
-  icon: {fileID: 8287793400891561834, guid: 863a5e09e92ae486f87bd48329da1b1f, type: 3}
-  description: First attack each round deals +1 damage.
+  traitName: Disrupting Peck
+  icon: {fileID: 0}
+  description: "Your first harass each round inflicts Fatigued next round (speed
+    \u22121)."
