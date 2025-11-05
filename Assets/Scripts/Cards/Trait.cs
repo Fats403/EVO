@@ -29,6 +29,8 @@ public abstract class Trait : ScriptableObject
     public virtual void OnWoundedRoundTick(Creature self) {}
     public virtual bool CanAttack(Creature self) { return self != null && self.data != null && self.data.type != CardType.Herbivore; }
     public virtual bool CanTarget(Creature self, Creature target) { return true; }
+    public virtual bool CanForage(Creature self) { return true; }
+    public virtual void CollectStatusTags(Creature self, System.Collections.Generic.List<StatusTag> into) {}
 }
 
 

@@ -310,6 +310,7 @@ public class ResolutionManager : MonoBehaviour
             int need = Mathf.Max(0, c.body - c.eaten);
             if (need <= 0) continue;
             if (foodPile.count <= 0) continue;
+            if (c.traits != null && c.traits.Any(t => t != null && !t.CanForage(c))) continue;
 
             int taken = foodPile.Take(1);
             if (taken > 0)

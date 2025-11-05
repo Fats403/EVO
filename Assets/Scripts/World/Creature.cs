@@ -252,6 +252,9 @@ public class Creature : MonoBehaviour
             if (IsWounded) healthText.color = new Color(0.8f, 0.1f, 0.1f);
             else healthText.color = Color.white;
         }
+
+        var sic = GetComponentInChildren<StatusIconController>(true);
+        if (sic != null) sic.Refresh(this);
     }
 
     private void EnsureTextReferences()
