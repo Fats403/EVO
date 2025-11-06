@@ -8,6 +8,7 @@ public enum StatusTag
     Suppressed,  // no-sign
     DamageUp,    // sword up
     NoForage,    // crossed leaf
+    Immune,      // immune symbol
 }
 
 
