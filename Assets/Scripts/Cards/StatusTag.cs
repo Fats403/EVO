@@ -9,6 +9,8 @@ public enum StatusTag
     DamageUp,    // sword up
     NoForage,    // crossed leaf
     Immune,      // immune symbol
+    Regen,       // regenerating symbol
+    Bleeding,    // bleeding symbol
 }
 
 

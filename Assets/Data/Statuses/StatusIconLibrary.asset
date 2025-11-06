@@ -31,3 +31,7 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: 23ac52ab6b4c04d13a67fc4d8c3f0d35, type: 3}
   - tag: 8
     sprite: {fileID: 21300000, guid: 956ea1d390b074e24a0b3f71226f7a2c, type: 3}
+  - tag: 9
+    sprite: {fileID: 21300000, guid: 32c22c825e5bc4a0882efecf10ac9d4e, type: 3}
+  - tag: 10
+    sprite: {fileID: 21300000, guid: cdc8cc74d1d934c31bd1991f4d5a8e8c, type: 3}
