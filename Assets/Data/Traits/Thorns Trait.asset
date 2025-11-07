@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e0bfa8c9950431d82a3646cf02963a, type: 3}
   m_Name: Thorns Trait
   m_EditorClassIdentifier: Assembly-CSharp::ThornsTrait
-  traitName: 
-  icon: {fileID: 0}
-  description: 
+  traitName: Thorns
+  description: When attacked it does 1 damage to the attacker
   reflectDamage: 1

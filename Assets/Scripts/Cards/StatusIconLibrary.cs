@@ -8,7 +8,7 @@ public class StatusIconLibrary : ScriptableObject
     [Serializable]
     public struct Entry { public StatusTag tag; public Sprite sprite; }
 
-    public List<Entry> entries = new List<Entry>();
+    public List<Entry> entries = new();
 
     private Dictionary<StatusTag, Sprite> map;
     void OnEnable()

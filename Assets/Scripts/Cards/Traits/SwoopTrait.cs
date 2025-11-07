@@ -8,14 +8,6 @@ public class SwoopTrait : Trait
         if (target != null && target.IsWounded) return baseDamage + 1;
         return baseDamage;
     }
-
-    private void OnValidate()
-    {
-        if (string.IsNullOrEmpty(description))
-        {
-            description = "+1 damage vs wounded targets.";
-        }
-    }
 }
 
 

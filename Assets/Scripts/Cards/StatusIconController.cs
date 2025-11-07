@@ -7,8 +7,8 @@ public class StatusIconController : MonoBehaviour
 {
     [Header("Setup")]
     public StatusIconLibrary library;
-    public Transform iconContainer;   // RectTransform under the creature
-    public GameObject iconPrefab;     // Prefab with an Image component
+    public Transform iconContainer;
+    public GameObject iconPrefab;
 
     private readonly Dictionary<StatusTag, GameObject> active = new();
 
@@ -18,20 +18,8 @@ public class StatusIconController : MonoBehaviour
 
         var desired = new List<StatusTag>();
 
-        // Intrinsic: fatigue inferred from Creature
-        if (c.fatigueStacks > 0) desired.Add(StatusTag.Fatigued);
-
-        // Effect-driven tags from traits
-        if (c.traits != null)
-        {
-            foreach (var t in c.traits)
-            {
-                if (t == null) continue;
-                t.CollectStatusTags(c, desired);
-            }
-        }
-
-        desired = desired.Distinct().ToList();
+        // Creature-applied statuses (already distinct from dictionary keys)
+        foreach (var tag in c.GetActiveStatusTags()) desired.Add(tag);
 
         // Create missing icons
         foreach (var tag in desired)

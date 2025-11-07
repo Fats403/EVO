@@ -7,19 +7,23 @@ public class DeckManager : MonoBehaviour
     public static DeckManager Instance;
 
     [Header("Deck Setup")]
-    public List<CardData> allCards;
+    public List<ScriptableObject> allCards;
     public GameObject cardPrefab;
     public Transform handPanel;
     public GameObject creaturePrefab;
 	[Tooltip("Prefab to show as a hover/highlight indicator on a BoardSlot while dragging a card")]
 	public GameObject hoverIndicatorPrefab;
     public int startingHandSize = 3;
+    [Tooltip("UI prefab for creature cards (fallbacks to cardPrefab if null)")]
+    public GameObject creatureCardPrefab;
+    [Tooltip("UI prefab for effect cards")]
+    public GameObject effectCardPrefab;
     
     [Header("Deck UI")]
     public Text deckCountText;
 
-    private readonly List<CardData> currentDeck = new List<CardData>();
-    private readonly List<CardData> drawPile = new List<CardData>();
+    private readonly List<ScriptableObject> currentDeck = new List<ScriptableObject>();
+    private readonly List<ScriptableObject> drawPile = new List<ScriptableObject>();
 
     private void Awake()
     {
@@ -56,21 +60,38 @@ public class DeckManager : MonoBehaviour
 
     public void DrawCard()
     {
-        CardData data = DrawCardData();
+        ScriptableObject data = DrawCardData();
         if (data == null) return;
         CreateCardUI(data);
     }
 
-    void CreateCardUI(CardData data)
+    void CreateCardUI(ScriptableObject data)
     {
-        GameObject cardObj = Instantiate(cardPrefab, handPanel);
-        CardUI ui = cardObj.GetComponent<CardUI>();
-        ui.Initialize(data);
+        if (data is CreatureCard creatureData)
+        {
+            GameObject prefab = creatureCardPrefab != null ? creatureCardPrefab : cardPrefab;
+            if (prefab == null) { Debug.LogError("Creature card prefab not assigned!"); return; }
+            GameObject cardObj = Instantiate(prefab, handPanel);
+            CreatureCardUI ui = cardObj.GetComponent<CreatureCardUI>();
+            if (ui != null) ui.Initialize(creatureData);
+        }
+        else if (data is EffectCard effectData)
+        {
+            if (effectCardPrefab == null) { Debug.LogError("Effect card prefab not assigned!"); return; }
+            GameObject cardObj = Instantiate(effectCardPrefab, handPanel);
+            EffectCardUI ui = cardObj.GetComponent<EffectCardUI>();
+            if (ui != null)
+            {
+                ui.Initialize(effectData);
+                ui.owner = SlotOwner.Player1;
+            }
+        }
+
 		var layout = handPanel != null ? handPanel.GetComponentInParent<HandLayoutController>() : null;
 		if (layout != null) layout.RequestLayout();
     }
 
-    public bool SpawnCreature(CardData data, BoardSlot slot)
+    public bool SpawnCreature(CreatureCard data, BoardSlot slot)
     {
         if (creaturePrefab == null)
         {
@@ -98,11 +119,11 @@ public class DeckManager : MonoBehaviour
         return handPanel.childCount;
     }
 
-    public CardData DrawCardData()
+    public ScriptableObject DrawCardData()
     {
         if (drawPile.Count == 0) return null;
         int last = drawPile.Count - 1;
-        CardData c = drawPile[last];
+        ScriptableObject c = drawPile[last];
         drawPile.RemoveAt(last);
         UpdateDeckUI();
         return c;

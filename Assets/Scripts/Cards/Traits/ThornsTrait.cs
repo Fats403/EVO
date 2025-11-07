@@ -13,12 +13,4 @@ public class ThornsTrait : Trait
         attacker.ApplyDamage(reflectDamage, null);
         FeedbackManager.Instance?.ShowFloatingText($"-{reflectDamage} HP [Thorns]", attacker.transform.position, new Color(1f, 0.5f, 0.2f));
     }
-
-    private void OnValidate()
-    {
-        if (string.IsNullOrEmpty(description))
-        {
-            description = "When hit, attacker takes 1 damage.";
-        }
-    }
 }

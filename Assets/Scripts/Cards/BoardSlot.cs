@@ -8,7 +8,7 @@ public class BoardSlot : MonoBehaviour
 	public Creature currentCreature;
 	public SlotOwner owner = SlotOwner.Player1;
 	public bool hasPending;
-	public CardData pendingCard;
+	public CreatureCard pendingCard;
 	public GameObject pendingVisual;
 	public GameObject hoverVisual;
 
@@ -26,7 +26,7 @@ public class BoardSlot : MonoBehaviour
 		occupied = false;
 	}
 
-	public bool SetPending(CardData data)
+	public bool SetPending(CreatureCard data)
 	{
 		if (occupied || hasPending) return false;
 		pendingCard = data;

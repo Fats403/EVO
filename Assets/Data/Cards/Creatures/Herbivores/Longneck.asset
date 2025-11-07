@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
+  m_Name: Longneck
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  cardName: Long Boy
+  artwork: {fileID: -6267084115559449085, guid: 5a3bce2d8e2574b48ae832060c351435, type: 3}
+  type: 0
+  background: {fileID: -4479935867671537506, guid: c7f6644d25ca94ea89bc4e9e3e2b66aa, type: 3}
+  size: 3
+  speed: 1
+  tier: 1
+  maxHealth: 4
+  baseTraits:
+  - {fileID: 11400000, guid: 43224a8391fb84c5c914768c9599463b, type: 2}

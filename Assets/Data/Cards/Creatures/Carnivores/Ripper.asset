@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
+  m_Name: Ripper
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  cardName: Ripper
+  artwork: {fileID: 1799645947264151884, guid: 577ff132e5d244b6a8b2b0ea4fb5136f, type: 3}
+  type: 1
+  background: {fileID: 91400773830335861, guid: 8c31de67644694e8d83f417669f04623, type: 3}
+  size: 2
+  speed: 2
+  tier: 1
+  maxHealth: 4
+  baseTraits:
+  - {fileID: 11400000, guid: a747435badd14452595c6b2a0d0b6a84, type: 2}

@@ -11,14 +11,6 @@ public class ScavengeTrait : Trait
 				self.eaten += 1;
 		}
 	}
-
-    private void OnValidate()
-    {
-        if (string.IsNullOrEmpty(description))
-        {
-            description = "When any creature dies, gain +1 eaten (if not full).";
-        }
-    }
 }
 
 

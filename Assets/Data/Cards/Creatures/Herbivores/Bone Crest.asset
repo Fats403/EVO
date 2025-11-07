@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
+  m_Name: Bone Crest
+  m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardName: Bone Crest
+  artwork: {fileID: -1697607560579913252, guid: d917c23612f574be3bb52e0b9ca04c5c, type: 3}
+  type: 0
+  background: {fileID: -4479935867671537506, guid: c7f6644d25ca94ea89bc4e9e3e2b66aa, type: 3}
+  size: 3
+  speed: 1
+  tier: 1
+  maxHealth: 5
+  baseTraits:
+  - {fileID: 11400000, guid: a168c9dce910f49bdaf3e677dcdbb920, type: 2}

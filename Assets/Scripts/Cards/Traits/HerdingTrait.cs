@@ -4,6 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Traits/Herding")]
 public class HerdingTrait : Trait
 {
+    // TODO: This may need to be looked at....
     public float adjacencySqrDist = 4f; // ~2 units
 
     public override int ModifyIncomingDamage(Creature self, Creature attacker, int baseDamage)

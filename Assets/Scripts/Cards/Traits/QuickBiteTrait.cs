@@ -16,18 +16,9 @@ public class QuickBiteTrait : Trait
         if (target == null) return;
         if (!usedThisRound.Contains(self))
         {
-            target.ApplyFatigue(1, false);
+            target.ApplyFatigued(1);
             FeedbackManager.Instance?.ShowFloatingText($"Fatigued [{traitName}]", target.transform.position, Color.yellow);
             usedThisRound.Add(self);
-        }
-    }
-
-    private void OnValidate()
-    {
-        if (string.IsNullOrEmpty(traitName)) traitName = "Disrupting Peck";
-        if (string.IsNullOrEmpty(description))
-        {
-            description = "Your first harass each round inflicts Fatigued next round (speed −1).";
         }
     }
 }

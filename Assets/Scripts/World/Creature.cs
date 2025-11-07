@@ -6,19 +6,21 @@ using System;
 
 public class Creature : MonoBehaviour
 {
-    public CardData data;
+    public CreatureCard data;
     private SpriteRenderer sr;
     public int body;
     public int speed;
     public int eaten;
     public SlotOwner owner;
     public List<Trait> traits = new List<Trait>();
-    public int tempSpeedMod;
-    public bool defendedThisRound;
     public int maxHealth;
     public int currentHealth;
     public int fatigueStacks;
     public bool isDying;
+
+    // Unified status stacks (Shielded, Infected, etc.)
+    private readonly System.Collections.Generic.Dictionary<StatusTag, int> statuses
+        = new System.Collections.Generic.Dictionary<StatusTag, int>();
 
     public int roundDamageDealt;
     public int roundHealingUndone;
@@ -34,7 +36,7 @@ public class Creature : MonoBehaviour
     private int baseBody;
     private int baseSpeed;
 
-    public void Initialize(CardData cardData)
+    public void Initialize(CreatureCard cardData)
     {
         data = cardData;
         name = $"{data.cardName}";
@@ -64,9 +66,6 @@ public class Creature : MonoBehaviour
         traits.Clear();
         if (data.baseTraits != null && data.baseTraits.Length > 0)
             traits.AddRange(data.baseTraits);
-
-        tempSpeedMod = 0;
-        defendedThisRound = false;
 
         EnsureTextReferences();
         RefreshStatsUI();
@@ -130,6 +129,14 @@ public class Creature : MonoBehaviour
 
     public void ApplyDamage(int amount, Creature source)
     {
+        // Shielded negates the next incoming damage instance per charge
+        if (amount > 0 && GetStatus(StatusTag.Shielded) > 0)
+        {
+            DecrementStatus(StatusTag.Shielded, 1);
+            FeedbackManager.Instance?.ShowFloatingText("Shielded", transform.position, Color.cyan);
+            return;
+        }
+
         int dmg = Mathf.Max(0, amount);
         if (dmg == 0) return;
         currentHealth = Mathf.Max(0, currentHealth - dmg);
@@ -162,6 +169,8 @@ public class Creature : MonoBehaviour
         int healed = Mathf.Max(0, currentHealth - prev);
         if (healed > 0)
         {
+            // Any healing clears all Bleeding stacks
+            if (GetStatus(StatusTag.Bleeding) > 0) ClearStatus(StatusTag.Bleeding);
             OnAnyCreatureHealed?.Invoke(this, healed);
             RefreshStatsUI();
         }
@@ -176,15 +185,6 @@ public class Creature : MonoBehaviour
         StartCoroutine(FadeAndDestroy(0.5f));
     }
 
-    public void ApplyFatigue(int stacks = 1, bool showText = true)
-    {
-        fatigueStacks += Mathf.Max(0, stacks);
-        if (showText)
-        {
-            FeedbackManager.Instance?.ShowFloatingText("Fatigued", transform.position, Color.yellow);
-        }
-        RefreshStatsUI();
-    }
 
     private System.Collections.IEnumerator FadeAndDestroy(float duration)
     {
@@ -231,7 +231,7 @@ public class Creature : MonoBehaviour
         if (speedText != null)
         {
             int traitSpeed = (traits != null) ? traits.Sum(t => t != null ? t.SpeedBonus(this) : 0) : 0;
-            int displaySpeed = speed + tempSpeedMod - fatigueStacks + traitSpeed;
+            int displaySpeed = speed - GetStatus(StatusTag.Fatigued) + traitSpeed;
             speedText.text = displaySpeed.ToString();
             if (displaySpeed > baseSpeed) speedText.color = Color.green;
             else if (displaySpeed < baseSpeed) speedText.color = Color.red;
@@ -255,6 +255,120 @@ public class Creature : MonoBehaviour
 
         var sic = GetComponentInChildren<StatusIconController>(true);
         if (sic != null) sic.Refresh(this);
+    }
+
+    // --- Unified status API ---
+
+    public int GetStatus(StatusTag tag)
+    {
+        return statuses.TryGetValue(tag, out var v) ? v : 0;
+    }
+
+    public bool HasStatus(StatusTag tag)
+    {
+        return GetStatus(tag) > 0;
+    }
+
+    public void AddStatus(StatusTag tag, int stacks = 1)
+    {
+        if (stacks <= 0) return;
+        // Immune blocks negative statuses, consuming one charge
+        if (IsNegativeStatus(tag) && GetStatus(StatusTag.Immune) > 0)
+        {
+            DecrementStatus(StatusTag.Immune, 1);
+            FeedbackManager.Instance?.ShowFloatingText("Immune", transform.position, Color.cyan);
+            return;
+        }
+        statuses[tag] = GetStatus(tag) + stacks;
+        RefreshStatsUI();
+    }
+
+    public void DecrementStatus(StatusTag tag, int amount = 1)
+    {
+        if (amount <= 0) return;
+        int v = GetStatus(tag) - amount;
+        if (v <= 0) statuses.Remove(tag);
+        else statuses[tag] = v;
+        RefreshStatsUI();
+    }
+
+    public void ClearStatus(StatusTag tag)
+    {
+        if (statuses.Remove(tag)) RefreshStatsUI();
+    }
+
+    public System.Collections.Generic.IEnumerable<StatusTag> GetActiveStatusTags()
+    {
+        foreach (var kv in statuses)
+        {
+            if (kv.Value > 0) yield return kv.Key;
+        }
+    }
+
+    private static bool IsNegativeStatus(StatusTag tag)
+    {
+        // Consider these negative; adjust as desired
+        return tag switch
+        {
+            StatusTag.Infected or StatusTag.Fatigued or StatusTag.Stunned or StatusTag.Suppressed or StatusTag.NoForage or StatusTag.Bleeding => true,
+            _ => false,
+        };
+    }
+
+    // Convenience
+    public void ApplyInfected(int stacks) => AddStatus(StatusTag.Infected, stacks);
+    public void ApplyShield(int charges) => AddStatus(StatusTag.Shielded, charges);
+    public void ApplyBleeding(int stacks) => AddStatus(StatusTag.Bleeding, stacks);
+    public void ApplyRegen(int stacks) => AddStatus(StatusTag.Regen, stacks);
+    public void ApplyRage() => AddStatus(StatusTag.Rage, 1);
+    public void ApplyStunned(int rounds = 1) => AddStatus(StatusTag.Stunned, rounds);
+    public void ApplySuppressed(int rounds) => AddStatus(StatusTag.Suppressed, rounds);
+    public void ApplyDamageUp(int stacks) => AddStatus(StatusTag.DamageUp, stacks);
+    public void ApplyNoForage(int rounds) => AddStatus(StatusTag.NoForage, rounds);
+    public void ApplyImmune(int charges = 1) => AddStatus(StatusTag.Immune, charges);
+    public void ApplyFatigued(int stacks) => AddStatus(StatusTag.Fatigued, stacks);
+
+    public void TickStatusesAtRoundStart()
+    {
+        // Infected: deal 1, then -1 stack
+        if (GetStatus(StatusTag.Infected) > 0)
+        {
+            ApplyDamage(1, null);
+            DecrementStatus(StatusTag.Infected, 1);
+        }
+    }
+
+    public void TickStatusesAtRoundEnd()
+    {
+        // Fatigued: -1
+        if (GetStatus(StatusTag.Fatigued) > 0) DecrementStatus(StatusTag.Fatigued, 1);
+
+        // DamageUp: clear all
+        if (GetStatus(StatusTag.DamageUp) > 0) ClearStatus(StatusTag.DamageUp);
+
+        // Regen: heal equal to stacks, then -1
+        int regen = GetStatus(StatusTag.Regen);
+        if (regen > 0)
+        {
+            Heal(regen);
+            DecrementStatus(StatusTag.Regen, 1);
+        }
+
+        // Bleeding: damage equal to stacks (does not self-decrement)
+        int bleed = GetStatus(StatusTag.Bleeding);
+        if (bleed > 0)
+        {
+            ApplyDamage(bleed, null);
+        }
+
+        // Suppressed: -1
+        if (GetStatus(StatusTag.Suppressed) > 0) DecrementStatus(StatusTag.Suppressed, 1);
+
+        // Stunned: -1
+        if (GetStatus(StatusTag.Stunned) > 0) DecrementStatus(StatusTag.Stunned, 1);
+
+        // NoForage: -1
+        if (GetStatus(StatusTag.NoForage) > 0) DecrementStatus(StatusTag.NoForage, 1);
     }
 
     private void EnsureTextReferences()

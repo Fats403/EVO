@@ -12,5 +12,3 @@ public enum StatusTag
     Regen,       // regenerating symbol
     Bleeding,    // bleeding symbol
 }
-
-

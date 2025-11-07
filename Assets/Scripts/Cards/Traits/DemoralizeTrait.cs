@@ -12,15 +12,8 @@ public class DemoralizeTrait : Trait
             .ToList();
         if (enemies.Count > 0)
         {
-            enemies[0].ApplyFatigue(1, true);
-        }
-    }
-
-    private void OnValidate()
-    {
-        if (string.IsNullOrEmpty(description))
-        {
-            description = "At round start, the nearest enemy becomes Fatigued (−1 speed).";
+            enemies[0].ApplyFatigued(1);
+            FeedbackManager.Instance?.ShowFloatingText("Demoralized", enemies[0].transform.position, Color.yellow);
         }
     }
 }

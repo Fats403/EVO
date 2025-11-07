@@ -22,7 +22,7 @@ public class HandLayoutController : MonoBehaviour
 	[SerializeField] private AnimationCurve easing = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
 	private RectTransform handRect;
-	private CardUI hoveredCard;
+    private BaseCardUI hoveredCard;
 	private readonly Dictionary<RectTransform, Coroutine> activeAnimations = new Dictionary<RectTransform, Coroutine>();
 	private readonly Dictionary<RectTransform, Canvas> tempHoverCanvasByCard = new Dictionary<RectTransform, Canvas>();
 	private RectTransform draggedCard;
@@ -53,14 +53,14 @@ public class HandLayoutController : MonoBehaviour
 		LayoutCards();
 	}
 
-	public void NotifyHoverEnter(CardUI card)
+    public void NotifyHoverEnter(BaseCardUI card)
 	{
 		hoveredCard = card;
 		ApplyHoverCanvas(hoveredCard, true);
 		LayoutCards();
 	}
 
-	public void NotifyHoverExit(CardUI card)
+    public void NotifyHoverExit(BaseCardUI card)
 	{
 		if (hoveredCard == card)
 		{
@@ -70,7 +70,7 @@ public class HandLayoutController : MonoBehaviour
 		}
 	}
 
-	public void NotifyDragStart(CardUI card)
+    public void NotifyDragStart(BaseCardUI card)
 	{
 		// If the hovered card is being dragged out, clear hover state
 		if (hoveredCard == card)
@@ -85,7 +85,7 @@ public class HandLayoutController : MonoBehaviour
 		LayoutCards();
 	}
 
-	public void NotifyDragEnd(CardUI card, bool returnedToHand)
+    public void NotifyDragEnd(BaseCardUI card, bool returnedToHand)
 	{
 		// When drag ends, just relayout current children
 		if (draggedCard == (card != null ? card.transform as RectTransform : null))
@@ -162,7 +162,7 @@ public class HandLayoutController : MonoBehaviour
 		return baselinePos - offsetRotated;
 	}
 
-	private void ApplyHoverCanvas(CardUI card, bool enable)
+    private void ApplyHoverCanvas(BaseCardUI card, bool enable)
 	{
 		if (card == null) return;
 		RectTransform rt = card.transform as RectTransform;

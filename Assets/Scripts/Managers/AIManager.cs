@@ -7,12 +7,12 @@ public class AIManager : MonoBehaviour
 	public static AIManager Instance;
 
 	[Header("AI Deck Setup")]
-	public List<CardData> allCards;
+	public List<ScriptableObject> allCards;
 	public int cardsPerTurn = 1;
 	[Header("Visuals")]
 	public GameObject cardBackPrefab;
 
-	private readonly List<CardData> drawPile = new List<CardData>();
+	private readonly List<ScriptableObject> drawPile = new List<ScriptableObject>();
 
 	void Awake()
 	{
@@ -46,7 +46,7 @@ public class AIManager : MonoBehaviour
 
 		for (int n = 0; n < cardsPerTurn && drawPile.Count > 0 && freeSlots.Count > 0; n++)
 		{
-			CardData card = PickCard();
+			CreatureCard card = PickCreatureCard();
 			if (card == null) break;
 			BoardSlot slot = ChooseSlot(freeSlots);
 			if (slot == null) break;
@@ -64,28 +64,30 @@ public class AIManager : MonoBehaviour
 		}
 	}
 
-	CardData PickCard()
+	CreatureCard PickCreatureCard()
 	{
 		if (drawPile.Count == 0) return null;
-		// Simple heuristic:
-		// If player1 has herbivores, prefer carnivore; else if food pile high, prefer herbivore; else avian; else any.
 		var enemy = FindObjectsByType<Creature>(FindObjectsSortMode.None)
 			.Where(c => c != null && c.owner == SlotOwner.Player1)
 			.ToList();
 		bool enemyHasHerb = enemy.Any(c => c.data != null && c.data.type == CardType.Herbivore);
 		int pile = GameManager.Instance != null && GameManager.Instance.foodPile != null ? GameManager.Instance.foodPile.count : 0;
 
-		CardData pick = null;
-		if (enemyHasHerb)
-			pick = drawPile.FirstOrDefault(c => c != null && c.type == CardType.Carnivore);
-		if (pick == null && pile >= 8)
-			pick = drawPile.FirstOrDefault(c => c != null && c.type == CardType.Herbivore);
-		if (pick == null)
-			pick = drawPile.FirstOrDefault(c => c != null && c.type == CardType.Avian);
-		if (pick == null)
-			pick = drawPile[drawPile.Count - 1];
+		var candidates = drawPile.OfType<CreatureCard>().ToList();
+		if (candidates.Count == 0) return null;
 
-		drawPile.Remove(pick);
+		CreatureCard pick = null;
+		if (enemyHasHerb)
+			pick = candidates.FirstOrDefault(c => c != null && c.type == CardType.Carnivore);
+		if (pick == null && pile >= 8)
+			pick = candidates.FirstOrDefault(c => c != null && c.type == CardType.Herbivore);
+		if (pick == null)
+			pick = candidates.FirstOrDefault(c => c != null && c.type == CardType.Avian);
+		if (pick == null)
+			pick = candidates[candidates.Count - 1];
+
+		int removeIdx = drawPile.FindLastIndex(o => ReferenceEquals(o, pick));
+		if (removeIdx >= 0) drawPile.RemoveAt(removeIdx);
 		return pick;
 	}
 

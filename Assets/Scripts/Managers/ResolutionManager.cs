@@ -6,6 +6,8 @@ using UnityEngine;
 public class ResolutionManager : MonoBehaviour
 {
 	public FoodPile foodPile;
+    [Header("Active Global Effects")]
+    public System.Collections.Generic.List<GlobalEffectBase> activeGlobalEffects = new System.Collections.Generic.List<GlobalEffectBase>();
 	[Header("Timing")]
     public float preStealDelay = 0.6f;
     public float eatDelay = 0.7f;
@@ -22,43 +24,71 @@ public class ResolutionManager : MonoBehaviour
 		// Reveal pending cards into creatures
 		RevealPendings();
 
-		// Round start hooks
+        // Round start hooks
         foreach (var c in AllCreatures())
-		{
-			c.defendedThisRound = false;
-            c.tempSpeedMod = 0;
-            if (c.traits != null)
+        {
+            // Status round-start ticks (e.g., Infected)
+            c.TickStatusesAtRoundStart();
+            if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
             {
-                foreach (var t in c.traits) { t?.OnRoundStart(c); }
+                var snapshot = c.traits != null ? c.traits.ToArray() : System.Array.Empty<Trait>();
+                foreach (var t in snapshot) { if (t != null) t.OnRoundStart(c); }
             }
             c.ResetRoundBookkeeping();
             c.RefreshStatsUI();
 		}
 
-		// Pre-herbivore trait steals (e.g., Peregrine)
+        // Global effects: round start
+        InvokeGlobal(g => g.OnRoundStart(this));
+
+        // Pre-herbivore trait steals (e.g., Peregrine)
+        InvokeGlobal(g => g.OnPreHerbivore(this));
 		yield return StartCoroutine(ResolvePreHerbivoreSteals());
 
-		// Resolve Herbivores eating
+        // Resolve Herbivores eating
+        InvokeGlobal(g => g.OnHerbivores(this));
 		yield return StartCoroutine(ResolveHerbivores());
 
         // Resolve Attacks (Carnivores and Avians)
         yield return StartCoroutine(ResolveAttacks());
 
         // Avian foraging then starvation and scoring
+        InvokeGlobal(g => g.OnForaging(this));
         yield return StartCoroutine(ResolveAvianForaging());
         yield return StartCoroutine(ResolveStarvationAndScoring());
 
-		// Round end hooks
-		foreach (var c in AllCreatures())
+        // Round end hooks
+        // First apply status round-end ticks (fatigue decay, regen, bleeding, etc.)
+        foreach (var c in AllCreatures())
+        {
+            if (c == null) continue;
+            c.TickStatusesAtRoundEnd();
+        }
+        foreach (var c in AllCreatures())
 		{
-			if (c.traits == null) continue;
-			foreach (var t in c.traits) { if (t != null) t.OnRoundEnd(c); }
+            if (c.traits == null) continue;
+            if (!c.HasStatus(StatusTag.Suppressed))
+            {
+                var snapshot = c.traits != null ? c.traits.ToArray() : System.Array.Empty<Trait>();
+                foreach (var t in snapshot) { if (t != null) t.OnRoundEnd(c); }
+            }
 		}
+        // Global effects: round end, then decrement lifetimes and prune
+        InvokeGlobal(g => g.OnRoundEnd(this));
+        if (activeGlobalEffects != null && activeGlobalEffects.Count > 0)
+        {
+            for (int i = activeGlobalEffects.Count - 1; i >= 0; i--)
+            {
+                var ge = activeGlobalEffects[i];
+                if (ge == null) { activeGlobalEffects.RemoveAt(i); continue; }
+                ge.remainingRounds = Mathf.Max(0, ge.remainingRounds - 1);
+                if (ge.remainingRounds == 0) activeGlobalEffects.RemoveAt(i);
+            }
+        }
 		// Weather end-of-round effects
 		if (WeatherManager.Instance != null)
 		{
 			WeatherManager.Instance.ApplyEndOfRoundEffects();
-			yield return new WaitForSeconds(statusEffectDelay);
 		}
 	}
 
@@ -75,17 +105,35 @@ public class ResolutionManager : MonoBehaviour
 		}
 	}
 
-    IEnumerable<Creature> AllCreatures()
+    public IEnumerable<Creature> AllCreatures()
     {
         var q = FindObjectsByType<Creature>(FindObjectsSortMode.None)
             .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
-            .OrderByDescending(c => c.speed + c.tempSpeedMod - c.fatigueStacks + (c.traits?.Sum(t => t != null ? t.SpeedBonus(c) : 0) ?? 0));
+            .OrderByDescending(c => c.speed - c.GetStatus(StatusTag.Fatigued) + (c.traits?.Sum(t => t != null ? t.SpeedBonus(c) : 0) ?? 0));
         // Deterministic tie-breaker: RNG-based shuffle for equals
         int Rand()
         {
             return GameManager.Instance != null ? GameManager.Instance.NextRandomInt(0, int.MaxValue) : UnityEngine.Random.Range(0, int.MaxValue);
         }
         return q.ThenBy(_ => Rand());
+    }
+
+    void InvokeGlobal(System.Action<GlobalEffectBase> call)
+    {
+        if (activeGlobalEffects == null || call == null) return;
+        foreach (var ge in activeGlobalEffects)
+        {
+            if (ge == null) continue;
+            call(ge);
+        }
+    }
+
+    public void RegisterGlobalEffect(GlobalEffectBase effect)
+    {
+        if (effect == null) return;
+        activeGlobalEffects ??= new System.Collections.Generic.List<GlobalEffectBase>();
+        activeGlobalEffects.Add(effect);
+        effect.OnPlay(this);
     }
 
     IEnumerator ResolvePreHerbivoreSteals()
@@ -121,12 +169,14 @@ public class ResolutionManager : MonoBehaviour
 		{
 			if (c == null || c.data == null) continue;
 			if (c.data.type != CardType.Herbivore) continue;
+            if (c.HasStatus(StatusTag.Stunned) || c.HasStatus(StatusTag.NoForage)) continue;
 			int need = Mathf.Max(0, c.body - c.eaten);
 			if (need <= 0) continue;
 			int desired = need;
-			if (c.traits != null)
+            if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
 			{
-				foreach (var t in c.traits)
+                var snap = c.traits.ToArray();
+                foreach (var t in snap)
 				{
 					if (t == null) continue;
 					desired = t.ModifyHerbivoreEatAmount(c, desired, foodPile);
@@ -135,11 +185,11 @@ public class ResolutionManager : MonoBehaviour
 			}
 			int taken = foodPile.Take(desired);
 			c.eaten += taken;
-				if (taken > 0)
+			if (taken > 0)
 			{
 				FeedbackManager.Instance?.ShowFloatingText($"+{taken} food", c.transform.position, new Color(0.3f, 1f, 0.3f));
 				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} ate {taken}.");
-					yield return new WaitForSeconds(eatDelay * pacingMultiplier);
+				yield return new WaitForSeconds(eatDelay * pacingMultiplier);
             }
 		}
 	}
@@ -152,6 +202,8 @@ public class ResolutionManager : MonoBehaviour
             var attacker = AllCreatures().FirstOrDefault(c => c != null && !acted.Contains(c));
             if (attacker == null) break;
             if (attacker == null || attacker.data == null) continue;
+            // Stunned creatures cannot act this round
+            if (attacker.HasStatus(StatusTag.Stunned)) { acted.Add(attacker); continue; }
             if (attacker.data.type == CardType.Herbivore)
             {
                 bool traitAllows = attacker.traits != null && attacker.traits.Any(t => t != null && t.CanAttack(attacker));
@@ -177,9 +229,10 @@ public class ResolutionManager : MonoBehaviour
                     if (atk.speed < tgt.speed) return false;
                 }
                 int bodyBonus = 0;
-                if (atk.traits != null)
+                if (!atk.HasStatus(StatusTag.Suppressed) && atk.traits != null)
                 {
-                    foreach (var t in atk.traits)
+                    var atkSnap = atk.traits.ToArray();
+                    foreach (var t in atkSnap)
                     {
                         if (t != null) bodyBonus += t.PredatorBodyBonusForTargeting(atk);
                     }
@@ -189,18 +242,20 @@ public class ResolutionManager : MonoBehaviour
                 if (tgt.body == effAtkBody)
                 {
                     // allow equal-body if any trait grants it
-                    if (atk.traits != null)
+                    if (!atk.HasStatus(StatusTag.Suppressed) && atk.traits != null)
                     {
-                        foreach (var t in atk.traits)
+                        var atkSnap2 = atk.traits.ToArray();
+                        foreach (var t in atkSnap2)
                         {
                             if (t != null && t.CanTargetEqualBody(atk, tgt)) return true;
                         }
                     }
                 }
                 // Additional target gating via traits (e.g., camouflage)
-                if (atk.traits != null)
+                if (!atk.HasStatus(StatusTag.Suppressed) && atk.traits != null)
                 {
-                    foreach (var t in atk.traits)
+                    var atkSnap3 = atk.traits.ToArray();
+                    foreach (var t in atkSnap3)
                     {
                         if (t != null && !t.CanTarget(atk, tgt)) return false;
                     }
@@ -221,9 +276,10 @@ public class ResolutionManager : MonoBehaviour
 
             // Check target defense traits – may negate attack (after windup to still show attempt)
             bool negated = false;
-            if (target.traits != null)
+            if (!target.HasStatus(StatusTag.Suppressed) && target.traits != null)
             {
-                foreach (var tr in target.traits)
+                var tgtSnap2 = target.traits.ToArray();
+                foreach (var tr in tgtSnap2)
                 {
 					if (tr != null && tr.TryNegateAttack(target, attacker)) { negated = true; break; }
                 }
@@ -246,27 +302,38 @@ public class ResolutionManager : MonoBehaviour
             bool targetIsCarnivore = target.data != null && target.data.type == CardType.Carnivore;
             bool faster = attacker.speed >= target.speed;
             int bodyBonus = 0;
-            if (attacker.traits != null)
+            if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
             {
-                foreach (var tr in attacker.traits) { if (tr != null) bodyBonus += tr.PredatorBodyBonusForTargeting(attacker); }
+                var atkSnapshot = attacker.traits.ToArray();
+                foreach (var tr in atkSnapshot) { if (tr != null) bodyBonus += tr.PredatorBodyBonusForTargeting(attacker); }
             }
             int effAtkBody = attacker.body + bodyBonus;
             bool meetsBodyRule = effAtkBody >= target.body;
 
             // Avian harass: faster-than-target, not vs Carnivores, and doesn't meet body rule
-            bool harass = isAvian && !targetIsCarnivore && faster && !meetsBodyRule;
+            bool harass = isAvian && !targetIsCarnivore && faster;
 
             // Damage calculation
             int baseDmg = harass ? 1 : Mathf.Max(1, effAtkBody - target.body + 1);
-            if (attacker.traits != null)
+            if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
             {
-                foreach (var tr in attacker.traits) { if (tr != null) baseDmg = tr.ModifyOutgoingDamage(attacker, target, baseDmg); }
+                var atkSnapshot2 = attacker.traits.ToArray();
+                foreach (var tr in atkSnapshot2) { if (tr != null) baseDmg = tr.ModifyOutgoingDamage(attacker, target, baseDmg); }
             }
-            if (target.traits != null)
+            if (!target.HasStatus(StatusTag.Suppressed) && target.traits != null)
             {
-                foreach (var tr in target.traits) { if (tr != null) baseDmg = tr.ModifyIncomingDamage(target, attacker, baseDmg); }
+                var tgtSnapshot = target.traits.ToArray();
+                foreach (var tr in tgtSnapshot) { if (tr != null) baseDmg = tr.ModifyIncomingDamage(target, attacker, baseDmg); }
             }
+            // DamageUp adds flat damage
+            baseDmg += Mathf.Max(0, attacker.GetStatus(StatusTag.DamageUp));
             baseDmg = Mathf.Max(0, baseDmg);
+            // Rage doubles next damage, then clears
+            if (attacker.HasStatus(StatusTag.Rage) && baseDmg > 0)
+            {
+                baseDmg *= 2;
+                attacker.ClearStatus(StatusTag.Rage);
+            }
             if (baseDmg > 0)
             {
                 target.ApplyDamage(baseDmg, attacker);
@@ -284,14 +351,16 @@ public class ResolutionManager : MonoBehaviour
                 // Notify attacker traits
                 if (attacker.traits != null)
                 {
-                    foreach (var tr in attacker.traits) { if (tr != null) tr.OnAfterKill(attacker, target); }
+                    var atkSnapshot3 = attacker.traits.ToArray();
+                    foreach (var tr in atkSnapshot3) { if (tr != null) tr.OnAfterKill(attacker, target); }
                 }
                 // Notify all about death (for scavengers)
                 foreach (var c2 in AllCreatures())
                 {
                     if (c2 == null || c2 == target) continue;
                     if (c2.traits == null) continue;
-                    foreach (var tr in c2.traits) { if (tr != null) tr.OnAnyDeath(c2, target); }
+                    var trSnapshot = c2.traits.ToArray();
+                    foreach (var tr in trSnapshot) { if (tr != null) tr.OnAnyDeath(c2, target); }
                 }
 			}
 			yield return new WaitForSeconds(attackResolvePause * pacingMultiplier);
@@ -310,6 +379,7 @@ public class ResolutionManager : MonoBehaviour
             int need = Mathf.Max(0, c.body - c.eaten);
             if (need <= 0) continue;
             if (foodPile.count <= 0) continue;
+            if (c.HasStatus(StatusTag.Stunned) || c.HasStatus(StatusTag.NoForage)) continue;
             if (c.traits != null && c.traits.Any(t => t != null && !t.CanForage(c))) continue;
 
             int taken = foodPile.Take(1);
@@ -339,8 +409,6 @@ public class ResolutionManager : MonoBehaviour
                 ScoreManager.Add(c.owner, gain);
                 FeedbackManager.Instance?.ShowFloatingText($"Score +{gain}", c.transform.position, Color.cyan);
                 FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} scores {gain} from food");
-                // small spacing before other texts for this creature
-				yield return new WaitForSeconds(0.5f * pacingMultiplier);
                 didAny = true;
             }
             // Starvation chip if ate nothing
@@ -352,8 +420,7 @@ public class ResolutionManager : MonoBehaviour
                 var owner = c.owner;
 				int starve = (WeatherManager.Instance != null) ? WeatherManager.Instance.GetStarvationDamageOrDefault(2) : 2;
 				c.ApplyDamage(starve, null);
-                // allow damage text to show first
-                yield return new WaitForSeconds(0.5f);
+
 				FeedbackManager.Instance?.ShowFloatingText($"Starved -{starve} HP", pos, Color.gray);
 				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(owner)} {cname} takes {starve} starvation damage");
                 // If the creature died, skip further per-creature steps
@@ -367,12 +434,12 @@ public class ResolutionManager : MonoBehaviour
             // Fatigue if partially fed
             if (c.eaten > 0 && c.eaten < c.body)
             {
-                c.ApplyFatigue(1, true);
-				yield return new WaitForSeconds(0.5f * pacingMultiplier);
+                c.ApplyFatigued(1);
                 didAny = true;
+                FeedbackManager.Instance?.ShowFloatingText("Fatigued", c.transform.position, Color.yellow);
             }
+            if (didAny) yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
             if (c != null) c.eaten = 0;
-			if (didAny) yield return new WaitForSeconds(starveDelay * pacingMultiplier);
         }
 
         // Net damage scoring after processing food/starvation
@@ -386,13 +453,8 @@ public class ResolutionManager : MonoBehaviour
                 FeedbackManager.Instance?.ShowFloatingText($"Damage +{net}", c.transform.position, new Color(1f, 0.7f, 0.3f));
                 FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} nets {net} from combat");
             }
-            // End-of-round fatigue recovery: remove one stack
-            if (c.fatigueStacks > 0)
-            {
-                c.fatigueStacks -= 1;
-                c.RefreshStatsUI();
-            }
         }
+		yield break;
 	}
 
 	BoardSlot FindSlotOf(Creature c)
