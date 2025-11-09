@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ReinforcedCarapaceTrait
   traitName: Reinforced Carapace
   description: 
-  remainingRounds: 1
+  remainingRounds: 0
+  shieldCharges: 1

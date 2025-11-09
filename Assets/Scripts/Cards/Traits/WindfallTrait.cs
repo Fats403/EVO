@@ -10,6 +10,7 @@ public class WindfallTrait : Trait
         if (pile == null) return 0;
         if (self.data == null || self.data.type != CardType.Herbivore) return 0;
         if (self.eaten >= self.body) return 0;
+        if (self.HasStatus(StatusTag.Suppressed)) return 0;
         return stealAmount;
     }
 }

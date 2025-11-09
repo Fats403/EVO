@@ -9,6 +9,7 @@ public class ThornsTrait : Trait
     {
         if (attacker == null) return;
         if (finalDamage <= 0) return;
+        if (self.HasStatus(StatusTag.Suppressed)) return;
         // Apply reflected damage without scoring/loops (source null)
         attacker.ApplyDamage(reflectDamage, null);
         FeedbackManager.Instance?.ShowFloatingText($"-{reflectDamage} HP [Thorns]", attacker.transform.position, new Color(1f, 0.5f, 0.2f));

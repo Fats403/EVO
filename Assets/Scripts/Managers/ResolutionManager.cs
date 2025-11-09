@@ -17,12 +17,17 @@ public class ResolutionManager : MonoBehaviour
     public float starveDelay = 0.7f;
     public float statusEffectDelay = 0.6f;
     [Tooltip("Global pacing multiplier for all waits (higher = slower)")]
-    public float pacingMultiplier = 1.4f;
+    public float pacingMultiplier = 1.75f;
+    // Tracks last herbivore that ate during ResolveHerbivores this round
+    Creature lastHerbivoreToEatThisRound = null;
 
 	public IEnumerator RevealAndResolveRound()
 	{
 		// Reveal pending cards into creatures
 		RevealPendings();
+
+        // Reset per-round trackers
+        lastHerbivoreToEatThisRound = null;
 
         // Round start hooks
         foreach (var c in AllCreatures())
@@ -109,7 +114,13 @@ public class ResolutionManager : MonoBehaviour
     {
         var q = FindObjectsByType<Creature>(FindObjectsSortMode.None)
             .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
-            .OrderByDescending(c => c.speed - c.GetStatus(StatusTag.Fatigued) + (c.traits?.Sum(t => t != null ? t.SpeedBonus(c) : 0) ?? 0));
+            .OrderByDescending(c =>
+                c.speed
+                - c.GetStatus(StatusTag.Fatigued)
+                + ((!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+                    ? c.traits.Sum(t => t != null ? t.SpeedBonus(c) : 0)
+                    : 0)
+            );
         // Deterministic tie-breaker: RNG-based shuffle for equals
         int Rand()
         {
@@ -189,6 +200,8 @@ public class ResolutionManager : MonoBehaviour
 			{
 				FeedbackManager.Instance?.ShowFloatingText($"+{taken} food", c.transform.position, new Color(0.3f, 1f, 0.3f));
 				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} ate {taken}.");
+                // Record as last herbivore that ate this round
+                lastHerbivoreToEatThisRound = c;
 				yield return new WaitForSeconds(eatDelay * pacingMultiplier);
             }
 		}
@@ -223,10 +236,40 @@ public class ResolutionManager : MonoBehaviour
 
             static bool IsValidTarget(Creature atk, Creature tgt)
             {
-                // Carnivore attacking Avian requires speed >= target
-                if (tgt.data != null && tgt.data.type == CardType.Avian && atk.data.type == CardType.Carnivore)
+                if (atk == null || tgt == null || atk.data == null || tgt.data == null) return false;
+
+                // Effective speed considers fatigue and trait bonuses (mirrors ordering/UI logic)
+                static int EffSpeed(Creature c)
                 {
-                    if (atk.speed < tgt.speed) return false;
+                    int traitSpeed = (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+                        ? c.traits.Sum(t => t != null ? t.SpeedBonus(c) : 0)
+                        : 0;
+                    return c.speed - c.GetStatus(StatusTag.Fatigued) + traitSpeed;
+                }
+
+                // Avian attackers: speed-based harass targeting against non-carnivores
+                if (atk.data.type == CardType.Avian)
+                {
+                    // Global filter already excludes carnivores, but keep guard for clarity
+                    if (tgt.data.type == CardType.Carnivore) return false;
+                    if (EffSpeed(atk) < EffSpeed(tgt)) return false;
+                    // Respect attacker trait-based gating (e.g., camouflage/line-of-sight)
+                    if (!atk.HasStatus(StatusTag.Suppressed) && atk.traits != null)
+                    {
+                        var atkSnap = atk.traits.ToArray();
+                        foreach (var t in atkSnap)
+                        {
+                            if (t != null && !t.CanTarget(atk, tgt)) return false;
+                        }
+                    }
+                    return true;
+                }
+
+                // Non-avian attackers (Carnivores, or herbivores with attack traits):
+                // Carnivore vs Avian requires speed >= target
+                if (tgt.data.type == CardType.Avian && atk.data.type == CardType.Carnivore)
+                {
+                    if (EffSpeed(atk) < EffSpeed(tgt)) return false;
                 }
                 int bodyBonus = 0;
                 if (!atk.HasStatus(StatusTag.Suppressed) && atk.traits != null)
@@ -293,6 +336,13 @@ public class ResolutionManager : MonoBehaviour
                 continue;
             }
 
+            // Stealth: consumed on first attack attempt
+            if (attacker.HasStatus(StatusTag.Stealth))
+            {
+                attacker.ClearStatus(StatusTag.Stealth);
+                FeedbackManager.Instance?.ShowFloatingText("Revealed", attacker.transform.position, new Color(0.8f, 0.8f, 0.8f));
+            }
+
 			// Brief red flash on target
 			if (target != null)
 				yield return target.StartCoroutine(target.FlashDamage(0.25f));
@@ -300,7 +350,21 @@ public class ResolutionManager : MonoBehaviour
             // Determine if this is an avian harass (baseline poke)
             bool isAvian = attacker.data != null && attacker.data.type == CardType.Avian;
             bool targetIsCarnivore = target.data != null && target.data.type == CardType.Carnivore;
-            bool faster = attacker.speed >= target.speed;
+            int AttkEffSpeed()
+            {
+                int traitSpeed = (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
+                    ? attacker.traits.Sum(t => t != null ? t.SpeedBonus(attacker) : 0)
+                    : 0;
+                return attacker.speed - attacker.GetStatus(StatusTag.Fatigued) + traitSpeed;
+            }
+            int TgtEffSpeed()
+            {
+                int traitSpeed = (!target.HasStatus(StatusTag.Suppressed) && target.traits != null)
+                    ? target.traits.Sum(t => t != null ? t.SpeedBonus(target) : 0)
+                    : 0;
+                return target.speed - target.GetStatus(StatusTag.Fatigued) + traitSpeed;
+            }
+            bool faster = AttkEffSpeed() >= TgtEffSpeed();
             int bodyBonus = 0;
             if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
             {
@@ -310,7 +374,7 @@ public class ResolutionManager : MonoBehaviour
             int effAtkBody = attacker.body + bodyBonus;
             bool meetsBodyRule = effAtkBody >= target.body;
 
-            // Avian harass: faster-than-target, not vs Carnivores, and doesn't meet body rule
+            // Avian harass: faster-than-target, not vs Carnivores
             bool harass = isAvian && !targetIsCarnivore && faster;
 
             // Damage calculation
@@ -339,6 +403,14 @@ public class ResolutionManager : MonoBehaviour
                 target.ApplyDamage(baseDmg, attacker);
                 var dmgTag = harass ? "Harass" : "Hit";
                 FeedbackManager.Instance?.ShowFloatingText($"-{baseDmg} HP ({dmgTag})", target.transform.position, new Color(1f, 0.3f, 0.3f));
+                // Special: last herbivore to eat this round applies Bleeding on its first attack
+                if (attacker != null && attacker == lastHerbivoreToEatThisRound)
+                {
+                    target.ApplyBleeding(1);
+                    FeedbackManager.Instance?.ShowFloatingText("Bleeding (Stalked)", target.transform.position, new Color(0.9f, 0.1f, 0.1f));
+                    // Consume so it doesn't apply multiple times if it attacks again
+                    lastHerbivoreToEatThisRound = null;
+                }
             }
 
             // Remove target if dead
@@ -467,5 +539,3 @@ public class ResolutionManager : MonoBehaviour
 		return null;
 	}
 }
-
-

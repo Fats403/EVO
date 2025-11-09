@@ -11,9 +11,9 @@ public class FeedbackManager : MonoBehaviour
 	[Header("Floating Text")]
 	public GameObject floatingTextPrefab; // prefab with TMP Text
     public float floatUpDistance = 1.2f;
-	public float floatDuration = 1.75f; // fade-out duration
+	public float floatDuration = 2.25f; // fade-out duration
 	[Tooltip("Time to hold at full alpha before fading starts")]
-	public float alphaHold = 0.75f;
+	public float alphaHold = 1.25f;
 	[Tooltip("Vertical spacing between stacked messages at same position")]
 	public float stackOffset = 0.3f;
 

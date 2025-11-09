@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 849d0a9a0c2454f15b951cc4d997e9c9, type: 3}
-  m_Name: Aerial Predator Trait
+  m_Script: {fileID: 11500000, guid: 5ed90a72595c244fb96c5d99a94d24c5, type: 3}
+  m_Name: Predatory Renewal Trait
   m_EditorClassIdentifier: Assembly-CSharp::AerialPredatorTrait
-  traitName: Ariel Predator
-  icon: {fileID: 8287793400891561834, guid: 863a5e09e92ae486f87bd48329da1b1f, type: 3}
-  description: May target equal-body prey if faster.
+  traitName: Predatory Renewal
+  description: On kill gain +1 regen

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
   effectName: Reinforced Carapace
   icon: {fileID: 21300000, guid: e5443e631ec4e4391bdce7dd76e15350, type: 3}
-  description: Reduce the next damage taken by 2 for one round.
+  description: Apply 1 Sheild to an ally
   targetSide: 0
   targetType: 0
   targetCount: 0

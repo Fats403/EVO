@@ -109,7 +109,7 @@ public class WeatherManager : MonoBehaviour
             case WeatherType.Clear:
             {
                 int add = Next(1, 3); // +1 to +2
-                pile.count = Mathf.Clamp(pile.count + add, 0, pile.maxCap);
+                pile.count = Mathf.Max(0, pile.count + add);
                 pile.UpdateUI();
                 FeedbackManager.Instance?.ShowFloatingText($"Weather: Clear +{add} food", pile.transform.position, new Color(0.5f, 0.9f, 0.5f));
                 break;
@@ -117,7 +117,7 @@ public class WeatherManager : MonoBehaviour
             case WeatherType.Drought:
             {
                 int remove = Next(1, 3); // -1 to -2
-                pile.count = Mathf.Clamp(pile.count - remove, 0, pile.maxCap);
+                pile.count = Mathf.Max(0, pile.count - remove);
                 pile.UpdateUI();
                 starveDamageOverride = 3;
                 FeedbackManager.Instance?.ShowFloatingText($"Drought: -{remove} food (Starve 3)", pile.transform.position, new Color(0.9f, 0.7f, 0.3f));
@@ -126,9 +126,18 @@ public class WeatherManager : MonoBehaviour
             case WeatherType.Storm:
             {
                 int remove = 1;
-                pile.count = Mathf.Clamp(pile.count - remove, 0, pile.maxCap);
+                pile.count = Mathf.Max(0, pile.count - remove);
                 pile.UpdateUI();
                 FeedbackManager.Instance?.ShowFloatingText("Storm: -1 food", pile.transform.position, new Color(0.6f, 0.8f, 1f));
+                // Apply 1 stack of Fatigued to all Avians at storm start
+                var avians = FindObjectsByType<Creature>(FindObjectsSortMode.None)
+                    .Where(c => c != null && c.currentHealth > 0 && !c.isDying && c.data != null && c.data.type == CardType.Avian)
+                    .ToList();
+                foreach (var a in avians)
+                {
+                    a.ApplyFatigued(1);
+                    FeedbackManager.Instance?.ShowFloatingText("Storm: Fatigued", a.transform.position, new Color(0.6f, 0.8f, 1f));
+                }
                 break;
             }
             case WeatherType.Wildfire:
@@ -161,25 +170,7 @@ public class WeatherManager : MonoBehaviour
             }
             case WeatherType.Storm:
             {
-                var all = FindObjectsByType<Creature>(FindObjectsSortMode.None)
-                    .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
-                    .ToList();
-                var p1 = all.Where(c => c.owner == SlotOwner.Player1).ToList();
-                var p2 = all.Where(c => c.owner == SlotOwner.Player2).ToList();
-                if (p1.Count > 0)
-                {
-                    var t = p1[Next(0, p1.Count)];
-                    Vector3 pos = t.transform.position;
-                    t.ApplyDamage(1, null);
-                    FeedbackManager.Instance?.ShowFloatingText("Storm -1 HP", pos, new Color(0.6f, 0.8f, 1f));
-                }
-                if (p2.Count > 0)
-                {
-                    var t = p2[Next(0, p2.Count)];
-                    Vector3 pos = t.transform.position;
-                    t.ApplyDamage(1, null);
-                    FeedbackManager.Instance?.ShowFloatingText("Storm -1 HP", pos, new Color(0.6f, 0.8f, 1f));
-                }
+                // Storm no longer deals end-of-round damage; effect applied at round start
                 break;
             }
             default:

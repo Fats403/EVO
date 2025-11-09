@@ -230,7 +230,9 @@ public class Creature : MonoBehaviour
         // Speed display with bonuses and temp mods
         if (speedText != null)
         {
-            int traitSpeed = (traits != null) ? traits.Sum(t => t != null ? t.SpeedBonus(this) : 0) : 0;
+            int traitSpeed = (!HasStatus(StatusTag.Suppressed) && traits != null)
+                ? traits.Sum(t => t != null ? t.SpeedBonus(this) : 0)
+                : 0;
             int displaySpeed = speed - GetStatus(StatusTag.Fatigued) + traitSpeed;
             speedText.text = displaySpeed.ToString();
             if (displaySpeed > baseSpeed) speedText.color = Color.green;
@@ -279,7 +281,10 @@ public class Creature : MonoBehaviour
             FeedbackManager.Instance?.ShowFloatingText("Immune", transform.position, Color.cyan);
             return;
         }
-        statuses[tag] = GetStatus(tag) + stacks;
+        int newValue = GetStatus(tag) + stacks;
+        // Stealth is non-stacking: clamp to 1
+        if (tag == StatusTag.Stealth) newValue = newValue > 0 ? 1 : 0;
+        statuses[tag] = newValue;
         RefreshStatsUI();
     }
 

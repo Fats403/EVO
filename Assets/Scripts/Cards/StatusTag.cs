@@ -11,4 +11,5 @@ public enum StatusTag
     Immune,      // immune symbol
     Regen,       // regenerating symbol
     Bleeding,    // bleeding symbol
+    Stealth,     // stealth symbol
 }
