@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using TMPro;
 using System;
@@ -12,19 +13,18 @@ public class Creature : MonoBehaviour
     public int speed;
     public int eaten;
     public SlotOwner owner;
-    public List<Trait> traits = new List<Trait>();
+    public List<Trait> traits = new();
     public int maxHealth;
     public int currentHealth;
     public int fatigueStacks;
     public bool isDying;
 
     // Unified status stacks (Shielded, Infected, etc.)
-    private readonly System.Collections.Generic.Dictionary<StatusTag, int> statuses
-        = new System.Collections.Generic.Dictionary<StatusTag, int>();
+    private readonly Dictionary<StatusTag, int> statuses = new();
 
     public int roundDamageDealt;
     public int roundHealingUndone;
-    private HashSet<Creature> damagedTargetsThisRound = new HashSet<Creature>();
+    private readonly HashSet<Creature> damagedTargetsThisRound = new();
 
     public static event Action<Creature, int> OnAnyCreatureHealed;
 
@@ -67,7 +67,6 @@ public class Creature : MonoBehaviour
         if (data.baseTraits != null && data.baseTraits.Length > 0)
             traits.AddRange(data.baseTraits);
 
-        EnsureTextReferences();
         RefreshStatsUI();
     }
 
@@ -139,6 +138,8 @@ public class Creature : MonoBehaviour
 
         int dmg = Mathf.Max(0, amount);
         if (dmg == 0) return;
+        // Taking real damage breaks Stealth
+        if (GetStatus(StatusTag.Stealth) > 0) ClearStatus(StatusTag.Stealth);
         currentHealth = Mathf.Max(0, currentHealth - dmg);
         if (source != null)
         {
@@ -186,7 +187,7 @@ public class Creature : MonoBehaviour
     }
 
 
-    private System.Collections.IEnumerator FadeAndDestroy(float duration)
+    private IEnumerator FadeAndDestroy(float duration)
     {
         float t = 0f;
         var renderers = GetComponentsInChildren<SpriteRenderer>(true);
@@ -315,7 +316,7 @@ public class Creature : MonoBehaviour
         // Consider these negative; adjust as desired
         return tag switch
         {
-            StatusTag.Infected or StatusTag.Fatigued or StatusTag.Stunned or StatusTag.Suppressed or StatusTag.NoForage or StatusTag.Bleeding => true,
+            StatusTag.Infected or StatusTag.Fatigued or StatusTag.Starvation or StatusTag.Stunned or StatusTag.Suppressed or StatusTag.NoForage or StatusTag.Bleeding => true,
             _ => false,
         };
     }
@@ -376,27 +377,7 @@ public class Creature : MonoBehaviour
         if (GetStatus(StatusTag.NoForage) > 0) DecrementStatus(StatusTag.NoForage, 1);
     }
 
-    private void EnsureTextReferences()
-    {
-        if (speedText != null && bodyText != null) return;
-        var texts = GetComponentsInChildren<TMP_Text>(true);
-        if (speedText == null)
-        {
-            speedText = texts.FirstOrDefault(t => t != null && (t.name == "SpeedText" || t.name.Contains("Speed")));
-        }
-        if (bodyText == null)
-        {
-            bodyText = texts.FirstOrDefault(t => t != null && (t.name == "BodyText" || t.name == "BodySizeText" || t.name.Contains("Body") || t.name.Contains("Size")));
-        }
-        if (healthText == null)
-        {
-            healthText = texts.FirstOrDefault(t => t != null && (t.name == "HealthText" || t.name.Contains("HP") || t.name.Contains("Health")));
-        }
-        if (speedText == null || bodyText == null)
-        {
-            Debug.LogWarning($"[Creature] Could not auto-find stat texts on {name}. Assign them in the prefab.");
-        }
-    }
+
 
     private BoardSlot FindSlotOf(Creature c)
     {

@@ -20,18 +20,20 @@ MonoBehaviour:
   - tag: 2
     sprite: {fileID: 21300000, guid: ea577325c1fcd4003b6b5da087832d04, type: 3}
   - tag: 3
-    sprite: {fileID: 21300000, guid: c0e7c22e60879472fbb127fe99121c23, type: 3}
+    sprite: {fileID: 21300000, guid: 7037a2d33515d4e39a5529624fac1102, type: 3}
   - tag: 4
-    sprite: {fileID: 21300000, guid: 1046e0a0ea9804dad9ff2236f397a0e8, type: 3}
+    sprite: {fileID: 21300000, guid: c0e7c22e60879472fbb127fe99121c23, type: 3}
   - tag: 5
-    sprite: {fileID: 21300000, guid: 97cfe5af5ae36429d8f4dbf56dc41733, type: 3}
+    sprite: {fileID: 21300000, guid: 1046e0a0ea9804dad9ff2236f397a0e8, type: 3}
   - tag: 6
     sprite: {fileID: 21300000, guid: bc13ab71ffdd5480f9e9a06efa784a94, type: 3}
   - tag: 7
     sprite: {fileID: 21300000, guid: 23ac52ab6b4c04d13a67fc4d8c3f0d35, type: 3}
   - tag: 8
-    sprite: {fileID: 21300000, guid: 956ea1d390b074e24a0b3f71226f7a2c, type: 3}
+    sprite: {fileID: 21300000, guid: 23ac52ab6b4c04d13a67fc4d8c3f0d35, type: 3}
   - tag: 9
-    sprite: {fileID: 21300000, guid: 32c22c825e5bc4a0882efecf10ac9d4e, type: 3}
+    sprite: {fileID: 21300000, guid: 956ea1d390b074e24a0b3f71226f7a2c, type: 3}
   - tag: 10
+    sprite: {fileID: 21300000, guid: 32c22c825e5bc4a0882efecf10ac9d4e, type: 3}
+  - tag: 11
     sprite: {fileID: 21300000, guid: cdc8cc74d1d934c31bd1991f4d5a8e8c, type: 3}

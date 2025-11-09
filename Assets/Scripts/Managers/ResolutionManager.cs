@@ -18,16 +18,13 @@ public class ResolutionManager : MonoBehaviour
     public float statusEffectDelay = 0.6f;
     [Tooltip("Global pacing multiplier for all waits (higher = slower)")]
     public float pacingMultiplier = 1.75f;
-    // Tracks last herbivore that ate during ResolveHerbivores this round
-    Creature lastHerbivoreToEatThisRound = null;
 
 	public IEnumerator RevealAndResolveRound()
 	{
 		// Reveal pending cards into creatures
 		RevealPendings();
 
-        // Reset per-round trackers
-        lastHerbivoreToEatThisRound = null;
+        // Reset per-round trackers (none currently)
 
         // Round start hooks
         foreach (var c in AllCreatures())
@@ -200,8 +197,6 @@ public class ResolutionManager : MonoBehaviour
 			{
 				FeedbackManager.Instance?.ShowFloatingText($"+{taken} food", c.transform.position, new Color(0.3f, 1f, 0.3f));
 				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} ate {taken}.");
-                // Record as last herbivore that ate this round
-                lastHerbivoreToEatThisRound = c;
 				yield return new WaitForSeconds(eatDelay * pacingMultiplier);
             }
 		}
@@ -238,6 +233,9 @@ public class ResolutionManager : MonoBehaviour
             {
                 if (atk == null || tgt == null || atk.data == null || tgt.data == null) return false;
 
+                // Targets with Stealth are not targetable
+                if (tgt.HasStatus(StatusTag.Stealth)) return false;
+
                 // Effective speed considers fatigue and trait bonuses (mirrors ordering/UI logic)
                 static int EffSpeed(Creature c)
                 {
@@ -266,6 +264,27 @@ public class ResolutionManager : MonoBehaviour
                 }
 
                 // Non-avian attackers (Carnivores, or herbivores with attack traits):
+                // If attacker has Stealth, ignore body rule for this first attack
+                if (atk.HasStatus(StatusTag.Stealth))
+                {
+                    // Still enforce Carnivore vs Avian speed gate
+                    if (tgt.data.type == CardType.Avian && atk.data.type == CardType.Carnivore)
+                    {
+                        if (EffSpeed(atk) < EffSpeed(tgt)) return false;
+                    }
+                    // Respect additional target gating via traits
+                    if (!atk.HasStatus(StatusTag.Suppressed) && atk.traits != null)
+                    {
+                        var atkSnapS = atk.traits.ToArray();
+                        foreach (var t in atkSnapS)
+                        {
+                            if (t != null && !t.CanTarget(atk, tgt)) return false;
+                        }
+                    }
+                    return true;
+                }
+
+                // Normal non-avian targeting path:
                 // Carnivore vs Avian requires speed >= target
                 if (tgt.data.type == CardType.Avian && atk.data.type == CardType.Carnivore)
                 {
@@ -403,14 +422,6 @@ public class ResolutionManager : MonoBehaviour
                 target.ApplyDamage(baseDmg, attacker);
                 var dmgTag = harass ? "Harass" : "Hit";
                 FeedbackManager.Instance?.ShowFloatingText($"-{baseDmg} HP ({dmgTag})", target.transform.position, new Color(1f, 0.3f, 0.3f));
-                // Special: last herbivore to eat this round applies Bleeding on its first attack
-                if (attacker != null && attacker == lastHerbivoreToEatThisRound)
-                {
-                    target.ApplyBleeding(1);
-                    FeedbackManager.Instance?.ShowFloatingText("Bleeding (Stalked)", target.transform.position, new Color(0.9f, 0.1f, 0.1f));
-                    // Consume so it doesn't apply multiple times if it attacks again
-                    lastHerbivoreToEatThisRound = null;
-                }
             }
 
             // Remove target if dead
@@ -474,8 +485,11 @@ public class ResolutionManager : MonoBehaviour
         {
             if (c == null) continue;
             bool didAny = false;
+            bool didEat = c.eaten > 0;
+            bool isAvianOrCarnivore = c.data != null && (c.data.type == CardType.Avian || c.data.type == CardType.Carnivore);
+
             // Food scoring for herbivores only
-            if (c.data != null && c.data.type == CardType.Herbivore && c.eaten > 0)
+            if (c.data != null && c.data.type == CardType.Herbivore && didEat)
             {
                 int gain = c.eaten;
                 ScoreManager.Add(c.owner, gain);
@@ -483,33 +497,52 @@ public class ResolutionManager : MonoBehaviour
                 FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} scores {gain} from food");
                 didAny = true;
             }
-            // Starvation chip if ate nothing
-            if (c.eaten == 0)
-            {
-                // Cache position/name/owner in case the creature dies and is destroyed
-                Vector3 pos = c.transform.position;
-                string cname = c.name;
-                var owner = c.owner;
-				int starve = (WeatherManager.Instance != null) ? WeatherManager.Instance.GetStarvationDamageOrDefault(2) : 2;
-				c.ApplyDamage(starve, null);
 
-				FeedbackManager.Instance?.ShowFloatingText($"Starved -{starve} HP", pos, Color.gray);
-				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(owner)} {cname} takes {starve} starvation damage");
-                // If the creature died, skip further per-creature steps
-                if (c == null || c.currentHealth == 0)
-                {
-					if (didAny) yield return new WaitForSeconds(starveDelay * pacingMultiplier);
-                    continue;
-                }
-                didAny = true;
-            }
-            // Fatigue if partially fed
-            if (c.eaten > 0 && c.eaten < c.body)
+            // New starvation rules for Avian/Carnivore
+            if (isAvianOrCarnivore)
             {
-                c.ApplyFatigued(1);
-                didAny = true;
-                FeedbackManager.Instance?.ShowFloatingText("Fatigued", c.transform.position, Color.yellow);
+                int prevStacks = c.GetStatus(StatusTag.Starvation);
+                if (didEat)
+                {
+                    if (prevStacks > 0)
+                    {
+                        c.ClearStatus(StatusTag.Starvation);
+                        c.ApplyFatigued(1);
+                        FeedbackManager.Instance?.ShowFloatingText("Recovered (Fatigue +1)", c.transform.position, Color.yellow);
+                        didAny = true;
+                    }
+                }
+                else
+                {
+                    c.AddStatus(StatusTag.Starvation, 1);
+                    int stacksNow = c.GetStatus(StatusTag.Starvation);
+                    FeedbackManager.Instance?.ShowFloatingText($"Starving +{1} (x{stacksNow})", c.transform.position, Color.gray);
+                    FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} gains Starvation (x{stacksNow})");
+                    didAny = true;
+                    // Instant death at 3 stacks
+                    if (stacksNow >= 3)
+                    {
+                        FeedbackManager.Instance?.ShowFloatingText("Starved to death", c.transform.position, Color.red);
+                        c.Kill("Starvation");
+                        yield return new WaitForSeconds(starveDelay * pacingMultiplier);
+                        continue;
+                    }
+                }
+                // End-of-round starvation damage equal to stacks
+                int dmg = c.GetStatus(StatusTag.Starvation);
+                if (dmg > 0)
+                {
+                    c.ApplyDamage(dmg, null);
+                    FeedbackManager.Instance?.ShowFloatingText($"Starvation -{dmg} HP", c.transform.position, Color.gray);
+                    didAny = true;
+                    if (c == null || c.currentHealth == 0)
+                    {
+                        yield return new WaitForSeconds(starveDelay * pacingMultiplier);
+                        continue;
+                    }
+                }
             }
+
             if (didAny) yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
             if (c != null) c.eaten = 0;
         }

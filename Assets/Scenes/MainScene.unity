@@ -586,8 +586,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FoodPile
   count: 10
   refillPerRound: 10
-  maxCap: 12
   label: {fileID: 513923674}
+  baseFoodPerPlayer: 3
+  numPlayers: 2
+  boardSlotsPerPlayer: 3
 --- !u!4 &508416462
 Transform:
   m_ObjectHideFlags: 0

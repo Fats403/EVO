@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Glipto
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
-  cardName: 
+  cardName: Glipto
   artwork: {fileID: 0}
   type: 0
-  background: {fileID: 0}
-  size: 1
+  background: {fileID: -4479935867671537506, guid: c7f6644d25ca94ea89bc4e9e3e2b66aa, type: 3}
+  size: 4
   speed: 1
-  tier: 1
-  maxHealth: 3
+  tier: 2
+  maxHealth: 6
   baseTraits: []
