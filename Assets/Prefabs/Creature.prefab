@@ -638,17 +638,15 @@ MonoBehaviour:
   eaten: 0
   owner: 0
   traits: []
-  tempSpeedMod: 0
-  defendedThisRound: 0
   maxHealth: 0
   currentHealth: 0
   fatigueStacks: 0
   isDying: 0
   roundDamageDealt: 0
   roundHealingUndone: 0
-  speedText: {fileID: 0}
-  bodyText: {fileID: 0}
-  healthText: {fileID: 0}
+  speedText: {fileID: 2309772588379586272}
+  bodyText: {fileID: 1063540675198084520}
+  healthText: {fileID: 1693638992708781782}
 --- !u!114 &4797494379576975761
 MonoBehaviour:
   m_ObjectHideFlags: 0

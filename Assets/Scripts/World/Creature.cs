@@ -128,11 +128,30 @@ public class Creature : MonoBehaviour
 
     public void ApplyDamage(int amount, Creature source)
     {
+        ApplyDamageInternal(amount, source, allowReflect: true);
+    }
+
+    private void ApplyDamageInternal(int amount, Creature source, bool allowReflect)
+    {
         // Shielded negates the next incoming damage instance per charge
         if (amount > 0 && GetStatus(StatusTag.Shielded) > 0)
         {
             DecrementStatus(StatusTag.Shielded, 1);
             FeedbackManager.Instance?.ShowFloatingText("Shielded", transform.position, Color.cyan);
+            return;
+        }
+
+        // Reflect: negate and reflect the would-be damage (one charge), but do not re-reflect
+        if (allowReflect && amount > 0 && GetStatus(StatusTag.Reflect) > 0)
+        {
+            DecrementStatus(StatusTag.Reflect, 1);
+            FeedbackManager.Instance?.ShowFloatingText("Reflect", transform.position, Color.cyan);
+            int reflected = Mathf.Max(0, amount);
+            if (source != null)
+            {
+                // Apply reflected damage to the attacker; allow their Shielded but not their Reflect to trigger
+                source.ApplyDamageInternal(reflected, this, allowReflect: false);
+            }
             return;
         }
 
@@ -146,7 +165,7 @@ public class Creature : MonoBehaviour
             source.roundDamageDealt += dmg;
             if (!source.damagedTargetsThisRound.Contains(this)) source.damagedTargetsThisRound.Add(this);
         }
-        StartCoroutine(FlashDamage(0.12f));
+        StartCoroutine(FlashDamage(0.2f));
         // Trait hooks
         if (source != null && source.traits != null)
         {

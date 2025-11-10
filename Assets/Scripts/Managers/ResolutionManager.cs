@@ -422,6 +422,11 @@ public class ResolutionManager : MonoBehaviour
                 target.ApplyDamage(baseDmg, attacker);
                 var dmgTag = harass ? "Harass" : "Hit";
                 FeedbackManager.Instance?.ShowFloatingText($"-{baseDmg} HP ({dmgTag})", target.transform.position, new Color(1f, 0.3f, 0.3f));
+                // Carnivores count a successful damaging hit as "eating" for starvation purposes
+                if (attacker != null && attacker.data != null && attacker.data.type == CardType.Carnivore)
+                {
+                    attacker.eaten = Mathf.Max(attacker.eaten, 1);
+                }
             }
 
             // Remove target if dead

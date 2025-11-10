@@ -2,6 +2,7 @@ public enum StatusTag
 {
     Infected,    // green skull
     Shielded,    // shield
+    Reflect,     // reflect next damage
     Fatigued,    // down arrow
     Starvation,  // starving icon
     Rage,        // flame / sword
