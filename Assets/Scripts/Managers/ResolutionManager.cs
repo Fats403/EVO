@@ -222,9 +222,14 @@ public class ResolutionManager : MonoBehaviour
                 }
             }
             // Candidates: opponent, cannot target Carnivores
-            var candidates = AllCreatures()
-                .Where(c => c != null && c.data != null && c.owner != attacker.owner)
-                .Where(c => c.data.type != CardType.Carnivore)
+            var enemies = AllCreatures()
+                .Where(c => c != null && c.data != null && c.owner != attacker.owner);
+            // Taunt: if any enemy has Taunt, restrict to only taunt targets (closest wins), and allow Carnivores
+            var tauntTargets = enemies.Where(c => c.HasStatus(StatusTag.Taunt)).ToList();
+            var basePool = (tauntTargets.Count > 0)
+                ? tauntTargets.AsEnumerable()
+                : enemies.Where(c => c.data.type != CardType.Carnivore);
+            var candidates = basePool
                 .Where(c => IsValidTarget(attacker, c))
                 .OrderBy(c => Vector3.SqrMagnitude(c.transform.position - attacker.transform.position))
                 .ToList();
@@ -235,6 +240,8 @@ public class ResolutionManager : MonoBehaviour
 
                 // Targets with Stealth are not targetable
                 if (tgt.HasStatus(StatusTag.Stealth)) return false;
+                // Targets with Taunt are always valid (ignore body rules and carnivore exclusion)
+                if (tgt.HasStatus(StatusTag.Taunt)) return true;
 
                 // Effective speed considers fatigue and trait bonuses (mirrors ordering/UI logic)
                 static int EffSpeed(Creature c)

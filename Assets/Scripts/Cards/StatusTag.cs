@@ -5,6 +5,7 @@ public enum StatusTag
     Reflect,     // reflect next damage
     Fatigued,    // down arrow
     Starvation,  // starving icon
+    Taunt,       // forces targeting
     Rage,        // flame / sword
     Stunned,     // zzz / stun
     Suppressed,  // no-sign

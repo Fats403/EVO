@@ -200,6 +200,19 @@ public class Creature : MonoBehaviour
     {
         if (isDying) return;
         isDying = true;
+        // Default avian scavenging: when any creature dies, all living avians gain +1 food
+        var all = FindObjectsByType<Creature>(FindObjectsSortMode.None);
+        foreach (var other in all)
+        {
+            if (other == null || other == this) continue;
+            if (other.currentHealth <= 0 || other.isDying) continue;
+            if (other.data != null && other.data.type == CardType.Avian)
+            {
+                other.eaten += 1;
+                FeedbackManager.Instance?.ShowFloatingText("Scavenge +1", other.transform.position, new Color(0.5f, 0.8f, 1f));
+                FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(other.owner)} {other.name} scavenges +1");
+            }
+        }
         var s = FindSlotOf(this);
         if (s != null) s.Vacate();
         StartCoroutine(FadeAndDestroy(0.5f));
@@ -335,7 +348,7 @@ public class Creature : MonoBehaviour
         // Consider these negative; adjust as desired
         return tag switch
         {
-            StatusTag.Infected or StatusTag.Fatigued or StatusTag.Starvation or StatusTag.Stunned or StatusTag.Suppressed or StatusTag.NoForage or StatusTag.Bleeding => true,
+            StatusTag.Infected or StatusTag.Fatigued or StatusTag.Starvation or StatusTag.Taunt or StatusTag.Stunned or StatusTag.Suppressed or StatusTag.NoForage or StatusTag.Bleeding => true,
             _ => false,
         };
     }
@@ -367,6 +380,8 @@ public class Creature : MonoBehaviour
     {
         // Fatigued: -1
         if (GetStatus(StatusTag.Fatigued) > 0) DecrementStatus(StatusTag.Fatigued, 1);
+        // Taunt: -1
+        if (GetStatus(StatusTag.Taunt) > 0) DecrementStatus(StatusTag.Taunt, 1);
 
         // DamageUp: clear all
         if (GetStatus(StatusTag.DamageUp) > 0) ClearStatus(StatusTag.DamageUp);
@@ -395,8 +410,6 @@ public class Creature : MonoBehaviour
         // NoForage: -1
         if (GetStatus(StatusTag.NoForage) > 0) DecrementStatus(StatusTag.NoForage, 1);
     }
-
-
 
     private BoardSlot FindSlotOf(Creature c)
     {
