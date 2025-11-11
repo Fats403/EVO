@@ -29,6 +29,13 @@ public abstract class Trait : ScriptableObject
     public virtual bool CanAttack(Creature self) { return self != null && self.data != null && self.data.type != CardType.Herbivore; }
     public virtual bool CanTarget(Creature self, Creature target) { return true; }
     public virtual bool CanForage(Creature self) { return true; }
+	// Targeting overrides
+	public virtual bool CanTargetAny(Creature self) { return false; }
+	public virtual bool IgnoreAvianSpeedRequirement(Creature self, Creature target) { return false; }
+	// Damage override (e.g., fixed damage). If returns true, use fixedDamage and skip other modifiers.
+	public virtual bool TryOverrideFinalDamage(Creature self, Creature target, out int fixedDamage) { fixedDamage = 0; return false; }
+	// Fires after an attack attempt resolves (negated or applied)
+	public virtual void OnAfterAttackResolved(Creature self, Creature target, bool wasNegated) {}
 
     // Eating and targeting reaction hooks
     public virtual void OnAfterEat(Creature self, int amountTaken, FoodPile pile) {}

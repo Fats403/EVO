@@ -29,11 +29,6 @@ public class RegressionTrait : EffectTraitBase
         }
         base.OnRoundEnd(self);
     }
-
-    public override void CollectStatusTags(Creature self, List<StatusTag> into)
-    {
-        into?.Add(StatusTag.Suppressed);
-    }
 }
 
 

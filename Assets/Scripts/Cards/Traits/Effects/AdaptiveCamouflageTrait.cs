@@ -8,11 +8,6 @@ public class AdaptiveCamouflageTrait : EffectTraitBase
     public override bool CanAttack(Creature self) { return false; }
     public override int ModifyHerbivoreEatAmount(Creature self, int baseAmount, FoodPile pile) { return 0; }
 
-    public override void CollectStatusTags(Creature self, List<StatusTag> into)
-    {
-        if (into == null) return;
-        into.Add(StatusTag.Immune);
-    }
 }
 
 

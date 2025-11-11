@@ -9,12 +9,6 @@ public class ParasiticInfectionTrait : EffectTraitBase
         if (self == null) return;
         self.ApplyDamage(1, null);
     }
-
-    public override void CollectStatusTags(Creature self, List<StatusTag> into)
-    {
-        if (into == null) return;
-        into.Add(StatusTag.Infected);
-    }
 }
 
 

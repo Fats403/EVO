@@ -18,8 +18,9 @@ public class Creature : MonoBehaviour
     public int currentHealth;
     public int fatigueStacks;
     public bool isDying;
+	private int pendingDamageUp;
 
-    // Unified status stacks (Shielded, Infected, etc.)
+    // Status stacks (Shielded, Infected, etc.)
     private readonly Dictionary<StatusTag, int> statuses = new();
 
     public int roundDamageDealt;
@@ -62,6 +63,7 @@ public class Creature : MonoBehaviour
         roundDamageDealt = 0;
         roundHealingUndone = 0;
         damagedTargetsThisRound.Clear();
+        pendingDamageUp = 0;
 
         traits.Clear();
         if (data.baseTraits != null && data.baseTraits.Length > 0)
@@ -240,6 +242,14 @@ public class Creature : MonoBehaviour
                 FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(other.owner)} {other.name} scavenges +1");
             }
         }
+        // Notify all traits about this death
+        foreach (var other in all)
+        {
+            if (other == null || other == this) continue;
+            if (other.traits == null) continue;
+            var trSnapshot = other.traits.ToArray();
+            foreach (var tr in trSnapshot) { if (tr != null) tr.OnAnyDeath(other, this); }
+        }
         var s = FindSlotOf(this);
         if (s != null) s.Vacate();
         StartCoroutine(FadeAndDestroy(0.5f));
@@ -409,6 +419,12 @@ public class Creature : MonoBehaviour
             ApplyDamage(1, null);
             DecrementStatus(StatusTag.Infected, 1);
         }
+        // Convert pending next-round DamageUp into active stacks
+        if (pendingDamageUp > 0)
+        {
+            AddStatus(StatusTag.DamageUp, pendingDamageUp);
+            pendingDamageUp = 0;
+        }
     }
 
     public void TickStatusesAtRoundEnd()
@@ -462,5 +478,11 @@ public class Creature : MonoBehaviour
             if (s.currentCreature == c) return s;
         }
         return null;
+    }
+
+    public void GrantNextRoundDamageUp(int stacks)
+    {
+        if (stacks <= 0) return;
+        pendingDamageUp += stacks;
     }
 }

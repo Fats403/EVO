@@ -13,11 +13,6 @@ public class ReinforcedCarapaceTrait : EffectTraitBase
         consumed = true;
         return reduced;
     }
-
-    public override void CollectStatusTags(Creature self, List<StatusTag> into)
-    {
-        if (!consumed) into?.Add(StatusTag.Shielded);
-    }
 }
 
 

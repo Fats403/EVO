@@ -8,12 +8,6 @@ public class FeralRageTrait : EffectTraitBase
     {
         return Mathf.Max(0, baseDamage * 2);
     }
-
-    public override void CollectStatusTags(Creature self, List<StatusTag> into)
-    {
-        if (into == null) return;
-        into.Add(StatusTag.Rage);
-    }
 }
 
 
