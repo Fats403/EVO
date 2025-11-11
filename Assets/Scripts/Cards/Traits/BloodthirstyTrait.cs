@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Linq;
 
-[CreateAssetMenu(menuName = "Traits/Bloodthirsty")]
+[CreateAssetMenu(menuName = "Traits/Carnivores/Bloodthirsty")]
 public class BloodthirstyTrait : Trait
 {
 	public override void OnAfterKill(Creature self, Creature target)

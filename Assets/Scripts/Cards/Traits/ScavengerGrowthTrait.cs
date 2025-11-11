@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Scavenger Growth")]
+[CreateAssetMenu(menuName = "Traits/Carnivores/Scavenger Growth")]
 public class ScavengerGrowthTrait : Trait
 {
 	public override void OnAnyDeath(Creature self, Creature dead)

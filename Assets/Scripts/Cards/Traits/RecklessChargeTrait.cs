@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Reckless Charge")]
+[CreateAssetMenu(menuName = "Traits/Carnivores/Reckless Charge")]
 public class RecklessChargeTrait : Trait
 {
 	public override bool CanTargetEqualBody(Creature self, Creature target) { return true; }

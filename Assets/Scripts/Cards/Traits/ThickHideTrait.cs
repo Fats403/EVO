@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Thick Hide")]
+[CreateAssetMenu(menuName = "Traits/Herbivores/Thick Hide")]
 public class ThickHideTrait : Trait
 {
 	public override void OnAfterEat(Creature self, int amountTaken, FoodPile pile)

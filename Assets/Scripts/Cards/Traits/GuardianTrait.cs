@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Guardian")]
+[CreateAssetMenu(menuName = "Traits/Herbivores/Guardian")]
 public class GuardianTrait : Trait
 {
 	public override void OnAnyDamage(Creature self, Creature victim, Creature attacker, int finalDamage)

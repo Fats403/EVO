@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Phalanx Leader")]
+[CreateAssetMenu(menuName = "Traits/Herbivores/Phalanx Leader")]
 public class PhalanxLeaderTrait : Trait
 {
 	public override void OnRoundStart(Creature self)

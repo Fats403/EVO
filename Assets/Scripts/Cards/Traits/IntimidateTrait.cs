@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Intimidate")]
+[CreateAssetMenu(menuName = "Traits/Carnivores/Intimidate")]
 public class IntimidateTrait : Trait
 {
 	public override void OnRoundStart(Creature self)

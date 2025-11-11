@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Protector's Fury")]
+[CreateAssetMenu(menuName = "Traits/Herbivores/Protector's Fury")]
 public class ProtectorsFuryTrait : Trait
 {
 	public override void OnAllyTargeted(Creature self, Creature ally, Creature attacker)

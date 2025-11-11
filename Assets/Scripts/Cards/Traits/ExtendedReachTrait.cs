@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Extended Reach")]
+[CreateAssetMenu(menuName = "Traits/Herbivores/Extended Reach")]
 public class ExtendedReachTrait : Trait
 {
 	public override void OnAfterEat(Creature self, int amountTaken, FoodPile pile)

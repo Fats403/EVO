@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Armored Counter")]
+[CreateAssetMenu(menuName = "Traits/Herbivores/Armored Counter")]
 public class ArmoredCounterTrait : Trait
 {
 	public override void OnDamageTaken(Creature self, Creature attacker, int finalDamage)

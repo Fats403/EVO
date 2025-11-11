@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
-  m_Name: Feather Fang
-  m_EditorClassIdentifier: Assembly-CSharp::CardData
-  cardName: Feather Fang
-  artwork: {fileID: -709686428871257337, guid: 0579990e0813c48c49d743951f3f16bc, type: 3}
-  type: 2
-  background: {fileID: 167301960625406016, guid: bb0ad0723eb114ce2858235face1b225, type: 3}
+  m_Name: Nibbles
+  m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardName: Nibbles
+  dinosaurName: Compsognathus
+  artwork: {fileID: 21300000, guid: 1f28e4ab63af84b7783a3501688625ec, type: 3}
+  type: 1
+  background: {fileID: 91400773830335861, guid: 8c31de67644694e8d83f417669f04623, type: 3}
   size: 1
   speed: 4
   tier: 1
-  maxHealth: 3
+  maxHealth: 1
   baseTraits:
-  - {fileID: 11400000, guid: 96b2c5ed870904de1a8a6cfbbb863279, type: 2}
+  - {fileID: 11400000, guid: af84839fc17fc4c9490a8ad22951ba86, type: 2}

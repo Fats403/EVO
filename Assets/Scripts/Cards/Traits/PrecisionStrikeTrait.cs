@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Precision Strike")]
+[CreateAssetMenu(menuName = "Traits/Carnivores/Precision Strike")]
 public class PrecisionStrikeTrait : Trait
 {
 	public override bool CanTargetAny(Creature self) { return true; }

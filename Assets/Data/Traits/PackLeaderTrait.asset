@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea4c88ae1b08b4b1e883c15146baa9f0, type: 3}
+  m_Name: PackLeaderTrait
+  m_EditorClassIdentifier: Assembly-CSharp::PackLeaderTrait
+  traitName: Pack Leader
+  description: When this attacks, all other allied carnivores attack the same target
+    immediately after (each must follow body rules individually)

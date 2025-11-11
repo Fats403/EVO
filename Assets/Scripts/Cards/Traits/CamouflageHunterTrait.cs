@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Camouflage Hunter")]
+[CreateAssetMenu(menuName = "Traits/Carnivores/Camouflage Hunter")]
 public class CamouflageHunterTrait : Trait
 {
 	public override void OnRoundStart(Creature self)

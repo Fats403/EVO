@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Blood Rush")]
+[CreateAssetMenu(menuName = "Traits/Carnivores/Blood Rush")]
 public class BloodRushTrait : Trait
 {
 	public override void OnAfterKill(Creature self, Creature target)

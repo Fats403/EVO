@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Sky Hunter")]
+[CreateAssetMenu(menuName = "Traits/Carnivores/Sky Hunter")]
 public class SkyHunterTrait : Trait
 {
 	public override bool IgnoreAvianSpeedRequirement(Creature self, Creature target)

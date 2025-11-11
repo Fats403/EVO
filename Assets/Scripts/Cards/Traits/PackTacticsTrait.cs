@@ -1,8 +1,8 @@
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Clever")]
-public class CleverTrait : Trait
+[CreateAssetMenu(menuName = "Traits/Carnivores/Pack Tactics")]
+public class PackTacticsTrait : Trait
 {
 	public override int SpeedBonus(Creature self)
 	{

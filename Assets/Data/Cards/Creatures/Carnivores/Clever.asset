@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
-  m_Name: Wind Seeker
-  m_EditorClassIdentifier: Assembly-CSharp::CardData
-  cardName: Wind Seeker
-  artwork: {fileID: -5513685828228860420, guid: 4360790fbde864348b81ea290107de66, type: 3}
-  type: 2
-  background: {fileID: 167301960625406016, guid: bb0ad0723eb114ce2858235face1b225, type: 3}
+  m_Name: Clever
+  m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardName: Clever
+  dinosaurName: Velociraptor
+  artwork: {fileID: 21300000, guid: e1a8975a0478c498692c1ba4335bc6c1, type: 3}
+  type: 1
+  background: {fileID: 91400773830335861, guid: 8c31de67644694e8d83f417669f04623, type: 3}
   size: 2
   speed: 3
   tier: 1
-  maxHealth: 3
+  maxHealth: 2
   baseTraits:
-  - {fileID: 11400000, guid: f7764a4b0774f431db212af9cf0c6b36, type: 2}
+  - {fileID: 11400000, guid: b4081c1257ef54b1d8b0e9f2f5bdb87a, type: 2}

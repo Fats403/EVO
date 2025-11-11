@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Linq;
 
-[CreateAssetMenu(menuName = "Traits/Apex Predator")]
+[CreateAssetMenu(menuName = "Traits/Carnivores/Apex Predator")]
 public class ApexPredatorTrait : Trait
 {
 	public override void OnRoundStart(Creature self)

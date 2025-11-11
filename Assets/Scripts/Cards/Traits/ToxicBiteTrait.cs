@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Toxic Bite")]
+[CreateAssetMenu(menuName = "Traits/Carnivores/Toxic Bite")]
 public class ToxicBiteTrait : Trait
 {
 	public override void OnDamageDealt(Creature self, Creature target, int finalDamage)

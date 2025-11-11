@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
-  m_Name: GrimGull
+  m_Name: Horns
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
-  cardName: Grim Gull
-  artwork: {fileID: -7317750863927162629, guid: 1a6c71f21328f42698157191c9cc7979, type: 3}
-  type: 2
-  background: {fileID: 167301960625406016, guid: bb0ad0723eb114ce2858235face1b225, type: 3}
-  size: 2
-  speed: 3
-  tier: 1
-  maxHealth: 3
+  cardName: Horns
+  dinosaurName: Ceratosaurus
+  artwork: {fileID: 0}
+  type: 1
+  background: {fileID: 91400773830335861, guid: 8c31de67644694e8d83f417669f04623, type: 3}
+  size: 3
+  speed: 1
+  tier: 2
+  maxHealth: 4
   baseTraits:
-  - {fileID: 11400000, guid: 824c8984b0ec1443185344cbe449a5c9, type: 2}
+  - {fileID: 11400000, guid: 6c1b475f1b13c40ec8d1c81315416bda, type: 2}

@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Herd Caller")]
+[CreateAssetMenu(menuName = "Traits/Herbivores/Herd Caller")]
 public class HerdCallerTrait : Trait
 {
 	public override void OnAfterEat(Creature self, int amountTaken, FoodPile pile)

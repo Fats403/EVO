@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Linq;
 
-[CreateAssetMenu(menuName = "Traits/Pack Leader")]
+[CreateAssetMenu(menuName = "Traits/Carnivores/Pack Leader")]
 public class PackLeaderTrait : Trait
 {
 	public override void OnAfterAttackResolved(Creature self, Creature target, bool wasNegated)

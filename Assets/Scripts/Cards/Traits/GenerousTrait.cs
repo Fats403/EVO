@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Generous")]
+[CreateAssetMenu(menuName = "Traits/Herbivores/Generous")]
 public class GenerousTrait : Trait
 {
 	public override void OnAfterEat(Creature self, int amountTaken, FoodPile pile)

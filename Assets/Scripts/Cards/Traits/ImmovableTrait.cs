@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Immovable")]
+[CreateAssetMenu(menuName = "Traits/Herbivores/Immovable")]
 public class ImmovableTrait : Trait
 {
 	public override void OnRoundStart(Creature self)

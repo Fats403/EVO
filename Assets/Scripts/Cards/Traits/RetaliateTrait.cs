@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Retaliate")]
+[CreateAssetMenu(menuName = "Traits/Herbivores/Retaliate")]
 public class RetaliateTrait : Trait
 {
 	public override void OnTargetedByAttack(Creature self, Creature attacker)
