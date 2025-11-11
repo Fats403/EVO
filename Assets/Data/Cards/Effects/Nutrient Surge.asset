@@ -17,7 +17,7 @@ MonoBehaviour:
   description: Add +3 to the food pile. This round herbivores you control eat +1
   targetSide: 0
   targetType: 1
-  targetCount: 0
+  targetCount: 2
   maxTargets: 1
   isGlobal: 1
   traitsToAttachToTargets:

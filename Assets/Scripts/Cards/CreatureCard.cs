@@ -5,6 +5,7 @@ public class CreatureCard : ScriptableObject
 {
     [Header("Identity")]
     public string cardName;
+    public string dinosaurName;
 
     [Header("Visuals")]
     public Sprite artwork;

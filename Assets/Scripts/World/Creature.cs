@@ -155,6 +155,26 @@ public class Creature : MonoBehaviour
             return;
         }
 
+        // Absorb: stacks reduce damage cumulatively; allow damage to be 0; decrement stacks by absorbed amount
+        if (amount > 0)
+        {
+            int absorb = GetStatus(StatusTag.Absorb);
+            if (absorb > 0)
+            {
+                int absorbed = Mathf.Min(absorb, amount);
+                amount -= absorbed;
+                DecrementStatus(StatusTag.Absorb, absorbed);
+                if (absorbed > 0)
+                {
+                    FeedbackManager.Instance?.ShowFloatingText("Absorb", transform.position, Color.cyan);
+                }
+                if (amount <= 0)
+                {
+                    return;
+                }
+            }
+        }
+
         int dmg = Mathf.Max(0, amount);
         if (dmg == 0) return;
         // Taking real damage breaks Stealth
@@ -174,6 +194,13 @@ public class Creature : MonoBehaviour
         if (traits != null)
         {
             foreach (var tr in traits) { if (tr != null) tr.OnDamageTaken(this, source, dmg); }
+        }
+        // Global post-damage notification
+        var all = FindObjectsByType<Creature>(FindObjectsSortMode.None);
+        foreach (var other in all)
+        {
+            if (other == null || other.traits == null) continue;
+            foreach (var tr in other.traits.ToArray()) { if (tr != null) tr.OnAnyDamage(other, this, source, dmg); }
         }
         RefreshStatsUI();
         if (currentHealth == 0)
@@ -266,7 +293,8 @@ public class Creature : MonoBehaviour
             int traitSpeed = (!HasStatus(StatusTag.Suppressed) && traits != null)
                 ? traits.Sum(t => t != null ? t.SpeedBonus(this) : 0)
                 : 0;
-            int displaySpeed = speed - GetStatus(StatusTag.Fatigued) + traitSpeed;
+            int tempSpeed = GetStatus(StatusTag.SpeedUp) - GetStatus(StatusTag.Fatigued);
+            int displaySpeed = speed + tempSpeed + traitSpeed;
             speedText.text = displaySpeed.ToString();
             if (displaySpeed > baseSpeed) speedText.color = Color.green;
             else if (displaySpeed < baseSpeed) speedText.color = Color.red;
@@ -276,9 +304,10 @@ public class Creature : MonoBehaviour
         // Body display relative to base body
         if (bodyText != null)
         {
-            bodyText.text = body.ToString();
-            if (body > baseBody) bodyText.color = Color.green;
-            else if (body < baseBody) bodyText.color = Color.red;
+            int displayBody = body + GetStatus(StatusTag.BodyUp) - GetStatus(StatusTag.Malnourished);
+            bodyText.text = displayBody.ToString();
+            if (displayBody > baseBody) bodyText.color = Color.green;
+            else if (displayBody < baseBody) bodyText.color = Color.red;
             else bodyText.color = Color.white;
         }
         if (healthText != null)
@@ -314,9 +343,15 @@ public class Creature : MonoBehaviour
             FeedbackManager.Instance?.ShowFloatingText("Immune", transform.position, Color.cyan);
             return;
         }
+        // Mutual exclusivity: BodyUp vs Malnourished; SpeedUp vs Fatigued
+        if (tag == StatusTag.BodyUp) ClearStatus(StatusTag.Malnourished);
+        if (tag == StatusTag.Malnourished) ClearStatus(StatusTag.BodyUp);
+        if (tag == StatusTag.SpeedUp) ClearStatus(StatusTag.Fatigued);
+        if (tag == StatusTag.Fatigued) ClearStatus(StatusTag.SpeedUp);
         int newValue = GetStatus(tag) + stacks;
         // Stealth is non-stacking: clamp to 1
         if (tag == StatusTag.Stealth) newValue = newValue > 0 ? 1 : 0;
+        
         statuses[tag] = newValue;
         RefreshStatsUI();
     }
@@ -348,7 +383,7 @@ public class Creature : MonoBehaviour
         // Consider these negative; adjust as desired
         return tag switch
         {
-            StatusTag.Infected or StatusTag.Fatigued or StatusTag.Starvation or StatusTag.Taunt or StatusTag.Stunned or StatusTag.Suppressed or StatusTag.NoForage or StatusTag.Bleeding => true,
+            StatusTag.Infected or StatusTag.Fatigued or StatusTag.Starvation or StatusTag.Taunt or StatusTag.Stunned or StatusTag.Suppressed or StatusTag.NoForage or StatusTag.Bleeding or StatusTag.Malnourished => true,
             _ => false,
         };
     }
@@ -380,6 +415,8 @@ public class Creature : MonoBehaviour
     {
         // Fatigued: -1
         if (GetStatus(StatusTag.Fatigued) > 0) DecrementStatus(StatusTag.Fatigued, 1);
+        // SpeedUp: -1
+        if (GetStatus(StatusTag.SpeedUp) > 0) DecrementStatus(StatusTag.SpeedUp, 1);
         // Taunt: -1
         if (GetStatus(StatusTag.Taunt) > 0) DecrementStatus(StatusTag.Taunt, 1);
 
@@ -400,6 +437,12 @@ public class Creature : MonoBehaviour
         {
             ApplyDamage(bleed, null);
         }
+
+        // BodyUp: -1 ; Malnourished: -1
+        if (GetStatus(StatusTag.BodyUp) > 0) DecrementStatus(StatusTag.BodyUp, 1);
+        if (GetStatus(StatusTag.Malnourished) > 0) DecrementStatus(StatusTag.Malnourished, 1);
+        // Absorb: clear remaining stacks at end of round
+        if (GetStatus(StatusTag.Absorb) > 0) ClearStatus(StatusTag.Absorb);
 
         // Suppressed: -1
         if (GetStatus(StatusTag.Suppressed) > 0) DecrementStatus(StatusTag.Suppressed, 1);

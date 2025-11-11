@@ -49,7 +49,23 @@ public class EffectsManager : MonoBehaviour
             foreach (var c in all)
             {
                 if (c == null || c.data == null) continue;
-                if (!card.IsValidTarget(c, player)) continue;
+                // For global cards, we still want to apply to all creatures matching side/type filters.
+                bool ok = true;
+                switch (card.targetSide)
+                {
+                    case EffectTargetSide.Ally: ok = c.owner == player; break;
+                    case EffectTargetSide.Enemy: ok = c.owner != player; break;
+                    case EffectTargetSide.Any: ok = true; break;
+                }
+                if (!ok) continue;
+                switch (card.targetType)
+                {
+                    case EffectTargetType.Herbivore: ok = c.data.type == CardType.Herbivore; break;
+                    case EffectTargetType.Carnivore: ok = c.data.type == CardType.Carnivore; break;
+                    case EffectTargetType.Avian: ok = c.data.type == CardType.Avian; break;
+                    case EffectTargetType.Any: ok = true; break;
+                }
+                if (!ok) continue;
                 list.Add(c);
             }
             targets = list;

@@ -29,6 +29,15 @@ public abstract class Trait : ScriptableObject
     public virtual bool CanAttack(Creature self) { return self != null && self.data != null && self.data.type != CardType.Herbivore; }
     public virtual bool CanTarget(Creature self, Creature target) { return true; }
     public virtual bool CanForage(Creature self) { return true; }
+
+    // Eating and targeting reaction hooks
+    public virtual void OnAfterEat(Creature self, int amountTaken, FoodPile pile) {}
+    // Fires when this creature becomes the target of an attack (before negate/damage)
+    public virtual void OnTargetedByAttack(Creature self, Creature attacker) {}
+    // Fires on allies when some ally is targeted by an attack
+    public virtual void OnAllyTargeted(Creature self, Creature ally, Creature attacker) {}
+    // Global notification after any damage is finalized and applied
+    public virtual void OnAnyDamage(Creature self, Creature victim, Creature attacker, int finalDamage) {}
 }
 
 

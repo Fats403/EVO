@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class ResolutionManager : MonoBehaviour
 {
+	public static ResolutionManager Instance { get; private set; }
 	public FoodPile foodPile;
     [Header("Active Global Effects")]
     public System.Collections.Generic.List<GlobalEffectBase> activeGlobalEffects = new System.Collections.Generic.List<GlobalEffectBase>();
@@ -18,6 +19,28 @@ public class ResolutionManager : MonoBehaviour
     public float statusEffectDelay = 0.6f;
     [Tooltip("Global pacing multiplier for all waits (higher = slower)")]
     public float pacingMultiplier = 1.75f;
+
+	void Awake()
+	{
+		Instance = this;
+	}
+
+	// --- Effective stat helpers ---
+	int EffBody(Creature c)
+	{
+		if (c == null) return 0;
+		int temp = c.GetStatus(StatusTag.BodyUp) - c.GetStatus(StatusTag.Malnourished);
+		return c.body + temp;
+	}
+	int EffSpeed(Creature c)
+	{
+		if (c == null) return 0;
+		int traitSpeed = (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+			? c.traits.Sum(t => t != null ? t.SpeedBonus(c) : 0)
+			: 0;
+		int temp = c.GetStatus(StatusTag.SpeedUp) - c.GetStatus(StatusTag.Fatigued);
+		return c.speed + temp + traitSpeed;
+	}
 
 	public IEnumerator RevealAndResolveRound()
 	{
@@ -112,11 +135,7 @@ public class ResolutionManager : MonoBehaviour
         var q = FindObjectsByType<Creature>(FindObjectsSortMode.None)
             .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
             .OrderByDescending(c =>
-                c.speed
-                - c.GetStatus(StatusTag.Fatigued)
-                + ((!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
-                    ? c.traits.Sum(t => t != null ? t.SpeedBonus(c) : 0)
-                    : 0)
+                EffSpeed(c)
             );
         // Deterministic tie-breaker: RNG-based shuffle for equals
         int Rand()
@@ -178,7 +197,7 @@ public class ResolutionManager : MonoBehaviour
 			if (c == null || c.data == null) continue;
 			if (c.data.type != CardType.Herbivore) continue;
             if (c.HasStatus(StatusTag.Stunned) || c.HasStatus(StatusTag.NoForage)) continue;
-			int need = Mathf.Max(0, c.body - c.eaten);
+			int need = Mathf.Max(0, EffBody(c) - c.eaten);
 			if (need <= 0) continue;
 			int desired = need;
             if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
@@ -195,6 +214,12 @@ public class ResolutionManager : MonoBehaviour
 			c.eaten += taken;
 			if (taken > 0)
 			{
+				// Notify eater traits
+				if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+				{
+					var eatSnap = c.traits.ToArray();
+					foreach (var t in eatSnap) { if (t != null) t.OnAfterEat(c, taken, foodPile); }
+				}
 				FeedbackManager.Instance?.ShowFloatingText($"+{taken} food", c.transform.position, new Color(0.3f, 1f, 0.3f));
 				FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} ate {taken}.");
 				yield return new WaitForSeconds(eatDelay * pacingMultiplier);
@@ -234,7 +259,7 @@ public class ResolutionManager : MonoBehaviour
                 .OrderBy(c => Vector3.SqrMagnitude(c.transform.position - attacker.transform.position))
                 .ToList();
 
-            static bool IsValidTarget(Creature atk, Creature tgt)
+            bool IsValidTarget(Creature atk, Creature tgt)
             {
                 if (atk == null || tgt == null || atk.data == null || tgt.data == null) return false;
 
@@ -242,15 +267,6 @@ public class ResolutionManager : MonoBehaviour
                 if (tgt.HasStatus(StatusTag.Stealth)) return false;
                 // Targets with Taunt are always valid (ignore body rules and carnivore exclusion)
                 if (tgt.HasStatus(StatusTag.Taunt)) return true;
-
-                // Effective speed considers fatigue and trait bonuses (mirrors ordering/UI logic)
-                static int EffSpeed(Creature c)
-                {
-                    int traitSpeed = (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
-                        ? c.traits.Sum(t => t != null ? t.SpeedBonus(c) : 0)
-                        : 0;
-                    return c.speed - c.GetStatus(StatusTag.Fatigued) + traitSpeed;
-                }
 
                 // Avian attackers: speed-based harass targeting against non-carnivores
                 if (atk.data.type == CardType.Avian)
@@ -306,9 +322,9 @@ public class ResolutionManager : MonoBehaviour
                         if (t != null) bodyBonus += t.PredatorBodyBonusForTargeting(atk);
                     }
                 }
-                int effAtkBody = atk.body + bodyBonus;
-                if (tgt.body < effAtkBody) return true;
-                if (tgt.body == effAtkBody)
+                int effAtkBody = EffBody(atk) + bodyBonus;
+                if (EffBody(tgt) < effAtkBody) return true;
+                if (EffBody(tgt) == effAtkBody)
                 {
                     // allow equal-body if any trait grants it
                     if (!atk.HasStatus(StatusTag.Suppressed) && atk.traits != null)
@@ -343,6 +359,26 @@ public class ResolutionManager : MonoBehaviour
             if (atkCreature != null)
                 yield return atkCreature.StartCoroutine(atkCreature.PlayAttackBump(0.35f, attackWindup));
 
+            // Pre-hit reactions (trigger even if attack is later negated)
+            if (target != null && !target.HasStatus(StatusTag.Suppressed) && target.traits != null)
+            {
+                var tgtPre = target.traits.ToArray();
+                foreach (var tr in tgtPre) { if (tr != null) tr.OnTargetedByAttack(target, attacker); }
+            }
+            foreach (var ally in AllCreatures().Where(x => x != null && x.owner == target.owner && x != target))
+            {
+                if (!ally.HasStatus(StatusTag.Suppressed) && ally.traits != null)
+                {
+                    var allySnap = ally.traits.ToArray();
+                    foreach (var tr in allySnap) { if (tr != null) tr.OnAllyTargeted(ally, target, attacker); }
+                }
+            }
+            if (attacker == null || attacker.currentHealth == 0)
+            {
+                acted.Add(attacker);
+                continue;
+            }
+
             // Check target defense traits – may negate attack (after windup to still show attempt)
             bool negated = false;
             if (!target.HasStatus(StatusTag.Suppressed) && target.traits != null)
@@ -376,35 +412,21 @@ public class ResolutionManager : MonoBehaviour
             // Determine if this is an avian harass (baseline poke)
             bool isAvian = attacker.data != null && attacker.data.type == CardType.Avian;
             bool targetIsCarnivore = target.data != null && target.data.type == CardType.Carnivore;
-            int AttkEffSpeed()
-            {
-                int traitSpeed = (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
-                    ? attacker.traits.Sum(t => t != null ? t.SpeedBonus(attacker) : 0)
-                    : 0;
-                return attacker.speed - attacker.GetStatus(StatusTag.Fatigued) + traitSpeed;
-            }
-            int TgtEffSpeed()
-            {
-                int traitSpeed = (!target.HasStatus(StatusTag.Suppressed) && target.traits != null)
-                    ? target.traits.Sum(t => t != null ? t.SpeedBonus(target) : 0)
-                    : 0;
-                return target.speed - target.GetStatus(StatusTag.Fatigued) + traitSpeed;
-            }
-            bool faster = AttkEffSpeed() >= TgtEffSpeed();
+            bool faster = EffSpeed(attacker) >= EffSpeed(target);
             int bodyBonus = 0;
             if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
             {
                 var atkSnapshot = attacker.traits.ToArray();
                 foreach (var tr in atkSnapshot) { if (tr != null) bodyBonus += tr.PredatorBodyBonusForTargeting(attacker); }
             }
-            int effAtkBody = attacker.body + bodyBonus;
-            bool meetsBodyRule = effAtkBody >= target.body;
+            int effAtkBody = EffBody(attacker) + bodyBonus;
+            bool meetsBodyRule = effAtkBody >= EffBody(target);
 
             // Avian harass: faster-than-target, not vs Carnivores
             bool harass = isAvian && !targetIsCarnivore && faster;
 
             // Damage calculation
-            int baseDmg = harass ? 1 : Mathf.Max(1, effAtkBody - target.body + 1);
+            int baseDmg = harass ? 1 : Mathf.Max(1, effAtkBody - EffBody(target) + 1);
             if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
             {
                 var atkSnapshot2 = attacker.traits.ToArray();
@@ -471,7 +493,7 @@ public class ResolutionManager : MonoBehaviour
         {
             if (c == null || c.data == null) continue;
             if (c.data.type != CardType.Avian) continue;
-            int need = Mathf.Max(0, c.body - c.eaten);
+            int need = Mathf.Max(0, EffBody(c) - c.eaten);
             if (need <= 0) continue;
             if (foodPile.count <= 0) continue;
             if (c.HasStatus(StatusTag.Stunned) || c.HasStatus(StatusTag.NoForage)) continue;
@@ -481,6 +503,12 @@ public class ResolutionManager : MonoBehaviour
             if (taken > 0)
             {
                 c.eaten += taken;
+				// Notify eater traits
+				if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+				{
+					var eatSnap = c.traits.ToArray();
+					foreach (var t in eatSnap) { if (t != null) t.OnAfterEat(c, taken, foodPile); }
+				}
                 FeedbackManager.Instance?.ShowFloatingText("+1 food", c.transform.position, new Color(0.5f, 0.8f, 1f));
                 FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} forages +1");
                 any = true;
@@ -582,5 +610,49 @@ public class ResolutionManager : MonoBehaviour
 			if (s.currentCreature == c) return s;
 		}
 		return null;
+	}
+
+	// Immediate single attack for reactive traits
+	public void PerformImmediateAttack(Creature attacker, Creature target, bool ignoreBodyRules = false)
+	{
+		if (attacker == null || target == null) return;
+		if (attacker.currentHealth <= 0 || target.currentHealth <= 0) return;
+		if (target.HasStatus(StatusTag.Stealth)) return;
+
+		bool isAvian = attacker.data != null && attacker.data.type == CardType.Avian;
+		bool targetIsCarnivore = target.data != null && target.data.type == CardType.Carnivore;
+		bool faster = EffSpeed(attacker) >= EffSpeed(target);
+		int bodyBonus = 0;
+		if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
+		{
+			foreach (var tr in attacker.traits.ToArray()) { if (tr != null) bodyBonus += tr.PredatorBodyBonusForTargeting(attacker); }
+		}
+		int effAtkBody = EffBody(attacker) + bodyBonus;
+		bool harass = isAvian && !targetIsCarnivore && faster;
+		int baseDmg = harass ? 1 : Mathf.Max(1, effAtkBody - EffBody(target) + 1);
+		if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
+		{
+			foreach (var tr in attacker.traits.ToArray()) { if (tr != null) baseDmg = tr.ModifyOutgoingDamage(attacker, target, baseDmg); }
+		}
+		if (!target.HasStatus(StatusTag.Suppressed) && target.traits != null)
+		{
+			foreach (var tr in target.traits.ToArray()) { if (tr != null) baseDmg = tr.ModifyIncomingDamage(target, attacker, baseDmg); }
+		}
+		baseDmg += Mathf.Max(0, attacker.GetStatus(StatusTag.DamageUp));
+		if (attacker.HasStatus(StatusTag.Rage) && baseDmg > 0)
+		{
+			baseDmg *= 2;
+			attacker.ClearStatus(StatusTag.Rage);
+		}
+		baseDmg = Mathf.Max(0, baseDmg);
+		if (baseDmg > 0)
+		{
+			target.ApplyDamage(baseDmg, attacker);
+			FeedbackManager.Instance?.ShowFloatingText($"-{baseDmg} HP", target.transform.position, new Color(1f, 0.3f, 0.3f));
+			if (attacker != null && attacker.data != null && attacker.data.type == CardType.Carnivore)
+			{
+				attacker.eaten = Mathf.Max(attacker.eaten, 1);
+			}
+		}
 	}
 }
