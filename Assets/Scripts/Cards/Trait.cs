@@ -36,6 +36,8 @@ public abstract class Trait : ScriptableObject
 	public virtual bool TryOverrideFinalDamage(Creature self, Creature target, out int fixedDamage) { fixedDamage = 0; return false; }
 	// Fires after an attack attempt resolves (negated or applied)
 	public virtual void OnAfterAttackResolved(Creature self, Creature target, bool wasNegated) {}
+	// Allow attacker traits to choose a target from valid candidates
+	public virtual Creature ChooseAttackTarget(Creature self, System.Collections.Generic.IEnumerable<Creature> candidates, Creature defaultTarget) { return defaultTarget; }
 
     // Eating and targeting reaction hooks
     public virtual void OnAfterEat(Creature self, int amountTaken, FoodPile pile) {}

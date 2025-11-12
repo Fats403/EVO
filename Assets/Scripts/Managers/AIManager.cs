@@ -7,7 +7,6 @@ public class AIManager : MonoBehaviour
 	public static AIManager Instance;
 
 	[Header("AI Deck Setup")]
-	public List<ScriptableObject> allCards;
 	public int cardsPerTurn = 1;
 	[Header("Visuals")]
 	public GameObject cardBackPrefab;
@@ -27,7 +26,29 @@ public class AIManager : MonoBehaviour
 	public void BuildDeck()
 	{
 		drawPile.Clear();
-		drawPile.AddRange(allCards);
+		// Source of truth: DeckManager.Instance.allCards 
+		var src = DeckManager.Instance.allCards;
+		var pool = new List<ScriptableObject>(src);
+		// Shuffle pool
+		for (int i = pool.Count - 1; i > 0; i--)
+		{
+
+			int j = (GameManager.Instance != null) ? GameManager.Instance.NextRandomInt(0, i + 1) : Random.Range(0, i + 1);
+			var temp = pool[i];
+			pool[i] = pool[j];
+			pool[j] = temp;
+		}
+		// Take up to 20 unique
+		var picked = new List<ScriptableObject>(20);
+		var seen = new System.Collections.Generic.HashSet<ScriptableObject>();
+		for (int i = 0; i < pool.Count && picked.Count < 20; i++)
+		{
+			var card = pool[i];
+			if (card == null) continue;
+			if (seen.Add(card)) picked.Add(card);
+		}
+		drawPile.AddRange(picked);
+		// Optional: shuffle draw order again
 		for (int i = drawPile.Count - 1; i > 0; i--)
 		{
 			int j = (GameManager.Instance != null) ? GameManager.Instance.NextRandomInt(0, i + 1) : Random.Range(0, i + 1);

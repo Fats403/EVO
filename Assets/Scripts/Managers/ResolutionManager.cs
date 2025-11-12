@@ -266,7 +266,18 @@ public class ResolutionManager : MonoBehaviour
                 acted.Add(attacker);
                 continue;
             }
-            var target = candidates[0];
+			var target = candidates[0];
+			// Allow attacker traits to override target selection (e.g., lowest HP)
+			if (attacker != null && attacker.traits != null && !attacker.HasStatus(StatusTag.Suppressed))
+			{
+				var snapChoose = attacker.traits.ToArray();
+				foreach (var tr in snapChoose)
+				{
+					if (tr == null) continue;
+					var picked = tr.ChooseAttackTarget(attacker, candidates, target);
+					if (picked != null && candidates.Contains(picked)) { target = picked; break; }
+				}
+			}
             // Attack bump tween on creature (always perform to show attempted attack)
             var atkCreature = attacker;
             if (atkCreature != null)
@@ -492,13 +503,16 @@ public class ResolutionManager : MonoBehaviour
                     FeedbackManager.Instance?.ShowFloatingText($"Starving +{1} (x{stacksNow})", c.transform.position, Color.gray);
                     FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(c.owner)} {c.name} gains Starvation (x{stacksNow})");
                     didAny = true;
-                    // Instant death at 3 stacks
+					// Lethal at 3 stacks: apply lethal damage so death-preventing traits can trigger
                     if (stacksNow >= 3)
                     {
-                        FeedbackManager.Instance?.ShowFloatingText("Starved to death", c.transform.position, Color.red);
-                        c.Kill("Starvation");
-                        yield return new WaitForSeconds(starveDelay * pacingMultiplier);
-                        continue;
+						int lethal = c.currentHealth;
+						if (lethal > 0) c.ApplyDamage(lethal, null);
+						if (c == null || c.currentHealth == 0)
+						{
+							yield return new WaitForSeconds(starveDelay * pacingMultiplier);
+							continue;
+						}
                     }
                 }
                 // End-of-round starvation damage equal to stacks
@@ -566,7 +580,9 @@ public class ResolutionManager : MonoBehaviour
 		if (isAvianAtk)
 		{
 			if (tgt.data.type == CardType.Carnivore) return false;
-			if (EffSpeed(atk) < EffSpeed(tgt)) return false;
+			bool ignoreSpeed = !atk.HasStatus(StatusTag.Suppressed) && atk.traits != null &&
+				atk.traits.Any(tr => tr != null && tr.IgnoreAvianSpeedRequirement(atk, tgt));
+			if (!ignoreSpeed && EffSpeed(atk) < EffSpeed(tgt)) return false;
 			return true;
 		}
 		// If attacker has Stealth, ignore body rule for this attempt

@@ -72,6 +72,20 @@ public class Creature : MonoBehaviour
         RefreshStatsUI();
     }
 
+    // Single source of truth for negative statuses
+    private static readonly StatusTag[] NegativeStatusTags = new StatusTag[]
+    {
+        StatusTag.Infected,
+        StatusTag.Fatigued,
+        StatusTag.Starvation,
+        StatusTag.Taunt,
+        StatusTag.Stunned,
+        StatusTag.Suppressed,
+        StatusTag.NoForage,
+        StatusTag.Bleeding,
+        StatusTag.Malnourished,
+    };
+
     private void OnEnable()
     {
         OnAnyCreatureHealed += HandleAnyCreatureHealed;
@@ -91,7 +105,7 @@ public class Creature : MonoBehaviour
         }
     }
 
-	public System.Collections.IEnumerator PlayAttackBump(float distance = 0.3f, float duration = 0.2f)
+	public IEnumerator PlayAttackBump(float distance = 0.3f, float duration = 0.2f)
 	{
 		Vector3 start = transform.position;
 		float dir = (owner == SlotOwner.Player1) ? 1f : -1f;
@@ -116,7 +130,7 @@ public class Creature : MonoBehaviour
 		}
 	}
 
-	public System.Collections.IEnumerator FlashDamage(float duration = 0.12f)
+	public IEnumerator FlashDamage(float duration = 0.12f)
 	{
 		if (sr == null) sr = GetComponent<SpriteRenderer>();
 		if (sr != null)
@@ -390,12 +404,15 @@ public class Creature : MonoBehaviour
 
     private static bool IsNegativeStatus(StatusTag tag)
     {
-        // Consider these negative; adjust as desired
-        return tag switch
+        return NegativeStatusTags.Contains(tag);
+    }
+
+    public void ClearAllNegativeStatuses()
+    {
+        foreach (var tag in NegativeStatusTags)
         {
-            StatusTag.Infected or StatusTag.Fatigued or StatusTag.Starvation or StatusTag.Taunt or StatusTag.Stunned or StatusTag.Suppressed or StatusTag.NoForage or StatusTag.Bleeding or StatusTag.Malnourished => true,
-            _ => false,
-        };
+            ClearStatus(tag);
+        }
     }
 
     // Convenience

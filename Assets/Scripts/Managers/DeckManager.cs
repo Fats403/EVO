@@ -8,7 +8,6 @@ public class DeckManager : MonoBehaviour
 
     [Header("Deck Setup")]
     public List<ScriptableObject> allCards;
-    public GameObject cardPrefab;
     public Transform handPanel;
     public GameObject creaturePrefab;
 	[Tooltip("Prefab to show as a hover/highlight indicator on a BoardSlot while dragging a card")]
@@ -39,16 +38,36 @@ public class DeckManager : MonoBehaviour
     void BuildDeck()
     {
         currentDeck.Clear();
-        currentDeck.AddRange(allCards);
-        drawPile.Clear();
-        drawPile.AddRange(currentDeck);
-        for (int i = drawPile.Count - 1; i > 0; i--)
-        {
-            int j = (GameManager.Instance != null) ? GameManager.Instance.NextRandomInt(0, i + 1) : Random.Range(0, i + 1);
-            var temp = drawPile[i];
-            drawPile[i] = drawPile[j];
-            drawPile[j] = temp;
-        }
+		// Source of truth: allCards; build a 20-card unique deck
+		var pool = new List<ScriptableObject>(allCards ?? new List<ScriptableObject>());
+		// Shuffle pool
+		for (int i = pool.Count - 1; i > 0; i--)
+		{
+			int j = (GameManager.Instance != null) ? GameManager.Instance.NextRandomInt(0, i + 1) : Random.Range(0, i + 1);
+			var temp = pool[i];
+			pool[i] = pool[j];
+			pool[j] = temp;
+		}
+		// Take up to 20 unique
+		var picked = new List<ScriptableObject>(20);
+		var seen = new System.Collections.Generic.HashSet<ScriptableObject>();
+		for (int i = 0; i < pool.Count && picked.Count < 20; i++)
+		{
+			var card = pool[i];
+			if (card == null) continue;
+			if (seen.Add(card)) picked.Add(card);
+		}
+		currentDeck.AddRange(picked);
+		drawPile.Clear();
+		drawPile.AddRange(currentDeck);
+		// Shuffle draw order
+		for (int i = drawPile.Count - 1; i > 0; i--)
+		{
+			int j = (GameManager.Instance != null) ? GameManager.Instance.NextRandomInt(0, i + 1) : Random.Range(0, i + 1);
+			var temp = drawPile[i];
+			drawPile[i] = drawPile[j];
+			drawPile[j] = temp;
+		}
         UpdateDeckUI();
     }
 
@@ -69,9 +88,8 @@ public class DeckManager : MonoBehaviour
     {
         if (data is CreatureCard creatureData)
         {
-            GameObject prefab = creatureCardPrefab != null ? creatureCardPrefab : cardPrefab;
-            if (prefab == null) { Debug.LogError("Creature card prefab not assigned!"); return; }
-            GameObject cardObj = Instantiate(prefab, handPanel);
+            if (creatureCardPrefab == null) { Debug.LogError("Creature card prefab not assigned!"); return; }
+            GameObject cardObj = Instantiate(creatureCardPrefab, handPanel);
             CreatureCardUI ui = cardObj.GetComponent<CreatureCardUI>();
             if (ui != null) ui.Initialize(creatureData);
         }
