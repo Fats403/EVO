@@ -8,7 +8,7 @@ public class ResolutionManager : MonoBehaviour
 	public static ResolutionManager Instance { get; private set; }
 	public FoodPile foodPile;
     [Header("Active Global Effects")]
-    public System.Collections.Generic.List<GlobalEffectBase> activeGlobalEffects = new System.Collections.Generic.List<GlobalEffectBase>();
+    public List<GlobalEffectBase> activeGlobalEffects = new();
 	[Header("Timing")]
     public float preStealDelay = 0.6f;
     public float eatDelay = 0.7f;

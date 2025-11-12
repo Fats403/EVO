@@ -43,3 +43,11 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: cdc8cc74d1d934c31bd1991f4d5a8e8c, type: 3}
   - tag: 14
     sprite: {fileID: 21300000, guid: 3a6efee49523e4e1bb1637bb0b41c7f5, type: 3}
+  - tag: 15
+    sprite: {fileID: 21300000, guid: 0ea3e55402c18462c87fc40737d81df7, type: 3}
+  - tag: 16
+    sprite: {fileID: 21300000, guid: 82817b82cd8a54b6081b9ede973eebb7, type: 3}
+  - tag: 17
+    sprite: {fileID: 21300000, guid: 8d1c4b1ec60214ac285346e15b58d487, type: 3}
+  - tag: 18
+    sprite: {fileID: 21300000, guid: ef5d6db46ee23429a8f68024577911a8, type: 3}

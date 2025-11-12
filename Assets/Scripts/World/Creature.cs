@@ -70,6 +70,17 @@ public class Creature : MonoBehaviour
             traits.AddRange(data.baseTraits);
 
         RefreshStatsUI();
+		// Ensure hover handler and a 2D collider for mouse events
+		if (GetComponent<CreatureHoverHandler>() == null) gameObject.AddComponent<CreatureHoverHandler>();
+		if (GetComponent<Collider2D>() == null)
+		{
+			var bc = gameObject.AddComponent<BoxCollider2D>();
+			if (sr != null && sr.sprite != null)
+			{
+				// approximate size from sprite bounds
+				bc.size = sr.sprite.bounds.size;
+			}
+		}
     }
 
     // Single source of truth for negative statuses

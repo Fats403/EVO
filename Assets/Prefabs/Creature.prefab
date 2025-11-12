@@ -534,6 +534,7 @@ GameObject:
   - component: {fileID: 410009514672085358}
   - component: {fileID: 3140808190824287159}
   - component: {fileID: 4797494379576975761}
+  - component: {fileID: 8509157290463671630}
   m_Layer: 0
   m_Name: Creature
   m_TagString: Untagged
@@ -617,7 +618,7 @@ SpriteRenderer:
   m_Size: {x: 9.55, y: 9.31}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &3140808190824287159
@@ -662,6 +663,18 @@ MonoBehaviour:
   library: {fileID: 11400000, guid: 316434689dd104df491c0b49a245f1ed, type: 2}
   iconContainer: {fileID: 1184218904178518504}
   iconPrefab: {fileID: 472242542002913755, guid: fa66c0ef119ca4afbb7d6f912cfb1b8f, type: 3}
+--- !u!114 &8509157290463671630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5765744327105739345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47e23c9910f444da9bff0ae6881cc17b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CreatureHoverHandler
 --- !u!1 &6201158760944499348
 GameObject:
   m_ObjectHideFlags: 0
