@@ -16,7 +16,7 @@ MonoBehaviour:
   dinosaurName: Carnotaurus
   artwork: {fileID: 21300000, guid: 879383835cd6d419e9ce57d57a4723cd, type: 3}
   type: 1
-  background: {fileID: 91400773830335861, guid: 8c31de67644694e8d83f417669f04623, type: 3}
+  background: {fileID: 21300000, guid: 8c31de67644694e8d83f417669f04623, type: 3}
   size: 3
   speed: 2
   tier: 3

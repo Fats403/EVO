@@ -16,7 +16,7 @@ MonoBehaviour:
   dinosaurName: Troodon
   artwork: {fileID: 21300000, guid: 6a7c36612e4894cc196b9e6233d0cdee, type: 3}
   type: 1
-  background: {fileID: 91400773830335861, guid: 8c31de67644694e8d83f417669f04623, type: 3}
+  background: {fileID: 21300000, guid: 8c31de67644694e8d83f417669f04623, type: 3}
   size: 1
   speed: 3
   tier: 1

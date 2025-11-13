@@ -16,7 +16,7 @@ MonoBehaviour:
   dinosaurName: Hatzegopteryx
   artwork: {fileID: 21300000, guid: 5e5227b09381141b7ad59a2915ff8ae6, type: 3}
   type: 2
-  background: {fileID: 167301960625406016, guid: bb0ad0723eb114ce2858235face1b225, type: 3}
+  background: {fileID: 21300000, guid: 84dcd8b3944564ae3a92911db61bb280, type: 3}
   size: 2
   speed: 3
   tier: 2

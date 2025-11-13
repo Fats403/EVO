@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: c7f6644d25ca94ea89bc4e9e3e2b66aa
+guid: d6db0ed7556cd4a628261ee5bb9c4805
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4479935867671537506
-    second: HerbivoreCard_0
+      213: -8328454310824100181
+    second: 435d5a5c-7e8f-4451-bde1-a38e183033f6-modified_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: HerbivoreCard_0
+      name: 435d5a5c-7e8f-4451-bde1-a38e183033f6-modified_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1024
-        height: 1536
+        width: 768
+        height: 1344
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e9818e6601214d1c0800000000000000
-      internalID: -4479935867671537506
+      spriteID: bae324b2ee26b6c80800000000000000
+      internalID: -8328454310824100181
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      HerbivoreCard_0: -4479935867671537506
+      435d5a5c-7e8f-4451-bde1-a38e183033f6-modified_0: -8328454310824100181
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

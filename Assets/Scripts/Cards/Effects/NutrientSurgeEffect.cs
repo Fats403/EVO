@@ -8,5 +8,3 @@ public class NutrientSurgeEffect : EffectTraitBase
         return baseAmount + 1;
     }
 }
-
-

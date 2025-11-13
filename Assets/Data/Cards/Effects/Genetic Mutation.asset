@@ -14,16 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
   effectName: Genetic Mutation
   icon: {fileID: 21300000, guid: 6aa2f8ac321d643649f4a5f37f92f1b3, type: 3}
-  description: Give an ally creatute +1 body size and speed permanently
+  description: Give an ally creatute +1 body size and +1 speed permanently
   targetSide: 0
   targetType: 0
   targetCount: 0
   maxTargets: 1
   isGlobal: 0
-  traitsToAttachToTargets: []
+  multiSelect: 0
+  multiSelectRadius: 2.5
+  traitsToAttachToTargets:
+  - {fileID: 11400000, guid: bddafd468662a42cb92e40d1dc561f9c, type: 2}
   globalEffect: {fileID: 0}
-  applyPermanentStatDelta: 1
-  bodyDelta: 1
-  speedDelta: 1
-  oncePerCreature: 1
-  costOneFood: 0

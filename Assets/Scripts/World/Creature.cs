@@ -1,9 +1,9 @@
-using UnityEngine;
-using System.Collections.Generic;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using System;
+using UnityEngine;
 
 public class Creature : MonoBehaviour
 {
@@ -18,7 +18,7 @@ public class Creature : MonoBehaviour
     public int currentHealth;
     public int fatigueStacks;
     public bool isDying;
-	private int pendingDamageUp;
+    private int pendingDamageUp;
 
     // Status stacks (Shielded, Infected, etc.)
     private readonly Dictionary<StatusTag, int> statuses = new();
@@ -31,9 +31,14 @@ public class Creature : MonoBehaviour
 
     public bool IsWounded => currentHealth < maxHealth;
 
-    [SerializeField] private TMP_Text speedText;
-    [SerializeField] private TMP_Text bodyText;
-    [SerializeField] private TMP_Text healthText;
+    [SerializeField]
+    private TMP_Text speedText;
+
+    [SerializeField]
+    private TMP_Text bodyText;
+
+    [SerializeField]
+    private TMP_Text healthText;
     private int baseBody;
     private int baseSpeed;
 
@@ -47,9 +52,12 @@ public class Creature : MonoBehaviour
         {
             sr.sprite = data.artwork;
             // subtle tint by type
-            if (data.type == CardType.Herbivore) sr.color = new Color(0.9f, 1f, 0.9f);
-            else if (data.type == CardType.Carnivore) sr.color = new Color(1f, 0.9f, 0.9f);
-            else if (data.type == CardType.Avian) sr.color = new Color(0.9f, 0.95f, 1f);
+            if (data.type == CardType.Herbivore)
+                sr.color = new Color(0.9f, 1f, 0.9f);
+            else if (data.type == CardType.Carnivore)
+                sr.color = new Color(1f, 0.9f, 0.9f);
+            else if (data.type == CardType.Avian)
+                sr.color = new Color(0.9f, 0.95f, 1f);
         }
         body = data.size;
         speed = data.speed;
@@ -70,17 +78,18 @@ public class Creature : MonoBehaviour
             traits.AddRange(data.baseTraits);
 
         RefreshStatsUI();
-		// Ensure hover handler and a 2D collider for mouse events
-		if (GetComponent<CreatureHoverHandler>() == null) gameObject.AddComponent<CreatureHoverHandler>();
-		if (GetComponent<Collider2D>() == null)
-		{
-			var bc = gameObject.AddComponent<BoxCollider2D>();
-			if (sr != null && sr.sprite != null)
-			{
-				// approximate size from sprite bounds
-				bc.size = sr.sprite.bounds.size;
-			}
-		}
+        // Ensure hover handler and a 2D collider for mouse events
+        if (GetComponent<CreatureHoverHandler>() == null)
+            gameObject.AddComponent<CreatureHoverHandler>();
+        if (GetComponent<Collider2D>() == null)
+        {
+            var bc = gameObject.AddComponent<BoxCollider2D>();
+            if (sr != null && sr.sprite != null)
+            {
+                // approximate size from sprite bounds
+                bc.size = sr.sprite.bounds.size;
+            }
+        }
     }
 
     // Single source of truth for negative statuses
@@ -109,49 +118,51 @@ public class Creature : MonoBehaviour
 
     private void HandleAnyCreatureHealed(Creature healed, int amount)
     {
-        if (amount <= 0) return;
+        if (amount <= 0)
+            return;
         if (damagedTargetsThisRound != null && damagedTargetsThisRound.Contains(healed))
         {
             roundHealingUndone += amount;
         }
     }
 
-	public IEnumerator PlayAttackBump(float distance = 0.3f, float duration = 0.2f)
-	{
-		Vector3 start = transform.position;
-		float dir = (owner == SlotOwner.Player1) ? 1f : -1f;
-		Vector3 offset = Vector3.up * dir * distance;
-		Vector3 mid = start + offset;
-		float half = duration * 0.5f;
-		float t = 0f;
-		while (t < half)
-		{
-			t += Time.deltaTime;
-			float u = Mathf.Clamp01(t / half);
-			transform.position = Vector3.Lerp(start, mid, u);
-			yield return null;
-		}
-		t = 0f;
-		while (t < half)
-		{
-			t += Time.deltaTime;
-			float u = Mathf.Clamp01(t / half);
-			transform.position = Vector3.Lerp(mid, start, u);
-			yield return null;
-		}
-	}
+    public IEnumerator PlayAttackBump(float distance = 0.3f, float duration = 0.2f)
+    {
+        Vector3 start = transform.position;
+        float dir = (owner == SlotOwner.Player1) ? 1f : -1f;
+        Vector3 offset = Vector3.up * dir * distance;
+        Vector3 mid = start + offset;
+        float half = duration * 0.5f;
+        float t = 0f;
+        while (t < half)
+        {
+            t += Time.deltaTime;
+            float u = Mathf.Clamp01(t / half);
+            transform.position = Vector3.Lerp(start, mid, u);
+            yield return null;
+        }
+        t = 0f;
+        while (t < half)
+        {
+            t += Time.deltaTime;
+            float u = Mathf.Clamp01(t / half);
+            transform.position = Vector3.Lerp(mid, start, u);
+            yield return null;
+        }
+    }
 
-	public IEnumerator FlashDamage(float duration = 0.12f)
-	{
-		if (sr == null) sr = GetComponent<SpriteRenderer>();
-		if (sr != null)
-		{
-			Color original = sr.color;
-			sr.color = new Color(1f, 0.3f, 0.3f);
-			yield return new WaitForSeconds(duration);
-			sr.color = original;
-		}
-	}
+    public IEnumerator FlashDamage(float duration = 0.12f)
+    {
+        if (sr == null)
+            sr = GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            Color original = sr.color;
+            sr.color = new Color(1f, 0.3f, 0.3f);
+            yield return new WaitForSeconds(duration);
+            sr.color = original;
+        }
+    }
 
     public void ApplyDamage(int amount, Creature source)
     {
@@ -193,7 +204,11 @@ public class Creature : MonoBehaviour
                 DecrementStatus(StatusTag.Absorb, absorbed);
                 if (absorbed > 0)
                 {
-                    FeedbackManager.Instance?.ShowFloatingText("Absorb", transform.position, Color.cyan);
+                    FeedbackManager.Instance?.ShowFloatingText(
+                        $"Absorbed [{absorbed}]",
+                        transform.position,
+                        Color.cyan
+                    );
                 }
                 if (amount <= 0)
                 {
@@ -203,31 +218,47 @@ public class Creature : MonoBehaviour
         }
 
         int dmg = Mathf.Max(0, amount);
-        if (dmg == 0) return;
+        if (dmg == 0)
+            return;
         // Taking real damage breaks Stealth
-        if (GetStatus(StatusTag.Stealth) > 0) ClearStatus(StatusTag.Stealth);
+        if (GetStatus(StatusTag.Stealth) > 0)
+            ClearStatus(StatusTag.Stealth);
         currentHealth = Mathf.Max(0, currentHealth - dmg);
         if (source != null)
         {
             source.roundDamageDealt += dmg;
-            if (!source.damagedTargetsThisRound.Contains(this)) source.damagedTargetsThisRound.Add(this);
+            if (!source.damagedTargetsThisRound.Contains(this))
+                source.damagedTargetsThisRound.Add(this);
         }
         StartCoroutine(FlashDamage(0.2f));
         // Trait hooks
         if (source != null && source.traits != null)
         {
-            foreach (var tr in source.traits) { if (tr != null) tr.OnDamageDealt(source, this, dmg); }
+            foreach (var tr in source.traits)
+            {
+                if (tr != null)
+                    tr.OnDamageDealt(source, this, dmg);
+            }
         }
         if (traits != null)
         {
-            foreach (var tr in traits) { if (tr != null) tr.OnDamageTaken(this, source, dmg); }
+            foreach (var tr in traits)
+            {
+                if (tr != null)
+                    tr.OnDamageTaken(this, source, dmg);
+            }
         }
         // Global post-damage notification
         var all = FindObjectsByType<Creature>(FindObjectsSortMode.None);
         foreach (var other in all)
         {
-            if (other == null || other.traits == null) continue;
-            foreach (var tr in other.traits.ToArray()) { if (tr != null) tr.OnAnyDamage(other, this, source, dmg); }
+            if (other == null || other.traits == null)
+                continue;
+            foreach (var tr in other.traits.ToArray())
+            {
+                if (tr != null)
+                    tr.OnAnyDamage(other, this, source, dmg);
+            }
         }
         RefreshStatsUI();
         if (currentHealth == 0)
@@ -244,7 +275,8 @@ public class Creature : MonoBehaviour
         if (healed > 0)
         {
             // Any healing clears all Bleeding stacks
-            if (GetStatus(StatusTag.Bleeding) > 0) ClearStatus(StatusTag.Bleeding);
+            if (GetStatus(StatusTag.Bleeding) > 0)
+                ClearStatus(StatusTag.Bleeding);
             OnAnyCreatureHealed?.Invoke(this, healed);
             RefreshStatsUI();
         }
@@ -252,34 +284,49 @@ public class Creature : MonoBehaviour
 
     public void Kill(string reason)
     {
-        if (isDying) return;
+        if (isDying)
+            return;
         isDying = true;
         // Default avian scavenging: when any creature dies, all living avians gain +1 food
         var all = FindObjectsByType<Creature>(FindObjectsSortMode.None);
         foreach (var other in all)
         {
-            if (other == null || other == this) continue;
-            if (other.currentHealth <= 0 || other.isDying) continue;
+            if (other == null || other == this)
+                continue;
+            if (other.currentHealth <= 0 || other.isDying)
+                continue;
             if (other.data != null && other.data.type == CardType.Avian)
             {
                 other.eaten += 1;
-                FeedbackManager.Instance?.ShowFloatingText("Scavenge +1", other.transform.position, new Color(0.5f, 0.8f, 1f));
-                FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(other.owner)} {other.name} scavenges +1");
+                FeedbackManager.Instance?.ShowFloatingText(
+                    "Scavenge +1",
+                    other.transform.position,
+                    new Color(0.5f, 0.8f, 1f)
+                );
+                FeedbackManager.Instance?.Log(
+                    $"{FeedbackManager.TagOwner(other.owner)} {other.name} scavenges +1"
+                );
             }
         }
         // Notify all traits about this death
         foreach (var other in all)
         {
-            if (other == null || other == this) continue;
-            if (other.traits == null) continue;
+            if (other == null || other == this)
+                continue;
+            if (other.traits == null)
+                continue;
             var trSnapshot = other.traits.ToArray();
-            foreach (var tr in trSnapshot) { if (tr != null) tr.OnAnyDeath(other, this); }
+            foreach (var tr in trSnapshot)
+            {
+                if (tr != null)
+                    tr.OnAnyDeath(other, this);
+            }
         }
         var s = FindSlotOf(this);
-        if (s != null) s.Vacate();
+        if (s != null)
+            s.Vacate();
         StartCoroutine(FadeAndDestroy(0.5f));
     }
-
 
     private IEnumerator FadeAndDestroy(float duration)
     {
@@ -298,14 +345,18 @@ public class Creature : MonoBehaviour
             {
                 if (renderers[i] != null)
                 {
-                    var c = srColors[i]; c.a = a; renderers[i].color = c;
+                    var c = srColors[i];
+                    c.a = a;
+                    renderers[i].color = c;
                 }
             }
             for (int i = 0; i < texts.Length; i++)
             {
                 if (texts[i] != null)
                 {
-                    var c = txtColors[i]; c.a = a; texts[i].color = c;
+                    var c = txtColors[i];
+                    c.a = a;
+                    texts[i].color = c;
                 }
             }
             yield return null;
@@ -317,7 +368,8 @@ public class Creature : MonoBehaviour
     {
         roundDamageDealt = 0;
         roundHealingUndone = 0;
-        if (damagedTargetsThisRound != null) damagedTargetsThisRound.Clear();
+        if (damagedTargetsThisRound != null)
+            damagedTargetsThisRound.Clear();
     }
 
     public void RefreshStatsUI()
@@ -325,35 +377,46 @@ public class Creature : MonoBehaviour
         // Speed display with bonuses and temp mods
         if (speedText != null)
         {
-            int traitSpeed = (!HasStatus(StatusTag.Suppressed) && traits != null)
-                ? traits.Sum(t => t != null ? t.SpeedBonus(this) : 0)
-                : 0;
+            int traitSpeed =
+                (!HasStatus(StatusTag.Suppressed) && traits != null)
+                    ? traits.Sum(t => t != null ? t.SpeedBonus(this) : 0)
+                    : 0;
             int tempSpeed = GetStatus(StatusTag.SpeedUp) - GetStatus(StatusTag.Fatigued);
             int displaySpeed = speed + tempSpeed + traitSpeed;
             speedText.text = displaySpeed.ToString();
-            if (displaySpeed > baseSpeed) speedText.color = Color.green;
-            else if (displaySpeed < baseSpeed) speedText.color = Color.red;
-            else speedText.color = Color.white;
+            if (displaySpeed > baseSpeed)
+                speedText.color = Color.green;
+            else if (displaySpeed < baseSpeed)
+                speedText.color = Color.red;
+            else
+                speedText.color = Color.white;
         }
 
         // Body display relative to base body
         if (bodyText != null)
         {
-            int displayBody = body + GetStatus(StatusTag.BodyUp) - GetStatus(StatusTag.Malnourished);
+            int displayBody =
+                body + GetStatus(StatusTag.BodyUp) - GetStatus(StatusTag.Malnourished);
             bodyText.text = displayBody.ToString();
-            if (displayBody > baseBody) bodyText.color = Color.green;
-            else if (displayBody < baseBody) bodyText.color = Color.red;
-            else bodyText.color = Color.white;
+            if (displayBody > baseBody)
+                bodyText.color = Color.green;
+            else if (displayBody < baseBody)
+                bodyText.color = Color.red;
+            else
+                bodyText.color = Color.white;
         }
         if (healthText != null)
         {
             healthText.text = $"{currentHealth}";
-            if (IsWounded) healthText.color = new Color(0.8f, 0.1f, 0.1f);
-            else healthText.color = Color.white;
+            if (IsWounded)
+                healthText.color = new Color(0.8f, 0.1f, 0.1f);
+            else
+                healthText.color = Color.white;
         }
 
         var sic = GetComponentInChildren<StatusIconController>(true);
-        if (sic != null) sic.Refresh(this);
+        if (sic != null)
+            sic.Refresh(this);
     }
 
     // --- Unified status API ---
@@ -370,7 +433,8 @@ public class Creature : MonoBehaviour
 
     public void AddStatus(StatusTag tag, int stacks = 1)
     {
-        if (stacks <= 0) return;
+        if (stacks <= 0)
+            return;
         // Immune blocks negative statuses, consuming one charge
         if (IsNegativeStatus(tag) && GetStatus(StatusTag.Immune) > 0)
         {
@@ -379,37 +443,47 @@ public class Creature : MonoBehaviour
             return;
         }
         // Mutual exclusivity: BodyUp vs Malnourished; SpeedUp vs Fatigued
-        if (tag == StatusTag.BodyUp) ClearStatus(StatusTag.Malnourished);
-        if (tag == StatusTag.Malnourished) ClearStatus(StatusTag.BodyUp);
-        if (tag == StatusTag.SpeedUp) ClearStatus(StatusTag.Fatigued);
-        if (tag == StatusTag.Fatigued) ClearStatus(StatusTag.SpeedUp);
+        if (tag == StatusTag.BodyUp)
+            ClearStatus(StatusTag.Malnourished);
+        if (tag == StatusTag.Malnourished)
+            ClearStatus(StatusTag.BodyUp);
+        if (tag == StatusTag.SpeedUp)
+            ClearStatus(StatusTag.Fatigued);
+        if (tag == StatusTag.Fatigued)
+            ClearStatus(StatusTag.SpeedUp);
         int newValue = GetStatus(tag) + stacks;
         // Stealth is non-stacking: clamp to 1
-        if (tag == StatusTag.Stealth) newValue = newValue > 0 ? 1 : 0;
-        
+        if (tag == StatusTag.Stealth)
+            newValue = newValue > 0 ? 1 : 0;
+
         statuses[tag] = newValue;
         RefreshStatsUI();
     }
 
     public void DecrementStatus(StatusTag tag, int amount = 1)
     {
-        if (amount <= 0) return;
+        if (amount <= 0)
+            return;
         int v = GetStatus(tag) - amount;
-        if (v <= 0) statuses.Remove(tag);
-        else statuses[tag] = v;
+        if (v <= 0)
+            statuses.Remove(tag);
+        else
+            statuses[tag] = v;
         RefreshStatsUI();
     }
 
     public void ClearStatus(StatusTag tag)
     {
-        if (statuses.Remove(tag)) RefreshStatsUI();
+        if (statuses.Remove(tag))
+            RefreshStatsUI();
     }
 
     public System.Collections.Generic.IEnumerable<StatusTag> GetActiveStatusTags()
     {
         foreach (var kv in statuses)
         {
-            if (kv.Value > 0) yield return kv.Key;
+            if (kv.Value > 0)
+                yield return kv.Key;
         }
     }
 
@@ -428,15 +502,25 @@ public class Creature : MonoBehaviour
 
     // Convenience
     public void ApplyInfected(int stacks) => AddStatus(StatusTag.Infected, stacks);
+
     public void ApplyShield(int charges) => AddStatus(StatusTag.Shielded, charges);
+
     public void ApplyBleeding(int stacks) => AddStatus(StatusTag.Bleeding, stacks);
+
     public void ApplyRegen(int stacks) => AddStatus(StatusTag.Regen, stacks);
+
     public void ApplyRage() => AddStatus(StatusTag.Rage, 1);
+
     public void ApplyStunned(int rounds = 1) => AddStatus(StatusTag.Stunned, rounds);
+
     public void ApplySuppressed(int rounds) => AddStatus(StatusTag.Suppressed, rounds);
+
     public void ApplyDamageUp(int stacks) => AddStatus(StatusTag.DamageUp, stacks);
+
     public void ApplyNoForage(int rounds) => AddStatus(StatusTag.NoForage, rounds);
+
     public void ApplyImmune(int charges = 1) => AddStatus(StatusTag.Immune, charges);
+
     public void ApplyFatigued(int stacks) => AddStatus(StatusTag.Fatigued, stacks);
 
     public void TickStatusesAtRoundStart()
@@ -458,14 +542,18 @@ public class Creature : MonoBehaviour
     public void TickStatusesAtRoundEnd()
     {
         // Fatigued: -1
-        if (GetStatus(StatusTag.Fatigued) > 0) DecrementStatus(StatusTag.Fatigued, 1);
+        if (GetStatus(StatusTag.Fatigued) > 0)
+            DecrementStatus(StatusTag.Fatigued, 1);
         // SpeedUp: -1
-        if (GetStatus(StatusTag.SpeedUp) > 0) DecrementStatus(StatusTag.SpeedUp, 1);
+        if (GetStatus(StatusTag.SpeedUp) > 0)
+            DecrementStatus(StatusTag.SpeedUp, 1);
         // Taunt: -1
-        if (GetStatus(StatusTag.Taunt) > 0) DecrementStatus(StatusTag.Taunt, 1);
+        if (GetStatus(StatusTag.Taunt) > 0)
+            DecrementStatus(StatusTag.Taunt, 1);
 
         // DamageUp: clear all
-        if (GetStatus(StatusTag.DamageUp) > 0) ClearStatus(StatusTag.DamageUp);
+        if (GetStatus(StatusTag.DamageUp) > 0)
+            ClearStatus(StatusTag.DamageUp);
 
         // Regen: heal equal to stacks, then -1
         int regen = GetStatus(StatusTag.Regen);
@@ -483,19 +571,26 @@ public class Creature : MonoBehaviour
         }
 
         // BodyUp: -1 ; Malnourished: -1
-        if (GetStatus(StatusTag.BodyUp) > 0) DecrementStatus(StatusTag.BodyUp, 1);
-        if (GetStatus(StatusTag.Malnourished) > 0) DecrementStatus(StatusTag.Malnourished, 1);
+        if (GetStatus(StatusTag.BodyUp) > 0)
+            DecrementStatus(StatusTag.BodyUp, 1);
+
+        if (GetStatus(StatusTag.Malnourished) > 0)
+            DecrementStatus(StatusTag.Malnourished, 1);
         // Absorb: clear remaining stacks at end of round
-        if (GetStatus(StatusTag.Absorb) > 0) ClearStatus(StatusTag.Absorb);
+        if (GetStatus(StatusTag.Absorb) > 0)
+            ClearStatus(StatusTag.Absorb);
 
         // Suppressed: -1
-        if (GetStatus(StatusTag.Suppressed) > 0) DecrementStatus(StatusTag.Suppressed, 1);
+        if (GetStatus(StatusTag.Suppressed) > 0)
+            DecrementStatus(StatusTag.Suppressed, 1);
 
         // Stunned: -1
-        if (GetStatus(StatusTag.Stunned) > 0) DecrementStatus(StatusTag.Stunned, 1);
+        if (GetStatus(StatusTag.Stunned) > 0)
+            DecrementStatus(StatusTag.Stunned, 1);
 
         // NoForage: -1
-        if (GetStatus(StatusTag.NoForage) > 0) DecrementStatus(StatusTag.NoForage, 1);
+        if (GetStatus(StatusTag.NoForage) > 0)
+            DecrementStatus(StatusTag.NoForage, 1);
     }
 
     private BoardSlot FindSlotOf(Creature c)
@@ -503,14 +598,16 @@ public class Creature : MonoBehaviour
         var slots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None);
         foreach (var s in slots)
         {
-            if (s.currentCreature == c) return s;
+            if (s.currentCreature == c)
+                return s;
         }
         return null;
     }
 
     public void GrantNextRoundDamageUp(int stacks)
     {
-        if (stacks <= 0) return;
+        if (stacks <= 0)
+            return;
         pendingDamageUp += stacks;
     }
 }

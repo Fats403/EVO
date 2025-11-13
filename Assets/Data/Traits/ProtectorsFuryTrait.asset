@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: ProtectorsFuryTrait
   m_EditorClassIdentifier: Assembly-CSharp::ProtectorsFuryTrait
   traitName: Protector's Fury
-  description: When an allied herbivore is attacked, this immediately attacks the
-    attacker (ignores body size rules, happens before attacker deals damage)
+  description: When an allied herbivore is attacked, this always attacks the attacker.
+    (Ignoring body size rules)

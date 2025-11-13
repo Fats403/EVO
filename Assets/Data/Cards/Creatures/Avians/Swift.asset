@@ -16,7 +16,7 @@ MonoBehaviour:
   dinosaurName: Pterodactylus
   artwork: {fileID: 21300000, guid: 4e0bb1c088e79462882e9f694619f3cb, type: 3}
   type: 2
-  background: {fileID: 167301960625406016, guid: bb0ad0723eb114ce2858235face1b225, type: 3}
+  background: {fileID: 21300000, guid: 84dcd8b3944564ae3a92911db61bb280, type: 3}
   size: 1
   speed: 5
   tier: 2

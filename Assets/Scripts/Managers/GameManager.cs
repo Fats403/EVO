@@ -1,8 +1,15 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
-public enum GamePhase { Setup, Draw, Place, Resolve, End }
+public enum GamePhase
+{
+    Setup,
+    Draw,
+    Place,
+    Resolve,
+    End,
+}
 
 public class GameManager : MonoBehaviour
 {
@@ -26,8 +33,10 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) Destroy(gameObject);
-        else Instance = this;
+        if (Instance != null && Instance != this)
+            Destroy(gameObject);
+        else
+            Instance = this;
 
         if (rngSeed == 0)
         {
@@ -40,17 +49,22 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         Debug.Log("[GameManager] Initialized in Phase: " + currentPhase + " | Seed: " + rngSeed);
-        if (endTurnButton != null) endTurnButton.onClick.AddListener(OnEndTurnClicked);
-        if (toggleLogButton != null) toggleLogButton.onClick.AddListener(OnToggleLogClicked);
+        if (endTurnButton != null)
+            endTurnButton.onClick.AddListener(OnEndTurnClicked);
+        if (toggleLogButton != null)
+            toggleLogButton.onClick.AddListener(OnToggleLogClicked);
         UpdatePhaseLabel();
-        if (weatherVideoBackground != null) weatherVideoBackground.ForceTo(WeatherType.Clear);
+        if (weatherVideoBackground != null)
+            weatherVideoBackground.ForceTo(WeatherType.Clear);
         BeginSetup();
     }
 
     void OnDestroy()
     {
-        if (endTurnButton != null) endTurnButton.onClick.RemoveListener(OnEndTurnClicked);
-        if (toggleLogButton != null) toggleLogButton.onClick.RemoveListener(OnToggleLogClicked);
+        if (endTurnButton != null)
+            endTurnButton.onClick.RemoveListener(OnEndTurnClicked);
+        if (toggleLogButton != null)
+            toggleLogButton.onClick.RemoveListener(OnToggleLogClicked);
     }
 
     void OnEndTurnClicked()
@@ -68,7 +82,9 @@ public class GameManager : MonoBehaviour
 
     void AdvancePhase()
     {
-        currentPhase = (GamePhase)(((int)currentPhase + 1) % System.Enum.GetValues(typeof(GamePhase)).Length);
+        currentPhase = (GamePhase)(
+            ((int)currentPhase + 1) % System.Enum.GetValues(typeof(GamePhase)).Length
+        );
         Debug.Log("[GameManager] New Phase: " + currentPhase);
         UpdatePhaseLabel();
 
@@ -105,19 +121,20 @@ public class GameManager : MonoBehaviour
 
     void BeginDraw()
     {
-        // Simple: draw up to a hand size of 5
+        // Draw per-round cards respecting max hand size
         var dm = DeckManager.Instance;
         if (dm != null)
         {
-            int toDraw = Mathf.Max(0, 5 - dm.CurrentHandCount());
-            for (int i = 0; i < toDraw; i++) dm.DrawCard();
+            dm.DrawCardsForRoundStart();
         }
-        if (foodPile != null) foodPile.RefillStartOfRound();
+        if (foodPile != null)
+            foodPile.RefillStartOfRound();
         // Weather: roll (first call keeps Clear), then apply start-of-round effects
         if (weatherManager != null)
         {
             var next = weatherManager.RollNextWeather();
-            if (weatherVideoBackground != null) StartCoroutine(weatherVideoBackground.CrossfadeTo(next, 0.7f));
+            if (weatherVideoBackground != null)
+                StartCoroutine(weatherVideoBackground.CrossfadeTo(next, 0.7f));
             weatherManager.ApplyRoundStartEffects(foodPile);
         }
         currentPhase = GamePhase.Place;

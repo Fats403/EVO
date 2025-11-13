@@ -1,4 +1,6 @@
 {
+    "editor.defaultFormatter": "csharpier.csharpier-vscode",
+    "editor.formatOnSave": true,
     "files.exclude": {
         "**/.DS_Store": true,
         "**/.git": true,

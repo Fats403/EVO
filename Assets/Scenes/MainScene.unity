@@ -2961,10 +2961,28 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d3aeb054bd950427cbf7ace55b973408, type: 2}
   - {fileID: 11400000, guid: 6115e962101f3425bab72b2f7f4b9cbe, type: 2}
   - {fileID: 11400000, guid: 16621144091a0427c8ebd91fe9480470, type: 2}
+  - {fileID: 11400000, guid: 651a4e04dba4a49d188489a96a96937f, type: 2}
+  - {fileID: 11400000, guid: 751de9a5927344fe28837cbaa5b9d198, type: 2}
+  - {fileID: 11400000, guid: ad81cd660d7b74dc2b20357edb7ac3d9, type: 2}
+  - {fileID: 11400000, guid: 2e393780501ca4358b3fad2fb9dcd01b, type: 2}
+  - {fileID: 11400000, guid: 4674f8ce07de84429afa4cc9dd663d00, type: 2}
+  - {fileID: 11400000, guid: 7103d668deeb14b71a2709df6d8e6e4f, type: 2}
+  - {fileID: 11400000, guid: 602c683d224c740dca8c3d4134fdb588, type: 2}
+  - {fileID: 11400000, guid: cfe5acfcd499245d2bf949f60bcba51f, type: 2}
+  - {fileID: 11400000, guid: 8110011feae024c119aaf16dcf061170, type: 2}
+  - {fileID: 11400000, guid: 2a9647c8a50214733854e549bf57aee9, type: 2}
+  - {fileID: 11400000, guid: 89e60917a9e7446a19b98f5a6089d0a7, type: 2}
+  - {fileID: 11400000, guid: 929c2f31198ce42c2bd131be5a6bffd4, type: 2}
+  - {fileID: 11400000, guid: 833a5af9bfe4d400bba690e12f114305, type: 2}
+  - {fileID: 11400000, guid: 62b6dcf996aa1470fa0e3104f68a7db0, type: 2}
+  - {fileID: 11400000, guid: 0f79b95179d69426784c88a0008fa4d4, type: 2}
   handPanel: {fileID: 2128517701}
   creaturePrefab: {fileID: 5765744327105739345, guid: df2ced5fde386438bb251dfc723d9caf, type: 3}
   hoverIndicatorPrefab: {fileID: 895323091584285675, guid: 60a0e7314dc02499d8a7ca1e95b37f98, type: 3}
   startingHandSize: 3
+  maxHandSize: 6
+  cardsPerRound: 2
+  deckSize: 20
   creatureCardPrefab: {fileID: 6378225315708850401, guid: 91ac1c24a6a3b45edba80f553a10afe5, type: 3}
   effectCardPrefab: {fileID: 3112541818185922300, guid: a6ab56675875b4ef798b95a49967d118, type: 3}
   deckCountText: {fileID: 0}

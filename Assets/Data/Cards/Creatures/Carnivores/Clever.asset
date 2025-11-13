@@ -16,7 +16,7 @@ MonoBehaviour:
   dinosaurName: Velociraptor
   artwork: {fileID: 21300000, guid: e1a8975a0478c498692c1ba4335bc6c1, type: 3}
   type: 1
-  background: {fileID: 91400773830335861, guid: 8c31de67644694e8d83f417669f04623, type: 3}
+  background: {fileID: 21300000, guid: 8c31de67644694e8d83f417669f04623, type: 3}
   size: 2
   speed: 3
   tier: 1

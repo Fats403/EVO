@@ -16,7 +16,7 @@ MonoBehaviour:
   dinosaurName: Glyptodon
   artwork: {fileID: 21300000, guid: b33ea1af55c6c42b6be281c615afa2b3, type: 3}
   type: 0
-  background: {fileID: -4479935867671537506, guid: c7f6644d25ca94ea89bc4e9e3e2b66aa, type: 3}
+  background: {fileID: 21300000, guid: d6db0ed7556cd4a628261ee5bb9c4805, type: 3}
   size: 3
   speed: 1
   tier: 3

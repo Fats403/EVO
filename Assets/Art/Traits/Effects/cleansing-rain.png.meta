@@ -1,0 +1,1170 @@
+fileFormatVersion: 2
+guid: 9de04207e70e54cc9a1ae39c2668e904
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3237984348762657474
+    second: cleansing-rain_0
+  - first:
+      213: -5066906307673514646
+    second: cleansing-rain_1
+  - first:
+      213: -8197699022966313841
+    second: cleansing-rain_2
+  - first:
+      213: 1799263826777916561
+    second: cleansing-rain_3
+  - first:
+      213: 5199201561006511392
+    second: cleansing-rain_4
+  - first:
+      213: 5418196565288332482
+    second: cleansing-rain_5
+  - first:
+      213: 1654879279191007209
+    second: cleansing-rain_6
+  - first:
+      213: -632667783535186009
+    second: cleansing-rain_7
+  - first:
+      213: -8700828548908098464
+    second: cleansing-rain_8
+  - first:
+      213: 7212147111101199975
+    second: cleansing-rain_9
+  - first:
+      213: 5133481165975155777
+    second: cleansing-rain_10
+  - first:
+      213: 3382886886955549044
+    second: cleansing-rain_11
+  - first:
+      213: 2091611406194540401
+    second: cleansing-rain_12
+  - first:
+      213: -4812720698938076030
+    second: cleansing-rain_13
+  - first:
+      213: -1923544570537460230
+    second: cleansing-rain_14
+  - first:
+      213: -2648487732431114257
+    second: cleansing-rain_15
+  - first:
+      213: -6945342220593939754
+    second: cleansing-rain_16
+  - first:
+      213: -4869476251762694698
+    second: cleansing-rain_17
+  - first:
+      213: -2974488934296211336
+    second: cleansing-rain_18
+  - first:
+      213: -8543261707870955880
+    second: cleansing-rain_19
+  - first:
+      213: 9070870909637446974
+    second: cleansing-rain_20
+  - first:
+      213: 5243287657083598295
+    second: cleansing-rain_21
+  - first:
+      213: 2492879263062620734
+    second: cleansing-rain_22
+  - first:
+      213: -3553925130093700588
+    second: cleansing-rain_23
+  - first:
+      213: 5186734750718229595
+    second: cleansing-rain_24
+  - first:
+      213: 5448952438419335203
+    second: cleansing-rain_25
+  - first:
+      213: 517039203805774372
+    second: cleansing-rain_26
+  - first:
+      213: -973421431842731571
+    second: cleansing-rain_27
+  - first:
+      213: 1124505772399378981
+    second: cleansing-rain_28
+  - first:
+      213: 4804239617305452590
+    second: cleansing-rain_29
+  - first:
+      213: -434175055068720006
+    second: cleansing-rain_30
+  - first:
+      213: 1811623786937900980
+    second: cleansing-rain_31
+  - first:
+      213: -3078418520345793622
+    second: cleansing-rain_32
+  - first:
+      213: -6277115067407175224
+    second: cleansing-rain_33
+  - first:
+      213: -2262880776778190555
+    second: cleansing-rain_34
+  - first:
+      213: 9094083201025372435
+    second: cleansing-rain_35
+  - first:
+      213: 4113076669351279690
+    second: cleansing-rain_36
+  - first:
+      213: 7266609256535704953
+    second: cleansing-rain_37
+  - first:
+      213: 6118004361960415011
+    second: cleansing-rain_38
+  - first:
+      213: 439782303006217543
+    second: cleansing-rain_39
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: cleansing-rain_0
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 779
+        width: 75
+        height: 190
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3d2abfe36e5013d0800000000000000
+      internalID: -3237984348762657474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_1
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 895
+        width: 38
+        height: 117
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6d1fec0f8bbea9b0800000000000000
+      internalID: -5066906307673514646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_2
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 863
+        width: 26
+        height: 133
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8ca6800c2ceb3e80800000000000000
+      internalID: -8197699022966313841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_3
+      rect:
+        serializedVersion: 2
+        x: 259
+        y: 831
+        width: 30
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 194ce44eae448f810800000000000000
+      internalID: 1799263826777916561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_4
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 943
+        width: 46
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 025137fe546472840800000000000000
+      internalID: 5199201561006511392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_5
+      rect:
+        serializedVersion: 2
+        x: 393
+        y: 863
+        width: 24
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cca04db11d413b40800000000000000
+      internalID: 5418196565288332482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_6
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 959
+        width: 55
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ef955ebfef47f610800000000000000
+      internalID: 1654879279191007209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_7
+      rect:
+        serializedVersion: 2
+        x: 519
+        y: 911
+        width: 26
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7af2d8db0005837f0800000000000000
+      internalID: -632667783535186009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_8
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 911
+        width: 25
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06c51c2a882704780800000000000000
+      internalID: -8700828548908098464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_9
+      rect:
+        serializedVersion: 2
+        x: 651
+        y: 927
+        width: 75
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 766fb010691b61460800000000000000
+      internalID: 7212147111101199975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_10
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 863
+        width: 46
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1447b1f0ce9cd3740800000000000000
+      internalID: 5133481165975155777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_11
+      rect:
+        serializedVersion: 2
+        x: 854
+        y: 877
+        width: 32
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 471005c43bd62fe20800000000000000
+      internalID: 3382886886955549044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_12
+      rect:
+        serializedVersion: 2
+        x: 899
+        y: 847
+        width: 67
+        height: 133
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17f716afd75e60d10800000000000000
+      internalID: 2091611406194540401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_13
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 719
+        width: 30
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28450a0f508c53db0800000000000000
+      internalID: -4812720698938076030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_14
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 799
+        width: 26
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afdbb7b87623e45e0800000000000000
+      internalID: -1923544570537460230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_15
+      rect:
+        serializedVersion: 2
+        x: 312
+        y: 783
+        width: 57
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fefa67c807eae3bd0800000000000000
+      internalID: -2648487732431114257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_16
+      rect:
+        serializedVersion: 2
+        x: 423
+        y: 751
+        width: 26
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dab9f16c003d9f90800000000000000
+      internalID: -6945342220593939754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_17
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 815
+        width: 26
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d5eb7b06252c6cb0800000000000000
+      internalID: -4869476251762694698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_18
+      rect:
+        serializedVersion: 2
+        x: 521
+        y: 815
+        width: 87
+        height: 87
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 870b1f2e21e78b6d0800000000000000
+      internalID: -2974488934296211336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_19
+      rect:
+        serializedVersion: 2
+        x: 643
+        y: 767
+        width: 43
+        height: 117
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8969727adbc307980800000000000000
+      internalID: -8543261707870955880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_20
+      rect:
+        serializedVersion: 2
+        x: 711
+        y: 815
+        width: 26
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3d4d54680532ed70800000000000000
+      internalID: 9070870909637446974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_21
+      rect:
+        serializedVersion: 2
+        x: 807
+        y: 751
+        width: 26
+        height: 120
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d578af0856e3c840800000000000000
+      internalID: 5243287657083598295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_22
+      rect:
+        serializedVersion: 2
+        x: 884
+        y: 719
+        width: 29
+        height: 124
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3af8ce5b7c789220800000000000000
+      internalID: 2492879263062620734
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_23
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 671
+        width: 39
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41a5e667cebedaec0800000000000000
+      internalID: -3553925130093700588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_24
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 639
+        width: 26
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5cfbb876cbfaf740800000000000000
+      internalID: 5186734750718229595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_25
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 671
+        width: 89
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 328abf97f519e9b40800000000000000
+      internalID: 5448952438419335203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_26
+      rect:
+        serializedVersion: 2
+        x: 312
+        y: 687
+        width: 25
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4224bcd9a64ec2700800000000000000
+      internalID: 517039203805774372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_27
+      rect:
+        serializedVersion: 2
+        x: 359
+        y: 703
+        width: 58
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc9034a7d56bd72f0800000000000000
+      internalID: -973421431842731571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_28
+      rect:
+        serializedVersion: 2
+        x: 455
+        y: 719
+        width: 25
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 522cdb7ca0c0b9f00800000000000000
+      internalID: 1124505772399378981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_29
+      rect:
+        serializedVersion: 2
+        x: 504
+        y: 735
+        width: 25
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e20a95d5a761ca240800000000000000
+      internalID: 4804239617305452590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_30
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 712
+        width: 25
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a741b48761089f9f0800000000000000
+      internalID: -434175055068720006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_31
+      rect:
+        serializedVersion: 2
+        x: 631
+        y: 687
+        width: 58
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4bfd41f5c3e242910800000000000000
+      internalID: 1811623786937900980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_32
+      rect:
+        serializedVersion: 2
+        x: 712
+        y: 735
+        width: 57
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aab2ec87aa24745d0800000000000000
+      internalID: -3078418520345793622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_33
+      rect:
+        serializedVersion: 2
+        x: 947
+        y: 671
+        width: 59
+        height: 120
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c171f09a1533e8a0800000000000000
+      internalID: -6277115067407175224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_34
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 0
+        width: 979
+        height: 680
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 521731b3ce1a890e0800000000000000
+      internalID: -2262880776778190555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_35
+      rect:
+        serializedVersion: 2
+        x: 520
+        y: 671
+        width: 57
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 311f6f22d7ca43e70800000000000000
+      internalID: 9094083201025372435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_36
+      rect:
+        serializedVersion: 2
+        x: 728
+        y: 623
+        width: 24
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4c31a25075941930800000000000000
+      internalID: 4113076669351279690
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_37
+      rect:
+        serializedVersion: 2
+        x: 792
+        y: 623
+        width: 88
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97540616e9e28d460800000000000000
+      internalID: 7266609256535704953
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_38
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 495
+        width: 26
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32fd0f87d8487e450800000000000000
+      internalID: 6118004361960415011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cleansing-rain_39
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 331
+        width: 78
+        height: 106
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 745503dacab6a1600800000000000000
+      internalID: 439782303006217543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      cleansing-rain_0: -3237984348762657474
+      cleansing-rain_1: -5066906307673514646
+      cleansing-rain_10: 5133481165975155777
+      cleansing-rain_11: 3382886886955549044
+      cleansing-rain_12: 2091611406194540401
+      cleansing-rain_13: -4812720698938076030
+      cleansing-rain_14: -1923544570537460230
+      cleansing-rain_15: -2648487732431114257
+      cleansing-rain_16: -6945342220593939754
+      cleansing-rain_17: -4869476251762694698
+      cleansing-rain_18: -2974488934296211336
+      cleansing-rain_19: -8543261707870955880
+      cleansing-rain_2: -8197699022966313841
+      cleansing-rain_20: 9070870909637446974
+      cleansing-rain_21: 5243287657083598295
+      cleansing-rain_22: 2492879263062620734
+      cleansing-rain_23: -3553925130093700588
+      cleansing-rain_24: 5186734750718229595
+      cleansing-rain_25: 5448952438419335203
+      cleansing-rain_26: 517039203805774372
+      cleansing-rain_27: -973421431842731571
+      cleansing-rain_28: 1124505772399378981
+      cleansing-rain_29: 4804239617305452590
+      cleansing-rain_3: 1799263826777916561
+      cleansing-rain_30: -434175055068720006
+      cleansing-rain_31: 1811623786937900980
+      cleansing-rain_32: -3078418520345793622
+      cleansing-rain_33: -6277115067407175224
+      cleansing-rain_34: -2262880776778190555
+      cleansing-rain_35: 9094083201025372435
+      cleansing-rain_36: 4113076669351279690
+      cleansing-rain_37: 7266609256535704953
+      cleansing-rain_38: 6118004361960415011
+      cleansing-rain_39: 439782303006217543
+      cleansing-rain_4: 5199201561006511392
+      cleansing-rain_5: 5418196565288332482
+      cleansing-rain_6: 1654879279191007209
+      cleansing-rain_7: -632667783535186009
+      cleansing-rain_8: -8700828548908098464
+      cleansing-rain_9: 7212147111101199975
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

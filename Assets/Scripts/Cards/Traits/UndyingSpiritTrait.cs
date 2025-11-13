@@ -4,7 +4,7 @@ using System.Collections.Generic;
 [CreateAssetMenu(menuName = "Traits/Avians/Undying Spirit")]
 public class UndyingSpiritTrait : Trait
 {
-	private static readonly HashSet<Creature> used = new HashSet<Creature>();
+	private static readonly HashSet<Creature> used = new();
 
 	public override void OnDamageTaken(Creature self, Creature attacker, int finalDamage)
 	{

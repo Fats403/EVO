@@ -16,7 +16,7 @@ MonoBehaviour:
   dinosaurName: Archaeopteryx
   artwork: {fileID: 21300000, guid: 6bddb643d33224c6d86becc1824862af, type: 3}
   type: 2
-  background: {fileID: 167301960625406016, guid: bb0ad0723eb114ce2858235face1b225, type: 3}
+  background: {fileID: 21300000, guid: 84dcd8b3944564ae3a92911db61bb280, type: 3}
   size: 1
   speed: 5
   tier: 1
