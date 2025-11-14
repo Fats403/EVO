@@ -535,6 +535,7 @@ GameObject:
   - component: {fileID: 3140808190824287159}
   - component: {fileID: 4797494379576975761}
   - component: {fileID: 8509157290463671630}
+  - component: {fileID: 7932011641673198508}
   m_Layer: 0
   m_Name: Creature
   m_TagString: Untagged
@@ -675,6 +676,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47e23c9910f444da9bff0ae6881cc17b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CreatureHoverHandler
+--- !u!114 &7932011641673198508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5765744327105739345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5dc0654cb87ff4bb29e9fe59602d6923, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TargetHighlightController
+  highlightObject: {fileID: 0}
+  enableRuntimeGlowFallback: 1
+  pulseSpeed: 3
+  minAlpha: 0.15
+  maxAlpha: 0.5
+  scaleAmplitude: 0.06
+  sortingOrderOffset: 5
+  baseScaleOffset: 0.12
+  useAdditiveBlend: 1
 --- !u!1 &6201158760944499348
 GameObject:
   m_ObjectHideFlags: 0

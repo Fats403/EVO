@@ -29,7 +29,8 @@ public class EffectsManager : MonoBehaviour
     public IEnumerable<Creature> PreviewAutoTargets(
         EffectCard card,
         SlotOwner owner,
-        Vector3 origin
+        Vector3 origin,
+        float radiusWorld
     )
     {
         if (card == null)
@@ -37,7 +38,7 @@ public class EffectsManager : MonoBehaviour
         if (!card.multiSelect)
             return System.Array.Empty<Creature>();
         int count = Mathf.Max(0, card.maxTargets);
-        float r = Mathf.Max(0f, card.multiSelectRadius);
+        float r = Mathf.Max(0f, radiusWorld);
         var all =
             resolutionManager != null
                 ? resolutionManager.AllCreatures()

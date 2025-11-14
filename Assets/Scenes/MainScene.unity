@@ -1480,7 +1480,7 @@ MonoBehaviour:
   weatherManager: {fileID: 707428238}
   weatherVideoBackground: {fileID: 49608290}
   currentPhase: 0
-  rngSeed: 0
+  rngSeed: -1832603567
 --- !u!4 &815865959
 Transform:
   m_ObjectHideFlags: 0
@@ -3552,7 +3552,7 @@ MonoBehaviour:
   curveDepth: 40
   handYOffset: 125
   hoverScale: 1.15
-  hoverLift: 60
+  hoverLift: 75
   hoverSortingOrder: 1000
   animationDuration: 0.18
   easing:

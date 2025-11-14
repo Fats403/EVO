@@ -9,7 +9,8 @@ public class EffectCardUI : BaseCardUI
 {
     public EffectCard effectData;
     public SlotOwner owner = SlotOwner.Player1;
-    public float targetRadiusPx = 100f;
+    public float targetRadiusPx = 125f;
+    public float multiSelectTargetRadiusPx = 250f;
 
     private readonly HashSet<TargetHighlightController> highlighted = new();
 
@@ -104,9 +105,23 @@ public class EffectCardUI : BaseCardUI
                     Mathf.Abs(cam.transform.position.z)
                 )
             );
+            // Convert pixel radius to world radius at current depth
+            Vector3 worldRight = cam.ScreenToWorldPoint(
+                new Vector3(
+                    eventData.position.x + multiSelectTargetRadiusPx,
+                    eventData.position.y,
+                    Mathf.Abs(cam.transform.position.z)
+                )
+            );
+            float radiusWorld = Vector3.Distance(world, worldRight);
             var picks =
                 EffectsManager.Instance != null
-                    ? EffectsManager.Instance.PreviewAutoTargets(effectData, owner, world)
+                    ? EffectsManager.Instance.PreviewAutoTargets(
+                        effectData,
+                        owner,
+                        world,
+                        radiusWorld
+                    )
                     : System.Array.Empty<Creature>();
             var list = picks.Where(c => c != null).ToList();
             if (list.Count > 0)
@@ -183,9 +198,23 @@ public class EffectCardUI : BaseCardUI
             Vector3 world = cam.ScreenToWorldPoint(
                 new Vector3(pointerScreen.x, pointerScreen.y, Mathf.Abs(cam.transform.position.z))
             );
+            // Convert pixel radius to world radius at current depth
+            Vector3 worldRight = cam.ScreenToWorldPoint(
+                new Vector3(
+                    pointerScreen.x + multiSelectTargetRadiusPx,
+                    pointerScreen.y,
+                    Mathf.Abs(cam.transform.position.z)
+                )
+            );
+            float radiusWorld = Vector3.Distance(world, worldRight);
             var picks =
                 EffectsManager.Instance != null
-                    ? EffectsManager.Instance.PreviewAutoTargets(effectData, owner, world)
+                    ? EffectsManager.Instance.PreviewAutoTargets(
+                        effectData,
+                        owner,
+                        world,
+                        radiusWorld
+                    )
                     : System.Array.Empty<Creature>();
             foreach (var c in picks)
             {
@@ -258,6 +287,4 @@ public class EffectCardUI : BaseCardUI
         }
         return best;
     }
-
-    // Description is authored on EffectCard (effectData.description)
 }

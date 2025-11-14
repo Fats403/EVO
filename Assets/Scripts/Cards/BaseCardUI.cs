@@ -1,8 +1,14 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public abstract class BaseCardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
+public abstract class BaseCardUI
+    : MonoBehaviour,
+        IBeginDragHandler,
+        IDragHandler,
+        IEndDragHandler,
+        IPointerEnterHandler,
+        IPointerExitHandler
 {
     [Header("Base UI")]
     protected RectTransform rectTransform;
@@ -14,7 +20,8 @@ public abstract class BaseCardUI : MonoBehaviour, IBeginDragHandler, IDragHandle
     protected Transform originalParent;
     protected int originalSiblingIndex;
 
-    [SerializeField] protected readonly float highlightRadius = 100f;
+    [SerializeField]
+    protected readonly float highlightRadius = 150f;
 
     // Drag smoothing (canvas local space)
     protected bool isDragging;
@@ -44,29 +51,49 @@ public abstract class BaseCardUI : MonoBehaviour, IBeginDragHandler, IDragHandle
         rectTransform.localScale = Vector3.one;
         // compute pointer offset so we keep the grab point consistent (in canvas local space)
         RectTransform canvasRT = canvas.transform as RectTransform;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRT, eventData.position, canvas.worldCamera, out Vector2 pointerLocal);
-        Vector2 cardScreen = RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, rectTransform.position);
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRT, cardScreen, canvas.worldCamera, out Vector2 cardPivotLocal);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRT,
+            eventData.position,
+            canvas.worldCamera,
+            out Vector2 pointerLocal
+        );
+        Vector2 cardScreen = RectTransformUtility.WorldToScreenPoint(
+            canvas.worldCamera,
+            rectTransform.position
+        );
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRT,
+            cardScreen,
+            canvas.worldCamera,
+            out Vector2 cardPivotLocal
+        );
         pointerGrabOffset = cardPivotLocal - pointerLocal;
         // start drag smoothing from the exact grab point to avoid 1-frame snap
         dragTargetAnchoredPosition = pointerLocal + pointerGrabOffset;
         rectTransform.anchoredPosition = dragTargetAnchoredPosition;
         dragVelocity = Vector2.zero;
         isDragging = true;
-        if (canvasGroup != null) canvasGroup.blocksRaycasts = false;
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = false;
     }
 
     public virtual void OnDrag(PointerEventData eventData)
     {
         // set target under the mouse with the original grab offset; Update() will ease towards it
         RectTransform canvasRT = canvas.transform as RectTransform;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRT, eventData.position, canvas.worldCamera, out Vector2 pointerLocal);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRT,
+            eventData.position,
+            canvas.worldCamera,
+            out Vector2 pointerLocal
+        );
         dragTargetAnchoredPosition = pointerLocal + pointerGrabOffset;
     }
 
     public virtual void OnEndDrag(PointerEventData eventData)
     {
-        if (canvasGroup != null) canvasGroup.blocksRaycasts = true;
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = true;
         isDragging = false;
         // default: return to hand (subclasses can override to consume or place)
         ReturnToHand();
@@ -103,9 +130,14 @@ public abstract class BaseCardUI : MonoBehaviour, IBeginDragHandler, IDragHandle
         if (isDragging)
         {
             // Smoothly move towards target anchored position while dragging
-            rectTransform.anchoredPosition = Vector2.SmoothDamp(rectTransform.anchoredPosition, dragTargetAnchoredPosition, ref dragVelocity, dragSmoothTime, Mathf.Infinity, Time.unscaledDeltaTime);
+            rectTransform.anchoredPosition = Vector2.SmoothDamp(
+                rectTransform.anchoredPosition,
+                dragTargetAnchoredPosition,
+                ref dragVelocity,
+                dragSmoothTime,
+                Mathf.Infinity,
+                Time.unscaledDeltaTime
+            );
         }
     }
 }
-
-

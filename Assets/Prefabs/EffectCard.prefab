@@ -486,7 +486,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EffectCardUI
   effectData: {fileID: 0}
   owner: 0
-  targetRadiusPx: 100
+  targetRadiusPx: 150
+  multiSelectTargetRadiusPx: 275
   artworkImage: {fileID: 2171389904074619779}
   nameText: {fileID: 7464215496263490521}
   descriptionText: {fileID: 3833289514611630815}

@@ -25,9 +25,6 @@ public class EffectCard : ScriptableObject
     [Tooltip("If true, the UI treats this as a multi-select and uses maxTargets.")]
     public bool multiSelect = false;
 
-    [Tooltip("Radius used for auto-select/highlighting when multi-select is enabled.")]
-    public float multiSelectRadius = 2.5f;
-
     [Header("Actions")]
     [Tooltip("Traits to attach to each targeted creature. Instances are created at play time.")]
     public EffectTraitBase[] traitsToAttachToTargets;
