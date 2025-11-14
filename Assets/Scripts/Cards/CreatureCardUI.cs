@@ -65,7 +65,6 @@ public class CreatureCardUI : BaseCardUI
         if (canvasGroup != null)
             canvasGroup.blocksRaycasts = true;
         isDragging = false;
-
         // Find closest board slot (world-space)
         BoardSlot closest = FindClosestSlot(eventData.position);
         bool placed = false;
@@ -81,7 +80,40 @@ public class CreatureCardUI : BaseCardUI
                     && GameManager.Instance.currentPhase == GamePhase.Place
                 )
                 {
-                    placed = DeckManager.Instance.SpawnCreature(Data, closest);
+                    // Check global rules (era, tier, momentum) before spawning
+                    string reason;
+                    if (
+                        GameManager.Instance.CanPlayCreatureCard(
+                            Data,
+                            SlotOwner.Player1,
+                            out reason
+                        )
+                    )
+                    {
+                        placed = DeckManager.Instance.SpawnCreature(Data, closest);
+                        if (!placed && !string.IsNullOrEmpty(reason))
+                        {
+                            // If spawn failed for some reason, refund the momentum we just spent
+                            // (best-effort: simply add cost back based on card)
+                            int cost = GameManager.Instance.GetCreatureCost(Data);
+                            if (cost > 0)
+                            {
+                                // Manual refund since TrySpendMomentum only subtracts
+                                if (GameManager.Instance != null)
+                                {
+                                    GameManager.Instance.p1Momentum += cost;
+                                    GameManager.Instance.UpdateMomentumUI();
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(reason))
+                        {
+                            FeedbackManager.Instance?.Log(reason);
+                        }
+                    }
                 }
             }
         }

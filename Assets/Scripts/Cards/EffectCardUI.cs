@@ -67,12 +67,23 @@ public class EffectCardUI : BaseCardUI
             var dz = GlobalEffectDropZone.Instance;
             if (dz != null && dz.IsPointerInside(eventData.position))
             {
-                EffectsManager.Instance?.PlayOnTargets(
-                    effectData,
-                    Enumerable.Empty<Creature>(),
-                    owner
-                );
-                played = true;
+                string reason = null;
+                if (
+                    GameManager.Instance != null
+                    && GameManager.Instance.CanPlayEffectCard(effectData, owner, out reason)
+                )
+                {
+                    EffectsManager.Instance?.PlayOnTargets(
+                        effectData,
+                        Enumerable.Empty<Creature>(),
+                        owner
+                    );
+                    played = true;
+                }
+                else if (!string.IsNullOrEmpty(reason))
+                {
+                    FeedbackManager.Instance?.Log(reason);
+                }
             }
         }
         else if (effectData != null && effectData.targetCount == EffectTargetCount.AllValid)
@@ -86,8 +97,19 @@ public class EffectCardUI : BaseCardUI
                 .ToList();
             if (all.Count > 0)
             {
-                EffectsManager.Instance?.PlayOnTargets(effectData, all, owner);
-                played = true;
+                string reason = null;
+                if (
+                    GameManager.Instance != null
+                    && GameManager.Instance.CanPlayEffectCard(effectData, owner, out reason)
+                )
+                {
+                    EffectsManager.Instance?.PlayOnTargets(effectData, all, owner);
+                    played = true;
+                }
+                else if (!string.IsNullOrEmpty(reason))
+                {
+                    FeedbackManager.Instance?.Log(reason);
+                }
             }
         }
         else if (
@@ -126,14 +148,36 @@ public class EffectCardUI : BaseCardUI
             var list = picks.Where(c => c != null).ToList();
             if (list.Count > 0)
             {
-                EffectsManager.Instance?.PlayOnTargets(effectData, list, owner);
-                played = true;
+                string reason = null;
+                if (
+                    GameManager.Instance != null
+                    && GameManager.Instance.CanPlayEffectCard(effectData, owner, out reason)
+                )
+                {
+                    EffectsManager.Instance?.PlayOnTargets(effectData, list, owner);
+                    played = true;
+                }
+                else if (!string.IsNullOrEmpty(reason))
+                {
+                    FeedbackManager.Instance?.Log(reason);
+                }
             }
         }
         else if (target != null && distPx <= targetRadiusPx)
         {
-            EffectsManager.Instance?.PlayOnTargets(effectData, new[] { target }, owner);
-            played = true;
+            string reason = null;
+            if (
+                GameManager.Instance != null
+                && GameManager.Instance.CanPlayEffectCard(effectData, owner, out reason)
+            )
+            {
+                EffectsManager.Instance?.PlayOnTargets(effectData, new[] { target }, owner);
+                played = true;
+            }
+            else if (!string.IsNullOrEmpty(reason))
+            {
+                FeedbackManager.Instance?.Log(reason);
+            }
         }
 
         // Clear highlights

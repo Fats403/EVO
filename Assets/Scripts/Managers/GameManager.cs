@@ -26,6 +26,16 @@ public class GameManager : MonoBehaviour
     public WeatherManager weatherManager;
     public WeatherVideoBackgroundController weatherVideoBackground;
 
+    [Header("Round & Era")]
+    public int currentRound = 1;
+    public Era currentEra = Era.Triassic;
+
+    [Header("Momentum")]
+    public int p1Momentum;
+    public int p2Momentum;
+    public TextMeshProUGUI p1MomentumLabel;
+    public TextMeshProUGUI p2MomentumLabel;
+
     [Header("Debug")]
     public GamePhase currentPhase = GamePhase.Setup;
     public int rngSeed = 0;
@@ -108,12 +118,19 @@ public class GameManager : MonoBehaviour
     void UpdatePhaseLabel()
     {
         if (phaseText != null)
-            phaseText.text = $"Phase: {currentPhase}";
+        {
+            string eraLabel = currentEra.ToString();
+            string phaseLabel = currentPhase.ToString();
+            phaseText.text = $"Round {currentRound} – {eraLabel} ({phaseLabel})";
+        }
+        UpdateMomentumUI();
     }
 
     void BeginSetup()
     {
-        // Seed already set; move to Draw
+        // Seed already set; initialize round/era then move to Draw
+        currentRound = 1;
+        currentEra = GetEraForRound(currentRound);
         currentPhase = GamePhase.Draw;
         UpdatePhaseLabel();
         BeginDraw();
@@ -144,6 +161,9 @@ public class GameManager : MonoBehaviour
 
     void BeginPlace()
     {
+        // Reset per-round momentum at the start of the Place phase
+        ResetMomentumForRound();
+
         // Trigger simple AI placement for Player2
         if (AIManager.Instance != null)
         {
@@ -171,10 +191,196 @@ public class GameManager : MonoBehaviour
 
     void BeginEndRound()
     {
-        // After resolution, prepare next round
+        // After resolution, advance round/era and prepare next round
+        currentRound = Mathf.Max(1, currentRound + 1);
+        currentEra = GetEraForRound(currentRound);
         currentPhase = GamePhase.Draw;
         UpdatePhaseLabel();
         BeginDraw();
+    }
+
+    public Era GetEraForRound(int round)
+    {
+        if (round <= 4)
+            return Era.Triassic;
+        if (round <= 8)
+            return Era.Jurassic;
+        if (round <= 12)
+            return Era.Cretaceous;
+        return Era.Extinction;
+    }
+
+    public int GetMomentumForEra(Era era)
+    {
+        switch (era)
+        {
+            case Era.Triassic:
+                return 2;
+            case Era.Jurassic:
+                return 3;
+            case Era.Cretaceous:
+                return 5;
+            case Era.Extinction:
+                return 7;
+            default:
+                return 2;
+        }
+    }
+
+    public int GetMomentum(SlotOwner owner)
+    {
+        return owner == SlotOwner.Player1 ? p1Momentum : p2Momentum;
+    }
+
+    public bool TrySpendMomentum(SlotOwner owner, int cost)
+    {
+        if (cost <= 0)
+            return true;
+
+        int current = owner == SlotOwner.Player1 ? p1Momentum : p2Momentum;
+        if (current < cost)
+            return false;
+
+        if (owner == SlotOwner.Player1)
+            p1Momentum -= cost;
+        else
+            p2Momentum -= cost;
+
+        UpdateMomentumUI();
+        return true;
+    }
+
+    public void ResetMomentumForRound()
+    {
+        int perRound = GetMomentumForEra(currentEra);
+        p1Momentum = perRound;
+        p2Momentum = perRound;
+        UpdateMomentumUI();
+    }
+
+    public void UpdateMomentumUI()
+    {
+        if (p1MomentumLabel != null)
+            p1MomentumLabel.text = $"P1 Momentum: {p1Momentum}";
+        if (p2MomentumLabel != null)
+            p2MomentumLabel.text = $"P2 Momentum: {p2Momentum}";
+    }
+
+    public bool IsTierAllowedInEra(int tier, Era era)
+    {
+        switch (era)
+        {
+            case Era.Triassic:
+                // Baseline: only Tier 1; higher tiers must be enabled by special effects
+                return tier == 1;
+            case Era.Jurassic:
+                // Tier 1–2 normally available
+                return tier >= 1 && tier <= 2;
+            case Era.Cretaceous:
+            case Era.Extinction:
+                // All tiers available
+                return tier >= 1 && tier <= 3;
+            default:
+                return true;
+        }
+    }
+
+    public int GetCreatureCost(CreatureCard card)
+    {
+        if (card == null)
+            return 0;
+        // Default: cost equals tier, clamped between 1 and 3
+        return Mathf.Clamp(card.tier, 1, 3);
+    }
+
+    public bool CanPlayCreatureCard(CreatureCard card, SlotOwner owner)
+    {
+        return CanPlayCreatureCard(card, owner, out _);
+    }
+
+    public bool CanPlayCreatureCard(CreatureCard card, SlotOwner owner, out string failureReason)
+    {
+        failureReason = null;
+
+        if (card == null)
+        {
+            failureReason = "Invalid creature card.";
+            return false;
+        }
+
+        if (currentPhase != GamePhase.Place)
+        {
+            failureReason = "You can only play creatures during the Place phase.";
+            return false;
+        }
+
+        if (!IsTierAllowedInEra(card.tier, currentEra))
+        {
+            failureReason =
+                $"Tier {card.tier} creatures are not available in the {currentEra} era.";
+            return false;
+        }
+
+        int cost = GetCreatureCost(card);
+        if (!TrySpendMomentum(owner, cost))
+        {
+            failureReason = "Not enough Momentum.";
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool CanPlayEffectCard(EffectCard card, SlotOwner owner)
+    {
+        return CanPlayEffectCard(card, owner, out _);
+    }
+
+    public bool CanPlayEffectCard(EffectCard card, SlotOwner owner, out string failureReason)
+    {
+        failureReason = null;
+
+        if (card == null)
+        {
+            failureReason = "Invalid effect card.";
+            return false;
+        }
+
+        if (currentPhase != GamePhase.Place)
+        {
+            failureReason = "You can only play effects during the Place phase.";
+            return false;
+        }
+
+        // Era requirement
+        if (currentEra < card.minEraAllowed)
+        {
+            failureReason = $"This card cannot be played before the {card.minEraAllowed} era.";
+            return false;
+        }
+
+        // Weather requirement (e.g., Solar Recovery)
+        if (card.requiresClearWeather)
+        {
+            if (
+                WeatherManager.Instance == null
+                || WeatherManager.Instance.CurrentWeather != WeatherType.Clear
+            )
+            {
+                failureReason = "This card can only be played in Clear weather.";
+                return false;
+            }
+        }
+
+        // Momentum requirement
+        int cost = Mathf.Max(0, card.momentumCost);
+        if (!TrySpendMomentum(owner, cost))
+        {
+            failureReason = "Not enough Momentum.";
+            return false;
+        }
+
+        return true;
     }
 
     public int NextRandomInt(int minInclusive, int maxExclusive)

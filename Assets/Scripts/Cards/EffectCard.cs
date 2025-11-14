@@ -32,7 +32,15 @@ public class EffectCard : ScriptableObject
     [Tooltip("Optional global effect to register on play (instanced per use)")]
     public GlobalEffectBase globalEffect;
 
-    // Removed unused permanent stat delta and cost fields
+    [Header("Cost & Conditions")]
+    [Tooltip("Momentum cost to play this effect card")]
+    public int momentumCost = 1;
+
+    [Tooltip("Minimum era in which this card can be played")]
+    public Era minEraAllowed = Era.Triassic;
+
+    [Tooltip("If true, this card may only be played while the weather is Clear")]
+    public bool requiresClearWeather = false;
 
     public bool IsValidTarget(Creature candidate, SlotOwner player)
     {
