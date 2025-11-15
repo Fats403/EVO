@@ -55,7 +55,7 @@ public class BoardSlot : MonoBehaviour
         if (prefab == null || pendingVisual != null)
             return;
         pendingVisual = UnityEngine.Object.Instantiate(prefab, transform);
-        pendingVisual.transform.localPosition = Vector3.zero;
+        pendingVisual.transform.localPosition = new Vector3(0, -15, 0);
     }
 
     // Hover indicator (does not change state)

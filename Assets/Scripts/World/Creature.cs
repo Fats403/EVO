@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Creature : MonoBehaviour
 {
     public CreatureCard data;
-    private SpriteRenderer sr;
+    public Image artworkImage;
     public int body;
     public int speed;
     public int eaten;
@@ -47,18 +48,6 @@ public class Creature : MonoBehaviour
         data = cardData;
         name = $"{data.cardName}";
 
-        sr = GetComponent<SpriteRenderer>();
-        if (sr != null && data.artwork != null)
-        {
-            sr.sprite = data.artwork;
-            // subtle tint by type
-            if (data.type == CardType.Herbivore)
-                sr.color = new Color(0.9f, 1f, 0.9f);
-            else if (data.type == CardType.Carnivore)
-                sr.color = new Color(1f, 0.9f, 0.9f);
-            else if (data.type == CardType.Avian)
-                sr.color = new Color(0.9f, 0.95f, 1f);
-        }
         body = data.size;
         speed = data.speed;
         baseBody = data.size;
@@ -78,16 +67,22 @@ public class Creature : MonoBehaviour
             traits.AddRange(data.baseTraits);
 
         RefreshStatsUI();
+
+        if (artworkImage != null && data.artwork != null)
+        {
+            artworkImage.sprite = data.artwork;
+        }
+
         // Ensure hover handler and a 2D collider for mouse events
         if (GetComponent<CreatureHoverHandler>() == null)
             gameObject.AddComponent<CreatureHoverHandler>();
         if (GetComponent<Collider2D>() == null)
         {
             var bc = gameObject.AddComponent<BoxCollider2D>();
-            if (sr != null && sr.sprite != null)
+            if (artworkImage != null && artworkImage.sprite != null)
             {
                 // approximate size from sprite bounds
-                bc.size = sr.sprite.bounds.size;
+                bc.size = artworkImage.sprite.bounds.size;
             }
         }
     }
@@ -153,14 +148,14 @@ public class Creature : MonoBehaviour
 
     public IEnumerator FlashDamage(float duration = 0.12f)
     {
-        if (sr == null)
-            sr = GetComponent<SpriteRenderer>();
-        if (sr != null)
+        if (artworkImage == null)
+            artworkImage = GetComponentInChildren<Image>();
+        if (artworkImage != null)
         {
-            Color original = sr.color;
-            sr.color = new Color(1f, 0.3f, 0.3f);
+            Color original = artworkImage.color;
+            artworkImage.color = new Color(1f, 0.3f, 0.3f);
             yield return new WaitForSeconds(duration);
-            sr.color = original;
+            artworkImage.color = original;
         }
     }
 

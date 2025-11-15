@@ -120,8 +120,8 @@ public class GameManager : MonoBehaviour
         if (phaseText != null)
         {
             string eraLabel = currentEra.ToString();
-            string phaseLabel = currentPhase.ToString();
-            phaseText.text = $"Round {currentRound} – {eraLabel} ({phaseLabel})";
+            // string phaseLabel = currentPhase.ToString();
+            phaseText.text = $"Round {currentRound} – {eraLabel}";
         }
         UpdateMomentumUI();
     }
