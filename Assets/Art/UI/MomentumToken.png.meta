@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 69059096257c043b9b23885ac058226f
+guid: 53543951fab174711b355fa0f8528fb9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 9164097274103974401
-    second: RectangleBox_96x96_0
+      213: 4941541555232882662
+    second: MomentumToken_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: RectangleBox_96x96_0
+      name: MomentumToken_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 96
-        height: 96
+        x: 107
+        y: 48
+        width: 915
+        height: 971
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 11, y: 12, z: 12, w: 11}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 10ac716dae96d2f70800000000000000
-      internalID: 9164097274103974401
+      spriteID: 6efbc72fcd1e39440800000000000000
+      internalID: 4941541555232882662
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: e36e7978dffc849b9b6ee942965942d9
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      RectangleBox_96x96_0: 9164097274103974401
+      MomentumToken_0: 4941541555232882662
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

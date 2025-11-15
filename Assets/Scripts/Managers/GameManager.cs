@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -153,7 +154,7 @@ public class GameManager : MonoBehaviour
         currentPhase = GamePhase.Draw;
         UpdatePhaseLabel();
         FeedbackManager.Instance?.ShowGlobalAlert(
-            $"Triassic Era – Round {currentRound}",
+            $"The {currentEra} Era Has begun",
             new Color(0.9f, 0.9f, 0.6f)
         );
         BeginDraw();
@@ -212,7 +213,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ResolveRoundCoroutine());
     }
 
-    System.Collections.IEnumerator ResolveRoundCoroutine()
+    IEnumerator ResolveRoundCoroutine()
     {
         yield return StartCoroutine(resolutionManager.RevealAndResolveRound());
         currentPhase = GamePhase.End;
@@ -229,7 +230,7 @@ public class GameManager : MonoBehaviour
         if (currentEra != previousEra)
         {
             FeedbackManager.Instance?.ShowGlobalAlert(
-                $"Entering {currentEra} Era",
+                $"The {currentEra} Era Has begun",
                 new Color(0.9f, 0.9f, 0.6f)
             );
         }
@@ -300,9 +301,9 @@ public class GameManager : MonoBehaviour
     public void UpdateMomentumUI()
     {
         if (p1MomentumLabel != null)
-            p1MomentumLabel.text = $"P1 Momentum: {p1Momentum}";
+            p1MomentumLabel.text = $"X {p1Momentum}";
         if (p2MomentumLabel != null)
-            p2MomentumLabel.text = $"P2 Momentum: {p2Momentum}";
+            p2MomentumLabel.text = $"X {p2Momentum}";
     }
 
     public bool IsTierAllowedInEra(int tier, Era era)

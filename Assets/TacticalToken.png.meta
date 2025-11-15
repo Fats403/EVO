@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e853f2f7f8d2145c8a0fc5a59f7d39c1
+guid: 88644b14323374d5d891eeaf3b667f07
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2037001853349802752
-    second: zFp-viwz7GNsajl-ALj2o_059a8ca5d66e4a56b92d8187b6a4ac0f_0
+      213: 1244793841713244643
+    second: TacticalToken_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: zFp-viwz7GNsajl-ALj2o_059a8ca5d66e4a56b92d8187b6a4ac0f_0
+      name: TacticalToken_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1024
-        height: 1024
+        width: 1032
+        height: 1080
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 116, y: 119, z: 113, w: 107}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0033ab3a462e44c10800000000000000
-      internalID: 2037001853349802752
+      spriteID: 3e969e16765664110800000000000000
+      internalID: 1244793841713244643
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 0f525fdd9bbf340bf8979a94ac47332c
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      zFp-viwz7GNsajl-ALj2o_059a8ca5d66e4a56b92d8187b6a4ac0f_0: 2037001853349802752
+      TacticalToken_0: 1244793841713244643
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
