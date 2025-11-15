@@ -26,6 +26,11 @@ public class GameManager : MonoBehaviour
     public WeatherManager weatherManager;
     public WeatherVideoBackgroundController weatherVideoBackground;
 
+    [Header("UI")]
+    public TextMeshProUGUI endTurnLabel;
+    public string endTurnIdleText = "End Turn";
+    public string endTurnBusyText = "Resolving...";
+
     [Header("Round & Era")]
     public int currentRound = 1;
     public Era currentEra = Era.Triassic;
@@ -63,6 +68,9 @@ public class GameManager : MonoBehaviour
             endTurnButton.onClick.AddListener(OnEndTurnClicked);
         if (toggleLogButton != null)
             toggleLogButton.onClick.AddListener(OnToggleLogClicked);
+        // Auto-wire end turn label if not assigned
+        if (endTurnLabel == null && endTurnButton != null)
+            endTurnLabel = endTurnButton.GetComponentInChildren<TextMeshProUGUI>();
         UpdatePhaseLabel();
         if (weatherVideoBackground != null)
             weatherVideoBackground.ForceTo(WeatherType.Clear);
@@ -79,6 +87,17 @@ public class GameManager : MonoBehaviour
 
     void OnEndTurnClicked()
     {
+        // Only allow ending the turn during the Place phase
+        if (currentPhase != GamePhase.Place)
+            return;
+
+        if (endTurnButton != null)
+            endTurnButton.interactable = false;
+        if (endTurnLabel != null)
+            endTurnLabel.text = string.IsNullOrEmpty(endTurnBusyText)
+                ? "Resolving..."
+                : endTurnBusyText;
+
         AdvancePhase();
     }
 
@@ -133,6 +152,10 @@ public class GameManager : MonoBehaviour
         currentEra = GetEraForRound(currentRound);
         currentPhase = GamePhase.Draw;
         UpdatePhaseLabel();
+        FeedbackManager.Instance?.ShowGlobalAlert(
+            $"Triassic Era – Round {currentRound}",
+            new Color(0.9f, 0.9f, 0.6f)
+        );
         BeginDraw();
     }
 
@@ -164,6 +187,14 @@ public class GameManager : MonoBehaviour
         // Reset per-round momentum at the start of the Place phase
         ResetMomentumForRound();
 
+        // Re-enable End Turn for the player
+        if (endTurnButton != null)
+            endTurnButton.interactable = true;
+        if (endTurnLabel != null)
+            endTurnLabel.text = string.IsNullOrEmpty(endTurnIdleText)
+                ? "End Turn"
+                : endTurnIdleText;
+
         // Trigger simple AI placement for Player2
         if (AIManager.Instance != null)
         {
@@ -192,8 +223,16 @@ public class GameManager : MonoBehaviour
     void BeginEndRound()
     {
         // After resolution, advance round/era and prepare next round
+        Era previousEra = currentEra;
         currentRound = Mathf.Max(1, currentRound + 1);
         currentEra = GetEraForRound(currentRound);
+        if (currentEra != previousEra)
+        {
+            FeedbackManager.Instance?.ShowGlobalAlert(
+                $"Entering {currentEra} Era",
+                new Color(0.9f, 0.9f, 0.6f)
+            );
+        }
         currentPhase = GamePhase.Draw;
         UpdatePhaseLabel();
         BeginDraw();

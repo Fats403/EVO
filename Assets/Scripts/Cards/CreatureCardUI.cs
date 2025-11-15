@@ -112,6 +112,10 @@ public class CreatureCardUI : BaseCardUI
                         if (!string.IsNullOrEmpty(reason))
                         {
                             FeedbackManager.Instance?.Log(reason);
+                            FeedbackManager.Instance?.ShowGlobalAlert(
+                                reason,
+                                new Color(1f, 0.5f, 0.5f)
+                            );
                         }
                     }
                 }

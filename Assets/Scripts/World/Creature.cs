@@ -328,9 +328,11 @@ public class Creature : MonoBehaviour
         float t = 0f;
         var renderers = GetComponentsInChildren<SpriteRenderer>(true);
         var texts = GetComponentsInChildren<TMP_Text>(true);
+        var images = GetComponentsInChildren<UnityEngine.UI.Image>(true);
         // capture original colors
         var srColors = renderers.Select(r => r != null ? r.color : Color.white).ToArray();
         var txtColors = texts.Select(txt => txt != null ? txt.color : Color.white).ToArray();
+        var imgColors = images.Select(img => img != null ? img.color : Color.white).ToArray();
         while (t < duration)
         {
             t += Time.deltaTime;
@@ -352,6 +354,15 @@ public class Creature : MonoBehaviour
                     var c = txtColors[i];
                     c.a = a;
                     texts[i].color = c;
+                }
+            }
+            for (int i = 0; i < images.Length; i++)
+            {
+                if (images[i] != null)
+                {
+                    var c = imgColors[i];
+                    c.a = a;
+                    images[i].color = c;
                 }
             }
             yield return null;

@@ -3,7 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public enum WeatherType { Clear, Drought, Wildfire, Storm }
+public enum WeatherType
+{
+    Clear,
+    Drought,
+    Wildfire,
+    Storm,
+}
 
 public class WeatherManager : MonoBehaviour
 {
@@ -16,9 +22,14 @@ public class WeatherManager : MonoBehaviour
     public int weightWildfire = 10;
 
     [Header("State")]
-    [SerializeField] private WeatherType currentWeather = WeatherType.Clear;
-    [SerializeField] private WeatherType? lastWeather = null;
-    [SerializeField] private bool isFirstRound = true;
+    [SerializeField]
+    private WeatherType currentWeather = WeatherType.Clear;
+
+    [SerializeField]
+    private WeatherType? lastWeather = null;
+
+    [SerializeField]
+    private bool isFirstRound = true;
     private int? starveDamageOverride = null;
 
     public Action<WeatherType> OnWeatherChanged;
@@ -29,8 +40,10 @@ public class WeatherManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance != null && Instance != this) Destroy(gameObject);
-        else Instance = this;
+        if (Instance != null && Instance != this)
+            Destroy(gameObject);
+        else
+            Instance = this;
     }
 
     public void InitializeClearStart()
@@ -70,8 +83,10 @@ public class WeatherManager : MonoBehaviour
 
         bool Disallowed(WeatherType t)
         {
-            if (lastWeather == WeatherType.Wildfire && t == WeatherType.Wildfire) return true; // no wildfire twice
-            if (lastWeather == WeatherType.Storm && t == WeatherType.Wildfire) return true;   // no storm -> wildfire
+            if (lastWeather == WeatherType.Wildfire && t == WeatherType.Wildfire)
+                return true; // no wildfire twice
+            if (lastWeather == WeatherType.Storm && t == WeatherType.Wildfire)
+                return true; // no storm -> wildfire
             return false;
         }
 
@@ -89,13 +104,27 @@ public class WeatherManager : MonoBehaviour
         foreach (var c in filtered)
         {
             acc += c.weight;
-            if (roll < acc) { picked = c.type; break; }
+            if (roll < acc)
+            {
+                picked = c.type;
+                break;
+            }
         }
 
         lastWeather = currentWeather;
         currentWeather = picked;
         starveDamageOverride = null;
         FeedbackManager.Instance?.Log($"Weather: {currentWeather}");
+        // Screen-center alert for weather changes
+        Color alertColor = currentWeather switch
+        {
+            WeatherType.Clear => new Color(0.8f, 1f, 0.8f),
+            WeatherType.Drought => new Color(0.95f, 0.8f, 0.4f),
+            WeatherType.Storm => new Color(0.7f, 0.85f, 1f),
+            WeatherType.Wildfire => new Color(1f, 0.6f, 0.3f),
+            _ => Color.white,
+        };
+        FeedbackManager.Instance?.ShowGlobalAlert($"Weather: {currentWeather}", alertColor);
         OnWeatherChanged?.Invoke(currentWeather);
         return currentWeather;
     }
@@ -103,7 +132,8 @@ public class WeatherManager : MonoBehaviour
     public void ApplyRoundStartEffects(FoodPile pile)
     {
         starveDamageOverride = null;
-        if (pile == null) return;
+        if (pile == null)
+            return;
         switch (currentWeather)
         {
             case WeatherType.Clear:
@@ -111,7 +141,7 @@ public class WeatherManager : MonoBehaviour
                 int add = Next(1, 3); // +1 to +2
                 pile.count = Mathf.Max(0, pile.count + add);
                 pile.UpdateUI();
-                FeedbackManager.Instance?.ShowFloatingText($"Weather: Clear +{add} food", pile.transform.position, new Color(0.5f, 0.9f, 0.5f));
+
                 break;
             }
             case WeatherType.Drought:
@@ -120,7 +150,6 @@ public class WeatherManager : MonoBehaviour
                 pile.count = Mathf.Max(0, pile.count - remove);
                 pile.UpdateUI();
                 starveDamageOverride = 3;
-                FeedbackManager.Instance?.ShowFloatingText($"Drought: -{remove} food (Starve 3)", pile.transform.position, new Color(0.9f, 0.7f, 0.3f));
                 break;
             }
             case WeatherType.Storm:
@@ -128,15 +157,20 @@ public class WeatherManager : MonoBehaviour
                 int remove = 1;
                 pile.count = Mathf.Max(0, pile.count - remove);
                 pile.UpdateUI();
-                FeedbackManager.Instance?.ShowFloatingText("Storm: -1 food", pile.transform.position, new Color(0.6f, 0.8f, 1f));
+
                 // Apply 1 stack of Fatigued to all Avians at storm start
                 var avians = FindObjectsByType<Creature>(FindObjectsSortMode.None)
-                    .Where(c => c != null && c.currentHealth > 0 && !c.isDying && c.data != null && c.data.type == CardType.Avian)
+                    .Where(c =>
+                        c != null
+                        && c.currentHealth > 0
+                        && !c.isDying
+                        && c.data != null
+                        && c.data.type == CardType.Avian
+                    )
                     .ToList();
                 foreach (var a in avians)
                 {
                     a.ApplyFatigued(1);
-                    FeedbackManager.Instance?.ShowFloatingText("Storm: Fatigued", a.transform.position, new Color(0.6f, 0.8f, 1f));
                 }
                 break;
             }
@@ -164,7 +198,11 @@ public class WeatherManager : MonoBehaviour
                 {
                     Vector3 pos = c.transform.position;
                     c.ApplyDamage(1, null);
-                    FeedbackManager.Instance?.ShowFloatingText("Wildfire -1 HP", pos, new Color(1f, 0.5f, 0.2f));
+                    FeedbackManager.Instance?.ShowFloatingText(
+                        "Wildfire -1 HP",
+                        pos,
+                        new Color(1f, 0.5f, 0.2f)
+                    );
                 }
                 break;
             }
@@ -178,5 +216,3 @@ public class WeatherManager : MonoBehaviour
         }
     }
 }
-
-

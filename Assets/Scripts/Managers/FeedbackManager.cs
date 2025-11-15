@@ -25,12 +25,24 @@ public class FeedbackManager : MonoBehaviour
     public int maxLines = 20;
     public bool logPanelVisible = false;
 
+    [Header("Global Alert")]
+    [Tooltip("Centered text used for big global alerts (weather, era changes, errors, etc.)")]
+    public TextMeshProUGUI globalAlertText;
+
+    [Tooltip("Seconds to hold the global alert at full alpha before fading")]
+    public float globalAlertHold = 2f;
+
+    [Tooltip("Seconds to fade the global alert out")]
+    public float globalAlertFade = 0.6f;
+
     private readonly System.Text.StringBuilder sb = new(1024);
 
     // Per-position queue system
     private readonly Dictionary<Vector3, Queue<FeedbackRequest>> positionQueues = new();
     private readonly Dictionary<Vector3, Coroutine> activeAnimations = new();
     private readonly Dictionary<Vector3, int> activeStackCounts = new(); // track stacking offset
+
+    private Coroutine globalAlertRoutine;
 
     private class FeedbackRequest
     {
@@ -44,6 +56,13 @@ public class FeedbackManager : MonoBehaviour
         Instance = this;
         // Set initial visibility
         logPanel?.SetActive(logPanelVisible);
+        // Ensure global alert starts hidden
+        if (globalAlertText != null)
+        {
+            var cg = globalAlertText.GetComponent<CanvasGroup>()
+                ?? globalAlertText.gameObject.AddComponent<CanvasGroup>();
+            cg.alpha = 0f;
+        }
     }
 
     public void Log(string message)
@@ -72,6 +91,51 @@ public class FeedbackManager : MonoBehaviour
         {
             logPanel.SetActive(logPanelVisible);
         }
+    }
+
+    // --- Global Screen-Center Alerts ---
+
+    public void ShowGlobalAlert(string message, Color color)
+    {
+        if (globalAlertText == null || string.IsNullOrEmpty(message))
+            return;
+
+        if (globalAlertRoutine != null)
+        {
+            StopCoroutine(globalAlertRoutine);
+            globalAlertRoutine = null;
+        }
+
+        globalAlertRoutine = StartCoroutine(GlobalAlertRoutine(message, color));
+    }
+
+    private IEnumerator GlobalAlertRoutine(string message, Color color)
+    {
+        var cg = globalAlertText.GetComponent<CanvasGroup>()
+            ?? globalAlertText.gameObject.AddComponent<CanvasGroup>();
+
+        globalAlertText.text = message;
+        Color c = color;
+        c.a = 1f;
+        globalAlertText.color = c;
+        cg.alpha = 1f;
+
+        float hold = Mathf.Max(0.01f, globalAlertHold);
+        float fade = Mathf.Max(0.01f, globalAlertFade);
+
+        yield return new WaitForSeconds(hold);
+
+        float t = 0f;
+        while (t < fade)
+        {
+            t += Time.deltaTime;
+            float u = Mathf.Clamp01(t / fade);
+            cg.alpha = 1f - u;
+            yield return null;
+        }
+
+        cg.alpha = 0f;
+        globalAlertRoutine = null;
     }
 
     public static string TagOwner(SlotOwner owner)
