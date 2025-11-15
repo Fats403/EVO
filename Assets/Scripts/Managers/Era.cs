@@ -5,5 +5,3 @@ public enum Era
     Cretaceous,
     Extinction,
 }
-
-
