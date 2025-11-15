@@ -107,7 +107,7 @@ public class HandLayoutController : MonoBehaviour
         draggedCard = rt;
         StopAnimating(rt);
         // animate scale down while dragging (position is controlled by drag logic)
-        AnimateScaleOnly(rt, 0.8f);
+        AnimateScaleOnly(rt, 0.65f);
         LayoutCards();
     }
 
