@@ -154,7 +154,7 @@ public class GameManager : MonoBehaviour
         currentPhase = GamePhase.Draw;
         UpdatePhaseLabel();
         FeedbackManager.Instance?.ShowGlobalAlert(
-            $"The {currentEra} Era Has begun",
+            $"The {currentEra} Era Has began!",
             new Color(0.9f, 0.9f, 0.6f)
         );
         BeginDraw();
@@ -230,7 +230,7 @@ public class GameManager : MonoBehaviour
         if (currentEra != previousEra)
         {
             FeedbackManager.Instance?.ShowGlobalAlert(
-                $"The {currentEra} Era Has begun",
+                $"The {currentEra} Era Has Started",
                 new Color(0.9f, 0.9f, 0.6f)
             );
         }

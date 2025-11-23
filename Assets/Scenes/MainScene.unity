@@ -433,7 +433,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 620, y: -190}
+  m_AnchoredPosition: {x: 636, y: -141}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &131098503
@@ -1609,6 +1609,8 @@ MonoBehaviour:
   starveDelay: 0.8
   statusEffectDelay: 0.8
   pacingMultiplier: 1.75
+  attackVFX: {fileID: 0}
+  eatVFX: {fileID: 0}
 --- !u!4 &648372068
 Transform:
   m_ObjectHideFlags: 0
@@ -1992,7 +1994,7 @@ MonoBehaviour:
   floatUpDistance: 1.2
   floatDuration: 1.5
   alphaHold: 0.75
-  stackOffset: 0.3
+  stackOffset: 0.8
   logText: {fileID: 1439202204}
   logPanel: {fileID: 1986103158}
   maxLines: 28
@@ -3149,7 +3151,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 620, y: 124.99997}
+  m_AnchoredPosition: {x: 635.99994, y: 173.99997}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1961572574

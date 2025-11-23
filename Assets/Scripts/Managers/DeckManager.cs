@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,10 +33,11 @@ public class DeckManager : MonoBehaviour
     public GameObject effectCardPrefab;
 
     [Header("Deck UI")]
-    public Text deckCountText;
+    public TMP_Text deckCountText;
+    public TMP_Text handCountText;
 
-    private readonly List<ScriptableObject> currentDeck = new List<ScriptableObject>();
-    private readonly List<ScriptableObject> drawPile = new List<ScriptableObject>();
+    private readonly List<ScriptableObject> currentDeck = new();
+    private readonly List<ScriptableObject> drawPile = new();
 
     private void Awake()
     {
@@ -46,6 +48,7 @@ public class DeckManager : MonoBehaviour
     {
         BuildDeck();
         DrawStartingHand();
+        UpdateHandUI();
     }
 
     void BuildDeck()
@@ -60,9 +63,7 @@ public class DeckManager : MonoBehaviour
                 (GameManager.Instance != null)
                     ? GameManager.Instance.NextRandomInt(0, i + 1)
                     : Random.Range(0, i + 1);
-            var temp = pool[i];
-            pool[i] = pool[j];
-            pool[j] = temp;
+            (pool[j], pool[i]) = (pool[i], pool[j]);
         }
         // Take up to deckSize unique
         var picked = new List<ScriptableObject>(deckSize);
@@ -85,9 +86,7 @@ public class DeckManager : MonoBehaviour
                 (GameManager.Instance != null)
                     ? GameManager.Instance.NextRandomInt(0, i + 1)
                     : Random.Range(0, i + 1);
-            var temp = drawPile[i];
-            drawPile[i] = drawPile[j];
-            drawPile[j] = temp;
+            (drawPile[j], drawPile[i]) = (drawPile[i], drawPile[j]);
         }
         UpdateDeckUI();
     }
@@ -100,6 +99,7 @@ public class DeckManager : MonoBehaviour
         {
             DrawCard();
         }
+        UpdateHandUI();
     }
 
     public void DrawCard()
@@ -110,6 +110,7 @@ public class DeckManager : MonoBehaviour
         if (data == null)
             return;
         CreateCardUI(data);
+        UpdateHandUI();
     }
 
     void CreateCardUI(ScriptableObject data)
@@ -123,8 +124,7 @@ public class DeckManager : MonoBehaviour
             }
             GameObject cardObj = Instantiate(creatureCardPrefab, handPanel);
             CreatureCardUI ui = cardObj.GetComponent<CreatureCardUI>();
-            if (ui != null)
-                ui.Initialize(creatureData);
+            ui?.Initialize(creatureData);
         }
         else if (data is EffectCard effectData)
         {
@@ -142,10 +142,9 @@ public class DeckManager : MonoBehaviour
             }
         }
 
-        var layout =
-            handPanel != null ? handPanel.GetComponentInParent<HandLayoutController>() : null;
-        if (layout != null)
-            layout.RequestLayout();
+        var layout = handPanel?.GetComponentInParent<HandLayoutController>();
+        layout?.RequestLayout();
+        UpdateHandUI();
     }
 
     public bool SpawnCreature(CreatureCard data, BoardSlot slot)
@@ -195,7 +194,13 @@ public class DeckManager : MonoBehaviour
     void UpdateDeckUI()
     {
         if (deckCountText != null)
-            deckCountText.text = $"Deck: {drawPile.Count}";
+            deckCountText.text = drawPile.Count.ToString();
+    }
+
+    public void UpdateHandUI()
+    {
+        if (handCountText != null)
+            handCountText.text = CurrentHandCount().ToString();
     }
 
     // Public helper for round-based draws (caller: round system)

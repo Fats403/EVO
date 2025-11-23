@@ -17,7 +17,7 @@ public class FeedbackManager : MonoBehaviour
     public float alphaHold = 1.25f;
 
     [Tooltip("Vertical spacing between stacked messages at same position")]
-    public float stackOffset = 0.3f;
+    public float stackOffset = 0.5f;
 
     [Header("Log UI")]
     public TextMeshProUGUI logText;
@@ -37,19 +37,10 @@ public class FeedbackManager : MonoBehaviour
 
     private readonly System.Text.StringBuilder sb = new(1024);
 
-    // Per-position queue system
-    private readonly Dictionary<Vector3, Queue<FeedbackRequest>> positionQueues = new();
-    private readonly Dictionary<Vector3, Coroutine> activeAnimations = new();
-    private readonly Dictionary<Vector3, int> activeStackCounts = new(); // track stacking offset
+    // Per-position active text tracking (for stacking)
+    private readonly Dictionary<Vector3, List<GameObject>> activeTexts = new();
 
     private Coroutine globalAlertRoutine;
-
-    private class FeedbackRequest
-    {
-        public string text;
-        public Vector3 worldPos;
-        public Color color;
-    }
 
     void Awake()
     {
@@ -59,7 +50,8 @@ public class FeedbackManager : MonoBehaviour
         // Ensure global alert starts hidden
         if (globalAlertText != null)
         {
-            var cg = globalAlertText.GetComponent<CanvasGroup>()
+            var cg =
+                globalAlertText.GetComponent<CanvasGroup>()
                 ?? globalAlertText.gameObject.AddComponent<CanvasGroup>();
             cg.alpha = 0f;
         }
@@ -111,7 +103,8 @@ public class FeedbackManager : MonoBehaviour
 
     private IEnumerator GlobalAlertRoutine(string message, Color color)
     {
-        var cg = globalAlertText.GetComponent<CanvasGroup>()
+        var cg =
+            globalAlertText.GetComponent<CanvasGroup>()
             ?? globalAlertText.gameObject.AddComponent<CanvasGroup>();
 
         globalAlertText.text = message;
@@ -148,89 +141,92 @@ public class FeedbackManager : MonoBehaviour
         if (floatingTextPrefab == null || string.IsNullOrEmpty(text))
             return;
 
-        // Round position to avoid near-duplicates creating separate queues
+        // Round position to group nearby texts
         Vector3 key = new Vector3(
             Mathf.Round(worldPos.x * 10f) / 10f,
             Mathf.Round(worldPos.y * 10f) / 10f,
             Mathf.Round(worldPos.z * 10f) / 10f
         );
 
-        var req = new FeedbackRequest
+        // Prune nulls from the list for this key
+        if (!activeTexts.ContainsKey(key))
+            activeTexts[key] = new List<GameObject>();
+
+        activeTexts[key].RemoveAll(x => x == null);
+
+        // Push existing texts up
+        foreach (var obj in activeTexts[key])
         {
-            text = text,
-            worldPos = worldPos,
-            color = color,
-        };
-
-        if (!positionQueues.ContainsKey(key))
-            positionQueues[key] = new Queue<FeedbackRequest>();
-
-        positionQueues[key].Enqueue(req);
-
-        // Start processing if not already running for this position
-        if (!activeAnimations.ContainsKey(key))
-        {
-            activeStackCounts[key] = 0;
-            activeAnimations[key] = StartCoroutine(ProcessQueue(key));
-        }
-    }
-
-    IEnumerator ProcessQueue(Vector3 key)
-    {
-        while (positionQueues.ContainsKey(key) && positionQueues[key].Count > 0)
-        {
-            var req = positionQueues[key].Dequeue();
-            int stackIndex = activeStackCounts[key];
-            activeStackCounts[key]++;
-
-            yield return StartCoroutine(FloatAndFade(req, stackIndex));
-
-            activeStackCounts[key]--;
+            if (obj != null)
+            {
+                obj.transform.position += Vector3.up * stackOffset;
+            }
         }
 
-        // Cleanup when queue is empty
-        activeAnimations.Remove(key);
-        positionQueues.Remove(key);
-        activeStackCounts.Remove(key);
-    }
-
-    IEnumerator FloatAndFade(FeedbackRequest req, int stackIndex)
-    {
-        if (floatingTextPrefab == null)
-            yield break;
-
-        // Apply vertical stack offset
-        Vector3 spawnPos = req.worldPos + Vector3.up * (stackIndex * stackOffset);
-        var go = Instantiate(floatingTextPrefab, spawnPos, Quaternion.identity);
+        // Instantiate new text
+        var go = Instantiate(floatingTextPrefab, worldPos, Quaternion.identity);
         var tmp = go.GetComponentInChildren<TextMeshProUGUI>();
         if (tmp != null)
         {
-            tmp.text = req.text;
-            tmp.color = req.color;
+            tmp.text = text;
+            tmp.color = color;
         }
 
-        var start = go.transform.position;
-        var end = start + Vector3.up * floatUpDistance;
-        var t = 0f;
-        var canvasGroup = go.GetComponent<CanvasGroup>() ?? go.AddComponent<CanvasGroup>();
-        float total = Mathf.Max(0.01f, alphaHold + Mathf.Max(0.01f, floatDuration));
+        // Track it
+        activeTexts[key].Add(go);
 
-        while (t < total)
+        // Animate
+        StartCoroutine(FloatAndFade(go));
+    }
+
+    IEnumerator FloatAndFade(GameObject go)
+    {
+        if (go == null)
+            yield break;
+
+        var startPos = go.transform.position; // Note: this is just the spawn point, but we will read current pos in loop
+        // We want to drift UP relative to wherever we are, but since other logic might move us (the stack push),
+        // we should perhaps just add a continuous drift velocity or simply fade out.
+        // The stack push handles the "make room" part.
+        // Let's just handle the Fade and maybe a slow drift, but be careful not to fight the stack push.
+        // Actually, if we just let the stack push handle the big moves, we can add a small drift here or just fade.
+
+        // To keep it simple and consistent with WoW style:
+        // The text appears, maybe pops a bit, then stays or drifts slowly, then fades.
+        // The "stack push" moves it up significantly.
+
+        var canvasGroup = go.GetComponent<CanvasGroup>() ?? go.AddComponent<CanvasGroup>();
+        float totalDuration = alphaHold + floatDuration;
+        float t = 0f;
+
+        // We'll add a small constant drift just so it's not static if no other events happen
+        float driftSpeed = 0.2f;
+
+        while (t < totalDuration)
         {
+            if (go == null)
+                yield break;
+
             t += Time.deltaTime;
-            float uMove = Mathf.Clamp01(t / total);
-            go.transform.position = Vector3.Lerp(start, end, uMove);
-            if (t <= alphaHold)
+
+            // Small continuous drift
+            go.transform.position += Vector3.up * (driftSpeed * Time.deltaTime);
+
+            // Alpha
+            if (t > alphaHold)
             {
-                canvasGroup.alpha = 1f;
+                float fadeProgress = (t - alphaHold) / floatDuration;
+                canvasGroup.alpha = 1f - Mathf.Clamp01(fadeProgress);
             }
             else
             {
-                float uFade = Mathf.Clamp01((t - alphaHold) / Mathf.Max(0.01f, floatDuration));
-                canvasGroup.alpha = 1f - uFade;
+                canvasGroup.alpha = 1f;
             }
+
             yield return null;
         }
-        Destroy(go);
+
+        if (go != null)
+            Destroy(go);
     }
 }

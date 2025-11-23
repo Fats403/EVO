@@ -83,10 +83,7 @@ public class EffectCardUI : BaseCardUI
                 else if (!string.IsNullOrEmpty(reason))
                 {
                     FeedbackManager.Instance?.Log(reason);
-                    FeedbackManager.Instance?.ShowGlobalAlert(
-                        reason,
-                        new Color(1f, 0.5f, 0.5f)
-                    );
+                    FeedbackManager.Instance?.ShowGlobalAlert(reason, new Color(1f, 0.5f, 0.5f));
                 }
             }
         }
@@ -113,10 +110,7 @@ public class EffectCardUI : BaseCardUI
                 else if (!string.IsNullOrEmpty(reason))
                 {
                     FeedbackManager.Instance?.Log(reason);
-                    FeedbackManager.Instance?.ShowGlobalAlert(
-                        reason,
-                        new Color(1f, 0.5f, 0.5f)
-                    );
+                    FeedbackManager.Instance?.ShowGlobalAlert(reason, new Color(1f, 0.5f, 0.5f));
                 }
             }
         }
@@ -168,10 +162,7 @@ public class EffectCardUI : BaseCardUI
                 else if (!string.IsNullOrEmpty(reason))
                 {
                     FeedbackManager.Instance?.Log(reason);
-                    FeedbackManager.Instance?.ShowGlobalAlert(
-                        reason,
-                        new Color(1f, 0.5f, 0.5f)
-                    );
+                    FeedbackManager.Instance?.ShowGlobalAlert(reason, new Color(1f, 0.5f, 0.5f));
                 }
             }
         }
@@ -189,10 +180,7 @@ public class EffectCardUI : BaseCardUI
             else if (!string.IsNullOrEmpty(reason))
             {
                 FeedbackManager.Instance?.Log(reason);
-                FeedbackManager.Instance?.ShowGlobalAlert(
-                    reason,
-                    new Color(1f, 0.5f, 0.5f)
-                );
+                FeedbackManager.Instance?.ShowGlobalAlert(reason, new Color(1f, 0.5f, 0.5f));
             }
         }
 
@@ -206,6 +194,8 @@ public class EffectCardUI : BaseCardUI
         if (played)
         {
             handLayout?.NotifyDragEnd(this, false);
+            // Card left hand; update hand count display
+            DeckManager.Instance?.UpdateHandUI();
             Destroy(gameObject);
             return;
         }

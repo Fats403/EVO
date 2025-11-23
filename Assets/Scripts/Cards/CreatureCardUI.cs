@@ -81,12 +81,11 @@ public class CreatureCardUI : BaseCardUI
                 )
                 {
                     // Check global rules (era, tier, momentum) before spawning
-                    string reason;
                     if (
                         GameManager.Instance.CanPlayCreatureCard(
                             Data,
                             SlotOwner.Player1,
-                            out reason
+                            out string reason
                         )
                     )
                     {
@@ -130,6 +129,8 @@ public class CreatureCardUI : BaseCardUI
                 hoverSlot.HideHoverIndicator();
                 hoverSlot = null;
             }
+            // Card left hand; update hand count display
+            DeckManager.Instance?.UpdateHandUI();
             Destroy(gameObject);
         }
         else

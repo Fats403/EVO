@@ -12,16 +12,20 @@ public class ResolutionManager : MonoBehaviour
     public List<GlobalEffectBase> activeGlobalEffects = new();
 
     [Header("Timing")]
-    public float preStealDelay = 0.6f;
-    public float eatDelay = 0.7f;
-    public float attackWindup = 0.35f;
-    public float attackResolvePause = 0.6f;
-    public float afterCarnivoreDelay = 0.6f;
-    public float starveDelay = 0.7f;
-    public float statusEffectDelay = 0.6f;
+    public float preStealDelay = 0.3f;
+    public float eatDelay = 0.4f;
+    public float attackWindup = 0.2f;
+    public float attackResolvePause = 0.3f;
+    public float afterCarnivoreDelay = 0.3f;
+    public float starveDelay = 0.3f;
+    public float statusEffectDelay = 0.2f;
 
     [Tooltip("Global pacing multiplier for all waits (higher = slower)")]
-    public float pacingMultiplier = 1.75f;
+    public float pacingMultiplier = 1.0f;
+
+    [Header("VFX")]
+    public GameObject attackVFX;
+    public GameObject eatVFX;
 
     void Awake()
     {
@@ -263,6 +267,25 @@ public class ResolutionManager : MonoBehaviour
                             t.OnAfterEat(c, taken, foodPile);
                     }
                 }
+
+                // Lunge animation + VFX
+                if (foodPile != null)
+                {
+                    yield return StartCoroutine(
+                        c.PlayEatAnimation(foodPile.transform.position, eatDelay * pacingMultiplier)
+                    );
+                }
+                else
+                {
+                    yield return new WaitForSeconds(eatDelay * pacingMultiplier);
+                }
+
+                // Optional Eat VFX
+                if (eatVFX != null)
+                {
+                    c.PlayVFX(eatVFX);
+                }
+
                 FeedbackManager.Instance?.ShowFloatingText(
                     $"+{taken} food",
                     c.transform.position,
@@ -271,7 +294,6 @@ public class ResolutionManager : MonoBehaviour
                 FeedbackManager.Instance?.Log(
                     $"{FeedbackManager.TagOwner(c.owner)} {c.name} ate {taken}."
                 );
-                yield return new WaitForSeconds(eatDelay * pacingMultiplier);
             }
         }
     }
@@ -512,7 +534,9 @@ public class ResolutionManager : MonoBehaviour
             baseDmg = Mathf.Max(0, baseDmg);
             if (baseDmg > 0)
             {
-                target.ApplyDamage(baseDmg, attacker);
+                // Pass attackVFX to ApplyDamage
+                target.ApplyDamage(baseDmg, attacker, attackVFX);
+
                 var dmgTag = harass ? "Harass" : "Hit";
                 FeedbackManager.Instance?.ShowFloatingText(
                     $"-{baseDmg} HP ({dmgTag})",
@@ -943,7 +967,8 @@ public class ResolutionManager : MonoBehaviour
         baseDmg = Mathf.Max(0, baseDmg);
         if (baseDmg > 0)
         {
-            target.ApplyDamage(baseDmg, attacker);
+            // Pass attackVFX here too
+            target.ApplyDamage(baseDmg, attacker, attackVFX);
             FeedbackManager.Instance?.ShowFloatingText(
                 $"-{baseDmg} HP",
                 target.transform.position,

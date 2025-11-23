@@ -121,6 +121,201 @@ public class Creature : MonoBehaviour
         }
     }
 
+    public IEnumerator PlayEatAnimation(Vector3 targetPos, float duration)
+    {
+        // Cache original position and Z so we can safely adjust layering during the lunge.
+        Vector3 originalStart = transform.position;
+        float originalZ = originalStart.z;
+        // Nudge slightly toward the camera so this creature renders above neighbors,
+        // but keep it on the same "plane" so background ordering is preserved.
+        float foregroundZ = originalZ - 0.1f;
+
+        Vector3 start = new Vector3(originalStart.x, originalStart.y, foregroundZ);
+        targetPos.z = foregroundZ;
+        // Lunge ~70% of the way toward the food pile in X/Y, not fully into it.
+        Vector3 mid = Vector3.Lerp(start, targetPos, 0.5f);
+
+        // Temporarily bump this creature's render order above neighbors by increasing the
+        // sortingOrder on any child world-space Canvases and SpriteRenderers.
+        const int sortBoost = 100;
+        Canvas[] canvases = GetComponentsInChildren<Canvas>(false);
+        int[] canvasOrders = null;
+        bool[] canvasOverrides = null;
+        if (canvases != null && canvases.Length > 0)
+        {
+            canvasOrders = new int[canvases.Length];
+            canvasOverrides = new bool[canvases.Length];
+            for (int i = 0; i < canvases.Length; i++)
+            {
+                var c = canvases[i];
+                if (c == null || c.renderMode != RenderMode.WorldSpace)
+                    continue;
+                canvasOrders[i] = c.sortingOrder;
+                canvasOverrides[i] = c.overrideSorting;
+                c.overrideSorting = true;
+                c.sortingOrder = canvasOrders[i] + sortBoost;
+            }
+        }
+
+        var spriteRenderers = GetComponentsInChildren<SpriteRenderer>(false);
+        int[] spriteOrders = null;
+        if (spriteRenderers != null && spriteRenderers.Length > 0)
+        {
+            spriteOrders = new int[spriteRenderers.Length];
+            for (int i = 0; i < spriteRenderers.Length; i++)
+            {
+                var r = spriteRenderers[i];
+                if (r == null)
+                    continue;
+                spriteOrders[i] = r.sortingOrder;
+                r.sortingOrder = spriteOrders[i] + sortBoost;
+            }
+        }
+
+        // Snap into the foreground start position before animating so we don't fight
+        // with any other movement that might have happened this frame.
+        transform.position = start;
+
+        // Timings: 20% move in, 60% hold/pulse, 20% move back
+        float moveTime = duration * 0.2f;
+        float holdTime = duration * 0.6f;
+
+        float t = 0f;
+        // Move to food
+        while (t < moveTime)
+        {
+            t += Time.deltaTime;
+            float u = Mathf.Clamp01(t / moveTime);
+            u = Mathf.Sin(u * Mathf.PI * 0.5f); // Ease out
+            transform.position = Vector3.Lerp(start, mid, u);
+            yield return null;
+        }
+
+        // Subtle double green pulse while holding: two small pulses toward a softer green.
+        if (artworkImage != null)
+        {
+            Color originalCol = artworkImage.color;
+            // Softer green so the art never goes fully neon.
+            Color pulseCol = Color.Lerp(originalCol, Color.green, 0.45f);
+            int pulses = 2;
+            float halfPulse = holdTime / (pulses * 2f);
+
+            for (int i = 0; i < pulses; i++)
+            {
+                // Fade to pulse color
+                t = 0f;
+                while (t < halfPulse)
+                {
+                    t += Time.deltaTime;
+                    float u = t / halfPulse;
+                    artworkImage.color = Color.Lerp(originalCol, pulseCol, u);
+                    yield return null;
+                }
+
+                // Fade back to original
+                t = 0f;
+                while (t < halfPulse)
+                {
+                    t += Time.deltaTime;
+                    float u = t / halfPulse;
+                    artworkImage.color = Color.Lerp(pulseCol, originalCol, u);
+                    yield return null;
+                }
+            }
+            artworkImage.color = originalCol;
+        }
+        else
+        {
+            yield return new WaitForSeconds(holdTime);
+        }
+
+        // Move back
+        t = 0f;
+        while (t < moveTime)
+        {
+            t += Time.deltaTime;
+            float u = Mathf.Clamp01(t / moveTime);
+            u = 1f - Mathf.Cos(u * Mathf.PI * 0.5f); // Ease in
+            transform.position = Vector3.Lerp(mid, start, u);
+            yield return null;
+        }
+
+        // Restore any modified SpriteRenderer orders
+        if (spriteRenderers != null && spriteOrders != null)
+        {
+            for (int i = 0; i < spriteRenderers.Length && i < spriteOrders.Length; i++)
+            {
+                if (spriteRenderers[i] != null)
+                    spriteRenderers[i].sortingOrder = spriteOrders[i];
+            }
+        }
+
+        // Restore any modified Canvas sorting
+        if (canvases != null && canvasOrders != null && canvasOverrides != null)
+        {
+            for (
+                int i = 0;
+                i < canvases.Length && i < canvasOrders.Length && i < canvasOverrides.Length;
+                i++
+            )
+            {
+                var c = canvases[i];
+                if (c == null || c.renderMode != RenderMode.WorldSpace)
+                    continue;
+                c.overrideSorting = canvasOverrides[i];
+                c.sortingOrder = canvasOrders[i];
+            }
+        }
+
+        // Ensure we are exactly back at the original starting world position (including Z).
+        transform.position = originalStart;
+    }
+
+    /// <summary>
+    /// Generalized pulse effect: fades to target color, pulses alpha/intensity slightly, then fades back.
+    /// </summary>
+    public IEnumerator PulseColor(Color targetColor, float duration, int pulses = 1)
+    {
+        if (artworkImage == null)
+            yield break;
+
+        Color original = artworkImage.color;
+
+        float halfPulse = duration / (pulses * 2f);
+
+        for (int i = 0; i < pulses; i++)
+        {
+            // Lerp to target
+            float t = 0f;
+            while (t < halfPulse)
+            {
+                t += Time.deltaTime;
+                float u = t / halfPulse;
+                artworkImage.color = Color.Lerp(original, targetColor, u);
+                yield return null;
+            }
+
+            // Lerp back
+            t = 0f;
+            while (t < halfPulse)
+            {
+                t += Time.deltaTime;
+                float u = t / halfPulse;
+                artworkImage.color = Color.Lerp(targetColor, original, u);
+                yield return null;
+            }
+        }
+        artworkImage.color = original;
+    }
+
+    public void PlayVFX(GameObject vfxPrefab)
+    {
+        if (vfxPrefab != null)
+        {
+            Instantiate(vfxPrefab, transform.position, Quaternion.identity);
+        }
+    }
+
     public IEnumerator PlayAttackBump(float distance = 0.3f, float duration = 0.2f)
     {
         Vector3 start = transform.position;
@@ -159,12 +354,17 @@ public class Creature : MonoBehaviour
         }
     }
 
-    public void ApplyDamage(int amount, Creature source)
+    public void ApplyDamage(int amount, Creature source, GameObject vfxPrefab = null)
     {
-        ApplyDamageInternal(amount, source, allowReflect: true);
+        ApplyDamageInternal(amount, source, allowReflect: true, vfxPrefab);
     }
 
-    private void ApplyDamageInternal(int amount, Creature source, bool allowReflect)
+    private void ApplyDamageInternal(
+        int amount,
+        Creature source,
+        bool allowReflect,
+        GameObject vfxPrefab = null
+    )
     {
         // Shielded negates the next incoming damage instance per charge
         if (amount > 0 && GetStatus(StatusTag.Shielded) > 0)
@@ -183,7 +383,8 @@ public class Creature : MonoBehaviour
             if (source != null)
             {
                 // Apply reflected damage to the attacker; allow their Shielded but not their Reflect to trigger
-                source.ApplyDamageInternal(reflected, this, allowReflect: false);
+                // Pass null VFX for reflection or maybe a specific one later
+                source.ApplyDamageInternal(reflected, this, allowReflect: false, vfxPrefab: null);
             }
             return;
         }
@@ -215,6 +416,10 @@ public class Creature : MonoBehaviour
         int dmg = Mathf.Max(0, amount);
         if (dmg == 0)
             return;
+
+        // Play VFX if provided
+        PlayVFX(vfxPrefab);
+
         // Taking real damage breaks Stealth
         if (GetStatus(StatusTag.Stealth) > 0)
             ClearStatus(StatusTag.Stealth);
@@ -277,11 +482,14 @@ public class Creature : MonoBehaviour
         }
     }
 
-    public void Kill(string reason)
+    public void Kill(string reason, GameObject vfxPrefab = null)
     {
         if (isDying)
             return;
         isDying = true;
+
+        PlayVFX(vfxPrefab);
+
         // Default avian scavenging: when any creature dies, all living avians gain +1 food
         var all = FindObjectsByType<Creature>(FindObjectsSortMode.None);
         foreach (var other in all)

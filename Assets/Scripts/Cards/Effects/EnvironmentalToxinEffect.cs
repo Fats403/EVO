@@ -5,16 +5,13 @@ public class EnvironmentalToxinEffect : GlobalEffectBase
 {
     public override void OnRoundStart(ResolutionManager rm)
     {
-        if (rm == null) return;
+        if (rm == null)
+            return;
         foreach (var c in rm.AllCreatures())
         {
-            if (c == null) continue;
+            if (c == null)
+                continue;
             c.ApplyDamage(1, null);
         }
     }
 }
-
-
-
-
-
