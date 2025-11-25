@@ -41,6 +41,7 @@ public class FeedbackManager : MonoBehaviour
     private readonly Dictionary<Vector3, List<GameObject>> activeTexts = new();
 
     private Coroutine globalAlertRoutine;
+    private readonly Queue<(string message, Color color)> globalAlertQueue = new();
 
     void Awake()
     {
@@ -92,13 +93,22 @@ public class FeedbackManager : MonoBehaviour
         if (globalAlertText == null || string.IsNullOrEmpty(message))
             return;
 
-        if (globalAlertRoutine != null)
+        // Enqueue the alert; if nothing is currently processing, start the processor
+        globalAlertQueue.Enqueue((message, color));
+        if (globalAlertRoutine == null)
         {
-            StopCoroutine(globalAlertRoutine);
-            globalAlertRoutine = null;
+            globalAlertRoutine = StartCoroutine(ProcessGlobalAlerts());
         }
+    }
 
-        globalAlertRoutine = StartCoroutine(GlobalAlertRoutine(message, color));
+    private IEnumerator ProcessGlobalAlerts()
+    {
+        while (globalAlertQueue.Count > 0)
+        {
+            var (message, color) = globalAlertQueue.Dequeue();
+            yield return StartCoroutine(GlobalAlertRoutine(message, color));
+        }
+        globalAlertRoutine = null;
     }
 
     private IEnumerator GlobalAlertRoutine(string message, Color color)
