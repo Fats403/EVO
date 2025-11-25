@@ -655,7 +655,7 @@ public class ResolutionManager : MonoBehaviour
             if (c.data != null && c.data.type == CardType.Herbivore && didEat)
             {
                 int gain = c.eaten;
-                ScoreManager.Add(c.owner, gain);
+                ScoreManager.Instance?.Add(c.owner, gain);
                 FeedbackManager.Instance?.ShowFloatingText(
                     $"Score +{gain}",
                     c.transform.position,
@@ -744,7 +744,7 @@ public class ResolutionManager : MonoBehaviour
             int net = Mathf.Max(0, c.roundDamageDealt - c.roundHealingUndone);
             if (net > 0)
             {
-                ScoreManager.Add(c.owner, net);
+                ScoreManager.Instance?.Add(c.owner, net);
                 FeedbackManager.Instance?.ShowFloatingText(
                     $"Damage +{net}",
                     c.transform.position,

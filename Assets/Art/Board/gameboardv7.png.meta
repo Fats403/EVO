@@ -1,22 +1,10 @@
 fileFormatVersion: 2
-guid: 0a602d8e147dd4892b8679b28310049b
+guid: b531f6f7c9efe4dca92fc57235153cf6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4035065818586539013
-    second: gameboard_0
-  - first:
-      213: -1583901876976997998
-    second: gameboard_1
-  - first:
-      213: 7184952239095045979
-    second: gameboard_2
-  - first:
-      213: 6055031642066657448
-    second: gameboard_3
-  - first:
-      213: 3649431942560108209
-    second: gameboard_4
+      213: -2712883191313685900
+    second: gameboardv7_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -125,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: gameboard_0
+      name: gameboardv7_0
       rect:
         serializedVersion: 2
-        x: 11
-        y: 0
-        width: 1494
-        height: 1024
+        x: 158
+        y: 40
+        width: 2173
+        height: 1619
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -140,96 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bfb14d544019008c0800000000000000
-      internalID: -4035065818586539013
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: gameboard_1
-      rect:
-        serializedVersion: 2
-        x: 83
-        y: 702
-        width: 6
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 29926bf72a9d40ae0800000000000000
-      internalID: -1583901876976997998
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: gameboard_2
-      rect:
-        serializedVersion: 2
-        x: 82
-        y: 622
-        width: 6
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b5f58637ef316b360800000000000000
-      internalID: 7184952239095045979
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: gameboard_3
-      rect:
-        serializedVersion: 2
-        x: 82
-        y: 302
-        width: 6
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 8a02221923bc70450800000000000000
-      internalID: 6055031642066657448
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: gameboard_4
-      rect:
-        serializedVersion: 2
-        x: 82
-        y: 286
-        width: 6
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 1be4248240365a230800000000000000
-      internalID: 3649431942560108209
+      spriteID: 472ae986c17e95ad0800000000000000
+      internalID: -2712883191313685900
       vertices: []
       indices: 
       edges: []
@@ -238,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -248,11 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      gameboard_0: -4035065818586539013
-      gameboard_1: -1583901876976997998
-      gameboard_2: 7184952239095045979
-      gameboard_3: 6055031642066657448
-      gameboard_4: 3649431942560108209
+      gameboardv7_0: -2712883191313685900
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

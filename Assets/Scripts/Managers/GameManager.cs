@@ -300,10 +300,12 @@ public class GameManager : MonoBehaviour
 
     public void UpdateMomentumUI()
     {
+        int currentEraMomentum = GetMomentumForEra(currentEra);
+
         if (p1MomentumLabel != null)
-            p1MomentumLabel.text = $"X {p1Momentum}";
+            p1MomentumLabel.text = $"{p1Momentum} / {currentEraMomentum}";
         if (p2MomentumLabel != null)
-            p2MomentumLabel.text = $"X {p2Momentum}";
+            p2MomentumLabel.text = $"{p2Momentum} / {currentEraMomentum}";
     }
 
     public bool IsTierAllowedInEra(int tier, Era era)

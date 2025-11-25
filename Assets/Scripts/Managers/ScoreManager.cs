@@ -1,21 +1,36 @@
 using TMPro;
 using UnityEngine;
 
-public static class ScoreManager
+public class ScoreManager : MonoBehaviour
 {
+    public static ScoreManager Instance { get; private set; }
     public static int player1;
     public static int player2;
-    public static TextMeshProUGUI p1Label;
-    public static TextMeshProUGUI p2Label;
 
-    public static void Reset()
+    public TMP_Text p1Label;
+    public TMP_Text p2Label;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+            Destroy(gameObject);
+        else
+            Instance = this;
+    }
+
+    private void Start()
+    {
+        Reset();
+    }
+
+    public void Reset()
     {
         player1 = 0;
         player2 = 0;
         UpdateUI();
     }
 
-    public static void Add(SlotOwner owner, int amount)
+    public void Add(SlotOwner owner, int amount)
     {
         if (owner == SlotOwner.Player1)
             player1 += amount;
@@ -24,11 +39,11 @@ public static class ScoreManager
         UpdateUI();
     }
 
-    public static void UpdateUI()
+    public void UpdateUI()
     {
         if (p1Label != null)
-            p1Label.text = $"P1: {player1}";
+            p1Label.text = $"{player1}";
         if (p2Label != null)
-            p2Label.text = $"P2: {player2}";
+            p2Label.text = $"{player2}";
     }
 }
