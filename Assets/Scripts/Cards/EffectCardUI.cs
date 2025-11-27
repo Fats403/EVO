@@ -67,23 +67,16 @@ public class EffectCardUI : BaseCardUI
             var dz = GlobalEffectDropZone.Instance;
             if (dz != null && dz.IsPointerInside(eventData.position))
             {
-                string reason = null;
+                string reason;
                 if (
-                    GameManager.Instance != null
-                    && GameManager.Instance.CanPlayEffectCard(effectData, owner, out reason)
+                    TryQueueEffectCard(Enumerable.Empty<Creature>(), out reason)
                 )
                 {
-                    EffectsManager.Instance?.PlayOnTargets(
-                        effectData,
-                        Enumerable.Empty<Creature>(),
-                        owner
-                    );
                     played = true;
                 }
-                else if (!string.IsNullOrEmpty(reason))
+                else
                 {
-                    FeedbackManager.Instance?.Log(reason);
-                    FeedbackManager.Instance?.ShowGlobalAlert(reason, new Color(1f, 0.5f, 0.5f));
+                    ShowPlayFailure(reason);
                 }
             }
         }
@@ -98,19 +91,14 @@ public class EffectCardUI : BaseCardUI
                 .ToList();
             if (all.Count > 0)
             {
-                string reason = null;
-                if (
-                    GameManager.Instance != null
-                    && GameManager.Instance.CanPlayEffectCard(effectData, owner, out reason)
-                )
+                string reason;
+                if (TryQueueEffectCard(all, out reason))
                 {
-                    EffectsManager.Instance?.PlayOnTargets(effectData, all, owner);
                     played = true;
                 }
-                else if (!string.IsNullOrEmpty(reason))
+                else
                 {
-                    FeedbackManager.Instance?.Log(reason);
-                    FeedbackManager.Instance?.ShowGlobalAlert(reason, new Color(1f, 0.5f, 0.5f));
+                    ShowPlayFailure(reason);
                 }
             }
         }
@@ -150,37 +138,27 @@ public class EffectCardUI : BaseCardUI
             var list = picks.Where(c => c != null).ToList();
             if (list.Count > 0)
             {
-                string reason = null;
-                if (
-                    GameManager.Instance != null
-                    && GameManager.Instance.CanPlayEffectCard(effectData, owner, out reason)
-                )
+                string reason;
+                if (TryQueueEffectCard(list, out reason))
                 {
-                    EffectsManager.Instance?.PlayOnTargets(effectData, list, owner);
                     played = true;
                 }
-                else if (!string.IsNullOrEmpty(reason))
+                else
                 {
-                    FeedbackManager.Instance?.Log(reason);
-                    FeedbackManager.Instance?.ShowGlobalAlert(reason, new Color(1f, 0.5f, 0.5f));
+                    ShowPlayFailure(reason);
                 }
             }
         }
         else if (target != null && distPx <= targetRadiusPx)
         {
-            string reason = null;
-            if (
-                GameManager.Instance != null
-                && GameManager.Instance.CanPlayEffectCard(effectData, owner, out reason)
-            )
+            string reason;
+            if (TryQueueEffectCard(new[] { target }, out reason))
             {
-                EffectsManager.Instance?.PlayOnTargets(effectData, new[] { target }, owner);
                 played = true;
             }
-            else if (!string.IsNullOrEmpty(reason))
+            else
             {
-                FeedbackManager.Instance?.Log(reason);
-                FeedbackManager.Instance?.ShowGlobalAlert(reason, new Color(1f, 0.5f, 0.5f));
+                ShowPlayFailure(reason);
             }
         }
 
@@ -336,5 +314,31 @@ public class EffectCardUI : BaseCardUI
             }
         }
         return best;
+    }
+
+    bool TryQueueEffectCard(IEnumerable<Creature> targets, out string failureReason)
+    {
+        failureReason = null;
+        if (effectData == null)
+        {
+            failureReason = "Invalid effect card.";
+            return false;
+        }
+
+        if (GameManager.Instance == null)
+        {
+            failureReason = "Missing GameManager.";
+            return false;
+        }
+
+        return GameManager.Instance.TryPlayEffectCard(effectData, owner, targets, out failureReason);
+    }
+
+    void ShowPlayFailure(string reason)
+    {
+        if (string.IsNullOrEmpty(reason))
+            return;
+        FeedbackManager.Instance?.Log(reason);
+        FeedbackManager.Instance?.ShowGlobalAlert(reason, new Color(1f, 0.5f, 0.5f));
     }
 }

@@ -89,7 +89,8 @@ public class CreatureCardUI : BaseCardUI
                         )
                     )
                     {
-                        placed = DeckManager.Instance.SpawnCreature(Data, closest);
+                        Creature spawned = DeckManager.Instance.SpawnCreature(Data, closest);
+                        placed = spawned != null;
                         if (!placed && !string.IsNullOrEmpty(reason))
                         {
                             // If spawn failed for some reason, refund the momentum we just spent

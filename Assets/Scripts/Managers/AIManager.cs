@@ -66,35 +66,45 @@ public class AIManager : MonoBehaviour
         }
     }
 
-    public void TakeTurnPlace()
+    public bool TryPlaySingleAction()
     {
         var freeSlots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
             .Where(s => s.owner == SlotOwner.Player2 && !s.occupied)
+            .OrderBy(s => s.transform.position.x)
             .ToList();
-        if (freeSlots.Count == 0)
-            return;
+        if (freeSlots.Count == 0 || drawPile.Count == 0)
+            return false;
 
-        for (int n = 0; n < cardsPerTurn && drawPile.Count > 0 && freeSlots.Count > 0; n++)
+        CreatureCard card = PickCreatureCard();
+        if (card == null)
+            return false;
+
+        BoardSlot slot = ChooseSlot(freeSlots);
+        if (slot == null)
         {
-            CreatureCard card = PickCreatureCard();
-            if (card == null)
-                break;
-            BoardSlot slot = ChooseSlot(freeSlots);
-            if (slot == null)
-                break;
-            bool ok = slot.SetPending(card);
-            if (ok)
-            {
-                if (cardBackPrefab != null)
-                    slot.ShowPendingVisual(cardBackPrefab);
-                freeSlots.Remove(slot);
-            }
-            else
-            {
-                // if failed, put card back to bottom
-                drawPile.Insert(0, card);
-            }
+            drawPile.Insert(0, card);
+            return false;
         }
+
+        string reason;
+        if (
+            GameManager.Instance != null
+            && !GameManager.Instance.CanPlayCreatureCard(card, SlotOwner.Player2, out reason)
+        )
+        {
+            drawPile.Insert(0, card);
+            if (!string.IsNullOrEmpty(reason))
+                Debug.Log($"[AI] Cannot play {card.cardName}: {reason}");
+            return false;
+        }
+
+        var creature = DeckManager.Instance.SpawnCreature(card, slot);
+        if (creature == null)
+        {
+            drawPile.Insert(0, card);
+            return false;
+        }
+        return true;
     }
 
     CreatureCard PickCreatureCard()

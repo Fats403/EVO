@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -52,6 +53,29 @@ public class GameManager : MonoBehaviour
     public int rngSeed = 0;
     private System.Random rng;
 
+    [Header("Turn Order")]
+    [Tooltip("Determines which player starts the Place phase for this round.")]
+    public SlotOwner startingPlayerForRound = SlotOwner.Player1;
+
+    [Header("Presentation")]
+    [Tooltip("Minimum time that a played creature stays spotlighted before the turn can advance.")]
+    public float cardPreviewHoldSeconds = 3.0f;
+
+    [Tooltip("Delay between showing an effect card preview and applying its logic.")]
+    public float effectRevealDelaySeconds = 1f;
+
+    [Tooltip("Delay between AI taking its action and the next turn starting.")]
+    public float aiTurnDelaySeconds = 1f;
+
+    [Tooltip("Delay after announcing that the round is resolving before combat begins.")]
+    public float resolveStartDelaySeconds = 1f;
+
+    private Coroutine placePhaseRoutine;
+    private SlotOwner currentPlaceTurnOwner = SlotOwner.Player1;
+    private SlotOwner? awaitingTurnOwner;
+    private bool p1PassedThisRound;
+    private bool p2PassedThisRound;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -93,21 +117,11 @@ public class GameManager : MonoBehaviour
 
     void OnEndTurnClicked()
     {
-        if (isGameOver)
+        if (isGameOver || currentPhase != GamePhase.Place)
             return;
-
-        // Only allow ending the turn during the Place phase
-        if (currentPhase != GamePhase.Place)
+        if (!awaitingTurnOwner.HasValue || awaitingTurnOwner.Value != SlotOwner.Player1)
             return;
-
-        if (endTurnButton != null)
-            endTurnButton.interactable = false;
-        if (endTurnLabel != null)
-            endTurnLabel.text = string.IsNullOrEmpty(endTurnBusyText)
-                ? "Resolving..."
-                : endTurnBusyText;
-
-        AdvancePhase();
+        HandlePass(SlotOwner.Player1);
     }
 
     void OnToggleLogClicked()
@@ -115,31 +129,6 @@ public class GameManager : MonoBehaviour
         if (FeedbackManager.Instance != null)
         {
             FeedbackManager.Instance.ToggleLogPanel();
-        }
-    }
-
-    void AdvancePhase()
-    {
-        currentPhase = (GamePhase)(
-            ((int)currentPhase + 1) % System.Enum.GetValues(typeof(GamePhase)).Length
-        );
-        Debug.Log("[GameManager] New Phase: " + currentPhase);
-        UpdatePhaseLabel();
-
-        switch (currentPhase)
-        {
-            case GamePhase.Draw:
-                BeginDraw();
-                break;
-            case GamePhase.Place:
-                BeginPlace();
-                break;
-            case GamePhase.Resolve:
-                BeginResolve();
-                break;
-            case GamePhase.End:
-                BeginEndRound();
-                break;
         }
     }
 
@@ -195,22 +184,275 @@ public class GameManager : MonoBehaviour
 
     void BeginPlace()
     {
-        // Reset per-round momentum at the start of the Place phase
         ResetMomentumForRound();
+        CardPreviewManager.Instance?.HideAll();
+        p1PassedThisRound = false;
+        p2PassedThisRound = false;
+        awaitingTurnOwner = null;
+        startingPlayerForRound = (currentRound % 2 == 1) ? SlotOwner.Player1 : SlotOwner.Player2;
+        currentPlaceTurnOwner = startingPlayerForRound;
 
-        // Re-enable End Turn for the player
-        if (endTurnButton != null)
-            endTurnButton.interactable = true;
-        if (endTurnLabel != null)
+        if (placePhaseRoutine != null)
+            StopCoroutine(placePhaseRoutine);
+        placePhaseRoutine = StartCoroutine(PlacePhaseCoroutine());
+        UpdateEndTurnButtonState();
+    }
+
+    IEnumerator PlacePhaseCoroutine()
+    {
+        while (!BothPlayersFinished())
+        {
+            if (OwnerFinished(currentPlaceTurnOwner))
+            {
+                currentPlaceTurnOwner = Opponent(currentPlaceTurnOwner);
+                continue;
+            }
+
+            yield return StartCoroutine(ExecuteTurn(currentPlaceTurnOwner));
+            currentPlaceTurnOwner = Opponent(currentPlaceTurnOwner);
+        }
+
+        awaitingTurnOwner = null;
+        UpdateEndTurnButtonState();
+        placePhaseRoutine = null;
+        currentPhase = GamePhase.Resolve;
+        UpdatePhaseLabel();
+
+        float delay = Mathf.Max(0f, resolveStartDelaySeconds);
+        if (delay > 0f)
+            yield return new WaitForSeconds(delay);
+
+        BeginResolve();
+    }
+
+    IEnumerator ExecuteTurn(SlotOwner owner)
+    {
+        if (OwnerFinished(owner))
+            yield break;
+
+        awaitingTurnOwner = owner;
+        UpdateEndTurnButtonState();
+        NotifyYourMove(owner);
+
+        if (owner == SlotOwner.Player1)
+        {
+            while (awaitingTurnOwner.HasValue && awaitingTurnOwner.Value == owner)
+            {
+                if (!HasMomentum(owner))
+                {
+                    HandlePass(owner);
+                    break;
+                }
+                yield return null;
+            }
+        }
+        else
+        {
+            // Give a brief moment after announcing the AI's turn before it acts.
+            float introDelay = Mathf.Max(0f, aiTurnDelaySeconds * 0.5f);
+            if (introDelay > 0f)
+                yield return new WaitForSeconds(introDelay);
+
+            if (!HasMomentum(owner))
+            {
+                HandlePass(owner);
+                yield break;
+            }
+
+            bool played = AIManager.Instance != null && AIManager.Instance.TryPlaySingleAction();
+            if (!played)
+            {
+                HandlePass(owner);
+            }
+            else
+            {
+                while (awaitingTurnOwner.HasValue && awaitingTurnOwner.Value == owner)
+                    yield return null;
+            }
+
+            // Small pause after AI acts or passes so its move is readable.
+            float pause = Mathf.Max(0f, aiTurnDelaySeconds);
+            if (pause > 0f)
+                yield return new WaitForSeconds(pause);
+        }
+    }
+
+    bool BothPlayersFinished()
+    {
+        return OwnerFinished(SlotOwner.Player1) && OwnerFinished(SlotOwner.Player2);
+    }
+
+    bool OwnerFinished(SlotOwner owner)
+    {
+        if (!HasMomentum(owner))
+            return true;
+        return owner == SlotOwner.Player1 ? p1PassedThisRound : p2PassedThisRound;
+    }
+
+    bool HasMomentum(SlotOwner owner)
+    {
+        return GetMomentum(owner) > 0;
+    }
+
+    void NotifyYourMove(SlotOwner owner)
+    {
+        if (FeedbackManager.Instance == null)
+            return;
+        string label = owner == SlotOwner.Player1 ? "Player 1" : "Player 2";
+        Color color =
+            owner == SlotOwner.Player1 ? new Color(0.6f, 0.9f, 1f) : new Color(1f, 0.75f, 0.5f);
+        FeedbackManager.Instance.ShowGlobalAlert($"{label}: Your move", color);
+    }
+
+    void UpdateEndTurnButtonState()
+    {
+        if (endTurnButton == null || endTurnLabel == null)
+            return;
+
+        if (isGameOver)
+        {
+            endTurnButton.interactable = false;
+            endTurnLabel.text = "Game Over";
+            return;
+        }
+
+        bool playerTurnActive =
+            currentPhase == GamePhase.Place
+            && awaitingTurnOwner.HasValue
+            && awaitingTurnOwner.Value == SlotOwner.Player1
+            && !p1PassedThisRound
+            && HasMomentum(SlotOwner.Player1);
+
+        endTurnButton.interactable = playerTurnActive;
+
+        if (currentPhase == GamePhase.Resolve)
+        {
+            endTurnLabel.text = string.IsNullOrEmpty(endTurnBusyText)
+                ? "Resolving..."
+                : endTurnBusyText;
+        }
+        else if (playerTurnActive)
+        {
+            endTurnLabel.text = "Pass";
+        }
+        else if (currentPhase == GamePhase.Place)
+        {
+            endTurnLabel.text = "Waiting...";
+        }
+        else
+        {
             endTurnLabel.text = string.IsNullOrEmpty(endTurnIdleText)
                 ? "End Turn"
                 : endTurnIdleText;
-
-        // Trigger simple AI placement for Player2
-        if (AIManager.Instance != null)
-        {
-            AIManager.Instance.TakeTurnPlace();
         }
+    }
+
+    void HandlePass(SlotOwner owner)
+    {
+        bool alreadyPassed = owner == SlotOwner.Player1 ? p1PassedThisRound : p2PassedThisRound;
+        if (!alreadyPassed)
+        {
+            if (owner == SlotOwner.Player1)
+                p1PassedThisRound = true;
+            else
+                p2PassedThisRound = true;
+            if (FeedbackManager.Instance != null)
+            {
+                string ownerTag = FeedbackManager.TagOwner(owner);
+                FeedbackManager.Instance.Log($"{ownerTag} passed.");
+                string label = owner == SlotOwner.Player1 ? "Player 1 passes" : "Player 2 passes";
+                FeedbackManager.Instance.ShowGlobalAlert(label, new Color(0.8f, 0.8f, 0.9f));
+            }
+        }
+
+        if (awaitingTurnOwner.HasValue && awaitingTurnOwner.Value == owner)
+            awaitingTurnOwner = null;
+
+        UpdateEndTurnButtonState();
+    }
+
+    void CompleteTurnAction(SlotOwner owner)
+    {
+        if (awaitingTurnOwner.HasValue && awaitingTurnOwner.Value == owner)
+        {
+            awaitingTurnOwner = null;
+            UpdateEndTurnButtonState();
+        }
+    }
+
+    SlotOwner Opponent(SlotOwner owner)
+    {
+        return owner == SlotOwner.Player1 ? SlotOwner.Player2 : SlotOwner.Player1;
+    }
+
+    bool IsTurnOwner(SlotOwner owner)
+    {
+        return awaitingTurnOwner.HasValue && awaitingTurnOwner.Value == owner;
+    }
+
+    public void OnCreaturePlayedDuringPlacement(Creature creature)
+    {
+        if (creature == null || creature.data == null)
+            return;
+        if (currentPhase != GamePhase.Place)
+            return;
+
+        StartCoroutine(OnCreaturePlayedDuringPlacementRoutine(creature));
+    }
+
+    IEnumerator OnCreaturePlayedDuringPlacementRoutine(Creature creature)
+    {
+        if (creature == null || creature.data == null)
+            yield break;
+
+        CardPreviewManager.Instance?.ShowForcedCreature(creature);
+        AnnounceCardPlay(creature.owner, creature.data.cardName);
+
+        float hold = Mathf.Max(0f, cardPreviewHoldSeconds);
+        if (hold > 0f)
+            yield return new WaitForSeconds(hold);
+
+        CompleteTurnAction(creature.owner);
+    }
+
+    void AnnounceCardPlay(SlotOwner owner, string cardName)
+    {
+        if (FeedbackManager.Instance == null || string.IsNullOrEmpty(cardName))
+            return;
+        FeedbackManager.Instance.Log($"{FeedbackManager.TagOwner(owner)} played {cardName}");
+    }
+
+    public bool TryPlayEffectCard(
+        EffectCard card,
+        SlotOwner owner,
+        IEnumerable<Creature> targets,
+        out string failureReason
+    )
+    {
+        failureReason = null;
+        if (card == null)
+        {
+            failureReason = "Invalid effect card.";
+            return false;
+        }
+
+        if (!CanPlayEffectCard(card, owner, out failureReason))
+            return false;
+
+        var list = targets != null ? targets.Where(c => c != null).ToList() : new List<Creature>();
+        StartCoroutine(PlayEffectCardRoutine(card, owner, list));
+        return true;
+    }
+
+    IEnumerator PlayEffectCardRoutine(EffectCard card, SlotOwner owner, List<Creature> targets)
+    {
+        AnnounceCardPlay(owner, card.effectName);
+        CardPreviewManager.Instance?.ShowForcedEffect(card, owner);
+        float revealDelay = Mathf.Max(0f, effectRevealDelaySeconds);
+        if (revealDelay > 0f)
+            yield return new WaitForSeconds(revealDelay);
+        EffectsManager.Instance?.PlayOnTargets(card, targets, owner);
+        CompleteTurnAction(owner);
     }
 
     void BeginResolve()
@@ -220,6 +462,7 @@ public class GameManager : MonoBehaviour
             Debug.LogError("ResolutionManager not assigned to GameManager");
             return;
         }
+        UpdateEndTurnButtonState();
         StartCoroutine(ResolveRoundCoroutine());
     }
 
@@ -440,6 +683,12 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
+        if (currentPhase == GamePhase.Place && !IsTurnOwner(owner))
+        {
+            failureReason = "Wait for your turn.";
+            return false;
+        }
+
         if (!IsTierAllowedInEra(card.tier, currentEra))
         {
             failureReason =
@@ -481,6 +730,12 @@ public class GameManager : MonoBehaviour
         if (currentPhase != GamePhase.Place)
         {
             failureReason = "You can only play effects during the Place phase.";
+            return false;
+        }
+
+        if (currentPhase == GamePhase.Place && !IsTurnOwner(owner))
+        {
+            failureReason = "Wait for your turn.";
             return false;
         }
 

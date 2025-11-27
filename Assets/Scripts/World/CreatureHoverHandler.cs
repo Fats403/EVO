@@ -39,9 +39,9 @@ public class CreatureHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointe
 			StopCoroutine(hoverRoutine);
 			hoverRoutine = null;
 		}
-		if (HoverPreviewManager.Instance != null)
+		if (CardPreviewManager.Instance != null)
 		{
-			HoverPreviewManager.Instance.Hide(creature);
+			CardPreviewManager.Instance.HideHoverCreature(creature);
 		}
 	}
 
@@ -49,9 +49,9 @@ public class CreatureHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointe
 	{
 		yield return new WaitForSeconds(Mathf.Max(0f, hoverDelaySeconds));
 		hoverRoutine = null;
-		if (pointerInside && HoverPreviewManager.Instance != null)
+		if (pointerInside && CardPreviewManager.Instance != null)
 		{
-			HoverPreviewManager.Instance.Show(creature);
+			CardPreviewManager.Instance.ShowHoverCreature(creature);
 		}
 	}
 }

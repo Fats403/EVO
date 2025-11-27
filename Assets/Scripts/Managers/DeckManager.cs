@@ -147,19 +147,19 @@ public class DeckManager : MonoBehaviour
         UpdateHandUI();
     }
 
-    public bool SpawnCreature(CreatureCard data, BoardSlot slot)
+    public Creature SpawnCreature(CreatureCard data, BoardSlot slot)
     {
         if (creaturePrefab == null)
         {
             Debug.LogError("Creature prefab not assigned!");
-            return false;
+            return null;
         }
 
         if (slot == null)
-            return false;
+            return null;
 
         if (slot.occupied)
-            return false;
+            return null;
 
         GameObject creatureObj = Instantiate(
             creaturePrefab,
@@ -170,7 +170,8 @@ public class DeckManager : MonoBehaviour
         creature.Initialize(data);
         creature.owner = slot.owner;
         slot.Occupy(creature);
-        return true;
+        GameManager.Instance?.OnCreaturePlayedDuringPlacement(creature);
+        return creature;
     }
 
     public int CurrentHandCount()
