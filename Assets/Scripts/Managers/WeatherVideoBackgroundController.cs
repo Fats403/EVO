@@ -10,19 +10,21 @@ public class WeatherVideoBackgroundController : MonoBehaviour
     public RawImage droughtImage;
     public RawImage wildfireImage;
     public RawImage stormImage;
+    public RawImage extinctionImage;
 
     [Header("VideoPlayers (one per weather)")]
     public VideoPlayer clearPlayer;
     public VideoPlayer droughtPlayer;
     public VideoPlayer wildfirePlayer;
     public VideoPlayer stormPlayer;
+    public VideoPlayer extinctionPlayer;
 
-    [Header("Playback")] 
+    [Header("Playback")]
     public bool playOnStart = true;
     public bool loopVideos = true;
 
-	[Header("Camera Overlay (no UI path)")]
-	public Camera targetCamera; // If set, fades use VideoPlayer.targetCameraAlpha
+    [Header("Camera Overlay (no UI path)")]
+    public Camera targetCamera; // If set, fades use VideoPlayer.targetCameraAlpha
 
     private WeatherType currentType = WeatherType.Clear;
 
@@ -32,66 +34,72 @@ public class WeatherVideoBackgroundController : MonoBehaviour
         SetupPlayback(droughtPlayer);
         SetupPlayback(wildfirePlayer);
         SetupPlayback(stormPlayer);
-		// Hide until the first frame of Clear is ready
-		SetAlpha(clearImage, 0f);
-		SetAlpha(droughtImage, 0f);
-		SetAlpha(wildfireImage, 0f);
-		SetAlpha(stormImage, 0f);
-		SetActive(clearImage, false);
-		SetActive(droughtImage, false);
-		SetActive(wildfireImage, false);
-		SetActive(stormImage, false);
+        SetupPlayback(extinctionPlayer);
+        // Hide until the first frame of Clear is ready
+        SetAlpha(clearImage, 0f);
+        SetAlpha(droughtImage, 0f);
+        SetAlpha(wildfireImage, 0f);
+        SetAlpha(stormImage, 0f);
+        SetAlpha(extinctionImage, 0f);
+        SetActive(clearImage, false);
+        SetActive(droughtImage, false);
+        SetActive(wildfireImage, false);
+        SetActive(stormImage, false);
+        SetActive(extinctionImage, false);
 
-		// If using camera overlay, initialize players to render to camera with alpha 0
-		if (targetCamera != null)
-		{
-			SetupCameraOverlay(clearPlayer);
-			SetupCameraOverlay(droughtPlayer);
-			SetupCameraOverlay(wildfirePlayer);
-			SetupCameraOverlay(stormPlayer);
-		}
+        // If using camera overlay, initialize players to render to camera with alpha 0
+        if (targetCamera != null)
+        {
+            SetupCameraOverlay(clearPlayer);
+            SetupCameraOverlay(droughtPlayer);
+            SetupCameraOverlay(wildfirePlayer);
+            SetupCameraOverlay(stormPlayer);
+            SetupCameraOverlay(extinctionPlayer);
+        }
     }
 
-	void Start()
-	{
-		StartCoroutine(InitializeAndShowClear());
-	}
+    void Start()
+    {
+        StartCoroutine(InitializeAndShowClear());
+    }
 
-	IEnumerator InitializeAndShowClear()
-	{
-		// Prepare all players to avoid a flash of uninitialized RenderTextures
-		SafePrepare(clearPlayer);
-		SafePrepare(droughtPlayer);
-		SafePrepare(wildfirePlayer);
-		SafePrepare(stormPlayer);
+    IEnumerator InitializeAndShowClear()
+    {
+        // Prepare all players to avoid a flash of uninitialized RenderTextures
+        SafePrepare(clearPlayer);
+        SafePrepare(droughtPlayer);
+        SafePrepare(wildfirePlayer);
+        SafePrepare(stormPlayer);
+        SafePrepare(extinctionPlayer);
 
-		// Wait for the Clear video to be ready
-		while (clearPlayer != null && !clearPlayer.isPrepared)
-		{
-			yield return null;
-		}
-		// Force first frame into the RenderTexture, then reveal
-		if (clearPlayer != null)
-		{
-			clearPlayer.Play();
-			clearPlayer.Pause();
-		}
-		ForceTo(WeatherType.Clear);
-		currentType = WeatherType.Clear;
+        // Wait for the Clear video to be ready
+        while (clearPlayer != null && !clearPlayer.isPrepared)
+        {
+            yield return null;
+        }
+        // Force first frame into the RenderTexture, then reveal
+        if (clearPlayer != null)
+        {
+            clearPlayer.Play();
+            clearPlayer.Pause();
+        }
+        ForceTo(WeatherType.Clear);
+        currentType = WeatherType.Clear;
 
-		if (playOnStart)
-		{
-			// Start all players so their RenderTextures are continuously updated
-			SafePlay(clearPlayer);
-			SafePlay(droughtPlayer);
-			SafePlay(wildfirePlayer);
-			SafePlay(stormPlayer);
-		}
-	}
+        if (playOnStart)
+        {
+            // Start all players so their RenderTextures are continuously updated
+            SafePlay(clearPlayer);
+            SafePlay(droughtPlayer);
+            SafePlay(wildfirePlayer);
+            SafePlay(stormPlayer);
+        }
+    }
 
     static void SetupPlayback(VideoPlayer vp)
     {
-        if (vp == null) return;
+        if (vp == null)
+            return;
         vp.isLooping = true;
         // If audio tracks exist but you don't want them, mute
         vp.SetDirectAudioMute(0, true);
@@ -99,7 +107,8 @@ public class WeatherVideoBackgroundController : MonoBehaviour
 
     static void SafePlay(VideoPlayer vp)
     {
-        if (vp == null) return;
+        if (vp == null)
+            return;
         if (!vp.isPrepared)
         {
             vp.Prepare();
@@ -107,116 +116,137 @@ public class WeatherVideoBackgroundController : MonoBehaviour
         vp.Play();
     }
 
-	static void SafePrepare(VideoPlayer vp)
-	{
-		if (vp == null) return;
-		if (!vp.isPrepared) vp.Prepare();
-	}
-
-	public void ForceTo(WeatherType type)
+    static void SafePrepare(VideoPlayer vp)
     {
-        currentType = type;
-		if (targetCamera != null)
-		{
-			// Camera overlay: use player camera alpha
-			SetCameraAlpha(clearPlayer, type == WeatherType.Clear ? 1f : 0f);
-			SetCameraAlpha(droughtPlayer, type == WeatherType.Drought ? 1f : 0f);
-			SetCameraAlpha(wildfirePlayer, type == WeatherType.Wildfire ? 1f : 0f);
-			SetCameraAlpha(stormPlayer, type == WeatherType.Storm ? 1f : 0f);
-			SafePlay(clearPlayer);
-			SafePlay(droughtPlayer);
-			SafePlay(wildfirePlayer);
-			SafePlay(stormPlayer);
-		}
-		else
-		{
-			// UI path: use RawImages
-			SetAlpha(clearImage, type == WeatherType.Clear ? 1f : 0f);
-			SetAlpha(droughtImage, type == WeatherType.Drought ? 1f : 0f);
-			SetAlpha(wildfireImage, type == WeatherType.Wildfire ? 1f : 0f);
-			SetAlpha(stormImage, type == WeatherType.Storm ? 1f : 0f);
-			SetActive(clearImage, type == WeatherType.Clear);
-			SetActive(droughtImage, type == WeatherType.Drought);
-			SetActive(wildfireImage, type == WeatherType.Wildfire);
-			SetActive(stormImage, type == WeatherType.Storm);
-		}
+        if (vp == null)
+            return;
+        if (!vp.isPrepared)
+            vp.Prepare();
     }
 
-	public IEnumerator CrossfadeTo(WeatherType target, float duration = 0.7f)
+    public void ForceTo(WeatherType type)
+    {
+        currentType = type;
+        if (targetCamera != null)
+        {
+            // Camera overlay: use player camera alpha
+            SetCameraAlpha(clearPlayer, type == WeatherType.Clear ? 1f : 0f);
+            SetCameraAlpha(droughtPlayer, type == WeatherType.Drought ? 1f : 0f);
+            SetCameraAlpha(wildfirePlayer, type == WeatherType.Wildfire ? 1f : 0f);
+            SetCameraAlpha(stormPlayer, type == WeatherType.Storm ? 1f : 0f);
+            SetCameraAlpha(extinctionPlayer, type == WeatherType.Extinction ? 1f : 0f);
+            SafePlay(clearPlayer);
+            SafePlay(droughtPlayer);
+            SafePlay(wildfirePlayer);
+            SafePlay(stormPlayer);
+            SafePlay(extinctionPlayer);
+        }
+        else
+        {
+            // UI path: use RawImages
+            SetAlpha(clearImage, type == WeatherType.Clear ? 1f : 0f);
+            SetAlpha(droughtImage, type == WeatherType.Drought ? 1f : 0f);
+            SetAlpha(wildfireImage, type == WeatherType.Wildfire ? 1f : 0f);
+            SetAlpha(stormImage, type == WeatherType.Storm ? 1f : 0f);
+            SetAlpha(extinctionImage, type == WeatherType.Extinction ? 1f : 0f);
+            SetActive(clearImage, type == WeatherType.Clear);
+            SetActive(droughtImage, type == WeatherType.Drought);
+            SetActive(wildfireImage, type == WeatherType.Wildfire);
+            SetActive(stormImage, type == WeatherType.Storm);
+            SetActive(extinctionImage, type == WeatherType.Extinction);
+        }
+    }
+
+    public IEnumerator CrossfadeTo(WeatherType target, float duration = 0.7f)
     {
         if (target == currentType)
         {
             yield break;
         }
 
-		Debug.Log($"[WeatherVideoBG] Crossfade {currentType} -> {target} (UI path: {targetCamera == null})");
+        Debug.Log(
+            $"[WeatherVideoBG] Crossfade {currentType} -> {target} (UI path: {targetCamera == null})"
+        );
 
-		// Prepare target first frame
-		var toPlayer = GetPlayer(target);
-		if (toPlayer != null && !toPlayer.isPrepared)
-		{
-			toPlayer.Prepare();
-			while (!toPlayer.isPrepared) { yield return null; }
-			toPlayer.Play();
-			toPlayer.Pause();
-		}
-		SafePlay(toPlayer);
+        // Prepare target first frame
+        var toPlayer = GetPlayer(target);
+        if (toPlayer != null && !toPlayer.isPrepared)
+        {
+            toPlayer.Prepare();
+            while (!toPlayer.isPrepared)
+            {
+                yield return null;
+            }
+            toPlayer.Play();
+            toPlayer.Pause();
+        }
+        SafePlay(toPlayer);
 
-		if (targetCamera != null)
-		{
-			var fromPlayer = GetPlayer(currentType);
-			float startFrom = GetCameraAlpha(fromPlayer);
-			float startTo = GetCameraAlpha(toPlayer);
-			// Ensure draw order: target on NearPlane, source on FarPlane during blend
-			SetPlane(fromPlayer, VideoRenderMode.CameraFarPlane);
-			SetPlane(toPlayer, VideoRenderMode.CameraNearPlane);
-			float t = 0f;
-			while (t < duration)
-			{
-				t += Time.deltaTime;
-				float u = Mathf.Clamp01(t / duration);
-				SetCameraAlpha(fromPlayer, Mathf.Lerp(startFrom, 0f, u));
-				SetCameraAlpha(toPlayer, Mathf.Lerp(startTo, 1f, u));
-				yield return null;
-			}
-			SetCameraAlpha(fromPlayer, 0f);
-			SetCameraAlpha(toPlayer, 1f);
-			// Optionally pause the previous video to save CPU
-			SafePause(fromPlayer);
-			// Keep target visible; previous remains on FarPlane with alpha 0
-		}
-		else
-		{
-			RawImage from = GetImage(currentType);
-			RawImage to = GetImage(target);
-			SetActive(to, true);
-			float t = 0f;
-			float startFrom = GetAlpha(from);
-			float startTo = GetAlpha(to);
-			while (t < duration)
-			{
-				t += Time.deltaTime;
-				float u = Mathf.Clamp01(t / duration);
-				if (from != null) SetAlpha(from, Mathf.Lerp(startFrom, 0f, u));
-				if (to != null) SetAlpha(to, Mathf.Lerp(startTo, 1f, u));
-				yield return null;
-			}
-			if (from != null) SetAlpha(from, 0f);
-			if (to != null) SetAlpha(to, 1f);
-			SetActive(from, false);
-		}
-		currentType = target;
-		Debug.Log($"[WeatherVideoBG] Now active: {currentType}");
+        if (targetCamera != null)
+        {
+            var fromPlayer = GetPlayer(currentType);
+            float startFrom = GetCameraAlpha(fromPlayer);
+            float startTo = GetCameraAlpha(toPlayer);
+            // Ensure draw order: target on NearPlane, source on FarPlane during blend
+            SetPlane(fromPlayer, VideoRenderMode.CameraFarPlane);
+            SetPlane(toPlayer, VideoRenderMode.CameraNearPlane);
+            float t = 0f;
+            while (t < duration)
+            {
+                t += Time.deltaTime;
+                float u = Mathf.Clamp01(t / duration);
+                SetCameraAlpha(fromPlayer, Mathf.Lerp(startFrom, 0f, u));
+                SetCameraAlpha(toPlayer, Mathf.Lerp(startTo, 1f, u));
+                yield return null;
+            }
+            SetCameraAlpha(fromPlayer, 0f);
+            SetCameraAlpha(toPlayer, 1f);
+            // Optionally pause the previous video to save CPU
+            SafePause(fromPlayer);
+            // Keep target visible; previous remains on FarPlane with alpha 0
+        }
+        else
+        {
+            RawImage from = GetImage(currentType);
+            RawImage to = GetImage(target);
+            SetActive(to, true);
+            float t = 0f;
+            float startFrom = GetAlpha(from);
+            float startTo = GetAlpha(to);
+            while (t < duration)
+            {
+                t += Time.deltaTime;
+                float u = Mathf.Clamp01(t / duration);
+                if (from != null)
+                    SetAlpha(from, Mathf.Lerp(startFrom, 0f, u));
+                if (to != null)
+                    SetAlpha(to, Mathf.Lerp(startTo, 1f, u));
+                yield return null;
+            }
+            if (from != null)
+                SetAlpha(from, 0f);
+            if (to != null)
+                SetAlpha(to, 1f);
+            SetActive(from, false);
+        }
+        currentType = target;
+        Debug.Log($"[WeatherVideoBG] Now active: {currentType}");
     }
 
     RawImage GetImage(WeatherType type)
     {
         switch (type)
         {
-            case WeatherType.Clear: return clearImage;
-            case WeatherType.Drought: return droughtImage;
-            case WeatherType.Wildfire: return wildfireImage;
-            case WeatherType.Storm: return stormImage;
+            case WeatherType.Clear:
+                return clearImage;
+            case WeatherType.Drought:
+                return droughtImage;
+            case WeatherType.Wildfire:
+                return wildfireImage;
+            case WeatherType.Storm:
+                return stormImage;
+            case WeatherType.Extinction:
+                return extinctionImage;
         }
         return null;
     }
@@ -225,17 +255,24 @@ public class WeatherVideoBackgroundController : MonoBehaviour
     {
         switch (type)
         {
-            case WeatherType.Clear: return clearPlayer;
-            case WeatherType.Drought: return droughtPlayer;
-            case WeatherType.Wildfire: return wildfirePlayer;
-            case WeatherType.Storm: return stormPlayer;
+            case WeatherType.Clear:
+                return clearPlayer;
+            case WeatherType.Drought:
+                return droughtPlayer;
+            case WeatherType.Wildfire:
+                return wildfirePlayer;
+            case WeatherType.Storm:
+                return stormPlayer;
+            case WeatherType.Extinction:
+                return extinctionPlayer;
         }
         return null;
     }
 
     static void SetAlpha(RawImage img, float a)
     {
-        if (img == null) return;
+        if (img == null)
+            return;
         var c = img.color;
         c.a = Mathf.Clamp01(a);
         img.color = c;
@@ -243,49 +280,56 @@ public class WeatherVideoBackgroundController : MonoBehaviour
 
     static float GetAlpha(RawImage img)
     {
-        if (img == null) return 0f;
+        if (img == null)
+            return 0f;
         return img.color.a;
     }
 
     static void SetActive(Behaviour b, bool active)
     {
-        if (b == null) return;
-        if (b.gameObject != null) b.gameObject.SetActive(active);
+        if (b == null)
+            return;
+        if (b.gameObject != null)
+            b.gameObject.SetActive(active);
         b.enabled = active;
     }
 
-	void SetupCameraOverlay(VideoPlayer vp)
-	{
-		if (vp == null || targetCamera == null) return;
-		vp.renderMode = VideoRenderMode.CameraFarPlane;
-		vp.targetCamera = targetCamera;
-		vp.targetCameraAlpha = 0f;
-	}
+    void SetupCameraOverlay(VideoPlayer vp)
+    {
+        if (vp == null || targetCamera == null)
+            return;
+        vp.renderMode = VideoRenderMode.CameraFarPlane;
+        vp.targetCamera = targetCamera;
+        vp.targetCameraAlpha = 0f;
+    }
 
-	void SetPlane(VideoPlayer vp, VideoRenderMode mode)
-	{
-		if (vp == null || targetCamera == null) return;
-		vp.renderMode = mode;
-		vp.targetCamera = targetCamera;
-	}
+    void SetPlane(VideoPlayer vp, VideoRenderMode mode)
+    {
+        if (vp == null || targetCamera == null)
+            return;
+        vp.renderMode = mode;
+        vp.targetCamera = targetCamera;
+    }
 
-	static void SetCameraAlpha(VideoPlayer vp, float a)
-	{
-		if (vp == null) return;
-		vp.targetCameraAlpha = Mathf.Clamp01(a);
-	}
+    static void SetCameraAlpha(VideoPlayer vp, float a)
+    {
+        if (vp == null)
+            return;
+        vp.targetCameraAlpha = Mathf.Clamp01(a);
+    }
 
-	static float GetCameraAlpha(VideoPlayer vp)
-	{
-		if (vp == null) return 0f;
-		return vp.targetCameraAlpha;
-	}
+    static float GetCameraAlpha(VideoPlayer vp)
+    {
+        if (vp == null)
+            return 0f;
+        return vp.targetCameraAlpha;
+    }
 
-	static void SafePause(VideoPlayer vp)
-	{
-		if (vp == null) return;
-		if (vp.isPlaying) vp.Pause();
-	}
+    static void SafePause(VideoPlayer vp)
+    {
+        if (vp == null)
+            return;
+        if (vp.isPlaying)
+            vp.Pause();
+    }
 }
-
-

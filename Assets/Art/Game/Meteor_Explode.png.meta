@@ -1,0 +1,645 @@
+fileFormatVersion: 2
+guid: df89119dec2154a42bf5dff5d0be0e30
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6534721670701765269
+    second: Meteor_Explode_0
+  - first:
+      213: 7028701216932455869
+    second: Meteor_Explode_1
+  - first:
+      213: 6056672084563118115
+    second: Meteor_Explode_2
+  - first:
+      213: 9058650699701612716
+    second: Meteor_Explode_3
+  - first:
+      213: -1116627745152138089
+    second: Meteor_Explode_4
+  - first:
+      213: 1317251585419932276
+    second: Meteor_Explode_5
+  - first:
+      213: 9167287744316140016
+    second: Meteor_Explode_6
+  - first:
+      213: 7884439594116689544
+    second: Meteor_Explode_7
+  - first:
+      213: -1156808052261961653
+    second: Meteor_Explode_8
+  - first:
+      213: 8132126914280894760
+    second: Meteor_Explode_9
+  - first:
+      213: 3012880354520286072
+    second: Meteor_Explode_10
+  - first:
+      213: -2666140206623355830
+    second: Meteor_Explode_11
+  - first:
+      213: -4706932797555102152
+    second: Meteor_Explode_12
+  - first:
+      213: 3742394682729819039
+    second: Meteor_Explode_13
+  - first:
+      213: 2626519334250910551
+    second: Meteor_Explode_14
+  - first:
+      213: -7313370465607403541
+    second: Meteor_Explode_15
+  - first:
+      213: -3383428950328904471
+    second: Meteor_Explode_16
+  - first:
+      213: 6442306229108913723
+    second: Meteor_Explode_17
+  - first:
+      213: -8269189101098468256
+    second: Meteor_Explode_18
+  - first:
+      213: 3867712765204727289
+    second: Meteor_Explode_19
+  - first:
+      213: 4987600324960698887
+    second: Meteor_Explode_20
+  - first:
+      213: 4646127013279168254
+    second: Meteor_Explode_21
+  - first:
+      213: -2886364795102980309
+    second: Meteor_Explode_22
+  - first:
+      213: 137851464925165094
+    second: Meteor_Explode_23
+  - first:
+      213: 5278053604504715215
+    second: Meteor_Explode_24
+  - first:
+      213: -536953791274714247
+    second: Meteor_Explode_25
+  - first:
+      213: -623135198864562850
+    second: Meteor_Explode_26
+  - first:
+      213: 6001177767462876404
+    second: Meteor_Explode_27
+  - first:
+      213: 8849072169268265821
+    second: Meteor_Explode_28
+  - first:
+      213: 2936427295524267389
+    second: Meteor_Explode_29
+  - first:
+      213: -2428722390020904785
+    second: Meteor_Explode_30
+  - first:
+      213: 8529929170298042264
+    second: Meteor_Explode_31
+  - first:
+      213: -4722509868601527
+    second: Meteor_Explode_32
+  - first:
+      213: -841684493155884804
+    second: Meteor_Explode_33
+  - first:
+      213: 1378281612458476875
+    second: Meteor_Explode_34
+  - first:
+      213: -8932240410059518500
+    second: Meteor_Explode_35
+  - first:
+      213: -664503251711308194
+    second: Meteor_Explode_36
+  - first:
+      213: 4437805238720957007
+    second: Meteor_Explode_37
+  - first:
+      213: -741822178442169568
+    second: Meteor_Explode_38
+  - first:
+      213: -652489288542438981
+    second: Meteor_Explode_39
+  - first:
+      213: -3508287788558569820
+    second: Meteor_Explode_40
+  - first:
+      213: 1605722286625357903
+    second: Meteor_Explode_41
+  - first:
+      213: -5742223552629350572
+    second: Meteor_Explode_42
+  - first:
+      213: 1405327197156631283
+    second: Meteor_Explode_43
+  - first:
+      213: 8844966660370868456
+    second: Meteor_Explode_44
+  - first:
+      213: -6089918464696781879
+    second: Meteor_Explode_45
+  - first:
+      213: 6078417291456229092
+    second: Meteor_Explode_46
+  - first:
+      213: -1913262768069849663
+    second: Meteor_Explode_47
+  - first:
+      213: 55811614499793380
+    second: Meteor_Explode_48
+  - first:
+      213: -2183417514501985621
+    second: Meteor_Explode_49
+  - first:
+      213: -3450581308377505597
+    second: Meteor_Explode_50
+  - first:
+      213: -1828510852518918645
+    second: Meteor_Explode_51
+  - first:
+      213: 2866937676685607355
+    second: Meteor_Explode_52
+  - first:
+      213: -4045504511295997518
+    second: Meteor_Explode_53
+  - first:
+      213: -1840470616934275963
+    second: Meteor_Explode_54
+  - first:
+      213: 7599870498376419758
+    second: Meteor_Explode_55
+  - first:
+      213: -1468117325951248101
+    second: Meteor_Explode_56
+  - first:
+      213: -6776258994389685058
+    second: Meteor_Explode_57
+  - first:
+      213: 8949951115217140245
+    second: Meteor_Explode_58
+  - first:
+      213: 876938431423530386
+    second: Meteor_Explode_59
+  - first:
+      213: -8261685042497020206
+    second: Meteor_Explode_60
+  - first:
+      213: -2928039636873365034
+    second: Meteor_Explode_61
+  - first:
+      213: -1993833031700926162
+    second: Meteor_Explode_62
+  - first:
+      213: -2569316730439495859
+    second: Meteor_Explode_63
+  - first:
+      213: -3367155286848679361
+    second: Meteor_Explode_64
+  - first:
+      213: -493657541443661654
+    second: Meteor_Explode_65
+  - first:
+      213: -4099656359985471570
+    second: Meteor_Explode_66
+  - first:
+      213: -318011536641131370
+    second: Meteor_Explode_67
+  - first:
+      213: -534537803077810974
+    second: Meteor_Explode_68
+  - first:
+      213: -3939535512167906432
+    second: Meteor_Explode_69
+  - first:
+      213: 6734739544080188514
+    second: Meteor_Explode_70
+  - first:
+      213: -6684378769618146047
+    second: Meteor_Explode_71
+  - first:
+      213: -7314292307805491969
+    second: Meteor_Explode_72
+  - first:
+      213: -7071518543798614757
+    second: Meteor_Explode_73
+  - first:
+      213: -579625176665682291
+    second: Meteor_Explode_74
+  - first:
+      213: -5633897351766891589
+    second: Meteor_Explode_75
+  - first:
+      213: -4716477809321178048
+    second: Meteor_Explode_76
+  - first:
+      213: -1499278728584499482
+    second: Meteor_Explode_77
+  - first:
+      213: 4895101364421163306
+    second: Meteor_Explode_78
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Meteor_Explode_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6d26cf43410055a0800000000000000
+      internalID: -6534721670701765269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Meteor_Explode_1
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 512
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db56d936486fa8160800000000000000
+      internalID: 7028701216932455869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Meteor_Explode_2
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 512
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 328c869db2f9d0450800000000000000
+      internalID: 6056672084563118115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Meteor_Explode_3
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 512
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca0fe0c01dac6bd70800000000000000
+      internalID: 9058650699701612716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Meteor_Explode_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7948cdf5bf0f080f0800000000000000
+      internalID: -1116627745152138089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Meteor_Explode_5
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47276cc7651d74210800000000000000
+      internalID: 1317251585419932276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Meteor_Explode_6
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f961c112afb83f70800000000000000
+      internalID: 9167287744316140016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Meteor_Explode_7
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88ea95c89082b6d60800000000000000
+      internalID: 7884439594116689544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Meteor_Explode_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b404d9b943132ffe0800000000000000
+      internalID: -1156808052261961653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Meteor_Explode_9
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8213b1ab75e1bd070800000000000000
+      internalID: 8132126914280894760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Meteor_Explode_10
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8734fe138b6efc920800000000000000
+      internalID: 3012880354520286072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Meteor_Explode_11
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4c04de9b97fffad0800000000000000
+      internalID: -2666140206623355830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 288dd771d0a5d4a4c881a6de387e8d3a
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":256.0,"y":256.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      Meteor_Explode_0: -6534721670701765269
+      Meteor_Explode_1: 7028701216932455869
+      Meteor_Explode_10: 3012880354520286072
+      Meteor_Explode_11: -2666140206623355830
+      Meteor_Explode_2: 6056672084563118115
+      Meteor_Explode_3: 9058650699701612716
+      Meteor_Explode_4: -1116627745152138089
+      Meteor_Explode_5: 1317251585419932276
+      Meteor_Explode_6: 9167287744316140016
+      Meteor_Explode_7: 7884439594116689544
+      Meteor_Explode_8: -1156808052261961653
+      Meteor_Explode_9: 8132126914280894760
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

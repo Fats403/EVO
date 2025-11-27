@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Round & Era")]
     public int currentRound = 1;
+    public int finalRound = 15;
     public Era currentEra = Era.Triassic;
 
     [Header("Momentum")]
@@ -41,6 +43,9 @@ public class GameManager : MonoBehaviour
     public int p2Momentum;
     public TextMeshProUGUI p1MomentumLabel;
     public TextMeshProUGUI p2MomentumLabel;
+
+    [Header("Game Over")]
+    public bool isGameOver;
 
     [Header("Debug")]
     public GamePhase currentPhase = GamePhase.Setup;
@@ -88,6 +93,9 @@ public class GameManager : MonoBehaviour
 
     void OnEndTurnClicked()
     {
+        if (isGameOver)
+            return;
+
         // Only allow ending the turn during the Place phase
         if (currentPhase != GamePhase.Place)
             return;
@@ -148,6 +156,8 @@ public class GameManager : MonoBehaviour
 
     void BeginSetup()
     {
+        isGameOver = false;
+
         // Seed already set; initialize round/era then move to Draw
         currentRound = 1;
         currentEra = GetEraForRound(currentRound);
@@ -227,16 +237,84 @@ public class GameManager : MonoBehaviour
         Era previousEra = currentEra;
         currentRound = Mathf.Max(1, currentRound + 1);
         currentEra = GetEraForRound(currentRound);
+
+        // Hard cap: at or beyond final round, trigger a game-ending extinction event.
+        if (currentRound >= finalRound)
+        {
+            StartCoroutine(HandleGameOverExtinction());
+            return;
+        }
+
         if (currentEra != previousEra)
         {
-            FeedbackManager.Instance?.ShowGlobalAlert(
-                $"The {currentEra} Era Has Started",
-                new Color(0.9f, 0.9f, 0.6f)
-            );
+            if (currentEra == Era.Extinction)
+            {
+                int remainingRounds = Mathf.Max(0, finalRound - currentRound);
+                if (remainingRounds > 0)
+                {
+                    FeedbackManager.Instance?.ShowGlobalAlert(
+                        $"{remainingRounds} rounds until extinction event...",
+                        new Color(1f, 0.6f, 0.4f)
+                    );
+                }
+            }
+            else
+            {
+                FeedbackManager.Instance?.ShowGlobalAlert(
+                    $"The {currentEra} Era Has Started",
+                    new Color(0.9f, 0.9f, 0.6f)
+                );
+            }
         }
         currentPhase = GamePhase.Draw;
         UpdatePhaseLabel();
         BeginDraw();
+    }
+
+    private IEnumerator HandleGameOverExtinction()
+    {
+        isGameOver = true;
+
+        // Lock out further input
+        if (endTurnButton != null)
+            endTurnButton.interactable = false;
+        if (endTurnLabel != null)
+            endTurnLabel.text = "Game Over";
+
+        currentPhase = GamePhase.End;
+        UpdatePhaseLabel();
+
+        // Crossfade background to the special extinction weather, if configured.
+        if (weatherVideoBackground != null)
+        {
+            StartCoroutine(weatherVideoBackground.CrossfadeTo(WeatherType.Extinction, 0.7f));
+        }
+
+        FeedbackManager.Instance?.ShowGlobalAlert(
+            "A final extinction event has wiped out all life.\nGame Over.",
+            new Color(1f, 0.4f, 0.3f)
+        );
+
+        // Drive the visual/gameplay extinction through the VFXManager if available.
+        if (VFXManager.Instance != null)
+        {
+            VFXManager.Instance.TriggerGameEndingExtinction();
+        }
+        else if (resolutionManager != null)
+        {
+            var creatures = resolutionManager
+                .AllCreatures()
+                .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
+                .ToList();
+
+            foreach (var c in creatures)
+            {
+                if (c != null && !c.isDying && c.currentHealth > 0)
+                    c.Kill("Final Extinction");
+            }
+        }
+
+        yield break;
     }
 
     public Era GetEraForRound(int round)
@@ -350,6 +428,12 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
+        if (isGameOver)
+        {
+            failureReason = "The game is over.";
+            return false;
+        }
+
         if (currentPhase != GamePhase.Place)
         {
             failureReason = "You can only play creatures during the Place phase.";
@@ -385,6 +469,12 @@ public class GameManager : MonoBehaviour
         if (card == null)
         {
             failureReason = "Invalid effect card.";
+            return false;
+        }
+
+        if (isGameOver)
+        {
+            failureReason = "The game is over.";
             return false;
         }
 

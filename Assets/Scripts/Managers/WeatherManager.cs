@@ -9,6 +9,7 @@ public enum WeatherType
     Drought,
     Wildfire,
     Storm,
+    Extinction, // special end-of-game backdrop; never rolled during play
 }
 
 public class WeatherManager : MonoBehaviour
@@ -73,6 +74,7 @@ public class WeatherManager : MonoBehaviour
             return currentWeather;
         }
 
+        // Only roll among the "normal" weathers. Extinction is triggered explicitly by game over.
         var candidates = new List<(WeatherType type, int weight)>
         {
             (WeatherType.Clear, weightClear),
@@ -122,6 +124,7 @@ public class WeatherManager : MonoBehaviour
             WeatherType.Drought => new Color(0.95f, 0.8f, 0.4f),
             WeatherType.Storm => new Color(0.7f, 0.85f, 1f),
             WeatherType.Wildfire => new Color(1f, 0.6f, 0.3f),
+            WeatherType.Extinction => new Color(1f, 0.4f, 0.4f),
             _ => Color.white,
         };
         FeedbackManager.Instance?.ShowGlobalAlert($"Weather: {currentWeather}", alertColor);
