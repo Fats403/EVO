@@ -68,9 +68,7 @@ public class EffectCardUI : BaseCardUI
             if (dz != null && dz.IsPointerInside(eventData.position))
             {
                 string reason;
-                if (
-                    TryQueueEffectCard(Enumerable.Empty<Creature>(), out reason)
-                )
+                if (TryQueueEffectCard(Enumerable.Empty<Creature>(), out reason))
                 {
                     played = true;
                 }
@@ -331,7 +329,12 @@ public class EffectCardUI : BaseCardUI
             return false;
         }
 
-        return GameManager.Instance.TryPlayEffectCard(effectData, owner, targets, out failureReason);
+        return GameManager.Instance.TryPlayEffectCard(
+            effectData,
+            owner,
+            targets,
+            out failureReason
+        );
     }
 
     void ShowPlayFailure(string reason)

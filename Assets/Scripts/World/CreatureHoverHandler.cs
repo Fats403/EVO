@@ -4,56 +4,57 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(Collider2D))]
 public class CreatureHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-	private Creature creature;
-	[SerializeField] private readonly float hoverDelaySeconds = 0.5f;
-	private Coroutine hoverRoutine;
-	private bool pointerInside;
+    private Creature creature;
 
-	void Awake()
-	{
-		creature = GetComponent<Creature>();
-	}
+    [SerializeField]
+    private readonly float hoverDelaySeconds = 0.5f;
+    private Coroutine hoverRoutine;
+    private bool pointerInside;
 
-	public void OnPointerEnter(PointerEventData eventData)
-	{
-		StartHover();
-	}
+    void Awake()
+    {
+        creature = GetComponent<Creature>();
+    }
 
-	public void OnPointerExit(PointerEventData eventData)
-	{
-		CancelHoverAndHide();
-	}
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        StartHover();
+    }
 
-	private void StartHover()
-	{
-		pointerInside = true;
-		if (hoverRoutine != null) StopCoroutine(hoverRoutine);
-		hoverRoutine = StartCoroutine(ShowAfterDelay());
-	}
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        CancelHoverAndHide();
+    }
 
-	private void CancelHoverAndHide()
-	{
-		pointerInside = false;
-		if (hoverRoutine != null)
-		{
-			StopCoroutine(hoverRoutine);
-			hoverRoutine = null;
-		}
-		if (CardPreviewManager.Instance != null)
-		{
-			CardPreviewManager.Instance.HideHoverCreature(creature);
-		}
-	}
+    private void StartHover()
+    {
+        pointerInside = true;
+        if (hoverRoutine != null)
+            StopCoroutine(hoverRoutine);
+        hoverRoutine = StartCoroutine(ShowAfterDelay());
+    }
 
-	private System.Collections.IEnumerator ShowAfterDelay()
-	{
-		yield return new WaitForSeconds(Mathf.Max(0f, hoverDelaySeconds));
-		hoverRoutine = null;
-		if (pointerInside && CardPreviewManager.Instance != null)
-		{
-			CardPreviewManager.Instance.ShowHoverCreature(creature);
-		}
-	}
+    private void CancelHoverAndHide()
+    {
+        pointerInside = false;
+        if (hoverRoutine != null)
+        {
+            StopCoroutine(hoverRoutine);
+            hoverRoutine = null;
+        }
+        if (CardPreviewManager.Instance != null)
+        {
+            CardPreviewManager.Instance.HideHoverCreature(creature);
+        }
+    }
+
+    private System.Collections.IEnumerator ShowAfterDelay()
+    {
+        yield return new WaitForSeconds(Mathf.Max(0f, hoverDelaySeconds));
+        hoverRoutine = null;
+        if (pointerInside && CardPreviewManager.Instance != null)
+        {
+            CardPreviewManager.Instance.ShowHoverCreature(creature);
+        }
+    }
 }
-
-
