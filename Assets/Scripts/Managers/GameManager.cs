@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     public Button endTurnButton;
     public Button toggleLogButton;
     public TextMeshProUGUI phaseText;
+    public TextMeshProUGUI roundText;
     public ResolutionManager resolutionManager;
     public FoodPile foodPile;
     public WeatherManager weatherManager;
@@ -104,6 +105,11 @@ public class GameManager : MonoBehaviour
         UpdatePhaseLabel();
         if (weatherVideoBackground != null)
             weatherVideoBackground.ForceTo(WeatherType.Clear);
+        // Initialize AI deck/hand before the first round begins so both players follow the same rules.
+        if (AIManager.Instance != null)
+        {
+            AIManager.Instance.BuildDeckAndDrawStartingHand();
+        }
         BeginSetup();
     }
 
@@ -134,13 +140,57 @@ public class GameManager : MonoBehaviour
 
     void UpdatePhaseLabel()
     {
-        if (phaseText != null)
+        string eraLabel = currentEra.ToString();
+
+        // Round/era display goes to roundText if assigned; otherwise fall back to phaseText
+        if (roundText != null)
         {
-            string eraLabel = currentEra.ToString();
-            // string phaseLabel = currentPhase.ToString();
-            phaseText.text = $"Round {currentRound} – {eraLabel}";
+            roundText.text = $"Round {currentRound} – {eraLabel}";
         }
+
+        UpdatePhaseStatusText();
         UpdateMomentumUI();
+    }
+
+    void UpdatePhaseStatusText()
+    {
+        if (phaseText == null)
+            return;
+
+        if (isGameOver)
+        {
+            phaseText.text = "Game Over";
+            return;
+        }
+
+        switch (currentPhase)
+        {
+            case GamePhase.Setup:
+                phaseText.text = "Setup";
+                break;
+            case GamePhase.Draw:
+                phaseText.text = "Draw";
+                break;
+            case GamePhase.Place:
+                if (awaitingTurnOwner.HasValue)
+                {
+                    phaseText.text =
+                        awaitingTurnOwner.Value == SlotOwner.Player1
+                            ? "Player 1 Turn"
+                            : "Player 2 Turn";
+                }
+                else
+                {
+                    phaseText.text = "Place Creatures";
+                }
+                break;
+            case GamePhase.Resolve:
+                phaseText.text = "Resolving...";
+                break;
+            case GamePhase.End:
+                phaseText.text = "End of Round";
+                break;
+        }
     }
 
     void BeginSetup()
@@ -166,6 +216,11 @@ public class GameManager : MonoBehaviour
         if (dm != null)
         {
             dm.DrawCardsForRoundStart();
+        }
+        // Mirror per-round draws for the AI using the same rules from DeckManager.
+        if (AIManager.Instance != null)
+        {
+            AIManager.Instance.DrawCardsForRoundStart();
         }
         if (foodPile != null)
             foodPile.RefillStartOfRound();
@@ -296,12 +351,8 @@ public class GameManager : MonoBehaviour
 
     void NotifyYourMove(SlotOwner owner)
     {
-        if (FeedbackManager.Instance == null)
-            return;
-        string label = owner == SlotOwner.Player1 ? "Player 1" : "Player 2";
-        Color color =
-            owner == SlotOwner.Player1 ? new Color(0.6f, 0.9f, 1f) : new Color(1f, 0.75f, 0.5f);
-        FeedbackManager.Instance.ShowGlobalAlert($"{label}: Your move", color);
+        UpdatePhaseStatusText();
+        FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(owner)}: Your move");
     }
 
     void UpdateEndTurnButtonState()
@@ -360,15 +411,17 @@ public class GameManager : MonoBehaviour
             {
                 string ownerTag = FeedbackManager.TagOwner(owner);
                 FeedbackManager.Instance.Log($"{ownerTag} passed.");
-                string label = owner == SlotOwner.Player1 ? "Player 1 passes" : "Player 2 passes";
-                FeedbackManager.Instance.ShowGlobalAlert(label, new Color(0.8f, 0.8f, 0.9f));
             }
+            // Show pass information in the phase text instead of a global alert.
+            if (phaseText != null)
+                phaseText.text = owner == SlotOwner.Player1 ? "Player 1 passes" : "Player 2 passes";
         }
 
         if (awaitingTurnOwner.HasValue && awaitingTurnOwner.Value == owner)
             awaitingTurnOwner = null;
 
         UpdateEndTurnButtonState();
+        UpdatePhaseStatusText();
     }
 
     void CompleteTurnAction(SlotOwner owner)
@@ -448,10 +501,21 @@ public class GameManager : MonoBehaviour
     {
         AnnounceCardPlay(owner, card.effectName);
         CardPreviewManager.Instance?.ShowForcedEffect(card, owner);
+        // First: wait for the effect reveal delay, then actually apply the effect logic.
         float revealDelay = Mathf.Max(0f, effectRevealDelaySeconds);
         if (revealDelay > 0f)
             yield return new WaitForSeconds(revealDelay);
+
         EffectsManager.Instance?.PlayOnTargets(card, targets, owner);
+
+        // Second: keep the preview visible until the total preview time has elapsed.
+        // We want the card to stay spotlighted for cardPreviewHoldSeconds from the start,
+        // with the effect resolving part-way through at revealDelay.
+        float totalPreview = Mathf.Max(0f, cardPreviewHoldSeconds);
+        float remaining = Mathf.Max(0f, totalPreview - revealDelay);
+        if (remaining > 0f)
+            yield return new WaitForSeconds(remaining);
+
         CompleteTurnAction(owner);
     }
 
@@ -656,12 +720,38 @@ public class GameManager : MonoBehaviour
         return Mathf.Clamp(card.tier, 1, 3);
     }
 
+    // --- Creature card rules ---
+
     public bool CanPlayCreatureCard(CreatureCard card, SlotOwner owner)
     {
         return CanPlayCreatureCard(card, owner, out _);
     }
 
     public bool CanPlayCreatureCard(CreatureCard card, SlotOwner owner, out string failureReason)
+    {
+        // Full rules check that also spends momentum on success.
+        return CanPlayCreatureCardInternal(card, owner, spendMomentum: true, out failureReason);
+    }
+
+    /// <summary>
+    /// Preview-only check for whether a creature card could be played under current rules
+    /// without actually spending momentum. Intended for AI and UI heuristics.
+    /// </summary>
+    public bool CanPlayCreatureCardPreview(
+        CreatureCard card,
+        SlotOwner owner,
+        out string failureReason
+    )
+    {
+        return CanPlayCreatureCardInternal(card, owner, spendMomentum: false, out failureReason);
+    }
+
+    bool CanPlayCreatureCardInternal(
+        CreatureCard card,
+        SlotOwner owner,
+        bool spendMomentum,
+        out string failureReason
+    )
     {
         failureReason = null;
 
@@ -697,14 +787,30 @@ public class GameManager : MonoBehaviour
         }
 
         int cost = GetCreatureCost(card);
-        if (!TrySpendMomentum(owner, cost))
+        if (cost < 0)
+            cost = 0;
+
+        if (spendMomentum)
         {
-            failureReason = "Not enough Momentum.";
-            return false;
+            if (!TrySpendMomentum(owner, cost))
+            {
+                failureReason = "Not enough Momentum.";
+                return false;
+            }
+        }
+        else
+        {
+            if (GetMomentum(owner) < cost)
+            {
+                failureReason = "Not enough Momentum.";
+                return false;
+            }
         }
 
         return true;
     }
+
+    // --- Effect card rules ---
 
     public bool CanPlayEffectCard(EffectCard card, SlotOwner owner)
     {
@@ -712,6 +818,26 @@ public class GameManager : MonoBehaviour
     }
 
     public bool CanPlayEffectCard(EffectCard card, SlotOwner owner, out string failureReason)
+    {
+        // Full rules check that also spends momentum on success.
+        return CanPlayEffectCardInternal(card, owner, spendMomentum: true, out failureReason);
+    }
+
+    /// <summary>
+    /// Preview-only check for whether an effect card could be played under current rules
+    /// without actually spending momentum. Intended for AI and UI heuristics.
+    /// </summary>
+    public bool CanPlayEffectCardPreview(EffectCard card, SlotOwner owner, out string failureReason)
+    {
+        return CanPlayEffectCardInternal(card, owner, spendMomentum: false, out failureReason);
+    }
+
+    bool CanPlayEffectCardInternal(
+        EffectCard card,
+        SlotOwner owner,
+        bool spendMomentum,
+        out string failureReason
+    )
     {
         failureReason = null;
 
@@ -747,6 +873,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Weather requirement (e.g., Solar Recovery)
+        // TODO: change this to specific weather requirements
         if (card.requiresClearWeather)
         {
             if (
@@ -761,10 +888,21 @@ public class GameManager : MonoBehaviour
 
         // Momentum requirement
         int cost = Mathf.Max(0, card.momentumCost);
-        if (!TrySpendMomentum(owner, cost))
+        if (spendMomentum)
         {
-            failureReason = "Not enough Momentum.";
-            return false;
+            if (!TrySpendMomentum(owner, cost))
+            {
+                failureReason = "Not enough Momentum.";
+                return false;
+            }
+        }
+        else
+        {
+            if (GetMomentum(owner) < cost)
+            {
+                failureReason = "Not enough Momentum.";
+                return false;
+            }
         }
 
         return true;

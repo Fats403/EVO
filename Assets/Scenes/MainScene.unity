@@ -176,7 +176,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: bc4295bbf7e2e4a4b9e2ea9eac6b254f, type: 2}
+  m_Texture: {fileID: 8400000, guid: 244136a5576ac43699ec4766c2941b65, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -326,7 +326,7 @@ MonoBehaviour:
   stormPlayer: {fileID: 2044170889}
   extinctionPlayer: {fileID: 1044412316}
   playOnStart: 1
-  loopVideos: 0
+  loopVideos: 1
   targetCamera: {fileID: 0}
 --- !u!1 &74413182
 GameObject:
@@ -830,6 +830,10 @@ MonoBehaviour:
   creaturePreviewUI: {fileID: 1868919981}
   effectPreviewUI: {fileID: 1770490317}
   forcedDisplaySeconds: 3
+  showDuration: 0.2
+  hideDuration: 0.15
+  showStartScale: 0.8
+  idleScale: 1
 --- !u!4 &221958238
 Transform:
   m_ObjectHideFlags: 0
@@ -870,11 +874,11 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 237599101}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 5d6efe51cf5f6466e90383cc390a3130, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: ab2aa45512a0e40749d993c2882b366c, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 519420031}
-  m_TargetTexture: {fileID: 8400000, guid: 4b3aa514bc89949eb84a163729cbb6ac, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: f6e4021efab414dd99b8667edba8657e, type: 2}
   m_TimeReference: 0
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
@@ -883,7 +887,7 @@ VideoPlayer:
   m_DataSource: 0
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
-  m_AudioOutputMode: 2
+  m_AudioOutputMode: 0
   m_TargetAudioSources:
   - {fileID: 0}
   m_DirectAudioVolumes:
@@ -894,7 +898,7 @@ VideoPlayer:
   m_ControlledAudioTrackCount: 1
   m_PlayOnAwake: 1
   m_SkipOnDrop: 0
-  m_Looping: 0
+  m_Looping: 1
   m_WaitForFirstFrame: 1
   m_FrameReadyEventEnabled: 0
   m_VideoShaders: []
@@ -970,7 +974,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: 6f4d2b862558649b687ad5d78b18a4d3, type: 2}
+  m_Texture: {fileID: 8400000, guid: b389f60016a8e44a6a8c00dbb332779e, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -1771,7 +1775,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: -1974876073
+  m_SortingLayerID: 1470497587
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &557953993
@@ -1931,6 +1935,142 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 567983863}
   m_CullTransparentMesh: 1
+--- !u!1 &584109796
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 584109797}
+  - component: {fileID: 584109799}
+  - component: {fileID: 584109798}
+  m_Layer: 5
+  m_Name: PhaseText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &584109797
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 584109796}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2118664156}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -98}
+  m_SizeDelta: {x: 500, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &584109798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 584109796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: 'Phase: Place'
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: c83d5756a8d654666a6575309a997d4c, type: 2}
+  m_sharedMaterial: {fileID: -8936540656170639948, guid: c83d5756a8d654666a6575309a997d4c, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 40
+  m_fontSizeBase: 40
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 256
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &584109799
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 584109796}
+  m_CullTransparentMesh: 1
 --- !u!1 &585839364
 GameObject:
   m_ObjectHideFlags: 0
@@ -2080,7 +2220,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: 4b3aa514bc89949eb84a163729cbb6ac, type: 2}
+  m_Texture: {fileID: 8400000, guid: f6e4021efab414dd99b8667edba8657e, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -2525,8 +2665,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b8a804270c554a6580bcb0b6f8e2819, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIManager
-  cardsPerTurn: 2
   cardBackPrefab: {fileID: 2101941085350782629, guid: 10ab4236f61d94e7180bf44cafa72201, type: 3}
+  creatureTierWeight: 3
+  creatureSizeWeight: 1.5
+  creatureBaseValue: 2
+  carnivoreBonus: 2
+  avianBonus: 1
+  momentumCostWeight: 1
+  lowMomentumPenalty: 1.5
+  allyEffectPerTargetValue: 1.5
+  enemyEffectPerTargetValue: 1.75
+  passThreshold: 0.25
 --- !u!4 &744680059
 Transform:
   m_ObjectHideFlags: 0
@@ -2650,7 +2799,8 @@ MonoBehaviour:
   player2SlotContainer: {fileID: 821395420}
   endTurnButton: {fileID: 1785638421}
   toggleLogButton: {fileID: 1984540527}
-  phaseText: {fileID: 895446171}
+  phaseText: {fileID: 584109798}
+  roundText: {fileID: 895446171}
   resolutionManager: {fileID: 648372067}
   foodPile: {fileID: 508416461}
   weatherManager: {fileID: 707428238}
@@ -2669,7 +2819,10 @@ MonoBehaviour:
   currentPhase: 0
   rngSeed: -1077177359
   startingPlayerForRound: 0
-  effectRevealDelaySeconds: 0.75
+  cardPreviewHoldSeconds: 3.5
+  effectRevealDelaySeconds: 1
+  aiTurnDelaySeconds: 1
+  resolveStartDelaySeconds: 1
 --- !u!4 &815865959
 Transform:
   m_ObjectHideFlags: 0
@@ -2873,7 +3026,7 @@ GameObject:
   - component: {fileID: 895446172}
   - component: {fileID: 895446171}
   m_Layer: 5
-  m_Name: PhaseText
+  m_Name: RoundText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2895,7 +3048,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -65.00003}
+  m_AnchoredPosition: {x: 0, y: -43}
   m_SizeDelta: {x: 500, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &895446171
@@ -2918,7 +3071,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Phase: Place'
+  m_text: Round 1 - Triasic
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c83d5756a8d654666a6575309a997d4c, type: 2}
   m_sharedMaterial: {fileID: -8936540656170639948, guid: c83d5756a8d654666a6575309a997d4c, type: 2}
@@ -3369,11 +3522,11 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1044412315}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 90d59d9f209264f4dad5df34637e2de2, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: abd3cf44ed6354471b7f85404add5bf7, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 519420031}
-  m_TargetTexture: {fileID: 8400000, guid: 5b78451620daa4690bef23c503f7ba64, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: f4035041d16064d10911c64f1d49f3e6, type: 2}
   m_TimeReference: 0
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
@@ -3382,7 +3535,7 @@ VideoPlayer:
   m_DataSource: 0
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
-  m_AudioOutputMode: 2
+  m_AudioOutputMode: 0
   m_TargetAudioSources: []
   m_DirectAudioVolumes: []
   m_Url: 
@@ -3391,7 +3544,7 @@ VideoPlayer:
   m_ControlledAudioTrackCount: 0
   m_PlayOnAwake: 1
   m_SkipOnDrop: 0
-  m_Looping: 0
+  m_Looping: 1
   m_WaitForFirstFrame: 1
   m_FrameReadyEventEnabled: 0
   m_VideoShaders: []
@@ -3435,11 +3588,11 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1057704644}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 4726e8f8ede4a486b8c306e874d371d1, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: ced41072c4b72482d9546c5ddd906cd1, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 519420031}
-  m_TargetTexture: {fileID: 8400000, guid: 6f4d2b862558649b687ad5d78b18a4d3, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: b389f60016a8e44a6a8c00dbb332779e, type: 2}
   m_TimeReference: 0
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
@@ -3448,7 +3601,7 @@ VideoPlayer:
   m_DataSource: 0
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
-  m_AudioOutputMode: 2
+  m_AudioOutputMode: 0
   m_TargetAudioSources:
   - {fileID: 0}
   m_DirectAudioVolumes:
@@ -3459,7 +3612,7 @@ VideoPlayer:
   m_ControlledAudioTrackCount: 1
   m_PlayOnAwake: 1
   m_SkipOnDrop: 0
-  m_Looping: 0
+  m_Looping: 1
   m_WaitForFirstFrame: 1
   m_FrameReadyEventEnabled: 0
   m_VideoShaders: []
@@ -4435,7 +4588,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: 5b78451620daa4690bef23c503f7ba64, type: 2}
+  m_Texture: {fileID: 8400000, guid: f4035041d16064d10911c64f1d49f3e6, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -4740,11 +4893,11 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1816691088}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 90d4796d428ed443c98881b6e35d0501, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: abe09bbf6bd254bb3b1ae60d01823e0a, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 519420031}
-  m_TargetTexture: {fileID: 8400000, guid: e6f62c9790f324dcab7874d1669fa313, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: 0ed023941bce14eae8546e926880ccef, type: 2}
   m_TimeReference: 0
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
@@ -4753,7 +4906,7 @@ VideoPlayer:
   m_DataSource: 0
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
-  m_AudioOutputMode: 2
+  m_AudioOutputMode: 0
   m_TargetAudioSources: []
   m_DirectAudioVolumes: []
   m_Url: 
@@ -4762,7 +4915,7 @@ VideoPlayer:
   m_ControlledAudioTrackCount: 0
   m_PlayOnAwake: 1
   m_SkipOnDrop: 0
-  m_Looping: 0
+  m_Looping: 1
   m_WaitForFirstFrame: 1
   m_FrameReadyEventEnabled: 0
   m_VideoShaders: []
@@ -4984,7 +5137,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: e6f62c9790f324dcab7874d1669fa313, type: 2}
+  m_Texture: {fileID: 8400000, guid: 0ed023941bce14eae8546e926880ccef, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -5334,11 +5487,11 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2044170888}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 05d28e2ba7c044305b0e34712a02c271, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 70710c0c9eb5f472abfa36a1c7ab0d76, type: 3}
   m_TargetCameraAlpha: 0
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 519420031}
-  m_TargetTexture: {fileID: 8400000, guid: bc4295bbf7e2e4a4b9e2ea9eac6b254f, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: 244136a5576ac43699ec4766c2941b65, type: 2}
   m_TimeReference: 0
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
@@ -5347,7 +5500,7 @@ VideoPlayer:
   m_DataSource: 0
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
-  m_AudioOutputMode: 2
+  m_AudioOutputMode: 0
   m_TargetAudioSources:
   - {fileID: 0}
   m_DirectAudioVolumes:
@@ -5358,7 +5511,7 @@ VideoPlayer:
   m_ControlledAudioTrackCount: 1
   m_PlayOnAwake: 1
   m_SkipOnDrop: 0
-  m_Looping: 0
+  m_Looping: 1
   m_WaitForFirstFrame: 1
   m_FrameReadyEventEnabled: 0
   m_VideoShaders: []
@@ -5895,6 +6048,7 @@ RectTransform:
   - {fileID: 1868919980}
   - {fileID: 1785638420}
   - {fileID: 895446170}
+  - {fileID: 584109797}
   - {fileID: 2128517701}
   - {fileID: 1984540526}
   - {fileID: 1929684834}
@@ -6004,7 +6158,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: -1594491081
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &2127664228
