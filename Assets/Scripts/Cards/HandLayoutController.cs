@@ -19,11 +19,15 @@ public class HandLayoutController : MonoBehaviour
     private float curveDepth = 40f; // how far center dips down
 
     [SerializeField]
+    [Tooltip("Base scale for cards in hand (1 = 100%)")]
+    private float baseScale = 0.9f;
+
+    [SerializeField]
     private float handYOffset = 0f; // positive moves cards down
 
     [Header("Hover")]
     [SerializeField]
-    private float hoverScale = 1.15f;
+    private float hoverScale = 1.1f;
 
     [SerializeField]
     private float hoverLift = 60f;
@@ -169,12 +173,14 @@ public class HandLayoutController : MonoBehaviour
 
             Vector2 baselinePos = new Vector2(x, y);
             float targetRot = angle;
-            float targetScale = 1f;
+            float targetScale = baseScale;
 
             if (hoveredCard != null && rt == hoveredCard.transform as RectTransform)
             {
                 baselinePos.y += hoverLift;
                 targetScale = hoverScale;
+                // When hovered, keep the card upright for easier reading.
+                targetRot = 0f;
             }
 
             Vector2 targetPos = BaselineToPivotAnchoredPosition(

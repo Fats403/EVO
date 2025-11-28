@@ -77,6 +77,9 @@ public class GameManager : MonoBehaviour
     private bool p1PassedThisRound;
     private bool p2PassedThisRound;
 
+    // Prevents Player 1 from queuing multiple actions while a card preview is still resolving.
+    private bool p1ActionLocked;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -450,6 +453,11 @@ public class GameManager : MonoBehaviour
         if (currentPhase != GamePhase.Place)
             return;
 
+        // Once a player card has been played, lock out additional P1 actions until
+        // its preview/resolution finishes so turns truly alternate actions.
+        if (creature.owner == SlotOwner.Player1)
+            p1ActionLocked = true;
+
         StartCoroutine(OnCreaturePlayedDuringPlacementRoutine(creature));
     }
 
@@ -464,6 +472,9 @@ public class GameManager : MonoBehaviour
         float hold = Mathf.Max(0f, cardPreviewHoldSeconds);
         if (hold > 0f)
             yield return new WaitForSeconds(hold);
+
+        if (creature.owner == SlotOwner.Player1)
+            p1ActionLocked = false;
 
         CompleteTurnAction(creature.owner);
     }
@@ -493,6 +504,10 @@ public class GameManager : MonoBehaviour
             return false;
 
         var list = targets != null ? targets.Where(c => c != null).ToList() : new List<Creature>();
+
+        if (owner == SlotOwner.Player1)
+            p1ActionLocked = true;
+
         StartCoroutine(PlayEffectCardRoutine(card, owner, list));
         return true;
     }
@@ -515,6 +530,9 @@ public class GameManager : MonoBehaviour
         float remaining = Mathf.Max(0f, totalPreview - revealDelay);
         if (remaining > 0f)
             yield return new WaitForSeconds(remaining);
+
+        if (owner == SlotOwner.Player1)
+            p1ActionLocked = false;
 
         CompleteTurnAction(owner);
     }
@@ -779,6 +797,14 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
+        // For the local player, also prevent queuing multiple actions while a previous
+        // card preview is still resolving.
+        if (owner == SlotOwner.Player1 && p1ActionLocked)
+        {
+            failureReason = "You have already taken an action. Wait for the other player.";
+            return false;
+        }
+
         if (!IsTierAllowedInEra(card.tier, currentEra))
         {
             failureReason =
@@ -862,6 +888,14 @@ public class GameManager : MonoBehaviour
         if (currentPhase == GamePhase.Place && !IsTurnOwner(owner))
         {
             failureReason = "Wait for your turn.";
+            return false;
+        }
+
+        // For the local player, also prevent queuing multiple actions while a previous
+        // card preview is still resolving.
+        if (owner == SlotOwner.Player1 && p1ActionLocked)
+        {
+            failureReason = "You have already taken an action. Wait for the other player.";
             return false;
         }
 
