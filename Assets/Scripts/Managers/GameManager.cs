@@ -275,12 +275,8 @@ public class GameManager : MonoBehaviour
         placePhaseRoutine = null;
         currentPhase = GamePhase.Resolve;
         UpdatePhaseLabel();
-
-        float delay = Mathf.Max(0f, resolveStartDelaySeconds);
-        if (delay > 0f)
-            yield return new WaitForSeconds(delay);
-
-        BeginResolve();
+        // Hand off to resolve intro + resolution coroutine.
+        yield return StartCoroutine(BeginResolve());
     }
 
     IEnumerator ExecuteTurn(SlotOwner owner)
@@ -537,15 +533,27 @@ public class GameManager : MonoBehaviour
         CompleteTurnAction(owner);
     }
 
-    void BeginResolve()
+    IEnumerator BeginResolve()
     {
         if (resolutionManager == null)
         {
             Debug.LogError("ResolutionManager not assigned to GameManager");
-            return;
+            yield break;
         }
+        // Single global alert when resolution begins so players can track pacing.
+        FeedbackManager.Instance?.ShowGlobalAlert(
+            $"Round {currentRound} Begins!",
+            new Color(0.9f, 0.1f, 0.1f)
+        );
+
+        // Let the alert breathe before combat resolves.
+        float introHold = Mathf.Max(0f, resolveStartDelaySeconds);
+        if (introHold > 0f)
+            yield return new WaitForSeconds(introHold);
+
         UpdateEndTurnButtonState();
-        StartCoroutine(ResolveRoundCoroutine());
+        // Run the actual resolution sequence.
+        yield return StartCoroutine(ResolveRoundCoroutine());
     }
 
     IEnumerator ResolveRoundCoroutine()

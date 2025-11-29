@@ -117,17 +117,55 @@ public class WeatherManager : MonoBehaviour
         currentWeather = picked;
         starveDamageOverride = null;
         FeedbackManager.Instance?.Log($"Weather: {currentWeather}");
-        // Screen-center alert for weather changes
-        Color alertColor = currentWeather switch
+
+        // Screen-center flavor text for weather changes
+        string msg = null;
+        switch (currentWeather)
         {
-            WeatherType.Clear => new Color(0.8f, 1f, 0.8f),
-            WeatherType.Drought => new Color(0.95f, 0.8f, 0.4f),
-            WeatherType.Storm => new Color(0.7f, 0.85f, 1f),
-            WeatherType.Wildfire => new Color(1f, 0.6f, 0.3f),
-            WeatherType.Extinction => new Color(1f, 0.4f, 0.4f),
-            _ => Color.white,
-        };
-        FeedbackManager.Instance?.ShowGlobalAlert($"Weather: {currentWeather}", alertColor);
+            case WeatherType.Clear:
+                // Never announce the very first clear (handled by isFirstRound guard above),
+                // but do announce when harsh weather finally clears.
+                if (lastWeather.HasValue && lastWeather.Value != WeatherType.Clear)
+                    msg = "The weather clears.";
+                else
+                    msg = "Clear skies continue.";
+                break;
+            case WeatherType.Drought:
+                msg =
+                    lastWeather == WeatherType.Drought
+                        ? "The drought drags on..."
+                        : "A drought grips the land...";
+                break;
+            case WeatherType.Storm:
+                msg =
+                    lastWeather == WeatherType.Storm
+                        ? "The storm continues to rage..."
+                        : "A massive storm rolls in...";
+                break;
+            case WeatherType.Wildfire:
+                msg =
+                    lastWeather == WeatherType.Wildfire
+                        ? "The wildfire continues to spread..."
+                        : "A wildfire has erupted!";
+                break;
+            case WeatherType.Extinction:
+                msg = "An extinction-level event darkens the skies.";
+                break;
+        }
+
+        if (!string.IsNullOrEmpty(msg) && FeedbackManager.Instance != null)
+        {
+            Color alertColor = currentWeather switch
+            {
+                WeatherType.Clear => new Color(0.8f, 1f, 0.8f),
+                WeatherType.Drought => new Color(0.95f, 0.8f, 0.4f),
+                WeatherType.Storm => new Color(0.7f, 0.85f, 1f),
+                WeatherType.Wildfire => new Color(1f, 0.6f, 0.3f),
+                WeatherType.Extinction => new Color(1f, 0.4f, 0.4f),
+                _ => Color.white,
+            };
+            FeedbackManager.Instance.ShowGlobalAlert(msg, alertColor);
+        }
         OnWeatherChanged?.Invoke(currentWeather);
         return currentWeather;
     }

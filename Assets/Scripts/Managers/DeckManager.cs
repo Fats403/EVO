@@ -76,9 +76,11 @@ public class DeckManager : MonoBehaviour
             if (seen.Add(card))
                 picked.Add(card);
         }
+
         currentDeck.AddRange(picked);
         drawPile.Clear();
         drawPile.AddRange(currentDeck);
+
         // Shuffle draw order
         for (int i = drawPile.Count - 1; i > 0; i--)
         {
