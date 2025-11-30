@@ -23,12 +23,24 @@ public class TooltipManager : MonoBehaviour
 
     [Header("Behavior")]
     [Tooltip("Offset from the mouse in screen pixels (positive X = right, positive Y = up).")]
-    public Vector2 screenOffset = new Vector2(16f, 100f);
+    public Vector2 screenOffset = new Vector2(300f, 100f);
+
+    [Tooltip("If true, flips the tooltip offset when near screen edges to help keep it on-screen.")]
+    public bool flipToStayOnScreen = true;
 
     [Tooltip("Sprite used when no specific icon is supplied.")]
     public Sprite defaultIcon;
 
     private object currentOwner;
+    private CanvasGroup canvasGroup;
+    private Coroutine fadeRoutine;
+
+    [Header("Fade")]
+    [Tooltip("Seconds to fade the tooltip in when it appears.")]
+    public float fadeInDuration = 0.12f;
+
+    [Tooltip("Seconds to fade the tooltip out when it hides.")]
+    public float fadeOutDuration = 0.08f;
 
     private void Awake()
     {
@@ -42,6 +54,18 @@ public class TooltipManager : MonoBehaviour
 
         if (canvas == null)
             canvas = GetComponentInParent<Canvas>();
+
+        if (root != null)
+        {
+            canvasGroup = root.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+                canvasGroup = root.gameObject.AddComponent<CanvasGroup>();
+
+            // Tooltips should not block other UI.
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+            canvasGroup.alpha = 0f;
+        }
 
         HideImmediate();
     }
@@ -70,6 +94,14 @@ public class TooltipManager : MonoBehaviour
             iconImage.sprite = iconToUse;
 
         UpdatePosition(screenPosition);
+
+        // Fade in
+        if (canvasGroup != null)
+        {
+            if (fadeRoutine != null)
+                StopCoroutine(fadeRoutine);
+            fadeRoutine = StartCoroutine(FadeRoutine(targetAlpha: 1f, fadeInDuration));
+        }
     }
 
     public void UpdatePosition(Vector2 screenPosition)
@@ -81,17 +113,44 @@ public class TooltipManager : MonoBehaviour
         if (canvasRect == null)
             return;
 
+        // Start with the configured offset, then optionally flip it based on which half
+        // of the screen the cursor is in so the tooltip tends to stay on-screen.
+        Vector2 offset = screenOffset;
+        if (flipToStayOnScreen)
+        {
+            float halfW = Screen.width * 0.5f;
+            float halfH = Screen.height * 0.5f;
+            offset.x =
+                (screenPosition.x > halfW) ? -Mathf.Abs(screenOffset.x) : Mathf.Abs(screenOffset.x);
+            offset.y =
+                (screenPosition.y > halfH) ? -Mathf.Abs(screenOffset.y) : Mathf.Abs(screenOffset.y);
+        }
+
         Vector2 localPoint;
         Camera cam = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
 
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             canvasRect,
-            screenPosition + screenOffset,
+            screenPosition + offset,
             cam,
             out localPoint
         );
 
-        root.anchoredPosition = localPoint;
+        // Clamp the tooltip so it stays within the canvas rect.
+        Vector2 size = root.rect.size;
+        Vector2 halfSize = size * 0.5f;
+        Rect rect = canvasRect.rect;
+
+        float minX = rect.xMin + halfSize.x;
+        float maxX = rect.xMax - halfSize.x;
+        float minY = rect.yMin + halfSize.y;
+        float maxY = rect.yMax - halfSize.y;
+
+        Vector2 clamped = localPoint;
+        clamped.x = Mathf.Clamp(clamped.x, minX, maxX);
+        clamped.y = Mathf.Clamp(clamped.y, minY, maxY);
+
+        root.anchoredPosition = clamped;
     }
 
     public void Hide(object owner = null)
@@ -99,13 +158,65 @@ public class TooltipManager : MonoBehaviour
         if (owner != null && currentOwner != null && !ReferenceEquals(owner, currentOwner))
             return;
 
-        HideImmediate();
+        // Fade out; if we have no CanvasGroup, hide immediately.
+        if (canvasGroup != null && fadeOutDuration > 0f)
+        {
+            if (fadeRoutine != null)
+                StopCoroutine(fadeRoutine);
+            fadeRoutine = StartCoroutine(FadeRoutine(targetAlpha: 0f, fadeOutDuration));
+        }
+        else
+        {
+            HideImmediate();
+        }
     }
 
     private void HideImmediate()
     {
+        if (fadeRoutine != null)
+        {
+            StopCoroutine(fadeRoutine);
+            fadeRoutine = null;
+        }
+
         currentOwner = null;
+
+        if (canvasGroup != null)
+            canvasGroup.alpha = 0f;
+
         if (root != null)
             root.gameObject.SetActive(false);
+    }
+
+    private System.Collections.IEnumerator FadeRoutine(float targetAlpha, float duration)
+    {
+        if (canvasGroup == null)
+        {
+            HideImmediate();
+            yield break;
+        }
+
+        float startAlpha = canvasGroup.alpha;
+        float t = 0f;
+        float dur = Mathf.Max(0.01f, duration);
+
+        while (t < dur)
+        {
+            t += Time.unscaledDeltaTime;
+            float u = Mathf.Clamp01(t / dur);
+            canvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, u);
+            yield return null;
+        }
+
+        canvasGroup.alpha = targetAlpha;
+        fadeRoutine = null;
+
+        if (Mathf.Approximately(targetAlpha, 0f))
+        {
+            // Fully hidden at the end of a fade-out.
+            currentOwner = null;
+            if (root != null)
+                root.gameObject.SetActive(false);
+        }
     }
 }

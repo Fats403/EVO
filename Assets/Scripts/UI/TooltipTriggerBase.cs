@@ -2,7 +2,11 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public abstract class TooltipTriggerBase : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler
+public abstract class TooltipTriggerBase
+    : MonoBehaviour,
+        IPointerEnterHandler,
+        IPointerExitHandler,
+        IPointerMoveHandler
 {
     [Header("Hover")]
     [SerializeField]
@@ -20,6 +24,18 @@ public abstract class TooltipTriggerBase : MonoBehaviour, IPointerEnterHandler, 
     }
 
     public void OnPointerExit(PointerEventData eventData)
+    {
+        pointerInside = false;
+        if (hoverRoutine != null)
+        {
+            StopCoroutine(hoverRoutine);
+            hoverRoutine = null;
+        }
+
+        OnHideTooltip();
+    }
+
+    private void OnDisable()
     {
         pointerInside = false;
         if (hoverRoutine != null)
@@ -52,5 +68,3 @@ public abstract class TooltipTriggerBase : MonoBehaviour, IPointerEnterHandler, 
     protected abstract void OnShowTooltip(Vector2 screenPosition);
     protected abstract void OnHideTooltip();
 }
-
-
