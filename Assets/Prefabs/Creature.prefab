@@ -255,7 +255,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1297743083
-  m_SortingLayer: 4
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: b822c566a76204b24ab1913c63e1dfaa, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -481,7 +481,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1297743083
-  m_SortingLayer: 4
+  m_SortingLayer: 3
   m_SortingOrder: 2
   m_Sprite: {fileID: -4853308011740183129, guid: 3f5ca65bba50b4520b5236b02f46531c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -685,7 +685,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1297743083
-  m_SortingLayer: 4
+  m_SortingLayer: 3
   m_SortingOrder: 1
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -738,9 +738,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea104a5fa411e49aa944729ed8491622, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatusIconController
-  library: {fileID: 11400000, guid: 316434689dd104df491c0b49a245f1ed, type: 2}
   iconContainer: {fileID: 1184218904178518504}
   iconPrefab: {fileID: 472242542002913755, guid: fa66c0ef119ca4afbb7d6f912cfb1b8f, type: 3}
+  definitionLibrary: {fileID: 11400000, guid: cef3bfd340c584789949964a33a2650c, type: 2}
 --- !u!114 &8509157290463671630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1058,7 +1058,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1297743083
-  m_SortingLayer: 4
+  m_SortingLayer: 3
   m_SortingOrder: 2
   m_Sprite: {fileID: 9170778751395157515, guid: 2f0dbde60736646ed9501f0dbb9b04d6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1284,7 +1284,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1297743083
-  m_SortingLayer: 4
+  m_SortingLayer: 3
   m_SortingOrder: 2
   m_Sprite: {fileID: -5278734259511242463, guid: c8e8d336c6f9a468cae7710efb4cff1d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
