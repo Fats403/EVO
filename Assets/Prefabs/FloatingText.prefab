@@ -85,7 +85,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &4971393539039493778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,10 +180,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Hello
+  m_text: Hello, I am floating!
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c83d5756a8d654666a6575309a997d4c, type: 2}
-  m_sharedMaterial: {fileID: -8936540656170639948, guid: c83d5756a8d654666a6575309a997d4c, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2f426f7ffc1844a99ace8cf66729aa31, type: 2}
+  m_sharedMaterial: {fileID: -2173939195190086279, guid: 2f426f7ffc1844a99ace8cf66729aa31, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 058b3c8bccac14f5c8a5e63f6e66fd31
+guid: ca3d50cae79de4415b560d71ede51bde
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 9043527412374406459
-    second: bg-side-panel-v2_0
+      213: -7587426025164618021
+    second: tooltip-bg-4_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: bg-side-panel-v2_0
+      name: tooltip-bg-4_0
       rect:
         serializedVersion: 2
-        x: 107
-        y: 228
-        width: 1310
-        height: 2319
+        x: 4
+        y: 0
+        width: 2780
+        height: 1533
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b3585135440118d70800000000000000
-      internalID: 9043527412374406459
+      spriteID: bd64282ea3c04b690800000000000000
+      internalID: -7587426025164618021
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      bg-side-panel-v2_0: 9043527412374406459
+      tooltip-bg-4_0: -7587426025164618021
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

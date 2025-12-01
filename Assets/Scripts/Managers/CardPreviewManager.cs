@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class CardPreviewManager : MonoBehaviour
@@ -18,6 +19,9 @@ public class CardPreviewManager : MonoBehaviour
 
     [Tooltip("Effect card preview UI anchored to the HUD.")]
     public EffectCardUI effectPreviewUI;
+
+    [Tooltip("Optional caption text shown only for forced previews (who played what).")]
+    public TextMeshProUGUI forcedCaptionText;
 
     [Header("Timing")]
     [Tooltip("Seconds a forced preview remains visible before hover can take over.")]
@@ -97,6 +101,13 @@ public class CardPreviewManager : MonoBehaviour
 
         forcedType = ForcedPreviewType.Creature;
         ShowCreaturePreview(creature);
+        // Caption: who played what (forced previews only)
+        if (forcedCaptionText != null)
+        {
+            string who = creature.owner == SlotOwner.Player1 ? "You play" : "Player 2 plays";
+            forcedCaptionText.text = $"{who} {creature.data.cardName}";
+            forcedCaptionText.gameObject.SetActive(true);
+        }
         BeginForcedTimer();
     }
 
@@ -107,6 +118,13 @@ public class CardPreviewManager : MonoBehaviour
 
         forcedType = ForcedPreviewType.Effect;
         ShowEffectPreview(card, owner);
+        // Caption: who played what (forced previews only)
+        if (forcedCaptionText != null)
+        {
+            string who = owner == SlotOwner.Player1 ? "You play" : "Player 2 plays";
+            forcedCaptionText.text = $"{who} {card.effectName}";
+            forcedCaptionText.gameObject.SetActive(true);
+        }
         BeginForcedTimer();
     }
 
@@ -120,6 +138,12 @@ public class CardPreviewManager : MonoBehaviour
 
         forcedType = ForcedPreviewType.None;
 
+        if (forcedCaptionText != null)
+        {
+            forcedCaptionText.gameObject.SetActive(false);
+            forcedCaptionText.text = string.Empty;
+        }
+
         if (hoverCreature != null && hoverCreature.data != null)
             ShowCreaturePreview(hoverCreature);
         else
@@ -130,6 +154,11 @@ public class CardPreviewManager : MonoBehaviour
     {
         HideCreaturePreview();
         HideEffectPreview();
+        if (forcedCaptionText != null)
+        {
+            forcedCaptionText.gameObject.SetActive(false);
+            forcedCaptionText.text = string.Empty;
+        }
     }
 
     void ShowCreaturePreview(Creature creature)
@@ -210,6 +239,11 @@ public class CardPreviewManager : MonoBehaviour
         yield return new WaitForSeconds(duration);
         forcedRoutine = null;
         forcedType = ForcedPreviewType.None;
+        if (forcedCaptionText != null)
+        {
+            forcedCaptionText.gameObject.SetActive(false);
+            forcedCaptionText.text = string.Empty;
+        }
         if (hoverCreature != null && hoverCreature.data != null)
             ShowCreaturePreview(hoverCreature);
         else

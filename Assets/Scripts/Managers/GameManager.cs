@@ -292,7 +292,9 @@ public class GameManager : MonoBehaviour
         {
             while (awaitingTurnOwner.HasValue && awaitingTurnOwner.Value == owner)
             {
-                if (!HasMomentum(owner))
+                // Auto-pass when out of momentum, but ONLY if we are not currently
+                // resolving a previously played card (p1ActionLocked).
+                if (!HasMomentum(owner) && !p1ActionLocked)
                 {
                     HandlePass(owner);
                     break;
@@ -414,6 +416,15 @@ public class GameManager : MonoBehaviour
             // Show pass information in the phase text instead of a global alert.
             if (phaseText != null)
                 phaseText.text = owner == SlotOwner.Player1 ? "Player 1 passes" : "Player 2 passes";
+
+            // For the AI, also surface a brief global alert so it's obvious that it passed.
+            if (owner == SlotOwner.Player2 && FeedbackManager.Instance != null)
+            {
+                FeedbackManager.Instance.ShowGlobalAlert(
+                    "Player 2 passes",
+                    new Color(0.85f, 0.85f, 1f)
+                );
+            }
         }
 
         if (awaitingTurnOwner.HasValue && awaitingTurnOwner.Value == owner)
@@ -543,7 +554,7 @@ public class GameManager : MonoBehaviour
         // Single global alert when resolution begins so players can track pacing.
         FeedbackManager.Instance?.ShowGlobalAlert(
             $"Round {currentRound} Begins!",
-            new Color(0.9f, 0.1f, 0.1f)
+            new Color(1f, 1f, 1f)
         );
 
         // Let the alert breathe before combat resolves.
