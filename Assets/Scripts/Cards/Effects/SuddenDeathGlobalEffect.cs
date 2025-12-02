@@ -8,6 +8,7 @@ public class SuddenDeathGlobalEffect : GlobalEffectBase
     {
         if (rm == null)
             return;
+
         var all = Object
             .FindObjectsByType<Creature>(FindObjectsSortMode.None)
             .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
@@ -21,8 +22,7 @@ public class SuddenDeathGlobalEffect : GlobalEffectBase
                     ? GameManager.Instance.NextRandomInt(0, p1.Count)
                     : Random.Range(0, p1.Count);
             var pick = p1[i];
-            if (pick != null)
-                pick.Kill("Sudden Death");
+            pick?.Kill("Sudden Death");
         }
         if (p2.Count > 0)
         {
@@ -32,7 +32,14 @@ public class SuddenDeathGlobalEffect : GlobalEffectBase
                     : Random.Range(0, p2.Count);
             var pick = p2[i];
             if (pick != null)
+            {
+                FeedbackManager.Instance?.ShowFloatingText(
+                    "Sudden Death",
+                    pick.transform.position,
+                    new Color(1f, 0.4f, 0.4f)
+                );
                 pick.Kill("Sudden Death");
+            }
         }
         remainingRounds = 0;
     }

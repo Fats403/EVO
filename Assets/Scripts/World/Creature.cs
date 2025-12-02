@@ -744,6 +744,11 @@ public class Creature : MonoBehaviour
         {
             ApplyDamage(1, null);
             DecrementStatus(StatusTag.Infected, 1);
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Infected -1 HP",
+                transform.position,
+                new Color(0.8f, 0.5f, 0.9f)
+            );
         }
         // Convert pending next-round DamageUp into active stacks
         if (pendingDamageUp > 0)
@@ -775,6 +780,11 @@ public class Creature : MonoBehaviour
         {
             Heal(regen);
             DecrementStatus(StatusTag.Regen, 1);
+            FeedbackManager.Instance?.ShowFloatingText(
+                $"+{regen} HP",
+                transform.position,
+                new Color(0.4f, 1f, 0.4f)
+            );
         }
 
         // Bleeding: damage equal to stacks (does not self-decrement)
@@ -782,6 +792,11 @@ public class Creature : MonoBehaviour
         if (bleed > 0)
         {
             ApplyDamage(bleed, null);
+            FeedbackManager.Instance?.ShowFloatingText(
+                $"Bleed -{bleed} HP",
+                transform.position,
+                new Color(1f, 0.4f, 0.4f)
+            );
         }
 
         // BodyUp: -1 ; Malnourished: -1

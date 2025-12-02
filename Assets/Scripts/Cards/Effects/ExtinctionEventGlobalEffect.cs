@@ -8,6 +8,7 @@ public class ExtinctionEventGlobalEffect : GlobalEffectBase
     {
         if (rm == null)
             return;
+
         var all = Object
             .FindObjectsByType<Creature>(FindObjectsSortMode.None)
             .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
@@ -27,15 +28,13 @@ public class ExtinctionEventGlobalEffect : GlobalEffectBase
                         if (target == null || target.isDying || target.currentHealth <= 0)
                             return;
                         target.ApplyDamage(3, null);
+                        FeedbackManager.Instance?.ShowFloatingText(
+                            "-3 HP",
+                            c.transform.position,
+                            new Color(1f, 0.5f, 0.5f)
+                        );
                     }
                 );
-            }
-        }
-        else
-        {
-            foreach (var c in all)
-            {
-                c.ApplyDamage(3, null);
             }
         }
 
@@ -43,7 +42,13 @@ public class ExtinctionEventGlobalEffect : GlobalEffectBase
         {
             rm.foodPile.count += 3;
             rm.foodPile.UpdateUI();
+            FeedbackManager.Instance?.ShowFloatingText(
+                "+3 Food (Extinction Event)",
+                rm.foodPile.transform.position,
+                new Color(1f, 0.8f, 0.5f)
+            );
         }
+
         remainingRounds = 0;
     }
 }

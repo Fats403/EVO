@@ -20,6 +20,16 @@ public class ResolutionManager : MonoBehaviour
     public float starveDelay = 0.3f;
     public float statusEffectDelay = 0.2f;
 
+    [Tooltip(
+        "Minimum time to pause after start-of-round statuses/global effects so players can read them."
+    )]
+    public float roundStartEffectPause = 2.0f;
+
+    [Tooltip(
+        "Minimum time to pause after end-of-round statuses/global effects so players can read them."
+    )]
+    public float roundEndEffectPause = 2.0f;
+
     [Tooltip("Global pacing multiplier for all waits (higher = slower)")]
     public float pacingMultiplier = 1.0f;
 
@@ -81,6 +91,11 @@ public class ResolutionManager : MonoBehaviour
         // Global effects: round start
         InvokeGlobal(g => g.OnRoundStart(this));
 
+        // Allow start-of-round statuses and global effects to be visually digested before moving on.
+        float startPause = Mathf.Max(0f, roundStartEffectPause) * pacingMultiplier;
+        if (startPause > 0f)
+            yield return new WaitForSeconds(startPause);
+
         // Pre-herbivore trait steals (e.g., Peregrine)
         InvokeGlobal(g => g.OnPreHerbivore(this));
         yield return StartCoroutine(ResolvePreHerbivoreSteals());
@@ -141,6 +156,11 @@ public class ResolutionManager : MonoBehaviour
         {
             WeatherManager.Instance.ApplyEndOfRoundEffects();
         }
+
+        // Brief pause after end-of-round statuses/global effects so players can see what happened.
+        float endPause = Mathf.Max(0f, roundEndEffectPause) * pacingMultiplier;
+        if (endPause > 0f)
+            yield return new WaitForSeconds(endPause);
     }
 
     void RevealPendings()
