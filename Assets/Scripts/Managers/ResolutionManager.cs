@@ -42,34 +42,8 @@ public class ResolutionManager : MonoBehaviour
         Instance = this;
     }
 
-    // --- Effective stat helpers ---
-    int EffBody(Creature c)
-    {
-        if (c == null)
-            return 0;
-        int temp = c.GetStatus(StatusTag.BodyUp) - c.GetStatus(StatusTag.Malnourished);
-        return c.body + temp;
-    }
-
-    int EffSpeed(Creature c)
-    {
-        if (c == null)
-            return 0;
-        int traitSpeed =
-            (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
-                ? c.traits.Sum(t => t != null ? t.SpeedBonus(c) : 0)
-                : 0;
-        int temp = c.GetStatus(StatusTag.SpeedUp) - c.GetStatus(StatusTag.Fatigued);
-        return c.speed + temp + traitSpeed;
-    }
-
     public IEnumerator RevealAndResolveRound()
     {
-        // Reveal pending cards into creatures
-        RevealPendings();
-
-        // Reset per-round trackers (none currently)
-
         // Round start hooks
         foreach (var c in AllCreatures())
         {
@@ -80,8 +54,7 @@ public class ResolutionManager : MonoBehaviour
                 var snapshot = c.traits != null ? c.traits.ToArray() : System.Array.Empty<Trait>();
                 foreach (var t in snapshot)
                 {
-                    if (t != null)
-                        t.OnRoundStart(c);
+                    t?.OnRoundStart(c);
                 }
             }
             c.ResetRoundBookkeeping();
@@ -96,7 +69,7 @@ public class ResolutionManager : MonoBehaviour
         if (startPause > 0f)
             yield return new WaitForSeconds(startPause);
 
-        // Pre-herbivore trait steals (e.g., Peregrine)
+        // Pre-herbivore traits
         InvokeGlobal(g => g.OnPreHerbivore(this));
         yield return StartCoroutine(ResolvePreHerbivoreSteals());
 
@@ -120,6 +93,8 @@ public class ResolutionManager : MonoBehaviour
                 continue;
             c.TickStatusesAtRoundEnd();
         }
+
+        // Round end traits
         foreach (var c in AllCreatures())
         {
             if (c.traits == null)
@@ -134,6 +109,7 @@ public class ResolutionManager : MonoBehaviour
                 }
             }
         }
+
         // Global effects: round end, then decrement lifetimes and prune
         InvokeGlobal(g => g.OnRoundEnd(this));
         if (activeGlobalEffects != null && activeGlobalEffects.Count > 0)
@@ -161,19 +137,6 @@ public class ResolutionManager : MonoBehaviour
         float endPause = Mathf.Max(0f, roundEndEffectPause) * pacingMultiplier;
         if (endPause > 0f)
             yield return new WaitForSeconds(endPause);
-    }
-
-    void RevealPendings()
-    {
-        var slots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None);
-        foreach (var s in slots)
-        {
-            if (s.hasPending && !s.occupied && s.pendingCard != null)
-            {
-                DeckManager.Instance.SpawnCreature(s.pendingCard, s);
-                s.ClearPending();
-            }
-        }
     }
 
     public IEnumerable<Creature> AllCreatures()
@@ -688,6 +651,7 @@ public class ResolutionManager : MonoBehaviour
             }
 
             // New starvation rules for Avian/Carnivore
+            // TODO: Herbivores need to be affected by starvation
             if (isAvianOrCarnivore)
             {
                 int prevStacks = c.GetStatus(StatusTag.Starvation);
@@ -1003,5 +967,26 @@ public class ResolutionManager : MonoBehaviour
                 attacker.eaten = Mathf.Max(attacker.eaten, 1);
             }
         }
+    }
+
+    // --- Effective stat helpers ---
+    int EffBody(Creature c)
+    {
+        if (c == null)
+            return 0;
+        int temp = c.GetStatus(StatusTag.BodyUp) - c.GetStatus(StatusTag.Malnourished);
+        return c.body + temp;
+    }
+
+    int EffSpeed(Creature c)
+    {
+        if (c == null)
+            return 0;
+        int traitSpeed =
+            (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+                ? c.traits.Sum(t => t != null ? t.SpeedBonus(c) : 0)
+                : 0;
+        int temp = c.GetStatus(StatusTag.SpeedUp) - c.GetStatus(StatusTag.Fatigued);
+        return c.speed + temp + traitSpeed;
     }
 }

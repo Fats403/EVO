@@ -19,6 +19,20 @@ public class EffectCardUI : BaseCardUI
     public TMP_Text nameText;
     public TMP_Text descriptionText;
 
+    [Header("Global Effect Pulse")]
+    [SerializeField]
+    private float globalPulseMinScale = 1.0f;
+
+    [SerializeField]
+    private float globalPulseMaxScale = 1.08f;
+
+    [SerializeField]
+    private float globalPulseSpeed = 3f;
+
+    private bool isOverGlobalDropZone;
+    private Vector3 dragBaseScale = Vector3.one;
+    private float pulseTime;
+
     public void Initialize(EffectCard data)
     {
         effectData = data;
@@ -33,6 +47,17 @@ public class EffectCardUI : BaseCardUI
     public override void OnBeginDrag(PointerEventData eventData)
     {
         base.OnBeginDrag(eventData);
+        // Cache the scale we should pulse around while dragging
+        if (rectTransform != null)
+        {
+            dragBaseScale = rectTransform.localScale;
+        }
+        else
+        {
+            dragBaseScale = Vector3.one;
+        }
+        isOverGlobalDropZone = false;
+        pulseTime = 0f;
     }
 
     public override void OnDrag(PointerEventData eventData)
@@ -50,6 +75,17 @@ public class EffectCardUI : BaseCardUI
         dragTargetAnchoredPosition = pointerLocal + pointerGrabOffset;
 
         UpdateHighlights(eventData.position);
+
+        // For global effects, track whether we're currently over the drop zone
+        if (effectData != null && effectData.isGlobal)
+        {
+            var dz = GlobalEffectDropZone.Instance;
+            isOverGlobalDropZone = dz != null && dz.IsPointerInside(eventData.position);
+        }
+        else
+        {
+            isOverGlobalDropZone = false;
+        }
     }
 
     public override void OnEndDrag(PointerEventData eventData)
@@ -57,6 +93,13 @@ public class EffectCardUI : BaseCardUI
         if (canvasGroup != null)
             canvasGroup.blocksRaycasts = true;
         isDragging = false;
+        isOverGlobalDropZone = false;
+        pulseTime = 0f;
+        if (rectTransform != null)
+        {
+            // Reset to base scale; hand layout / hover logic can take it from here
+            rectTransform.localScale = dragBaseScale;
+        }
 
         // Determine target or global drop
         var target = FindNearestValidTarget(eventData.position, out float distPx);
@@ -72,9 +115,10 @@ public class EffectCardUI : BaseCardUI
                 {
                     played = true;
                 }
-                else
+                else if (!string.IsNullOrEmpty(reason))
                 {
-                    ShowPlayFailure(reason);
+                    FeedbackManager.Instance?.Log(reason);
+                    FeedbackManager.Instance?.ShowGlobalAlert(reason, new Color(1f, 0.5f, 0.5f));
                 }
             }
         }
@@ -94,9 +138,10 @@ public class EffectCardUI : BaseCardUI
                 {
                     played = true;
                 }
-                else
+                else if (!string.IsNullOrEmpty(reason))
                 {
-                    ShowPlayFailure(reason);
+                    FeedbackManager.Instance?.Log(reason);
+                    FeedbackManager.Instance?.ShowGlobalAlert(reason, new Color(1f, 0.5f, 0.5f));
                 }
             }
         }
@@ -141,9 +186,10 @@ public class EffectCardUI : BaseCardUI
                 {
                     played = true;
                 }
-                else
+                else if (!string.IsNullOrEmpty(reason))
                 {
-                    ShowPlayFailure(reason);
+                    FeedbackManager.Instance?.Log(reason);
+                    FeedbackManager.Instance?.ShowGlobalAlert(reason, new Color(1f, 0.5f, 0.5f));
                 }
             }
         }
@@ -154,9 +200,10 @@ public class EffectCardUI : BaseCardUI
             {
                 played = true;
             }
-            else
+            else if (!string.IsNullOrEmpty(reason))
             {
-                ShowPlayFailure(reason);
+                FeedbackManager.Instance?.Log(reason);
+                FeedbackManager.Instance?.ShowGlobalAlert(reason, new Color(1f, 0.5f, 0.5f));
             }
         }
 
@@ -170,12 +217,30 @@ public class EffectCardUI : BaseCardUI
         if (played)
         {
             handLayout?.NotifyDragEnd(this, false);
-            // Card left hand; update hand count display
-            DeckManager.Instance?.UpdateHandUI();
             Destroy(gameObject);
             return;
         }
         ReturnToHand();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        // Only pulse while dragging a global effect that is over the drop zone
+        if (isDragging && effectData != null && effectData.isGlobal && isOverGlobalDropZone)
+        {
+            pulseTime += Time.unscaledDeltaTime * globalPulseSpeed;
+            float t = Mathf.Sin(pulseTime) * 0.5f + 0.5f; // 0..1
+            float scale = Mathf.Lerp(globalPulseMinScale, globalPulseMaxScale, t);
+            if (rectTransform != null)
+                rectTransform.localScale = dragBaseScale * scale;
+        }
+        else if (isDragging && rectTransform != null)
+        {
+            // While still dragging but not over the zone, keep the base drag scale
+            rectTransform.localScale = dragBaseScale;
+        }
     }
 
     private void UpdateHighlights(Vector2 pointerScreen)
@@ -314,34 +379,13 @@ public class EffectCardUI : BaseCardUI
         return best;
     }
 
-    bool TryQueueEffectCard(IEnumerable<Creature> targets, out string failureReason)
+    private bool TryQueueEffectCard(IEnumerable<Creature> targets, out string failureReason)
     {
-        failureReason = null;
-        if (effectData == null)
-        {
-            failureReason = "Invalid effect card.";
-            return false;
-        }
-
-        if (GameManager.Instance == null)
-        {
-            failureReason = "Missing GameManager.";
-            return false;
-        }
-
         return GameManager.Instance.TryPlayEffectCard(
             effectData,
             owner,
             targets,
             out failureReason
         );
-    }
-
-    void ShowPlayFailure(string reason)
-    {
-        if (string.IsNullOrEmpty(reason))
-            return;
-        FeedbackManager.Instance?.Log(reason);
-        FeedbackManager.Instance?.ShowGlobalAlert(reason, new Color(1f, 0.5f, 0.5f));
     }
 }

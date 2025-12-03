@@ -11,9 +11,6 @@ public class BoardSlot : MonoBehaviour
     public bool occupied;
     public Creature currentCreature;
     public SlotOwner owner = SlotOwner.Player1;
-    public bool hasPending;
-    public CreatureCard pendingCard;
-    public GameObject pendingVisual;
     public GameObject hoverVisual;
 
     public Vector2 ScreenPosition => Camera.main.WorldToScreenPoint(transform.position);
@@ -30,41 +27,13 @@ public class BoardSlot : MonoBehaviour
         occupied = false;
     }
 
-    public bool SetPending(CreatureCard data)
-    {
-        if (occupied || hasPending)
-            return false;
-        pendingCard = data;
-        hasPending = true;
-        return true;
-    }
-
-    public void ClearPending()
-    {
-        hasPending = false;
-        pendingCard = null;
-        if (pendingVisual != null)
-        {
-            UnityEngine.Object.Destroy(pendingVisual);
-            pendingVisual = null;
-        }
-    }
-
-    public void ShowPendingVisual(GameObject prefab)
-    {
-        if (prefab == null || pendingVisual != null)
-            return;
-        pendingVisual = UnityEngine.Object.Instantiate(prefab, transform);
-        pendingVisual.transform.localPosition = new Vector3(0, -24, 0);
-    }
-
     // Hover indicator (does not change state)
     public void ShowHoverIndicator(GameObject prefab)
     {
         if (prefab == null || hoverVisual != null)
             return;
         hoverVisual = UnityEngine.Object.Instantiate(prefab, transform);
-        hoverVisual.transform.localPosition = Vector3.zero;
+        hoverVisual.transform.localPosition = new Vector3(0, -32, 0);
     }
 
     public void HideHoverIndicator()

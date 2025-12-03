@@ -664,9 +664,6 @@ MonoBehaviour:
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 0
-  hasPending: 0
-  pendingCard: {fileID: 0}
-  pendingVisual: {fileID: 0}
   hoverVisual: {fileID: 0}
 --- !u!1 &205482814
 GameObject:
@@ -719,9 +716,6 @@ MonoBehaviour:
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 1
-  hasPending: 0
-  pendingCard: {fileID: 0}
-  pendingVisual: {fileID: 0}
   hoverVisual: {fileID: 0}
 --- !u!1 &221958236
 GameObject:
@@ -1012,9 +1006,6 @@ MonoBehaviour:
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 0
-  hasPending: 0
-  pendingCard: {fileID: 0}
-  pendingVisual: {fileID: 0}
   hoverVisual: {fileID: 0}
 --- !u!1 &496623506
 GameObject:
@@ -1176,9 +1167,6 @@ MonoBehaviour:
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 0
-  hasPending: 0
-  pendingCard: {fileID: 0}
-  pendingVisual: {fileID: 0}
   hoverVisual: {fileID: 0}
 --- !u!1 &513923673
 GameObject:
@@ -3168,9 +3156,6 @@ MonoBehaviour:
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 0
-  hasPending: 0
-  pendingCard: {fileID: 0}
-  pendingVisual: {fileID: 0}
   hoverVisual: {fileID: 0}
 --- !u!1 &1034536381
 GameObject:
@@ -3223,9 +3208,6 @@ MonoBehaviour:
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 1
-  hasPending: 0
-  pendingCard: {fileID: 0}
-  pendingVisual: {fileID: 0}
   hoverVisual: {fileID: 0}
 --- !u!1 &1044412315
 GameObject:
@@ -3415,7 +3397,7 @@ MonoBehaviour:
   deckManager: {fileID: 2017726960}
   travelDuration: 0.5
   flipDuration: 0.25
-  pullDownDistance: 80
+  pullDownDistance: 200
   pullDownPortion: 0.35
   moveCurve:
     serializedVersion: 2
@@ -3997,9 +3979,6 @@ MonoBehaviour:
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 1
-  hasPending: 0
-  pendingCard: {fileID: 0}
-  pendingVisual: {fileID: 0}
   hoverVisual: {fileID: 0}
 --- !u!1 &1354909368
 GameObject:
@@ -4052,9 +4031,6 @@ MonoBehaviour:
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 1
-  hasPending: 0
-  pendingCard: {fileID: 0}
-  pendingVisual: {fileID: 0}
   hoverVisual: {fileID: 0}
 --- !u!1 &1432409513
 GameObject:
@@ -5084,9 +5060,6 @@ MonoBehaviour:
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 1
-  hasPending: 0
-  pendingCard: {fileID: 0}
-  pendingVisual: {fileID: 0}
   hoverVisual: {fileID: 0}
 --- !u!1 &1929684833
 GameObject:
@@ -5803,9 +5776,6 @@ MonoBehaviour:
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 0
-  hasPending: 0
-  pendingCard: {fileID: 0}
-  pendingVisual: {fileID: 0}
   hoverVisual: {fileID: 0}
 --- !u!1 &2101015291
 GameObject:
@@ -5983,7 +5953,6 @@ RectTransform:
   - {fileID: 1770490316}
   - {fileID: 1868919980}
   - {fileID: 2069899325}
-  - {fileID: 1785638420}
   - {fileID: 895446170}
   - {fileID: 584109797}
   - {fileID: 2128517701}
@@ -5991,6 +5960,7 @@ RectTransform:
   - {fileID: 1929684834}
   - {fileID: 513923676}
   - {fileID: 74413183}
+  - {fileID: 1785638420}
   - {fileID: 1986103159}
   - {fileID: 1484916379}
   - {fileID: 1204530484}
@@ -6240,12 +6210,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HandLayoutController
   maxTotalArcDegrees: 60
   degreesPerCard: 8
-  overlapFactor: 0.5
+  overlapFactor: 0.55
   curveDepth: 40
-  predictionArcFactor: 0.45
+  predictionArcFactor: 0.5
   baseScale: 0.8
   handYOffset: 215
-  hoverScale: 1.2
+  hoverScale: 1.1
   hoverLift: 150
   hoverSortingOrder: 1000
   animationDuration: 0.2

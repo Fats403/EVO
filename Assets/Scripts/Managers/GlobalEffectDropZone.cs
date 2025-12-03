@@ -8,18 +8,23 @@ public class GlobalEffectDropZone : MonoBehaviour
 
     void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
-        if (rect == null) rect = GetComponent<RectTransform>();
-        if (canvas == null) canvas = GetComponentInParent<Canvas>();
+        if (rect == null)
+            rect = GetComponent<RectTransform>();
+        if (canvas == null)
+            canvas = GetComponentInParent<Canvas>();
     }
 
     public bool IsPointerInside(Vector2 screenPos)
     {
-        if (rect == null) return false;
-        var cam = canvas != null ? canvas.worldCamera : null;
+        if (rect == null)
+            return false;
+        var cam = canvas?.worldCamera;
         return RectTransformUtility.RectangleContainsScreenPoint(rect, screenPos, cam);
     }
 }
-
-

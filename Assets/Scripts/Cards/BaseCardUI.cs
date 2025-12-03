@@ -30,6 +30,11 @@ public abstract class BaseCardUI
     protected const float dragSmoothTime = 0.06f;
     protected Vector2 pointerGrabOffset; // keeps where you grabbed relative to card center in canvas space
 
+    [Header("Drag")]
+    [Tooltip("Uniform scale applied to cards while they are being dragged from the hand.")]
+    [SerializeField]
+    protected float dragScale = 0.65f;
+
     protected virtual void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -46,9 +51,9 @@ public abstract class BaseCardUI
         handLayout?.NotifyDragStart(this);
         // move to top-level canvas to avoid being laid out by the hand while dragging
         transform.SetParent(canvas.transform, true); // preserve world position
-        // rotate upright and set natural scale for dragging
+        // rotate upright and set drag scale so card doesn't cover too much of the board
         rectTransform.localRotation = Quaternion.identity;
-        rectTransform.localScale = Vector3.one;
+        rectTransform.localScale = Vector3.one * dragScale;
         // compute pointer offset so we keep the grab point consistent (in canvas local space)
         RectTransform canvasRT = canvas.transform as RectTransform;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(

@@ -4,6 +4,7 @@ public class TooltipTrigger : TooltipTriggerBase
 {
     [Header("Tooltip Content")]
     public string title;
+
     [TextArea]
     public string body;
     public Sprite icon;
@@ -17,7 +18,7 @@ public class TooltipTrigger : TooltipTriggerBase
         {
             title = title,
             body = body,
-            icon = icon
+            icon = icon,
         };
 
         TooltipManager.Instance.Show(data, screenPosition, this);
@@ -29,5 +30,3 @@ public class TooltipTrigger : TooltipTriggerBase
             TooltipManager.Instance.Hide(this);
     }
 }
-
-

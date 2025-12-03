@@ -56,8 +56,6 @@ public class HandLayoutController : MonoBehaviour
     private readonly Dictionary<RectTransform, Canvas> tempHoverCanvasByCard =
         new Dictionary<RectTransform, Canvas>();
     private RectTransform draggedCard;
-    private readonly Dictionary<RectTransform, Coroutine> activeScaleAnimations =
-        new Dictionary<RectTransform, Coroutine>();
 
     [HideInInspector]
     public bool suppressNextAutoLayout;
@@ -125,8 +123,6 @@ public class HandLayoutController : MonoBehaviour
         var rt = card.transform as RectTransform;
         draggedCard = rt;
         StopAnimating(rt);
-        // animate scale down while dragging (position is controlled by drag logic)
-        AnimateScaleOnly(rt, 0.65f);
         LayoutCards();
     }
 
@@ -135,8 +131,6 @@ public class HandLayoutController : MonoBehaviour
         // When drag ends, just relayout current children
         if (draggedCard == (card != null ? card.transform as RectTransform : null))
         {
-            // stop scale-only animation; LayoutCards will restore scale via standard animation
-            StopScaleAnimating(draggedCard);
             draggedCard = null;
         }
         LayoutCards();
@@ -339,40 +333,6 @@ public class HandLayoutController : MonoBehaviour
             StopCoroutine(running);
         }
         activeAnimations[rt] = null;
-    }
-
-    private void AnimateScaleOnly(RectTransform rt, float targetScale)
-    {
-        StopScaleAnimating(rt);
-        activeScaleAnimations[rt] = StartCoroutine(AnimateScaleOnlyRoutine(rt, targetScale));
-    }
-
-    private void StopScaleAnimating(RectTransform rt)
-    {
-        if (rt == null)
-            return;
-        if (activeScaleAnimations.TryGetValue(rt, out var running) && running != null)
-        {
-            StopCoroutine(running);
-        }
-        activeScaleAnimations[rt] = null;
-    }
-
-    private IEnumerator AnimateScaleOnlyRoutine(RectTransform rt, float targetScale)
-    {
-        float startScale = rt.localScale.x;
-        float t = 0f;
-        while (t < animationDuration)
-        {
-            t += Time.unscaledDeltaTime;
-            float u = Mathf.Clamp01(t / animationDuration);
-            u = easing.Evaluate(u);
-            float s = Mathf.LerpUnclamped(startScale, targetScale, u);
-            rt.localScale = new Vector3(s, s, 1f);
-            yield return null;
-        }
-        rt.localScale = new Vector3(targetScale, targetScale, 1f);
-        activeScaleAnimations[rt] = null;
     }
 
     private IEnumerator AnimateRoutine(
