@@ -19,6 +19,13 @@ public class HandLayoutController : MonoBehaviour
     private float curveDepth = 40f; // how far center dips down
 
     [SerializeField]
+    [Range(0f, 1f)]
+    [Tooltip(
+        "How much of the arc's vertical sag to use when predicting draw targets (0 = flat, 1 = full curve)."
+    )]
+    private float predictionArcFactor = 0.35f;
+
+    [SerializeField]
     [Tooltip("Base scale for cards in hand (1 = 100%)")]
     private float baseScale = 0.9f;
 
@@ -52,6 +59,9 @@ public class HandLayoutController : MonoBehaviour
     private readonly Dictionary<RectTransform, Coroutine> activeScaleAnimations =
         new Dictionary<RectTransform, Coroutine>();
 
+    [HideInInspector]
+    public bool suppressNextAutoLayout;
+
     void Awake()
     {
         handRect = GetComponent<RectTransform>();
@@ -73,6 +83,11 @@ public class HandLayoutController : MonoBehaviour
 
     void OnTransformChildrenChanged()
     {
+        if (suppressNextAutoLayout)
+        {
+            suppressNextAutoLayout = false;
+            return;
+        }
         RequestLayout();
     }
 
@@ -125,6 +140,63 @@ public class HandLayoutController : MonoBehaviour
             draggedCard = null;
         }
         LayoutCards();
+    }
+
+    /// <summary>
+    /// Predicts the world-space position where a newly added card (appended at the end)
+    /// will settle after the hand layout animation, using the same arc math as LayoutCards.
+    /// </summary>
+    public Vector3 GetPredictedWorldPositionForNewCard()
+    {
+        if (handRect == null)
+            handRect = GetComponent<RectTransform>();
+
+        int count = handRect.childCount + 1;
+        if (count <= 0)
+            return handRect.position;
+
+        // Determine arc span for the new total count
+        float desiredTotalArc = Mathf.Min(
+            maxTotalArcDegrees,
+            degreesPerCard * Mathf.Max(0, count - 1)
+        );
+        float perCardAngle = (count > 1) ? desiredTotalArc / (count - 1) : 0f;
+
+        // Use the first child as a reference for card size when available
+        RectTransform first =
+            handRect.childCount > 0 ? handRect.GetChild(0) as RectTransform : null;
+        float cardWidth = (first != null) ? first.rect.width : 100f;
+        float baseSpacing = cardWidth * (1f - overlapFactor);
+        float totalWidth = baseSpacing * Mathf.Max(0, count - 1);
+        float halfChord = totalWidth * 0.5f;
+        float sagitta = Mathf.Max(0.0001f, curveDepth);
+        float radius = ((halfChord * halfChord) + (sagitta * sagitta)) / (2f * sagitta);
+
+        // New card is appended at the end
+        int index = count - 1;
+
+        float x = -halfChord + (baseSpacing * index);
+        // Compute full arc Y, then blend between baseline (0) and arc using predictionArcFactor
+        float underRoot = Mathf.Max(0f, radius * radius - x * x);
+        float yOnCircle = -radius + Mathf.Sqrt(underRoot);
+        float fullArcY = yOnCircle - sagitta - handYOffset;
+        float y = Mathf.Lerp(0f, fullArcY, predictionArcFactor);
+
+        Vector2 baselinePos = new Vector2(x, y);
+        float targetRot = -((index - (count - 1) * 0.5f) * perCardAngle);
+        float targetScale = baseScale;
+
+        RectTransform rtForCalc = first ?? handRect;
+        Vector2 anchored = BaselineToPivotAnchoredPosition(
+            rtForCalc,
+            baselinePos,
+            targetRot,
+            targetScale
+        );
+
+        // anchored is relative to handRect; convert to world position
+        Vector3 worldPos = handRect.TransformPoint(new Vector3(anchored.x, anchored.y, 0f));
+        return worldPos;
     }
 
     private void LayoutCards()

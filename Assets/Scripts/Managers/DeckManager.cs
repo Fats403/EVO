@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -36,6 +37,16 @@ public class DeckManager : MonoBehaviour
     public TMP_Text deckCountText;
     public TMP_Text handCountText;
 
+    [Header("Animation")]
+    [Tooltip("Optional animator used to play draw-from-deck animations for the local player.")]
+    public CardDrawAnimator cardDrawAnimator;
+
+    [Tooltip("Delay before dealing the player's starting hand (seconds).")]
+    public float initialDrawDelay = 1.0f;
+
+    [Tooltip("Extra delay between sequential draw animations (seconds).")]
+    public float drawSpacingDelay = 0.15f;
+
     private readonly List<ScriptableObject> currentDeck = new();
     private readonly List<ScriptableObject> drawPile = new();
 
@@ -47,8 +58,7 @@ public class DeckManager : MonoBehaviour
     private void Start()
     {
         BuildDeck();
-        DrawStartingHand();
-        UpdateHandUI();
+        StartCoroutine(DrawStartingHandRoutine());
     }
 
     void BuildDeck()
@@ -93,14 +103,34 @@ public class DeckManager : MonoBehaviour
         UpdateDeckUI();
     }
 
-    void DrawStartingHand()
+    IEnumerator DrawStartingHandRoutine()
     {
         int canDraw = Mathf.Max(0, maxHandSize - CurrentHandCount());
         int drawNow = Mathf.Min(startingHandSize, canDraw);
-        for (int i = 0; i < drawNow; i++)
+        if (drawNow <= 0)
         {
-            DrawCard();
+            UpdateHandUI();
+            yield break;
         }
+
+        if (initialDrawDelay > 0f)
+            yield return new WaitForSeconds(initialDrawDelay);
+
+        // Use the animated multi-draw path when available so the starting hand feels cinematic.
+        if (cardDrawAnimator != null)
+        {
+            yield return StartCoroutine(DrawCardsAnimated(drawNow));
+        }
+        else
+        {
+            for (int i = 0; i < drawNow; i++)
+            {
+                DrawCard();
+                if (drawSpacingDelay > 0f && i < drawNow - 1)
+                    yield return new WaitForSeconds(drawSpacingDelay);
+            }
+        }
+
         UpdateHandUI();
     }
 
@@ -111,20 +141,38 @@ public class DeckManager : MonoBehaviour
         ScriptableObject data = DrawCardData();
         if (data == null)
             return;
-        CreateCardUI(data);
-        UpdateHandUI();
+
+        // If we have a card draw animator, play the full animation for the local player.
+        if (cardDrawAnimator != null)
+        {
+            StartCoroutine(cardDrawAnimator.DrawCardAnimated(data));
+        }
+        else
+        {
+            // Fallback: immediate spawn with no animation.
+            CreateCardUI(data, triggerLayoutAndUI: true);
+        }
     }
 
-    void CreateCardUI(ScriptableObject data)
+    /// <summary>
+    /// Creates a card UI GameObject for the given data under the hand panel.
+    /// Optionally triggers hand layout and hand-count UI.
+    /// </summary>
+    public GameObject CreateCardUI(ScriptableObject data, bool triggerLayoutAndUI = true)
     {
+        if (data == null || handPanel == null)
+            return null;
+
+        GameObject cardObj = null;
+
         if (data is CreatureCard creatureData)
         {
             if (creatureCardPrefab == null)
             {
                 Debug.LogError("Creature card prefab not assigned!");
-                return;
+                return null;
             }
-            GameObject cardObj = Instantiate(creatureCardPrefab, handPanel);
+            cardObj = Object.Instantiate(creatureCardPrefab, handPanel);
             CreatureCardUI ui = cardObj.GetComponent<CreatureCardUI>();
             ui?.Initialize(creatureData);
         }
@@ -133,9 +181,9 @@ public class DeckManager : MonoBehaviour
             if (effectCardPrefab == null)
             {
                 Debug.LogError("Effect card prefab not assigned!");
-                return;
+                return null;
             }
-            GameObject cardObj = Instantiate(effectCardPrefab, handPanel);
+            cardObj = Object.Instantiate(effectCardPrefab, handPanel);
             EffectCardUI ui = cardObj.GetComponent<EffectCardUI>();
             if (ui != null)
             {
@@ -144,9 +192,14 @@ public class DeckManager : MonoBehaviour
             }
         }
 
-        var layout = handPanel?.GetComponentInParent<HandLayoutController>();
-        layout?.RequestLayout();
-        UpdateHandUI();
+        if (triggerLayoutAndUI)
+        {
+            var layout = handPanel.GetComponentInParent<HandLayoutController>();
+            layout?.RequestLayout();
+            UpdateHandUI();
+        }
+
+        return cardObj;
     }
 
     public Creature SpawnCreature(CreatureCard data, BoardSlot slot)
@@ -211,9 +264,53 @@ public class DeckManager : MonoBehaviour
     {
         int canDraw = Mathf.Max(0, maxHandSize - CurrentHandCount());
         int drawNow = Mathf.Min(cardsPerRound, canDraw);
-        for (int i = 0; i < drawNow; i++)
+        if (drawNow <= 0)
+            return;
+
+        // If we have an animator, run the animated multi-draw sequence; otherwise fall back to instant draws.
+        if (cardDrawAnimator != null)
         {
-            DrawCard();
+            StartCoroutine(DrawCardsAnimated(drawNow));
+        }
+        else
+        {
+            for (int i = 0; i < drawNow; i++)
+            {
+                DrawCard();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Coroutine helper to draw multiple cards in sequence with animation (for player 1).
+    /// Falls back to immediate draws if no animator is assigned.
+    /// </summary>
+    public IEnumerator DrawCardsAnimated(int count)
+    {
+        if (count <= 0)
+            yield break;
+
+        int canDrawTotal = Mathf.Max(0, maxHandSize - CurrentHandCount());
+        int toDraw = Mathf.Min(count, canDrawTotal);
+        for (int i = 0; i < toDraw; i++)
+        {
+            ScriptableObject data = DrawCardData();
+            if (data == null)
+                yield break;
+
+            if (cardDrawAnimator != null)
+            {
+                yield return StartCoroutine(cardDrawAnimator.DrawCardAnimated(data));
+            }
+            else
+            {
+                CreateCardUI(data, triggerLayoutAndUI: true);
+                // Give a frame so multiple instant draws don't all apply on the same frame.
+                yield return null;
+            }
+
+            if (drawSpacingDelay > 0f && i < toDraw - 1)
+                yield return new WaitForSeconds(drawSpacingDelay);
         }
     }
 }
