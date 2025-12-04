@@ -7,6 +7,10 @@ public struct TooltipData
     public string title;
     public string body;
     public Sprite icon;
+
+    // Optional dedicated stacks display (e.g., for status effects).
+    public bool hasStacks;
+    public int stacks;
 }
 
 public class TooltipManager : MonoBehaviour
@@ -18,6 +22,7 @@ public class TooltipManager : MonoBehaviour
     public RectTransform root;
     public TextMeshProUGUI titleText;
     public TextMeshProUGUI bodyText;
+    public TextMeshProUGUI stacksText;
     public Image iconImage;
     public GameObject iconContainer;
 
@@ -85,6 +90,21 @@ public class TooltipManager : MonoBehaviour
         if (bodyText != null)
             bodyText.text = data.body ?? string.Empty;
 
+        // Optional stacks readout (only used by some tooltips, e.g., statuses).
+        if (stacksText != null)
+        {
+            if (data.hasStacks)
+            {
+                stacksText.gameObject.SetActive(true);
+                stacksText.text = $"x{data.stacks}";
+            }
+            else
+            {
+                stacksText.gameObject.SetActive(false);
+                stacksText.text = string.Empty;
+            }
+        }
+
         Sprite iconToUse = data.icon != null ? data.icon : defaultIcon;
 
         if (iconContainer != null)
@@ -126,6 +146,7 @@ public class TooltipManager : MonoBehaviour
                 (screenPosition.y > halfH) ? -Mathf.Abs(screenOffset.y) : Mathf.Abs(screenOffset.y);
         }
 
+        // Convert cursor position to local canvas space and apply offset.
         Vector2 localPoint;
         Camera cam = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
 
@@ -136,21 +157,33 @@ public class TooltipManager : MonoBehaviour
             out localPoint
         );
 
-        // Clamp the tooltip so it stays within the canvas rect.
-        Vector2 size = root.rect.size;
-        Vector2 halfSize = size * 0.5f;
-        Rect rect = canvasRect.rect;
+        // First place the tooltip at the desired point.
+        root.anchoredPosition = localPoint;
 
-        float minX = rect.xMin + halfSize.x;
-        float maxX = rect.xMax - halfSize.x;
-        float minY = rect.yMin + halfSize.y;
-        float maxY = rect.yMax - halfSize.y;
+        // Make sure layout is up-to-date so bounds are correct.
+        LayoutRebuilder.ForceRebuildLayoutImmediate(root);
 
-        Vector2 clamped = localPoint;
-        clamped.x = Mathf.Clamp(clamped.x, minX, maxX);
-        clamped.y = Mathf.Clamp(clamped.y, minY, maxY);
+        // Now compute the tooltip's bounds relative to the canvas and nudge it fully on-screen.
+        var bounds = RectTransformUtility.CalculateRelativeRectTransformBounds(canvasRect, root);
+        Rect canvasBounds = canvasRect.rect;
 
-        root.anchoredPosition = clamped;
+        Vector2 correction = Vector2.zero;
+
+        // If the left side is outside, move right.
+        if (bounds.min.x < canvasBounds.xMin)
+            correction.x += canvasBounds.xMin - bounds.min.x;
+        // If the right side is outside, move left.
+        if (bounds.max.x > canvasBounds.xMax)
+            correction.x += canvasBounds.xMax - bounds.max.x;
+
+        // If the bottom is outside, move up.
+        if (bounds.min.y < canvasBounds.yMin)
+            correction.y += canvasBounds.yMin - bounds.min.y;
+        // If the top is outside, move down.
+        if (bounds.max.y > canvasBounds.yMax)
+            correction.y += canvasBounds.yMax - bounds.max.y;
+
+        root.anchoredPosition += correction;
     }
 
     public void Hide(object owner = null)

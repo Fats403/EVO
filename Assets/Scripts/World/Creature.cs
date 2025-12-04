@@ -745,7 +745,7 @@ public class Creature : MonoBehaviour
             ApplyDamage(1, null);
             DecrementStatus(StatusTag.Infected, 1);
             FeedbackManager.Instance?.ShowFloatingText(
-                "Infected -1 HP",
+                "-1 HP (Infected)",
                 transform.position,
                 new Color(0.8f, 0.5f, 0.9f)
             );
@@ -793,7 +793,7 @@ public class Creature : MonoBehaviour
         {
             ApplyDamage(bleed, null);
             FeedbackManager.Instance?.ShowFloatingText(
-                $"Bleed -{bleed} HP",
+                $"-{bleed} HP (Bleed)",
                 transform.position,
                 new Color(1f, 0.4f, 0.4f)
             );

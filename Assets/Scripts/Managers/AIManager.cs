@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class AIManager : MonoBehaviour
@@ -13,6 +14,13 @@ public class AIManager : MonoBehaviour
     // Logical AI deck/hand – mirrors DeckManager rules (deckSize, startingHandSize, etc.)
     private readonly List<ScriptableObject> drawPile = new List<ScriptableObject>();
     private readonly List<ScriptableObject> hand = new List<ScriptableObject>();
+
+    [Header("UI")]
+    [Tooltip("Text label showing the AI's remaining deck size.")]
+    public TMP_Text deckCountText;
+
+    [Tooltip("Text label showing the AI's hand size.")]
+    public TMP_Text handCountText;
 
     [Header("Heuristic Weights (Normal AI)")]
     [Tooltip("Value per creature tier when considering plays.")]
@@ -43,7 +51,7 @@ public class AIManager : MonoBehaviour
     public float enemyEffectPerTargetValue = 1.75f;
 
     [Tooltip("Threshold below which the AI prefers to pass instead of playing.")]
-    public float passThreshold = 0.25f;
+    public float passThreshold = 0.2f;
 
     void Awake()
     {
@@ -103,7 +111,13 @@ public class AIManager : MonoBehaviour
                     : Random.Range(0, i + 1);
             (drawPile[j], drawPile[i]) = (drawPile[i], drawPile[j]);
         }
+
+        UpdateDeckUI();
+        UpdateHandUI();
     }
+
+    public int RemainingDeckCount => drawPile.Count;
+    public int HandCount => hand.Count;
 
     int MaxHandSize
     {
@@ -140,6 +154,8 @@ public class AIManager : MonoBehaviour
         {
             DrawCardToHand();
         }
+
+        UpdateHandUI();
     }
 
     ScriptableObject DrawCardData()
@@ -149,6 +165,7 @@ public class AIManager : MonoBehaviour
         int last = drawPile.Count - 1;
         var c = drawPile[last];
         drawPile.RemoveAt(last);
+        UpdateDeckUI();
         return c;
     }
 
@@ -158,7 +175,10 @@ public class AIManager : MonoBehaviour
             return;
         var data = DrawCardData();
         if (data != null)
+        {
             hand.Add(data);
+            UpdateHandUI();
+        }
     }
 
     // Public round-start entry used by GameManager.BeginDraw.
@@ -170,6 +190,19 @@ public class AIManager : MonoBehaviour
         {
             DrawCardToHand();
         }
+        UpdateHandUI();
+    }
+
+    void UpdateDeckUI()
+    {
+        if (deckCountText != null)
+            deckCountText.text = RemainingDeckCount.ToString();
+    }
+
+    void UpdateHandUI()
+    {
+        if (handCountText != null)
+            handCountText.text = HandCount.ToString();
     }
 
     enum AIActionType
@@ -509,8 +542,8 @@ public class AIManager : MonoBehaviour
 
         if (creature == null)
             return false;
-
         hand.Remove(card);
+        UpdateHandUI();
         return true;
     }
 
@@ -532,6 +565,7 @@ public class AIManager : MonoBehaviour
         }
 
         hand.Remove(card);
+        UpdateHandUI();
         return true;
     }
 }

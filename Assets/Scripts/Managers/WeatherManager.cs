@@ -239,8 +239,12 @@ public class WeatherManager : MonoBehaviour
                 {
                     Vector3 pos = c.transform.position;
                     c.ApplyDamage(1, null);
+                    FeedbackManager.Instance?.ShowGlobalAlert(
+                        "The wildfire burns!",
+                        new Color(1f, 0.5f, 0.2f)
+                    );
                     FeedbackManager.Instance?.ShowFloatingText(
-                        "Wildfire -1 HP",
+                        "-1 HP",
                         pos,
                         new Color(1f, 0.5f, 0.2f)
                     );

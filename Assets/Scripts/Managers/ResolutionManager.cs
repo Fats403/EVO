@@ -520,9 +520,9 @@ public class ResolutionManager : MonoBehaviour
                 // Pass attackVFX to ApplyDamage
                 target.ApplyDamage(baseDmg, attacker, attackVFX);
 
-                var dmgTag = harass ? "Harass" : "Hit";
+                /// var dmgTag = harass ? "Harass" : "Hit";
                 FeedbackManager.Instance?.ShowFloatingText(
-                    $"-{baseDmg} HP ({dmgTag})",
+                    $"-{baseDmg} HP",
                     target.transform.position,
                     new Color(1f, 0.3f, 0.3f)
                 );
@@ -673,11 +673,6 @@ public class ResolutionManager : MonoBehaviour
                 {
                     c.AddStatus(StatusTag.Starvation, 1);
                     int stacksNow = c.GetStatus(StatusTag.Starvation);
-                    FeedbackManager.Instance?.ShowFloatingText(
-                        $"Starving +{1} (x{stacksNow})",
-                        c.transform.position,
-                        Color.gray
-                    );
                     FeedbackManager.Instance?.Log(
                         $"{FeedbackManager.TagOwner(c.owner)} {c.name} gains Starvation (x{stacksNow})"
                     );
@@ -701,7 +696,7 @@ public class ResolutionManager : MonoBehaviour
                 {
                     c.ApplyDamage(dmg, null);
                     FeedbackManager.Instance?.ShowFloatingText(
-                        $"Starvation -{dmg} HP",
+                        $"-{dmg} HP (Starve)",
                         c.transform.position,
                         Color.gray
                     );
