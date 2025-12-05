@@ -12,6 +12,7 @@ public class CreatureCardUI : BaseCardUI
     public Image backgroundImage;
     public TMP_Text nameText;
     public TMP_Text tierText;
+    public TMP_Text momentumCostText;
     public TMP_Text speedText;
     public TMP_Text bodyText;
     public TMP_Text healthText;
@@ -27,6 +28,8 @@ public class CreatureCardUI : BaseCardUI
             nameText.text = data.cardName;
         if (tierText != null)
             tierText.text = $"Tier: {data.tier}";
+        if (momentumCostText != null)
+            momentumCostText.text = data != null ? data.momentumCost.ToString() : "";
         if (speedText != null)
             speedText.text = $"Speed: {data.speed}";
         if (bodyText != null)

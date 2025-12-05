@@ -753,8 +753,9 @@ public class GameManager : MonoBehaviour
     {
         if (card == null)
             return 0;
-        // Default: cost equals tier, clamped between 1 and 3
-        return Mathf.Clamp(card.tier, 1, 3);
+        // Creature momentum cost is explicitly defined on the card asset.
+        // (Tier still gates availability by era via IsTierAllowedInEra.)
+        return Mathf.Max(0, card.momentumCost);
     }
 
     // --- Creature card rules ---

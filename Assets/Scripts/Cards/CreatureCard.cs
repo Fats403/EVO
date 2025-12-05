@@ -22,6 +22,11 @@ public class CreatureCard : ScriptableObject
     [Header("Vitals")]
     public int maxHealth = 3;
 
+    [Header("Cost & Conditions")]
+    [Tooltip("Momentum cost to play this creature card")]
+    [Min(1)]
+    public int momentumCost = 1;
+
     [Header("Base Traits")]
     public Trait[] baseTraits;
 }

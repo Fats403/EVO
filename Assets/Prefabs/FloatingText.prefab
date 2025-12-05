@@ -183,7 +183,7 @@ MonoBehaviour:
   m_text: Hello, I am floating!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2f426f7ffc1844a99ace8cf66729aa31, type: 2}
-  m_sharedMaterial: {fileID: -2173939195190086279, guid: 2f426f7ffc1844a99ace8cf66729aa31, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 98d889d6a27d349ebb23325029b78cc6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

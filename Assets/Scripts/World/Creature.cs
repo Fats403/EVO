@@ -341,6 +341,58 @@ public class Creature : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Smooth "effect hit" presentation: a gentle scale up plus vertical bob,
+    /// then return to the starting transform.
+    /// </summary>
+    public IEnumerator PlayEffectHitBounce(
+        float scaleMultiplier = 1.08f,
+        float height = 0.2f,
+        float duration = 0.45f
+    )
+    {
+        if (duration <= 0f)
+            yield break;
+
+        Vector3 startPos = transform.position;
+        Vector3 startScale = transform.localScale;
+
+        Vector3 peakPos = startPos + Vector3.up * height;
+        Vector3 peakScale = startScale * scaleMultiplier;
+
+        float half = duration * 0.5f;
+        float t = 0f;
+
+        // Move/scale up
+        while (t < half)
+        {
+            t += Time.deltaTime;
+            float u = Mathf.Clamp01(t / half);
+            // Ease-out curve for going up
+            u = Mathf.Sin(u * Mathf.PI * 0.5f);
+            transform.position = Vector3.Lerp(startPos, peakPos, u);
+            transform.localScale = Vector3.Lerp(startScale, peakScale, u);
+            yield return null;
+        }
+
+        // Move/scale back down
+        t = 0f;
+        while (t < half)
+        {
+            t += Time.deltaTime;
+            float u = Mathf.Clamp01(t / half);
+            // Ease-in curve for coming back down
+            u = 1f - Mathf.Cos(u * Mathf.PI * 0.5f);
+            transform.position = Vector3.Lerp(peakPos, startPos, u);
+            transform.localScale = Vector3.Lerp(peakScale, startScale, u);
+            yield return null;
+        }
+
+        // Snap back to the exact starting transform to avoid drift from rounding.
+        transform.position = startPos;
+        transform.localScale = startScale;
+    }
+
     public IEnumerator FlashDamage(float duration = 0.12f)
     {
         if (artworkImage == null)

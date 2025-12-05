@@ -145,6 +145,12 @@ public class EffectsManager : MonoBehaviour
                     c.RefreshStatsUI();
                 }
             }
+
+            // Visual feedback: a smooth scale/bob when this effect actually hits the creature.
+            if (c.gameObject.activeInHierarchy)
+            {
+                c.StartCoroutine(c.PlayEffectHitBounce(1.08f, 0.2f, 0.45f));
+            }
         }
 
         // Register global effect if any

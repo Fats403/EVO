@@ -21,7 +21,9 @@ MonoBehaviour:
   maxTargets: 1
   isGlobal: 1
   multiSelect: 0
-  multiSelectRadius: 2.5
   traitsToAttachToTargets:
   - {fileID: 11400000, guid: b39c45c5dc72c4ebca82ff30145a5ba5, type: 2}
   globalEffect: {fileID: 0}
+  momentumCost: 3
+  minEraAllowed: 0
+  requiresClearWeather: 0

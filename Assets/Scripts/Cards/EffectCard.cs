@@ -34,7 +34,7 @@ public class EffectCard : ScriptableObject
 
     [Header("Cost & Conditions")]
     [Tooltip("Momentum cost to play this effect card")]
-    [Min(0)]
+    [Min(1)]
     public int momentumCost = 1;
 
     [Tooltip("Minimum era in which this card can be played")]

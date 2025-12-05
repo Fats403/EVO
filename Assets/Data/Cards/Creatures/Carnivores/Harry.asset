@@ -21,5 +21,6 @@ MonoBehaviour:
   speed: 2
   tier: 2
   maxHealth: 4
+  momentumCost: 2
   baseTraits:
   - {fileID: 11400000, guid: caaf3611ccc284999b3dff72d2ad4f10, type: 2}

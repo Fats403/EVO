@@ -31,8 +31,6 @@ public class WeatherManager : MonoBehaviour
 
     [SerializeField]
     private bool isFirstRound = true;
-    private int? starveDamageOverride = null;
-
     public Action<WeatherType> OnWeatherChanged;
 
     public WeatherType CurrentWeather => currentWeather;
@@ -52,7 +50,6 @@ public class WeatherManager : MonoBehaviour
         isFirstRound = true;
         lastWeather = null;
         currentWeather = WeatherType.Clear;
-        starveDamageOverride = null;
         FeedbackManager.Instance?.Log("Weather: Clear (start)");
         OnWeatherChanged?.Invoke(currentWeather);
     }
@@ -115,7 +112,6 @@ public class WeatherManager : MonoBehaviour
 
         lastWeather = currentWeather;
         currentWeather = picked;
-        starveDamageOverride = null;
         FeedbackManager.Instance?.Log($"Weather: {currentWeather}");
 
         // Screen-center flavor text for weather changes
@@ -172,7 +168,6 @@ public class WeatherManager : MonoBehaviour
 
     public void ApplyRoundStartEffects(FoodPile pile)
     {
-        starveDamageOverride = null;
         if (pile == null)
             return;
         switch (currentWeather)
@@ -190,7 +185,6 @@ public class WeatherManager : MonoBehaviour
                 int remove = Next(1, 3); // -1 to -2
                 pile.count = Mathf.Max(0, pile.count - remove);
                 pile.UpdateUI();
-                starveDamageOverride = 3;
                 break;
             }
             case WeatherType.Storm:
@@ -219,11 +213,6 @@ public class WeatherManager : MonoBehaviour
             default:
                 break;
         }
-    }
-
-    public int GetStarvationDamageOrDefault(int defaultVal)
-    {
-        return starveDamageOverride.HasValue ? starveDamageOverride.Value : defaultVal;
     }
 
     public void ApplyEndOfRoundEffects()

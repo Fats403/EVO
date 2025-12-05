@@ -660,12 +660,6 @@ public class ResolutionManager : MonoBehaviour
                     if (prevStacks > 0)
                     {
                         c.ClearStatus(StatusTag.Starvation);
-                        c.ApplyFatigued(1);
-                        FeedbackManager.Instance?.ShowFloatingText(
-                            "Recovered (Fatigue +1)",
-                            c.transform.position,
-                            Color.yellow
-                        );
                         didAny = true;
                     }
                 }
@@ -698,7 +692,7 @@ public class ResolutionManager : MonoBehaviour
                     FeedbackManager.Instance?.ShowFloatingText(
                         $"-{dmg} HP (Starve)",
                         c.transform.position,
-                        Color.gray
+                        Color.darkRed
                     );
                     didAny = true;
                     if (c == null || c.currentHealth == 0)

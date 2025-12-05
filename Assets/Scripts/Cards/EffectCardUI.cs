@@ -18,6 +18,7 @@ public class EffectCardUI : BaseCardUI
     public Image artworkImage;
     public TMP_Text nameText;
     public TMP_Text descriptionText;
+    public TMP_Text momentumCostText;
 
     [Header("Global Effect Pulse")]
     [SerializeField]
@@ -42,6 +43,8 @@ public class EffectCardUI : BaseCardUI
             artworkImage.sprite = effectData != null ? effectData.icon : null;
         if (descriptionText != null)
             descriptionText.text = effectData != null ? (effectData.description ?? "").Trim() : "";
+        if (momentumCostText != null)
+            momentumCostText.text = effectData != null ? effectData.momentumCost.ToString() : "";
     }
 
     public override void OnBeginDrag(PointerEventData eventData)
