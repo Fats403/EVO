@@ -10,15 +10,6 @@ using UnityEngine;
 /// </summary>
 public class DraftManager : MonoBehaviour
 {
-    [System.Serializable]
-    private class DraftCardEntry
-    {
-        public ScriptableObject data;
-        public bool isCreature;
-        public int momentumCost;
-        public int costTier; // 0 = low, 1 = mid, 2 = high
-    }
-
     [Header("Config & References")]
     public DraftConfig config;
     public DeckManager deckManager;
@@ -35,7 +26,7 @@ public class DraftManager : MonoBehaviour
 
     private readonly List<ScriptableObject> draftedDeck = new();
     private readonly Dictionary<ScriptableObject, int> copiesPerCard = new();
-    private readonly List<DraftCardEntry> draftPool = new();
+    private readonly List<DraftRules.CardEntry> draftPool = new();
 
     private int creatureCount;
     private int effectCount;
@@ -90,32 +81,8 @@ public class DraftManager : MonoBehaviour
             : deckManager != null ? deckManager.allCards
             : Enumerable.Empty<ScriptableObject>();
 
-        foreach (var so in source)
-        {
-            if (so == null)
-                continue;
-
-            var entry = new DraftCardEntry { data = so };
-
-            if (so is CreatureCard creature)
-            {
-                entry.isCreature = true;
-                entry.momentumCost = Mathf.Max(0, creature.momentumCost);
-            }
-            else if (so is EffectCard effect)
-            {
-                entry.isCreature = false;
-                entry.momentumCost = Mathf.Max(0, effect.momentumCost);
-            }
-            else
-            {
-                // Unsupported type for drafting; skip.
-                continue;
-            }
-
-            entry.costTier = config.GetCostTier(entry.momentumCost);
-            draftPool.Add(entry);
-        }
+        var built = DraftRules.BuildEntryPool(source, config);
+        draftPool.AddRange(built);
 
         if (draftPool.Count == 0)
         {
@@ -172,10 +139,18 @@ public class DraftManager : MonoBehaviour
             Debug.LogError("DraftManager.OnRandomDeckClicked: DeckManager not assigned.");
             return;
         }
+        if (config == null)
+        {
+            Debug.LogError("DraftManager.OnRandomDeckClicked: DraftConfig not assigned.");
+            return;
+        }
 
-        // Hide the draft UI and build a random deck for the player.
+        // Hide the draft UI and build a balanced random deck for the player
+        // using the same rules as the normal draft.
         ShowDraftUI(false);
-        deckManager.InitializeRandomDeck();
+        var src = deckManager.allCards ?? new System.Collections.Generic.List<ScriptableObject>();
+        var built = BalancedDeckBuilder.BuildDeck(src, config);
+        deckManager.InitializeFromDraft(built);
 
         // Hand off to normal game startup, which will draw the starting hand
         // and begin the usual setup / round flow.
@@ -207,11 +182,21 @@ public class DraftManager : MonoBehaviour
         }
 
         // Decide desired type and cost tier for this pick, using bias strengths.
-        bool preferCreature = ChoosePreferredIsCreature();
-        int desiredTier = ChoosePreferredCostTier();
+        bool preferCreature = DraftRules.ChoosePreferredIsCreature(
+            config,
+            picksDone,
+            creatureCount
+        );
+        int desiredTier = DraftRules.ChoosePreferredCostTier(config, lowCount, midCount, highCount);
 
         // Build candidate list with progressively relaxed constraints.
-        var candidates = BuildCandidates(preferCreature, desiredTier);
+        var candidates = DraftRules.BuildCandidates(
+            draftPool,
+            config,
+            preferCreature,
+            desiredTier,
+            copiesPerCard
+        );
 
         if (candidates.Count == 0)
         {
@@ -250,101 +235,6 @@ public class DraftManager : MonoBehaviour
         }
     }
 
-    private bool ChoosePreferredIsCreature()
-    {
-        if (config == null)
-            return true;
-
-        if (picksDone == 0)
-            return true; // first pick creature to anchor a board.
-
-        float currentCreatureRatio =
-            picksDone > 0 ? (float)creatureCount / picksDone : config.targetCreatureRatio;
-
-        // Blend current vs target using a simple bias factor.
-        float bias = Mathf.Max(0f, config.typeBiasStrength);
-        // When bias is 0, we mostly keep current ratio; when high, we push toward target.
-        float blendedTarget =
-            (1f / (1f + bias)) * currentCreatureRatio
-            + (bias / (1f + bias)) * config.targetCreatureRatio;
-
-        // If we're below blended target, prefer creatures; otherwise prefer effects.
-        return currentCreatureRatio <= blendedTarget;
-    }
-
-    private int ChoosePreferredCostTier()
-    {
-        if (config == null)
-            return 0;
-
-        // Compute deficits relative to targets.
-        int lowDeficit = config.targetLowCount - lowCount;
-        int midDeficit = config.targetMidCount - midCount;
-        int highDeficit = config.targetHighCount - highCount;
-
-        float bias = Mathf.Max(0f, config.costBiasStrength);
-
-        // If bias is 0, treat all tiers equally weighted; otherwise magnify the deficit difference.
-        float lowScore = Mathf.Pow(Mathf.Max(0, lowDeficit), 1f + bias);
-        float midScore = Mathf.Pow(Mathf.Max(0, midDeficit), 1f + bias);
-        float highScore = Mathf.Pow(Mathf.Max(0, highDeficit), 1f + bias);
-
-        if (lowScore >= midScore && lowScore >= highScore)
-            return 0;
-        if (midScore >= lowScore && midScore >= highScore)
-            return 1;
-        return 2;
-    }
-
-    private List<DraftCardEntry> BuildCandidates(bool preferCreature, int desiredTier)
-    {
-        var result = new List<DraftCardEntry>();
-        if (draftPool.Count == 0 || config == null)
-            return result;
-
-        // Helper local predicate respecting copy cap.
-        bool UnderCopyCap(DraftCardEntry e) =>
-            GetCopies(e.data) < Mathf.Max(1, config.maxCopiesPerCard);
-
-        // 1) Strict: desired type + desired tier
-        result = draftPool
-            .Where(e =>
-                e.isCreature == preferCreature && e.costTier == desiredTier && UnderCopyCap(e)
-            )
-            .ToList();
-        if (result.Count >= 3)
-            return result;
-
-        // 2) Relax tier: any tier of desired type
-        var typeOnly = draftPool
-            .Where(e => e.isCreature == preferCreature && UnderCopyCap(e))
-            .ToList();
-        MergeUnique(result, typeOnly);
-        if (result.Count >= 3)
-            return result;
-
-        // 3) Allow opposite type but keep desired tier
-        var tierOnly = draftPool.Where(e => e.costTier == desiredTier && UnderCopyCap(e)).ToList();
-        MergeUnique(result, tierOnly);
-        if (result.Count >= 3)
-            return result;
-
-        // 4) Fully relaxed: any under copy cap
-        var any = draftPool.Where(UnderCopyCap).ToList();
-        MergeUnique(result, any);
-
-        return result;
-    }
-
-    private void MergeUnique(List<DraftCardEntry> target, List<DraftCardEntry> source)
-    {
-        foreach (var e in source)
-        {
-            if (!target.Contains(e))
-                target.Add(e);
-        }
-    }
-
     private int GetCopies(ScriptableObject card)
     {
         if (card == null)
@@ -357,34 +247,15 @@ public class DraftManager : MonoBehaviour
         if (picked == null || config == null)
             return;
 
-        if (picked is CreatureCard creature)
-        {
-            creatureCount++;
-            int tier = config.GetCostTier(creature.momentumCost);
-            IncrementTierCount(tier);
-        }
-        else if (picked is EffectCard effect)
-        {
-            effectCount++;
-            int tier = config.GetCostTier(effect.momentumCost);
-            IncrementTierCount(tier);
-        }
-    }
-
-    private void IncrementTierCount(int tier)
-    {
-        switch (tier)
-        {
-            case 0:
-                lowCount++;
-                break;
-            case 1:
-                midCount++;
-                break;
-            default:
-                highCount++;
-                break;
-        }
+        DraftRules.IncrementCountersForPicked(
+            config,
+            picked,
+            ref creatureCount,
+            ref effectCount,
+            ref lowCount,
+            ref midCount,
+            ref highCount
+        );
     }
 
     private void OnOptionClicked(DraftCardOptionUI option)

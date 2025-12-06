@@ -221,6 +221,11 @@ public class WeatherManager : MonoBehaviour
         {
             case WeatherType.Wildfire:
             {
+                FeedbackManager.Instance?.ShowGlobalAlert(
+                    "The wildfire burns!",
+                    new Color(1f, 0.5f, 0.2f)
+                );
+
                 var all = FindObjectsByType<Creature>(FindObjectsSortMode.None)
                     .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
                     .ToList();
@@ -228,10 +233,6 @@ public class WeatherManager : MonoBehaviour
                 {
                     Vector3 pos = c.transform.position;
                     c.ApplyDamage(1, null);
-                    FeedbackManager.Instance?.ShowGlobalAlert(
-                        "The wildfire burns!",
-                        new Color(1f, 0.5f, 0.2f)
-                    );
                     FeedbackManager.Instance?.ShowFloatingText(
                         "-1 HP",
                         pos,

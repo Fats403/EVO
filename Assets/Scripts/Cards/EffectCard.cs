@@ -43,6 +43,25 @@ public class EffectCard : ScriptableObject
     [Tooltip("If true, this card may only be played while the weather is Clear")]
     public bool requiresClearWeather = false;
 
+    [Header("AI Hints (Optional)")]
+    [Tooltip(
+        "How much this effect gains value from cleansing/removing negative statuses (0 = ignore)."
+    )]
+    [Range(0f, 5f)]
+    public float aiCleanseSynergy = 0f;
+
+    [Tooltip(
+        "How much this effect gains value from giving an ally an immediate attack payoff (e.g., Rage)."
+    )]
+    [Range(0f, 5f)]
+    public float aiAttackSynergy = 0f;
+
+    [Tooltip(
+        "Approximate multiplier to how much this effect improves an ally's effective body (1 = neutral, >1 = stronger body buff)."
+    )]
+    [Range(1f, 3f)]
+    public float aiBodyBuffMultiplier = 1f;
+
     public bool IsValidTarget(Creature candidate, SlotOwner player)
     {
         if (isGlobal || candidate == null || candidate.data == null)

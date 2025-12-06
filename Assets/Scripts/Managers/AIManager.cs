@@ -23,35 +23,92 @@ public class AIManager : MonoBehaviour
     public TMP_Text handCountText;
 
     [Header("Heuristic Weights (Normal AI)")]
-    [Tooltip("Value per creature tier when considering plays.")]
-    public float creatureTierWeight = 3f;
-
     [Tooltip("Value per creature size/body when considering plays.")]
+    [Range(0f, 10f)]
     public float creatureSizeWeight = 1.5f;
 
     [Tooltip("Base value for playing any creature at all.")]
+    [Range(0f, 10f)]
     public float creatureBaseValue = 2f;
 
     [Tooltip("Extra value for carnivores, since they threaten herbivores.")]
+    [Range(0f, 10f)]
     public float carnivoreBonus = 2f;
 
     [Tooltip("Extra value for avians, reflecting mobility/harass potential.")]
+    [Range(0f, 10f)]
     public float avianBonus = 1f;
 
     [Tooltip("Penalty per point of momentum cost when evaluating any action.")]
+    [Range(0f, 5f)]
     public float momentumCostWeight = 1.0f;
 
     [Tooltip("Additional penalty factor when remaining momentum is low.")]
+    [Range(0.5f, 4f)]
     public float lowMomentumPenalty = 1.5f;
 
     [Tooltip("Base value per allied target affected by a positive effect.")]
+    [Range(0f, 5f)]
     public float allyEffectPerTargetValue = 1.5f;
 
     [Tooltip("Base value per enemy target affected by a negative effect.")]
+    [Range(0f, 5f)]
     public float enemyEffectPerTargetValue = 1.75f;
 
     [Tooltip("Threshold below which the AI prefers to pass instead of playing.")]
+    [Range(0f, 5f)]
     public float passThreshold = 0.2f;
+
+    [Header("Deck Building")]
+    [Tooltip("DraftConfig used to build balanced AI decks (same rules as player draft).")]
+    public DraftConfig draftConfig;
+
+    [Header("Effect Evaluation Weights")]
+    [Tooltip(
+        "Extra value per stack of negative status on an allied target when cleanse-synergy effects are used."
+    )]
+    [Range(0f, 5f)]
+    public float allyNegativeStatusWeight = 1.0f;
+
+    [Tooltip(
+        "Extra value per stack of positive status on an enemy target when targeting them with effects."
+    )]
+    [Range(0f, 5f)]
+    public float enemyPositiveStatusWeight = 1.0f;
+
+    [Tooltip(
+        "Bonus for targeting an ally that currently has at least one valid attack target (helps avoid wasting Rage-like buffs)."
+    )]
+    [Range(0f, 10f)]
+    public float allyAttackOpportunityBonus = 2.0f;
+
+    // Local AI view of which statuses are generally harmful/beneficial.
+    // Kept in sync conceptually with Creature.NegativeStatusTags.
+    static readonly StatusTag[] NegativeStatusTagsForAI = new StatusTag[]
+    {
+        StatusTag.Infected,
+        StatusTag.Fatigued,
+        StatusTag.Starvation,
+        StatusTag.Taunt,
+        StatusTag.Stunned,
+        StatusTag.Suppressed,
+        StatusTag.NoForage,
+        StatusTag.Bleeding,
+        StatusTag.Malnourished,
+    };
+
+    static readonly StatusTag[] PositiveStatusTagsForAI = new StatusTag[]
+    {
+        StatusTag.Shielded,
+        StatusTag.Reflect,
+        StatusTag.DamageUp,
+        StatusTag.Regen,
+        StatusTag.Stealth,
+        StatusTag.Absorb,
+        StatusTag.BodyUp,
+        StatusTag.SpeedUp,
+        StatusTag.Immune,
+    };
 
     void Awake()
     {
@@ -65,7 +122,9 @@ public class AIManager : MonoBehaviour
         DrawStartingHand();
     }
 
-    // Mirror of DeckManager.BuildDeck, but building an AI-owned logical deck.
+    // Build an AI-owned logical deck that mirrors the same rules as the
+    // player's draft (when a DraftConfig is provided). Falls back to a
+    // simple random-unique deck if no config is assigned.
     void BuildDeck()
     {
         drawPile.Clear();
@@ -76,40 +135,40 @@ public class AIManager : MonoBehaviour
             return;
 
         var src = dm.allCards ?? new List<ScriptableObject>();
-        var pool = new List<ScriptableObject>(src);
 
-        // Shuffle pool using the same RNG source as the rest of the game.
-        for (int i = pool.Count - 1; i > 0; i--)
+        if (draftConfig != null)
         {
-            int j =
-                (GameManager.Instance != null)
-                    ? GameManager.Instance.NextRandomInt(0, i + 1)
-                    : Random.Range(0, i + 1);
-            (pool[j], pool[i]) = (pool[i], pool[j]);
+            // Build a balanced deck using the same rules as the player draft.
+            var built = BalancedDeckBuilder.BuildDeck(src, draftConfig);
+            drawPile.AddRange(built);
         }
-
-        int deckSize = dm.deckSize > 0 ? dm.deckSize : pool.Count;
-        var picked = new List<ScriptableObject>(deckSize);
-        var seen = new HashSet<ScriptableObject>();
-        for (int i = 0; i < pool.Count && picked.Count < deckSize; i++)
+        else
         {
-            var card = pool[i];
-            if (card == null)
-                continue;
-            if (seen.Add(card))
-                picked.Add(card);
-        }
+            // Fallback: simple random-unique deck if no config is assigned.
+            var pool = new List<ScriptableObject>(src);
 
-        drawPile.AddRange(picked);
+            for (int i = pool.Count - 1; i > 0; i--)
+            {
+                int j =
+                    (GameManager.Instance != null)
+                        ? GameManager.Instance.NextRandomInt(0, i + 1)
+                        : Random.Range(0, i + 1);
+                (pool[j], pool[i]) = (pool[i], pool[j]);
+            }
 
-        // Shuffle draw order
-        for (int i = drawPile.Count - 1; i > 0; i--)
-        {
-            int j =
-                (GameManager.Instance != null)
-                    ? GameManager.Instance.NextRandomInt(0, i + 1)
-                    : Random.Range(0, i + 1);
-            (drawPile[j], drawPile[i]) = (drawPile[i], drawPile[j]);
+            int deckSize = dm.deckSize > 0 ? dm.deckSize : pool.Count;
+            var picked = new List<ScriptableObject>(deckSize);
+            var seen = new HashSet<ScriptableObject>();
+            for (int i = 0; i < pool.Count && picked.Count < deckSize; i++)
+            {
+                var card = pool[i];
+                if (card == null)
+                    continue;
+                if (seen.Add(card))
+                    picked.Add(card);
+            }
+
+            drawPile.AddRange(picked);
         }
 
         UpdateDeckUI();
@@ -293,7 +352,6 @@ public class AIManager : MonoBehaviour
             foreach (var slot in freeSlots)
             {
                 float baseValue = creatureBaseValue;
-                baseValue += creatureTierWeight * card.tier;
                 baseValue += creatureSizeWeight * card.size;
 
                 switch (card.type)
@@ -357,16 +415,14 @@ public class AIManager : MonoBehaviour
             // Global effects: no direct targets; evaluate based on how many creatures match filters.
             if (card.isGlobal)
             {
-                var potentialTargets = allCreatures.Where(c =>
-                    EffectsManager.Instance != null
-                    && EffectsManager.Instance.IsValidTarget(card, c, SlotOwner.Player2)
-                );
+                var potentialTargets = allCreatures
+                    .Where(c =>
+                        EffectsManager.Instance != null
+                        && EffectsManager.Instance.IsValidTarget(card, c, SlotOwner.Player2)
+                    )
+                    .ToList();
 
-                int allyCount = potentialTargets.Count(c => c.owner == SlotOwner.Player2);
-                int enemyCount = potentialTargets.Count(c => c.owner == SlotOwner.Player1);
-
-                float baseValue =
-                    allyCount * allyEffectPerTargetValue + enemyCount * enemyEffectPerTargetValue;
+                float baseValue = ScoreEffectTargets(card, potentialTargets, SlotOwner.Player2);
 
                 float score = baseValue - momentumPenalty;
                 if (score <= 0f)
@@ -394,53 +450,13 @@ public class AIManager : MonoBehaviour
             var allyTargets = validTargets.Where(c => c.owner == SlotOwner.Player2).ToList();
             var enemyTargets = validTargets.Where(c => c.owner == SlotOwner.Player1).ToList();
 
-            // Helper to score a list of targets.
-            float ScoreTargetList(List<Creature> list)
-            {
-                if (list == null || list.Count == 0)
-                    return 0f;
-
-                float total = 0f;
-                foreach (var c in list)
-                {
-                    if (c == null || c.data == null)
-                        continue;
-
-                    float threat =
-                        c.data.tier * creatureTierWeight
-                        + c.data.size * creatureSizeWeight
-                        + c.maxHealth * 0.25f;
-
-                    if (c.data.type == CardType.Carnivore)
-                        threat += carnivoreBonus;
-                    else if (c.data.type == CardType.Avian)
-                        threat += avianBonus;
-
-                    // Slight bonus if wounded for ally-targeted buffs (heals/protection),
-                    // and for low-HP enemies for enemy-targeted debuffs.
-                    if (c.owner == SlotOwner.Player2 && c.IsWounded)
-                        threat *= 1.1f;
-                    if (c.owner == SlotOwner.Player1 && c.IsWounded)
-                        threat *= 1.15f;
-
-                    total += threat;
-                }
-
-                bool targetsEnemies = list.Any(c => c.owner == SlotOwner.Player1);
-                float perTarget = targetsEnemies
-                    ? enemyEffectPerTargetValue
-                    : allyEffectPerTargetValue;
-
-                return total + list.Count * perTarget;
-            }
-
             // Single-target effects.
             if (card.targetCount == EffectTargetCount.One)
             {
                 foreach (var tgt in validTargets)
                 {
                     var list = new List<Creature> { tgt };
-                    float baseValue = ScoreTargetList(list);
+                    float baseValue = ScoreEffectTargets(card, list, SlotOwner.Player2);
                     if (baseValue <= 0f)
                         continue;
                     float score = baseValue - momentumPenalty;
@@ -466,17 +482,17 @@ public class AIManager : MonoBehaviour
                 var ordered =
                     card.targetSide == EffectTargetSide.Enemy
                         ? enemyTargets.OrderByDescending(c =>
-                            ScoreTargetList(new List<Creature> { c })
+                            ScoreEffectTargets(card, new List<Creature> { c }, SlotOwner.Player2)
                         )
                         : allyTargets.OrderByDescending(c =>
-                            ScoreTargetList(new List<Creature> { c })
+                            ScoreEffectTargets(card, new List<Creature> { c }, SlotOwner.Player2)
                         );
 
                 var picks = ordered.Take(maxTargets).Where(c => c != null).ToList();
                 if (picks.Count == 0)
                     continue;
 
-                float baseValue = ScoreTargetList(picks);
+                float baseValue = ScoreEffectTargets(card, picks, SlotOwner.Player2);
                 if (baseValue <= 0f)
                     continue;
 
@@ -501,7 +517,7 @@ public class AIManager : MonoBehaviour
                 if (picks.Count == 0)
                     continue;
 
-                float baseValue = ScoreTargetList(picks);
+                float baseValue = ScoreEffectTargets(card, picks, SlotOwner.Player2);
                 if (baseValue <= 0f)
                     continue;
 
@@ -520,6 +536,129 @@ public class AIManager : MonoBehaviour
                 );
             }
         }
+    }
+
+    float ScoreEffectTargets(EffectCard card, List<Creature> targets, SlotOwner owner)
+    {
+        if (card == null || targets == null || targets.Count == 0)
+            return 0f;
+
+        float totalThreatValue = 0f;
+        float allyStatusValue = 0f;
+        float enemyStatusValue = 0f;
+        float attackSynergyValue = 0f;
+
+        foreach (var c in targets)
+        {
+            if (c == null || c.data == null)
+                continue;
+
+            bool isAlly = c.owner == owner;
+            bool isEnemy = !isAlly;
+
+            float threat = c.data.size * creatureSizeWeight + c.maxHealth * 0.25f;
+
+            if (c.data.type == CardType.Carnivore)
+                threat += carnivoreBonus;
+            else if (c.data.type == CardType.Avian)
+                threat += avianBonus;
+
+            // Slight bonus if wounded for ally-targeted buffs (heals/protection),
+            // and for low-HP enemies for enemy-targeted debuffs.
+            if (isAlly && c.IsWounded)
+                threat *= 1.1f;
+            if (isEnemy && c.IsWounded)
+                threat *= 1.15f;
+
+            // If this effect is marked as improving body, slightly favor allies for whom
+            // a bigger body is especially valuable (e.g., frontliners / carnivores).
+            if (isAlly && card.aiBodyBuffMultiplier > 1f)
+            {
+                // Clamp how hard this can swing things by only partially applying the multiplier.
+                float bodyFactor = Mathf.Lerp(1f, card.aiBodyBuffMultiplier, 0.5f);
+                threat *= bodyFactor;
+            }
+
+            totalThreatValue += threat;
+
+            // Status-based value: assume negative statuses on allies and positive statuses on enemies
+            // are high leverage for many common effects (cleanses, dispels, buffs).
+            var tags = c.GetActiveStatusTags();
+            int negativeStacks = tags.Count(t => IsNegativeStatusForAI(t));
+            int positiveStacks = tags.Count(t => IsPositiveStatusForAI(t));
+
+            if (isAlly && negativeStacks > 0 && allyNegativeStatusWeight > 0f)
+            {
+                // Scale by per-status weight and any card-specific cleanse synergy.
+                float cleanseFactor = Mathf.Max(1f, card.aiCleanseSynergy);
+                allyStatusValue += negativeStacks * allyNegativeStatusWeight * cleanseFactor;
+            }
+
+            if (isEnemy && positiveStacks > 0 && enemyPositiveStatusWeight > 0f)
+            {
+                enemyStatusValue += positiveStacks * enemyPositiveStatusWeight;
+            }
+
+            // Generic "don't waste offensive buffs" rule: if the card advertises attack synergy
+            // and this ally can reasonably attack, give it a bump.
+            if (isAlly && card.aiAttackSynergy > 0f && allyAttackOpportunityBonus > 0f)
+            {
+                if (HasPotentialAttackTarget(c))
+                {
+                    attackSynergyValue += allyAttackOpportunityBonus * card.aiAttackSynergy;
+                }
+            }
+        }
+
+        bool targetsEnemies = targets.Any(c => c != null && c.owner != owner);
+        int targetCount = targets.Count(c => c != null);
+
+        float perTarget = targetsEnemies ? enemyEffectPerTargetValue : allyEffectPerTargetValue;
+        float countValue = targetCount * perTarget;
+
+        return totalThreatValue
+            + allyStatusValue
+            + enemyStatusValue
+            + attackSynergyValue
+            + countValue;
+    }
+
+    static bool IsNegativeStatusForAI(StatusTag tag)
+    {
+        // Using Contains on a small static array; cost is negligible given small board sizes.
+        return NegativeStatusTagsForAI.Contains(tag);
+    }
+
+    static bool IsPositiveStatusForAI(StatusTag tag)
+    {
+        return PositiveStatusTagsForAI.Contains(tag);
+    }
+
+    bool HasPotentialAttackTarget(Creature attacker)
+    {
+        if (attacker == null || attacker.data == null)
+            return false;
+
+        // Stunned creatures cannot act this round.
+        if (attacker.HasStatus(StatusTag.Stunned))
+            return false;
+
+        // Herbivores only attack if a trait explicitly allows it.
+        if (attacker.data.type == CardType.Herbivore)
+        {
+            bool traitAllows =
+                attacker.traits != null
+                && attacker.traits.Any(t => t != null && t.CanAttack(attacker));
+            if (!traitAllows)
+                return false;
+        }
+
+        if (ResolutionManager.Instance == null)
+            return false;
+
+        // Reuse the same targeting logic ResolutionManager uses for normal attacks.
+        var best = ResolutionManager.Instance.FindBestTarget(attacker);
+        return best != null;
     }
 
     bool ExecuteCreatureAction(GameManager gm, AIAction action)
