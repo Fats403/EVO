@@ -42,11 +42,15 @@ public class DraftConfig : ScriptableObject
     public int targetHighCount = 4;
 
     [Header("Bias Tuning")]
-    [Tooltip("How strongly to steer each pick toward the creature/effect ratio (0 = almost ignore, 2+ = very strong).")]
+    [Tooltip(
+        "How strongly to steer each pick toward the creature/effect ratio (0 = almost ignore, 2+ = very strong)."
+    )]
     [Min(0f)]
     public float typeBiasStrength = 1.0f;
 
-    [Tooltip("How strongly to steer each pick toward the low/mid/high momentum curve (0 = almost ignore, 2+ = very strong).")]
+    [Tooltip(
+        "How strongly to steer each pick toward the low/mid/high momentum curve (0 = almost ignore, 2+ = very strong)."
+    )]
     [Min(0f)]
     public float costBiasStrength = 1.0f;
 
@@ -63,5 +67,3 @@ public class DraftConfig : ScriptableObject
         return 2;
     }
 }
-
-

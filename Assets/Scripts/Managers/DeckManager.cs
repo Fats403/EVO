@@ -63,18 +63,9 @@ public class DeckManager : MonoBehaviour
         Instance = this;
     }
 
-    private void Start()
-    {
-        // In non-draft modes, build a random deck immediately.
-        // For draft / external decks, disable autoBuildOnStart in the inspector
-        // and call InitializeFromDraft + InitializeAndDraw from game flow code.
-        if (autoBuildOnStart)
-        {
-            BuildDeck();
-            deckInitialized = true;
-            StartCoroutine(DrawStartingHandRoutine());
-        }
-    }
+    // DeckManager no longer auto-builds or draws a starting hand on Start().
+    // The deck is expected to be initialized explicitly via InitializeRandomDeck()
+    // or InitializeFromDraft(), followed by InitializeAndDraw() when appropriate.
 
     void BuildDeck()
     {
@@ -320,6 +311,16 @@ public class DeckManager : MonoBehaviour
             if (drawSpacingDelay > 0f && i < toDraw - 1)
                 yield return new WaitForSeconds(drawSpacingDelay);
         }
+    }
+
+    /// <summary>
+    /// Build a fresh random deck from allCards using the configured deckSize.
+    /// Does not draw any cards; caller is responsible for triggering the starting hand draw.
+    /// </summary>
+    public void InitializeRandomDeck()
+    {
+        BuildDeck();
+        deckInitialized = true;
     }
 
     /// <summary>

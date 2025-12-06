@@ -281,16 +281,24 @@ public class GameManager : MonoBehaviour
 
     void BeginDraw()
     {
-        // Draw per-round cards respecting max hand size
-        var dm = DeckManager.Instance;
-        if (dm != null)
+        // Draw per-round cards respecting max hand size.
+        // Round 1 already has its starting hands dealt explicitly:
+        // - Player: via DeckManager.InitializeAndDraw() after draft/random deck.
+        // - AI: via AIManager.BuildDeckAndDrawStartingHand() in Start().
+        // To avoid double-drawing on the first round, only perform the
+        // per-round draws from round 2 onward.
+        if (currentRound > 1)
         {
-            dm.DrawCardsForRoundStart();
-        }
-        // Mirror per-round draws for the AI using the same rules from DeckManager.
-        if (AIManager.Instance != null)
-        {
-            AIManager.Instance.DrawCardsForRoundStart();
+            var dm = DeckManager.Instance;
+            if (dm != null)
+            {
+                dm.DrawCardsForRoundStart();
+            }
+            // Mirror per-round draws for the AI using the same rules from DeckManager.
+            if (AIManager.Instance != null)
+            {
+                AIManager.Instance.DrawCardsForRoundStart();
+            }
         }
         if (foodPile != null)
             foodPile.RefillStartOfRound();

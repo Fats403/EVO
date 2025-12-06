@@ -86,11 +86,9 @@ public class DraftManager : MonoBehaviour
         draftPool.Clear();
 
         IEnumerable<ScriptableObject> source =
-            (allDraftableCards != null && allDraftableCards.Count > 0)
-                ? allDraftableCards
-                : deckManager != null
-                    ? deckManager.allCards
-                    : Enumerable.Empty<ScriptableObject>();
+            (allDraftableCards != null && allDraftableCards.Count > 0) ? allDraftableCards
+            : deckManager != null ? deckManager.allCards
+            : Enumerable.Empty<ScriptableObject>();
 
         foreach (var so in source)
         {
@@ -121,7 +119,9 @@ public class DraftManager : MonoBehaviour
 
         if (draftPool.Count == 0)
         {
-            Debug.LogError("DraftManager: Draft pool is empty – check allDraftableCards / DeckManager.");
+            Debug.LogError(
+                "DraftManager: Draft pool is empty – check allDraftableCards / DeckManager."
+            );
         }
     }
 
@@ -162,6 +162,33 @@ public class DraftManager : MonoBehaviour
         draftCanvasGroup.blocksRaycasts = visible;
     }
 
+    /// <summary>
+    /// UI hook: skip the draft and play with a random deck instead.
+    /// </summary>
+    public void OnRandomDeckClicked()
+    {
+        if (deckManager == null)
+        {
+            Debug.LogError("DraftManager.OnRandomDeckClicked: DeckManager not assigned.");
+            return;
+        }
+
+        // Hide the draft UI and build a random deck for the player.
+        ShowDraftUI(false);
+        deckManager.InitializeRandomDeck();
+
+        // Hand off to normal game startup, which will draw the starting hand
+        // and begin the usual setup / round flow.
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnDraftCompleted();
+        }
+        else
+        {
+            Debug.LogWarning("DraftManager.OnRandomDeckClicked: No GameManager instance found.");
+        }
+    }
+
     private void ShowNextPick()
     {
         if (!IsDrafting)
@@ -189,9 +216,7 @@ public class DraftManager : MonoBehaviour
         if (candidates.Count == 0)
         {
             Debug.LogWarning("DraftManager: No candidates available; falling back to full pool.");
-            candidates.AddRange(
-                draftPool.Where(e => GetCopies(e.data) < config.maxCopiesPerCard)
-            );
+            candidates.AddRange(draftPool.Where(e => GetCopies(e.data) < config.maxCopiesPerCard));
         }
 
         // Shuffle candidates lightly to avoid always picking the same few.
@@ -283,7 +308,9 @@ public class DraftManager : MonoBehaviour
 
         // 1) Strict: desired type + desired tier
         result = draftPool
-            .Where(e => e.isCreature == preferCreature && e.costTier == desiredTier && UnderCopyCap(e))
+            .Where(e =>
+                e.isCreature == preferCreature && e.costTier == desiredTier && UnderCopyCap(e)
+            )
             .ToList();
         if (result.Count >= 3)
             return result;
@@ -297,9 +324,7 @@ public class DraftManager : MonoBehaviour
             return result;
 
         // 3) Allow opposite type but keep desired tier
-        var tierOnly = draftPool
-            .Where(e => e.costTier == desiredTier && UnderCopyCap(e))
-            .ToList();
+        var tierOnly = draftPool.Where(e => e.costTier == desiredTier && UnderCopyCap(e)).ToList();
         MergeUnique(result, tierOnly);
         if (result.Count >= 3)
             return result;
@@ -447,5 +472,3 @@ public class DraftManager : MonoBehaviour
         }
     }
 }
-
-

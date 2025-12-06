@@ -9,10 +9,6 @@ using UnityEngine.UI;
 /// </summary>
 public class DraftCardOptionUI : MonoBehaviour, IPointerClickHandler
 {
-    [Header("UI")]
-    [Tooltip("The clickable button root for this option.")]
-    public Button button;
-
     [Tooltip(
         "Parent transform where the card preview (CreatureCardUI / EffectCardUI) will be instantiated."
     )]
@@ -76,19 +72,6 @@ public class DraftCardOptionUI : MonoBehaviour, IPointerClickHandler
 
         // Initialize visuals to unselected.
         ApplySelectionVisuals(false);
-
-        if (button != null)
-        {
-            button.onClick.AddListener(HandleClicked);
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (button != null)
-        {
-            button.onClick.RemoveListener(HandleClicked);
-        }
     }
 
     public void SetCard(ScriptableObject data, System.Action<DraftCardOptionUI> clickedCallback)
@@ -213,8 +196,8 @@ public class DraftCardOptionUI : MonoBehaviour, IPointerClickHandler
     }
 
     /// <summary>
-    /// Fallback so clicks still work even if the Button wiring is off;
-    /// as long as this option has a raycast-target graphic, we'll receive clicks.
+    /// Handle pointer clicks directly on this option. As long as the root
+    /// has a raycast-target Graphic (ensured in Awake), this will fire.
     /// </summary>
     public void OnPointerClick(PointerEventData eventData)
     {
