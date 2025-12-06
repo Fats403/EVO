@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public enum GamePhase
@@ -48,6 +49,17 @@ public class GameManager : MonoBehaviour
 
     [Header("Game Over")]
     public bool isGameOver;
+
+    [Header("UI - Canvas Groups")]
+    public CanvasGroup mainCanvasGroup;
+    public CanvasGroup gameOverCanvasGroup;
+
+    [Header("Game Over UI")]
+    public TextMeshProUGUI gameOverOutcomeText;
+    public TextMeshProUGUI player1ScoreText;
+    public TextMeshProUGUI player2ScoreText;
+    public float gameOverFadeDuration = 0.75f;
+    public float postExtinctionUIPauseSeconds = 1.5f;
 
     [Header("Debug")]
     public GamePhase currentPhase = GamePhase.Setup;
@@ -105,6 +117,11 @@ public class GameManager : MonoBehaviour
         // Auto-wire end turn label if not assigned
         if (endTurnLabel == null && endTurnButton != null)
             endTurnLabel = endTurnButton.GetComponentInChildren<TextMeshProUGUI>();
+
+        // Ensure initial canvas visibility states
+        SetCanvasGroupVisible(mainCanvasGroup, true);
+        SetCanvasGroupVisible(gameOverCanvasGroup, false);
+
         UpdatePhaseLabel();
         if (weatherVideoBackground != null)
             weatherVideoBackground.ForceTo(WeatherType.Clear);
@@ -114,6 +131,22 @@ public class GameManager : MonoBehaviour
             AIManager.Instance.BuildDeckAndDrawStartingHand();
         }
         BeginSetup();
+    }
+
+    void SetCanvasGroupVisible(CanvasGroup cg, bool visible)
+    {
+        if (cg == null)
+            return;
+        cg.alpha = visible ? 1f : 0f;
+        cg.interactable = visible;
+        cg.blocksRaycasts = visible;
+    }
+
+    void SetCanvasGroupAlpha(CanvasGroup cg, float alpha)
+    {
+        if (cg == null)
+            return;
+        cg.alpha = alpha;
     }
 
     void OnDestroy()
@@ -658,7 +691,85 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        // Let the extinction VFX play out before switching to the game over UI.
+        float delay = Mathf.Max(0f, postExtinctionUIPauseSeconds);
+        if (delay > 0f)
+            yield return new WaitForSeconds(delay);
+
+        ShowGameOverScreen();
+
         yield break;
+    }
+
+    void ShowGameOverScreen()
+    {
+        int p1 = ScoreManager.player1;
+        int p2 = ScoreManager.player2;
+
+        // Decide outcome from Player 1's perspective
+        if (gameOverOutcomeText != null)
+        {
+            if (p1 > p2)
+            {
+                gameOverOutcomeText.text = "Victory";
+            }
+            else if (p1 < p2)
+            {
+                gameOverOutcomeText.text = "Defeat";
+            }
+            else
+            {
+                gameOverOutcomeText.text = "Draw";
+            }
+        }
+
+        if (player1ScoreText != null)
+            player1ScoreText.text = p1.ToString();
+        if (player2ScoreText != null)
+            player2ScoreText.text = p2.ToString();
+
+        StartCoroutine(FadeToGameOverCoroutine());
+    }
+
+    IEnumerator FadeToGameOverCoroutine()
+    {
+        float duration = Mathf.Max(0.01f, gameOverFadeDuration);
+        float t = 0f;
+
+        // Prepare initial states
+        if (mainCanvasGroup != null)
+        {
+            mainCanvasGroup.interactable = false;
+            mainCanvasGroup.blocksRaycasts = false;
+        }
+
+        if (gameOverCanvasGroup != null)
+        {
+            gameOverCanvasGroup.interactable = false;
+            gameOverCanvasGroup.blocksRaycasts = false;
+            gameOverCanvasGroup.alpha = 0f;
+        }
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float u = Mathf.Clamp01(t / duration);
+
+            SetCanvasGroupAlpha(mainCanvasGroup, 1f - u);
+            SetCanvasGroupAlpha(gameOverCanvasGroup, u);
+
+            yield return null;
+        }
+
+        // Final visibility and input states
+        SetCanvasGroupAlpha(mainCanvasGroup, 0f);
+        SetCanvasGroupAlpha(gameOverCanvasGroup, 1f);
+
+        if (gameOverCanvasGroup != null)
+        {
+            gameOverCanvasGroup.interactable = true;
+            gameOverCanvasGroup.blocksRaycasts = true;
+        }
     }
 
     public Era GetEraForRound(int round)
@@ -965,5 +1076,12 @@ public class GameManager : MonoBehaviour
     public int NextRandomInt(int minInclusive, int maxExclusive)
     {
         return rng.Next(minInclusive, maxExclusive);
+    }
+
+    public void OnGameOverResetClicked()
+    {
+        // Reload the current scene for a clean restart
+        Scene activeScene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(activeScene.buildIndex);
     }
 }
