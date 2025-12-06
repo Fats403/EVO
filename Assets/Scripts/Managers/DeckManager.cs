@@ -24,7 +24,7 @@ public class DeckManager : MonoBehaviour
     [Tooltip("Number of cards drawn automatically at the start of each round")]
     public int cardsPerRound = 2;
 
-    [Tooltip("Size of the deck")]
+    [Tooltip("Size of the deck (used when auto-building a random deck).")]
     public int deckSize = 20;
 
     [Tooltip("UI prefab for creature cards (fallbacks to cardPrefab if null)")]
@@ -32,6 +32,12 @@ public class DeckManager : MonoBehaviour
 
     [Tooltip("UI prefab for effect cards")]
     public GameObject effectCardPrefab;
+
+    [Header("Draft / External Deck")]
+    [Tooltip(
+        "If true, DeckManager will auto-build a random deck on Start; set false when using external decks (e.g., draft or database-loaded)."
+    )]
+    public bool autoBuildOnStart = true;
 
     [Header("Deck UI")]
     public TMP_Text deckCountText;
@@ -50,6 +56,8 @@ public class DeckManager : MonoBehaviour
     private readonly List<ScriptableObject> currentDeck = new();
     private readonly List<ScriptableObject> drawPile = new();
 
+    private bool deckInitialized;
+
     private void Awake()
     {
         Instance = this;
@@ -57,8 +65,15 @@ public class DeckManager : MonoBehaviour
 
     private void Start()
     {
-        BuildDeck();
-        StartCoroutine(DrawStartingHandRoutine());
+        // In non-draft modes, build a random deck immediately.
+        // For draft / external decks, disable autoBuildOnStart in the inspector
+        // and call InitializeFromDraft + InitializeAndDraw from game flow code.
+        if (autoBuildOnStart)
+        {
+            BuildDeck();
+            deckInitialized = true;
+            StartCoroutine(DrawStartingHandRoutine());
+        }
     }
 
     void BuildDeck()
@@ -92,14 +107,7 @@ public class DeckManager : MonoBehaviour
         drawPile.AddRange(currentDeck);
 
         // Shuffle draw order
-        for (int i = drawPile.Count - 1; i > 0; i--)
-        {
-            int j =
-                (GameManager.Instance != null)
-                    ? GameManager.Instance.NextRandomInt(0, i + 1)
-                    : Random.Range(0, i + 1);
-            (drawPile[j], drawPile[i]) = (drawPile[i], drawPile[j]);
-        }
+        ShuffleDrawPile();
         UpdateDeckUI();
     }
 
@@ -311,6 +319,64 @@ public class DeckManager : MonoBehaviour
 
             if (drawSpacingDelay > 0f && i < toDraw - 1)
                 yield return new WaitForSeconds(drawSpacingDelay);
+        }
+    }
+
+    /// <summary>
+    /// Initialize the internal deck state from an externally provided list
+    /// (e.g., a drafted deck or a deck loaded from a database).
+    /// </summary>
+    public void InitializeFromDraft(IReadOnlyList<ScriptableObject> draftedCards)
+    {
+        currentDeck.Clear();
+        drawPile.Clear();
+
+        if (draftedCards != null)
+        {
+            for (int i = 0; i < draftedCards.Count; i++)
+            {
+                var card = draftedCards[i];
+                if (card == null)
+                    continue;
+                currentDeck.Add(card);
+                drawPile.Add(card);
+            }
+        }
+
+        ShuffleDrawPile();
+        deckInitialized = true;
+        UpdateDeckUI();
+    }
+
+    /// <summary>
+    /// Called by game flow once the deck content has been provided externally
+    /// (e.g., after draft completes) to shuffle and deal the starting hand.
+    /// </summary>
+    public void InitializeAndDraw()
+    {
+        if (!deckInitialized)
+        {
+            Debug.LogWarning("DeckManager.InitializeAndDraw called before deck was initialized.");
+            return;
+        }
+
+        // Ensure draw pile is shuffled before drawing the starting hand.
+        ShuffleDrawPile();
+        StartCoroutine(DrawStartingHandRoutine());
+    }
+
+    private void ShuffleDrawPile()
+    {
+        if (drawPile == null || drawPile.Count <= 1)
+            return;
+
+        for (int i = drawPile.Count - 1; i > 0; i--)
+        {
+            int j =
+                (GameManager.Instance != null)
+                    ? GameManager.Instance.NextRandomInt(0, i + 1)
+                    : Random.Range(0, i + 1);
+            (drawPile[j], drawPile[i]) = (drawPile[i], drawPile[j]);
         }
     }
 }

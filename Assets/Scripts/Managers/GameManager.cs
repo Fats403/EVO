@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     public FoodPile foodPile;
     public WeatherManager weatherManager;
     public WeatherVideoBackgroundController weatherVideoBackground;
+    public DraftManager draftManager;
 
     [Header("UI")]
     public TextMeshProUGUI endTurnLabel;
@@ -119,7 +120,9 @@ public class GameManager : MonoBehaviour
             endTurnLabel = endTurnButton.GetComponentInChildren<TextMeshProUGUI>();
 
         // Ensure initial canvas visibility states
-        SetCanvasGroupVisible(mainCanvasGroup, true);
+        bool usingDraft = draftManager != null;
+        // Hide the main gameplay UI while we are in the draft, show it otherwise.
+        SetCanvasGroupVisible(mainCanvasGroup, !usingDraft);
         SetCanvasGroupVisible(gameOverCanvasGroup, false);
 
         UpdatePhaseLabel();
@@ -130,7 +133,19 @@ public class GameManager : MonoBehaviour
         {
             AIManager.Instance.BuildDeckAndDrawStartingHand();
         }
-        BeginSetup();
+
+        // Always start with draft phase for the local player in this prototype.
+        if (draftManager != null)
+        {
+            draftManager.BeginDraft();
+        }
+        else
+        {
+            Debug.LogWarning(
+                "GameManager: DraftManager not assigned; starting game without draft."
+            );
+            BeginSetup();
+        }
     }
 
     void SetCanvasGroupVisible(CanvasGroup cg, bool visible)
@@ -243,6 +258,25 @@ public class GameManager : MonoBehaviour
             new Color(0.9f, 0.9f, 0.6f)
         );
         BeginDraw();
+    }
+
+    /// <summary>
+    /// Called by the DraftManager once the local player's draft is complete
+    /// and the DeckManager has been initialized from the drafted list.
+    /// </summary>
+    public void OnDraftCompleted()
+    {
+        // When draft ends, reveal the main gameplay UI.
+        SetCanvasGroupVisible(mainCanvasGroup, true);
+
+        // Let the DeckManager shuffle and draw the starting hand for the drafted deck.
+        if (DeckManager.Instance != null)
+        {
+            DeckManager.Instance.InitializeAndDraw();
+        }
+
+        // Proceed into the normal game setup / round flow.
+        BeginSetup();
     }
 
     void BeginDraw()
