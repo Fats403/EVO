@@ -332,6 +332,29 @@ public class ResolutionManager : MonoBehaviour
                 )
                 .ToList();
 
+            // If no valid non-carnivore (or unrestricted) targets exist, Carnivores will still
+            // fight each other as a fallback, ignoring body size rules but respecting stealth,
+            // taunt, and any special trait gating.
+            if (
+                candidates.Count == 0
+                && attacker.data != null
+                && attacker.data.type == CardType.Carnivore
+            )
+            {
+                var carnivoreEnemies = enemies.Where(c => c.data.type == CardType.Carnivore);
+                var tauntCarnivores = carnivoreEnemies
+                    .Where(c => c.HasStatus(StatusTag.Taunt))
+                    .ToList();
+                var carniPool =
+                    (tauntCarnivores.Count > 0) ? tauntCarnivores.AsEnumerable() : carnivoreEnemies;
+                candidates = carniPool
+                    .Where(c => IsValidAttackTarget(attacker, c, ignoreBodyRule: true))
+                    .OrderBy(c =>
+                        Vector3.SqrMagnitude(c.transform.position - attacker.transform.position)
+                    )
+                    .ToList();
+            }
+
             if (candidates.Count == 0)
             {
                 acted.Add(attacker);
@@ -427,8 +450,7 @@ public class ResolutionManager : MonoBehaviour
                     var afterNeg = attacker.traits.ToArray();
                     foreach (var tr in afterNeg)
                     {
-                        if (tr != null)
-                            tr.OnAfterAttackResolved(attacker, target, wasNegated: true);
+                        tr?.OnAfterAttackResolved(attacker, target, wasNegated: true);
                     }
                 }
                 acted.Add(attacker);
@@ -450,9 +472,10 @@ public class ResolutionManager : MonoBehaviour
             if (target != null)
                 yield return target.StartCoroutine(target.FlashDamage(0.25f));
 
-            // Determine if this is an avian harass (baseline poke)
+            // Determine if this is an avian harass (baseline poke). Avians that are at
+            // least as fast as their target always deal fixed 1 damage regardless of
+            // target type; they are harassers, not primary killers.
             bool isAvian = attacker.data != null && attacker.data.type == CardType.Avian;
-            bool targetIsCarnivore = target.data != null && target.data.type == CardType.Carnivore;
             bool faster = EffSpeed(attacker) >= EffSpeed(target);
             int bodyBonus = 0;
             if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
@@ -465,10 +488,9 @@ public class ResolutionManager : MonoBehaviour
                 }
             }
             int effAtkBody = EffBody(attacker) + bodyBonus;
-            bool meetsBodyRule = effAtkBody >= EffBody(target);
 
-            // Avian harass: faster-than-target, not vs Carnivores
-            bool harass = isAvian && !targetIsCarnivore && faster;
+            // Avian harass: faster-than-target, always 1 damage vs any type
+            bool harass = isAvian && faster;
 
             // Damage calculation
             int baseDmg = harass ? 1 : Mathf.Max(1, effAtkBody - EffBody(target) + 1);
@@ -561,8 +583,7 @@ public class ResolutionManager : MonoBehaviour
                 var afterSnap = attacker.traits.ToArray();
                 foreach (var tr in afterSnap)
                 {
-                    if (tr != null)
-                        tr.OnAfterAttackResolved(attacker, target, wasNegated: false);
+                    tr?.OnAfterAttackResolved(attacker, target, wasNegated: false);
                 }
             }
             yield return new WaitForSeconds(attackResolvePause * pacingMultiplier);
@@ -601,12 +622,11 @@ public class ResolutionManager : MonoBehaviour
                     var eatSnap = c.traits.ToArray();
                     foreach (var t in eatSnap)
                     {
-                        if (t != null)
-                            t.OnAfterEat(c, taken, foodPile);
+                        t?.OnAfterEat(c, taken, foodPile);
                     }
                 }
                 FeedbackManager.Instance?.ShowFloatingText(
-                    "+1 food",
+                    "+1 Food",
                     c.transform.position,
                     new Color(0.5f, 0.8f, 1f)
                 );
@@ -630,9 +650,13 @@ public class ResolutionManager : MonoBehaviour
                 continue;
             bool didAny = false;
             bool didEat = c.eaten > 0;
-            bool isAvianOrCarnivore =
+            bool isStarvable =
                 c.data != null
-                && (c.data.type == CardType.Avian || c.data.type == CardType.Carnivore);
+                && (
+                    c.data.type == CardType.Herbivore
+                    || c.data.type == CardType.Avian
+                    || c.data.type == CardType.Carnivore
+                );
 
             // Food scoring for herbivores only
             if (c.data != null && c.data.type == CardType.Herbivore && didEat)
@@ -650,9 +674,10 @@ public class ResolutionManager : MonoBehaviour
                 didAny = true;
             }
 
-            // New starvation rules for Avian/Carnivore
-            // TODO: Herbivores need to be affected by starvation
-            if (isAvianOrCarnivore)
+            // Starvation rules for all starvable creature types (Herbivore / Avian / Carnivore).
+            // First stack is a warning (no damage). On subsequent rounds of not eating,
+            // damage per round is (stacks - 1).
+            if (isStarvable)
             {
                 int prevStacks = c.GetStatus(StatusTag.Starvation);
                 if (didEat)
@@ -671,28 +696,19 @@ public class ResolutionManager : MonoBehaviour
                         $"{FeedbackManager.TagOwner(c.owner)} {c.name} gains Starvation (x{stacksNow})"
                     );
                     didAny = true;
-                    // Lethal at 3 stacks: apply lethal damage so death-preventing traits can trigger
-                    if (stacksNow >= 3)
-                    {
-                        int lethal = c.currentHealth;
-                        if (lethal > 0)
-                            c.ApplyDamage(lethal, null);
-                        if (c == null || c.currentHealth == 0)
-                        {
-                            yield return new WaitForSeconds(starveDelay * pacingMultiplier);
-                            continue;
-                        }
-                    }
                 }
-                // End-of-round starvation damage equal to stacks
-                int dmg = c.GetStatus(StatusTag.Starvation);
+
+                // End-of-round starvation damage: first stack is a warning, so only
+                // stacks beyond the first deal damage.
+                int stacksFinal = c.GetStatus(StatusTag.Starvation);
+                int dmg = Mathf.Max(0, stacksFinal - 1);
                 if (dmg > 0)
                 {
                     c.ApplyDamage(dmg, null);
                     FeedbackManager.Instance?.ShowFloatingText(
                         $"-{dmg} HP (Starve)",
                         c.transform.position,
-                        Color.darkRed
+                        Color.red
                     );
                     didAny = true;
                     if (c == null || c.currentHealth == 0)
@@ -719,9 +735,9 @@ public class ResolutionManager : MonoBehaviour
             {
                 ScoreManager.Instance?.Add(c.owner, net);
                 FeedbackManager.Instance?.ShowFloatingText(
-                    $"Damage +{net}",
+                    $"Score +{net}",
                     c.transform.position,
-                    new Color(1f, 0.7f, 0.3f)
+                    Color.cyan
                 );
                 FeedbackManager.Instance?.Log(
                     $"{FeedbackManager.TagOwner(c.owner)} {c.name} nets {net} from combat"
@@ -742,7 +758,7 @@ public class ResolutionManager : MonoBehaviour
         return null;
     }
 
-    public bool IsValidAttackTarget(Creature atk, Creature tgt)
+    public bool IsValidAttackTarget(Creature atk, Creature tgt, bool ignoreBodyRule = false)
     {
         if (atk == null || tgt == null || atk.data == null || tgt.data == null)
             return false;
@@ -763,11 +779,10 @@ public class ResolutionManager : MonoBehaviour
                     return false;
             }
         }
-        // Avian harass rules
+        // Avian harass rules: Avians can harass any enemy type as long as they are at
+        // least as fast as the target (or have a trait that ignores the speed gate).
         if (isAvianAtk)
         {
-            if (tgt.data.type == CardType.Carnivore)
-                return false;
             bool ignoreSpeed =
                 !atk.HasStatus(StatusTag.Suppressed)
                 && atk.traits != null
@@ -776,7 +791,8 @@ public class ResolutionManager : MonoBehaviour
                 return false;
             return true;
         }
-        // If attacker has Stealth, ignore body rule for this attempt
+        // If attacker has Stealth, ignore body rule for this attempt (but still respect
+        // special Carnivore-vs-Avian speed gate below).
         if (atk.HasStatus(StatusTag.Stealth))
         {
             // Carnivore vs Avian speed gate still applies unless trait ignores it
@@ -801,6 +817,10 @@ public class ResolutionManager : MonoBehaviour
             if (!ignoreSpeed && EffSpeed(atk) < EffSpeed(tgt))
                 return false;
         }
+        // Body rule: by default, attacker can target same-body-or-smaller prey. Traits may
+        // still override this (CanTargetEqualBody / CanTargetAny). Some callers (e.g.
+        // Carnivore-vs-Carnivore fallback, reactive attacks) may request to ignore the
+        // body rule entirely.
         int bodyBonus = 0;
         if (!atk.HasStatus(StatusTag.Suppressed) && atk.traits != null)
         {
@@ -811,18 +831,12 @@ public class ResolutionManager : MonoBehaviour
             }
         }
         int effAtkBody = EffBody(atk) + bodyBonus;
-        if (EffBody(tgt) < effAtkBody)
-            return true;
-        if (EffBody(tgt) == effAtkBody)
+        int tgtBody = EffBody(tgt);
+        if (!ignoreBodyRule)
         {
-            if (!atk.HasStatus(StatusTag.Suppressed) && atk.traits != null)
-            {
-                foreach (var t in atk.traits.ToArray())
-                {
-                    if (t != null && t.CanTargetEqualBody(atk, tgt))
-                        return true;
-                }
-            }
+            // Simple rule: can attack same size or smaller by default.
+            if (effAtkBody >= tgtBody)
+                return true;
         }
         // Trait allowing any targeting skips carnivore exclusion/body gate but not stealth/taunt/speed-into-avian rule
         bool canTargetAny =
@@ -863,6 +877,30 @@ public class ResolutionManager : MonoBehaviour
             .Where(c => IsValidAttackTarget(attacker, c))
             .OrderBy(c => Vector3.SqrMagnitude(c.transform.position - attacker.transform.position))
             .ToList();
+
+        // If no valid non-carnivore (or unrestricted) targets exist, Carnivores will still
+        // fight each other as a fallback, ignoring body size rules but respecting stealth,
+        // taunt, and any special trait gating.
+        if (
+            candidates.Count == 0
+            && attacker.data != null
+            && attacker.data.type == CardType.Carnivore
+        )
+        {
+            var carnivoreEnemies = enemies.Where(c => c.data.type == CardType.Carnivore);
+            var tauntCarnivores = carnivoreEnemies
+                .Where(c => c.HasStatus(StatusTag.Taunt))
+                .ToList();
+            var carniPool =
+                (tauntCarnivores.Count > 0) ? tauntCarnivores.AsEnumerable() : carnivoreEnemies;
+            candidates = carniPool
+                .Where(c => IsValidAttackTarget(attacker, c, ignoreBodyRule: true))
+                .OrderBy(c =>
+                    Vector3.SqrMagnitude(c.transform.position - attacker.transform.position)
+                )
+                .ToList();
+        }
+
         return candidates.Count > 0 ? candidates[0] : null;
     }
 
@@ -884,7 +922,6 @@ public class ResolutionManager : MonoBehaviour
             return;
 
         bool isAvian = attacker.data != null && attacker.data.type == CardType.Avian;
-        bool targetIsCarnivore = target.data != null && target.data.type == CardType.Carnivore;
         bool faster = EffSpeed(attacker) >= EffSpeed(target);
         int bodyBonus = 0;
         if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
@@ -896,7 +933,7 @@ public class ResolutionManager : MonoBehaviour
             }
         }
         int effAtkBody = EffBody(attacker) + bodyBonus;
-        bool harass = isAvian && !targetIsCarnivore && faster;
+        bool harass = isAvian && faster;
         int baseDmg = harass ? 1 : Mathf.Max(1, effAtkBody - EffBody(target) + 1);
         // Try fixed-damage override first
         bool overridden = false;

@@ -226,6 +226,7 @@ MonoBehaviour:
   writeToFile: 0
   outputFileName: CardAudit.txt
   deckManager: {fileID: 0}
+  statusDefinitionLibrary: {fileID: 11400000, guid: cef3bfd340c584789949964a33a2650c, type: 2}
 --- !u!4 &37084838
 Transform:
   m_ObjectHideFlags: 0
@@ -4509,6 +4510,7 @@ MonoBehaviour:
   isGameOver: 0
   mainCanvasGroup: {fileID: 2118664157}
   gameOverCanvasGroup: {fileID: 205841994}
+  worldCanvasGroup: {fileID: 557953994}
   gameOverOutcomeText: {fileID: 518741332}
   player1ScoreText: {fileID: 223432673}
   player2ScoreText: {fileID: 1167619538}

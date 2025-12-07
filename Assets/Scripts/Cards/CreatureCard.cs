@@ -16,9 +16,6 @@ public class CreatureCard : ScriptableObject
     public int size = 1; // Affects food requirement and strength
     public int speed = 1; // Feeding order priority
 
-    [Range(1, 3)]
-    public int tier = 1; // Evolution stage
-
     [Header("Vitals")]
     public int maxHealth = 3;
 

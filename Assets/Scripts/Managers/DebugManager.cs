@@ -32,6 +32,10 @@ public class DebugManager : MonoBehaviour
     )]
     public DeckManager deckManager;
 
+    [Header("Status Sources")]
+    [Tooltip("Library of status definitions to include in the debug report.")]
+    public StatusDefinitionLibrary statusDefinitionLibrary;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -50,43 +54,66 @@ public class DebugManager : MonoBehaviour
         if (deckManager == null)
             deckManager = DeckManager.Instance;
 
-        LogAllCards();
+        LogGameData();
     }
 
-    public void LogAllCards()
+    public void LogGameData()
     {
-        if (deckManager == null || deckManager.allCards == null || deckManager.allCards.Count == 0)
-        {
-            Debug.LogWarning(
-                $"{logPrefix} No deckManager or allCards configured; skipping card log."
-            );
-            return;
-        }
-
-        var creatures = new List<CreatureCard>();
-        var effects = new List<EffectCard>();
-
-        foreach (var so in deckManager.allCards)
-        {
-            if (so == null)
-                continue;
-
-            if (so is CreatureCard cc && !creatures.Contains(cc))
-                creatures.Add(cc);
-            else if (so is EffectCard ec && !effects.Contains(ec))
-                effects.Add(ec);
-        }
-
         var sb = new StringBuilder(4096);
 
-        AppendCreatureCards(creatures, sb);
-        sb.AppendLine();
-        AppendEffectCards(effects, sb);
+        bool hasSection = false;
+
+        // Cards
+        if (deckManager == null || deckManager.allCards == null || deckManager.allCards.Count == 0)
+        {
+            sb.AppendLine($"{logPrefix} No deckManager or allCards configured; skipping card log.");
+        }
+        else
+        {
+            var creatures = new List<CreatureCard>();
+            var effects = new List<EffectCard>();
+
+            foreach (var so in deckManager.allCards)
+            {
+                if (so == null)
+                    continue;
+
+                if (so is CreatureCard cc && !creatures.Contains(cc))
+                    creatures.Add(cc);
+                else if (so is EffectCard ec && !effects.Contains(ec))
+                    effects.Add(ec);
+            }
+
+            AppendCreatureCards(creatures, sb);
+            sb.AppendLine();
+            AppendEffectCards(effects, sb);
+            hasSection = true;
+        }
+
+        // Statuses
+        if (
+            statusDefinitionLibrary == null
+            || statusDefinitionLibrary.entries == null
+            || statusDefinitionLibrary.entries.Count == 0
+        )
+        {
+            sb.AppendLine(
+                $"{logPrefix} No statusDefinitionLibrary or entries configured; skipping status log."
+            );
+        }
+        else
+        {
+            if (hasSection)
+                sb.AppendLine();
+
+            AppendStatuses(sb);
+            hasSection = true;
+        }
 
         string report = sb.ToString();
         if (string.IsNullOrWhiteSpace(report))
         {
-            Debug.Log($"{logPrefix} Card report is empty.");
+            Debug.Log($"{logPrefix} Game data report is empty.");
             return;
         }
 
@@ -96,7 +123,7 @@ public class DebugManager : MonoBehaviour
         if (copyToClipboard)
         {
             GUIUtility.systemCopyBuffer = report;
-            Debug.Log($"{logPrefix} Full card report copied to clipboard.");
+            Debug.Log($"{logPrefix} Full game data report copied to clipboard.");
         }
 
         if (writeToFile)
@@ -104,17 +131,23 @@ public class DebugManager : MonoBehaviour
             try
             {
                 string fileName = string.IsNullOrEmpty(outputFileName)
-                    ? "CardAudit.txt"
+                    ? "GameDataAudit.txt"
                     : outputFileName;
                 string path = Path.Combine(Application.persistentDataPath, fileName);
                 File.WriteAllText(path, report);
-                Debug.Log($"{logPrefix} Card report written to file: {path}");
+                Debug.Log($"{logPrefix} Game data report written to file: {path}");
             }
             catch (System.Exception ex)
             {
-                Debug.LogWarning($"{logPrefix} Failed to write card report file: {ex}");
+                Debug.LogWarning($"{logPrefix} Failed to write game data report file: {ex}");
             }
         }
+    }
+
+    // Backwards-compatible entry point if anything else still calls this
+    public void LogAllCards()
+    {
+        LogGameData();
     }
 
     void AppendCreatureCards(List<CreatureCard> creatures, StringBuilder sb)
@@ -127,7 +160,7 @@ public class DebugManager : MonoBehaviour
 
         sb.AppendLine($"{logPrefix} === CREATURE CARDS ({creatures.Count}) ===");
 
-        foreach (var c in creatures.OrderBy(c => c.tier).ThenBy(c => c.cardName))
+        foreach (var c in creatures.OrderBy(c => c.momentumCost).ThenBy(c => c.cardName))
         {
             if (c == null)
                 continue;
@@ -136,7 +169,7 @@ public class DebugManager : MonoBehaviour
             string dinoName = string.IsNullOrEmpty(c.dinosaurName) ? "" : $" ({c.dinosaurName})";
 
             string header =
-                $"{logPrefix} [CREATURE] {name}{dinoName} | Type={c.type} | Tier={c.tier} | COST={c.momentumCost}";
+                $"{logPrefix} [CREATURE] {name}{dinoName} | Type={c.type} | COST={c.momentumCost}";
             string stats = $"HP={c.maxHealth} | SPD={c.speed} | SIZE={c.size}";
 
             string traitBlock = "";
@@ -183,8 +216,7 @@ public class DebugManager : MonoBehaviour
                 continue;
 
             string name = string.IsNullOrEmpty(e.effectName) ? "(Unnamed Effect)" : e.effectName;
-            string header =
-                $"{logPrefix} [EFFECT] {name} | COST={e.momentumCost} | Era>={e.minEraAllowed} | ClearOnly={e.requiresClearWeather}";
+            string header = $"{logPrefix} [EFFECT] {name} | COST={e.momentumCost}";
 
             // High-level targeting summary
             string targeting =
@@ -204,10 +236,7 @@ public class DebugManager : MonoBehaviour
                     if (t == null)
                         continue;
                     string tName = string.IsNullOrEmpty(t.traitName) ? t.name : t.traitName;
-                    string tDesc = string.IsNullOrEmpty(t.description)
-                        ? "(no description)"
-                        : t.description;
-                    parts.Add($"{tName}: {tDesc}");
+                    parts.Add($"{tName}");
                 }
                 if (parts.Count > 0)
                     traitBlock = "EffectTraits: " + string.Join(" | ", parts);
@@ -221,6 +250,32 @@ public class DebugManager : MonoBehaviour
             sb.AppendLine($"{logPrefix}    {targeting}");
             sb.AppendLine($"{logPrefix}    Text: {desc}");
             sb.AppendLine($"{logPrefix}    {traitBlock}");
+        }
+    }
+
+    void AppendStatuses(StringBuilder sb)
+    {
+        if (
+            statusDefinitionLibrary == null
+            || statusDefinitionLibrary.entries == null
+            || statusDefinitionLibrary.entries.Count == 0
+        )
+        {
+            sb.AppendLine($"{logPrefix} No status definitions found.");
+            return;
+        }
+
+        sb.AppendLine(
+            $"{logPrefix} === STATUS DEFINITIONS ({statusDefinitionLibrary.entries.Count}) ==="
+        );
+
+        foreach (var e in statusDefinitionLibrary.entries.OrderBy(e => e.displayName))
+        {
+            string name = string.IsNullOrEmpty(e.displayName) ? e.tag.ToString() : e.displayName;
+            string desc = string.IsNullOrEmpty(e.description) ? "(no description)" : e.description;
+
+            sb.AppendLine($"{logPrefix} [STATUS] {name} ({e.tag})");
+            sb.AppendLine($"{logPrefix}    {desc}");
         }
     }
 }

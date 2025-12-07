@@ -55,6 +55,9 @@ public class GameManager : MonoBehaviour
     public CanvasGroup mainCanvasGroup;
     public CanvasGroup gameOverCanvasGroup;
 
+    [Tooltip("World-space gameplay canvas (Canvas_World).")]
+    public CanvasGroup worldCanvasGroup;
+
     [Header("Game Over UI")]
     public TextMeshProUGUI gameOverOutcomeText;
     public TextMeshProUGUI player1ScoreText;
@@ -121,18 +124,17 @@ public class GameManager : MonoBehaviour
 
         // Ensure initial canvas visibility states
         bool usingDraft = draftManager != null;
-        // Hide the main gameplay UI while we are in the draft, show it otherwise.
+        // Hide the main gameplay UI and world canvas while we are in the draft, show them otherwise.
         SetCanvasGroupVisible(mainCanvasGroup, !usingDraft);
+        SetCanvasGroupVisible(worldCanvasGroup, !usingDraft);
+        if (worldCanvasGroup != null)
+            worldCanvasGroup.gameObject.SetActive(!usingDraft);
         SetCanvasGroupVisible(gameOverCanvasGroup, false);
 
         UpdatePhaseLabel();
-        if (weatherVideoBackground != null)
-            weatherVideoBackground.ForceTo(WeatherType.Clear);
+        weatherVideoBackground?.ForceTo(WeatherType.Clear);
         // Initialize AI deck/hand before the first round begins so both players follow the same rules.
-        if (AIManager.Instance != null)
-        {
-            AIManager.Instance.BuildDeckAndDrawStartingHand();
-        }
+        AIManager.Instance?.BuildDeckAndDrawStartingHand();
 
         // Always start with draft phase for the local player in this prototype.
         if (draftManager != null)
@@ -268,6 +270,9 @@ public class GameManager : MonoBehaviour
     {
         // When draft ends, reveal the main gameplay UI.
         SetCanvasGroupVisible(mainCanvasGroup, true);
+        SetCanvasGroupVisible(worldCanvasGroup, true);
+        if (worldCanvasGroup != null)
+            worldCanvasGroup.gameObject.SetActive(true);
 
         // Let the DeckManager shuffle and draw the starting hand for the drafted deck.
         if (DeckManager.Instance != null)
@@ -883,31 +888,13 @@ public class GameManager : MonoBehaviour
             p2MomentumLabel.text = $"{p2Momentum} / {currentEraMomentum}";
     }
 
-    public bool IsTierAllowedInEra(int tier, Era era)
-    {
-        switch (era)
-        {
-            case Era.Triassic:
-                // Baseline: only Tier 1; higher tiers must be enabled by special effects
-                return tier == 1;
-            case Era.Jurassic:
-                // Tier 1–2 normally available
-                return tier >= 1 && tier <= 2;
-            case Era.Cretaceous:
-            case Era.Extinction:
-                // All tiers available
-                return tier >= 1 && tier <= 3;
-            default:
-                return true;
-        }
-    }
-
     public int GetCreatureCost(CreatureCard card)
     {
         if (card == null)
             return 0;
-        // Creature momentum cost is explicitly defined on the card asset.
-        // (Tier still gates availability by era via IsTierAllowedInEra.)
+        // Creature momentum cost is explicitly defined on the card asset. Tiers no longer
+        // gate availability by era; they are used purely as design metadata / to inform
+        // how expensive a creature should be.
         return Mathf.Max(0, card.momentumCost);
     }
 
@@ -975,13 +962,6 @@ public class GameManager : MonoBehaviour
         if (owner == SlotOwner.Player1 && p1ActionLocked)
         {
             failureReason = "You have already taken an action. Wait for the other player.";
-            return false;
-        }
-
-        if (!IsTierAllowedInEra(card.tier, currentEra))
-        {
-            failureReason =
-                $"Tier {card.tier} creatures are not available in the {currentEra} era.";
             return false;
         }
 
@@ -1079,16 +1059,59 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
-        // Weather requirement (e.g., Solar Recovery)
-        // TODO: change this to specific weather requirements
-        if (card.requiresClearWeather)
+        // Weather requirements: if any allowed-weather flags are set on the card, it can
+        // only be played while the current weather matches one of those. If none are set,
+        // the card may be played in any weather.
+        bool hasWeatherRestriction =
+            card.allowInClear || card.allowInDrought || card.allowInStorm || card.allowInWildfire;
+        if (hasWeatherRestriction)
         {
-            if (
-                WeatherManager.Instance == null
-                || WeatherManager.Instance.CurrentWeather != WeatherType.Clear
-            )
+            if (WeatherManager.Instance == null)
             {
-                failureReason = "This card can only be played in Clear weather.";
+                failureReason =
+                    "This card has weather requirements, but no WeatherManager is present.";
+                return false;
+            }
+
+            var currentWeather = WeatherManager.Instance.CurrentWeather;
+            bool allowed =
+                (currentWeather == WeatherType.Clear && card.allowInClear)
+                || (currentWeather == WeatherType.Drought && card.allowInDrought)
+                || (currentWeather == WeatherType.Storm && card.allowInStorm)
+                || (currentWeather == WeatherType.Wildfire && card.allowInWildfire);
+
+            if (!allowed)
+            {
+                // Build a human-readable description of the allowed weathers for failure text.
+                System.Collections.Generic.List<string> names =
+                    new System.Collections.Generic.List<string>();
+                if (card.allowInClear)
+                    names.Add("Clear");
+                if (card.allowInDrought)
+                    names.Add("Drought");
+                if (card.allowInStorm)
+                    names.Add("Storm");
+                if (card.allowInWildfire)
+                    names.Add("Wildfire");
+
+                string weatherLabel;
+                if (names.Count == 1)
+                {
+                    weatherLabel = names[0] + " weather";
+                }
+                else if (names.Count == 2)
+                {
+                    weatherLabel = $"{names[0]} or {names[1]} weather";
+                }
+                else
+                {
+                    // e.g., "Clear, Drought, or Storm weather"
+                    var allButLast = names.GetRange(0, names.Count - 1);
+                    string joined = string.Join(", ", allButLast);
+                    weatherLabel = $"{joined}, or {names[names.Count - 1]} weather";
+                }
+
+                failureReason = $"This card can only be played in {weatherLabel}.";
                 return false;
             }
         }

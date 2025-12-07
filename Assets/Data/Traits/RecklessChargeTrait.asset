@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: RecklessChargeTrait
   m_EditorClassIdentifier: Assembly-CSharp::RecklessChargeTrait
   traitName: Reckless Charge
-  description: Can attack targets with equal body size. Takes 1 damage after each
-    attack
+  description: Always attacks the closest enemy, ignoring body rules. After each
+    successful attack, takes 1 recoil damage.

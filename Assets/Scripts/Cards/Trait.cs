@@ -13,11 +13,6 @@ public abstract class Trait : ScriptableObject
         return 0;
     }
 
-    public virtual bool CanTargetEqualBody(Creature self, Creature target)
-    {
-        return false;
-    }
-
     public virtual int ModifyHerbivoreEatAmount(Creature self, int baseAmount, FoodPile pile)
     {
         return baseAmount;

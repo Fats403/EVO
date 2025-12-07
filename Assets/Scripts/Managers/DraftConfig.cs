@@ -67,3 +67,5 @@ public class DraftConfig : ScriptableObject
         return 2;
     }
 }
+
+

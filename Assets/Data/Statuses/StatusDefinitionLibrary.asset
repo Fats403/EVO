@@ -36,7 +36,7 @@ MonoBehaviour:
   - tag: 4
     displayName: Starvation
     description: Each stack represents severe hunger that deals damage equal to the
-      number of stacks; 3 stacks of Starvation will cause instant death.
+      number of stacks minus one.
     icon: {fileID: 21300000, guid: 7037a2d33515d4e39a5529624fac1102, type: 3}
   - tag: 5
     displayName: Taunt
@@ -85,13 +85,12 @@ MonoBehaviour:
   - tag: 14
     displayName: Stealth
     description: While Stealth is active, this creature cannot be directly targeted.
-      Stealth is removed when it takes real damage.
+      Stealth is removed when it takes damage.
     icon: {fileID: 21300000, guid: 3a6efee49523e4e1bb1637bb0b41c7f5, type: 3}
   - tag: 15
     displayName: Absorb
     description: Absorb reduces incoming damage by its total stacks, consuming stacks
-      equal to the amount absorbed. Remaining Absorb is cleared at the end of the
-      round.
+      equal to the amount absorbed. Absorb is cleared at the end of the round.
     icon: {fileID: 21300000, guid: 0ea3e55402c18462c87fc40737d81df7, type: 3}
   - tag: 16
     displayName: Body Up

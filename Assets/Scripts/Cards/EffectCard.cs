@@ -40,8 +40,14 @@ public class EffectCard : ScriptableObject
     [Tooltip("Minimum era in which this card can be played")]
     public Era minEraAllowed = Era.Triassic;
 
-    [Tooltip("If true, this card may only be played while the weather is Clear")]
-    public bool requiresClearWeather = false;
+    [Header("Weather Requirements")]
+    [Tooltip(
+        "If none are checked, this card can be played in any weather. If one or more are checked, the card can only be played while the weather matches one of the selected types."
+    )]
+    public bool allowInClear = false;
+    public bool allowInDrought = false;
+    public bool allowInStorm = false;
+    public bool allowInWildfire = false;
 
     [Header("AI Hints (Optional)")]
     [Tooltip(

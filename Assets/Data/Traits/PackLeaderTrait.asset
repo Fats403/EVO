@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PackLeaderTrait
   traitName: Pack Leader
   description: When this attacks, all other allied carnivores attack the same target
-    immediately after (each must follow body rules individually)
+    immediately after (if its allowed to)

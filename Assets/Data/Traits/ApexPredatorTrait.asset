@@ -13,5 +13,4 @@ MonoBehaviour:
   m_Name: ApexPredatorTrait
   m_EditorClassIdentifier: Assembly-CSharp::ApexPredatorTrait
   traitName: Apex Predator
-  description: At round start, all allied carnivores gain Rage. This creature can
-    attack targets with equal body size
+  description: At round start, all allied carnivores gain Rage.

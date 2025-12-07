@@ -26,8 +26,6 @@ public class CreatureCardUI : BaseCardUI
 
         if (nameText != null)
             nameText.text = data.cardName;
-        if (tierText != null)
-            tierText.text = $"Tier: {data.tier}";
         if (momentumCostText != null)
             momentumCostText.text = data != null ? data.momentumCost.ToString() : "";
         if (speedText != null)
