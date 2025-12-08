@@ -4517,7 +4517,7 @@ MonoBehaviour:
   gameOverFadeDuration: 0.75
   postExtinctionUIPauseSeconds: 1.5
   currentPhase: 0
-  rngSeed: 0
+  rngSeed: -975412045
   startingPlayerForRound: 0
   cardPreviewHoldSeconds: 3.5
   effectRevealDelaySeconds: 0.5
@@ -9354,6 +9354,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 833a5af9bfe4d400bba690e12f114305, type: 2}
   - {fileID: 11400000, guid: 62b6dcf996aa1470fa0e3104f68a7db0, type: 2}
   - {fileID: 11400000, guid: 0f79b95179d69426784c88a0008fa4d4, type: 2}
+  - {fileID: 11400000, guid: 1ef57dd9e23af4d2d930c794a25f2c7d, type: 2}
   handPanel: {fileID: 2128517701}
   creaturePrefab: {fileID: 5765744327105739345, guid: df2ced5fde386438bb251dfc723d9caf, type: 3}
   hoverIndicatorPrefab: {fileID: 895323091584285675, guid: 60a0e7314dc02499d8a7ca1e95b37f98, type: 3}

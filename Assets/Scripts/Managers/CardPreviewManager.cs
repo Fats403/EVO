@@ -128,6 +128,25 @@ public class CardPreviewManager : MonoBehaviour
         BeginForcedTimer();
     }
 
+    /// <summary>
+    /// Show an effect card preview with a custom instructional caption, without
+    /// starting the forced preview timer. Used for manual-selection flows.
+    /// </summary>
+    public void ShowEffectSelection(EffectCard card, SlotOwner owner, string caption)
+    {
+        if (card == null)
+            return;
+
+        forcedType = ForcedPreviewType.Effect;
+        ShowEffectPreview(card, owner);
+
+        if (forcedCaptionText != null)
+        {
+            forcedCaptionText.text = caption ?? string.Empty;
+            forcedCaptionText.gameObject.SetActive(true);
+        }
+    }
+
     public void ClearForced()
     {
         if (forcedRoutine != null)

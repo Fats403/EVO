@@ -2,7 +2,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Collider2D))]
-public class CreatureHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class CreatureInteractionHandler
+    : MonoBehaviour,
+        IPointerEnterHandler,
+        IPointerExitHandler,
+        IPointerClickHandler
 {
     private Creature creature;
 
@@ -24,6 +28,16 @@ public class CreatureHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointe
     public void OnPointerExit(PointerEventData eventData)
     {
         CancelHoverAndHide();
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (creature == null)
+            return;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.HandleManualEffectCreatureClicked(creature);
+        }
     }
 
     private void StartHover()

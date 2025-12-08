@@ -21,6 +21,12 @@ public class EffectCard : ScriptableObject
     [Tooltip("Marks this card as a global effect (no creature targets)")]
     public bool isGlobal;
 
+    [Header("Manual Selection")]
+    [Tooltip(
+        "If true, this card is played and then the player must click targets manually using targetCount/maxTargets instead of auto-selecting on drag release."
+    )]
+    public bool requiresManualSelection = false;
+
     [Header("Multi-Select (UI)")]
     [Tooltip("If true, the UI treats this as a multi-select and uses maxTargets.")]
     public bool multiSelect = false;
@@ -31,6 +37,16 @@ public class EffectCard : ScriptableObject
 
     [Tooltip("Optional global effect to register on play (instanced per use)")]
     public GlobalEffectBase globalEffect;
+
+    [Tooltip(
+        "Optional bespoke runtime logic that runs once on the final chosen target set (e.g., swapping positions)."
+    )]
+    public RuntimeEffectBase runtimeEffect;
+
+    [Tooltip(
+        "If true, EffectsManager will NOT play the default hit-bounce animation on targets when this card resolves."
+    )]
+    public bool suppressHitBounce = false;
 
     [Header("Cost & Conditions")]
     [Tooltip("Momentum cost to play this effect card")]

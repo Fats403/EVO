@@ -573,6 +573,22 @@ public class GameManager : MonoBehaviour
         FeedbackManager.Instance.Log($"{FeedbackManager.TagOwner(owner)} played {cardName}");
     }
 
+    // --- Manual effect-card target selection state ---
+
+    private class ManualEffectSelectionState
+    {
+        public EffectCard card;
+        public SlotOwner owner;
+        public List<Creature> candidates = new List<Creature>();
+        public HashSet<Creature> selected = new HashSet<Creature>();
+        public int requiredCount;
+    }
+
+    private ManualEffectSelectionState manualEffectSelection;
+
+    public bool HasActiveManualEffectSelection =>
+        manualEffectSelection != null && manualEffectSelection.card != null;
+
     public bool TryPlayEffectCard(
         EffectCard card,
         SlotOwner owner,
@@ -584,6 +600,14 @@ public class GameManager : MonoBehaviour
         if (card == null)
         {
             failureReason = "Invalid effect card.";
+            return false;
+        }
+
+        // Manual-selection cards should not be resolved through this path; they are
+        // started via TryBeginManualEffectSelection and completed via clicks.
+        if (card.requiresManualSelection)
+        {
+            failureReason = "This effect requires you to select targets manually.";
             return false;
         }
 
@@ -603,6 +627,7 @@ public class GameManager : MonoBehaviour
     {
         AnnounceCardPlay(owner, card.effectName);
         CardPreviewManager.Instance?.ShowForcedEffect(card, owner);
+
         // First: wait for the effect reveal delay, then actually apply the effect logic.
         float revealDelay = Mathf.Max(0f, effectRevealDelaySeconds);
         if (revealDelay > 0f)
@@ -622,6 +647,180 @@ public class GameManager : MonoBehaviour
             p1ActionLocked = false;
 
         CompleteTurnAction(owner);
+    }
+
+    /// <summary>
+    /// Begins a manual-selection effect card flow where the player clicks up to
+    /// a fixed number of valid targets before the effect resolves.
+    /// </summary>
+    public bool TryBeginManualEffectSelection(
+        EffectCard card,
+        SlotOwner owner,
+        out string failureReason
+    )
+    {
+        failureReason = null;
+
+        if (card == null)
+        {
+            failureReason = "Invalid effect card.";
+            return false;
+        }
+
+        if (!card.requiresManualSelection)
+        {
+            failureReason = "This effect does not use manual target selection.";
+            return false;
+        }
+
+        if (manualEffectSelection != null)
+        {
+            failureReason = "You are already choosing targets for another effect.";
+            return false;
+        }
+
+        // Check rules and momentum without spending yet.
+        if (!CanPlayEffectCardPreview(card, owner, out failureReason))
+            return false;
+
+        // Discover all valid, living candidates for this effect.
+        IEnumerable<Creature> allCreatures;
+        if (resolutionManager != null)
+        {
+            allCreatures = resolutionManager.AllCreatures();
+        }
+        else
+        {
+            allCreatures = FindObjectsByType<Creature>(FindObjectsSortMode.None);
+        }
+
+        var candidates = allCreatures
+            .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
+            .Where(c =>
+                EffectsManager.Instance != null
+                && EffectsManager.Instance.IsValidTarget(card, c, owner)
+            )
+            .ToList();
+
+        int requiredCount = 1;
+        switch (card.targetCount)
+        {
+            case EffectTargetCount.One:
+                requiredCount = 1;
+                break;
+            case EffectTargetCount.ManySelectUpToN:
+                requiredCount = Mathf.Max(1, card.maxTargets);
+                break;
+            default:
+                requiredCount = 1;
+                break;
+        }
+
+        if (candidates.Count < requiredCount)
+        {
+            failureReason =
+                requiredCount == 1
+                    ? "There are no valid targets for this effect."
+                    : $"You need at least {requiredCount} valid targets for this effect.";
+            return false;
+        }
+
+        // Spend momentum and perform final rules check now that we know it is playable.
+        if (!CanPlayEffectCard(card, owner, out failureReason))
+            return false;
+
+        if (owner == SlotOwner.Player1)
+            p1ActionLocked = true;
+
+        manualEffectSelection = new ManualEffectSelectionState
+        {
+            card = card,
+            owner = owner,
+            candidates = candidates,
+            selected = new HashSet<Creature>(),
+            requiredCount = requiredCount,
+        };
+
+        if (FeedbackManager.Instance != null)
+        {
+            string ownerTag = FeedbackManager.TagOwner(owner);
+            string msg =
+                requiredCount == 1
+                    ? $"{ownerTag}: Choose a target for {card.effectName}."
+                    : $"{ownerTag}: Choose {requiredCount} targets for {card.effectName}.";
+            FeedbackManager.Instance.Log(msg);
+        }
+
+        // Show the effect card preview with an instructional caption so the
+        // player has clear context while choosing targets.
+        if (CardPreviewManager.Instance != null)
+        {
+            string caption =
+                requiredCount == 1 ? "Select 1 Creature" : $"Select {requiredCount} Creatures";
+            CardPreviewManager.Instance.ShowEffectSelection(card, owner, caption);
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Called by creatures when clicked; only active while a manual-selection
+    /// effect is in progress. Clicks outside the candidate set are ignored.
+    /// </summary>
+    public void HandleManualEffectCreatureClicked(Creature c)
+    {
+        if (c == null || manualEffectSelection == null)
+            return;
+
+        var state = manualEffectSelection;
+
+        if (state.card == null)
+            return;
+
+        if (!state.candidates.Contains(c))
+            return;
+
+        if (c.currentHealth <= 0 || c.isDying)
+            return;
+
+        bool nowSelected;
+        if (state.selected.Contains(c))
+        {
+            state.selected.Remove(c);
+            nowSelected = false;
+        }
+        else
+        {
+            state.selected.Add(c);
+            nowSelected = true;
+        }
+
+        var th = c.GetComponent<TargetHighlightController>();
+        if (th != null)
+        {
+            th.SetHighlighted(nowSelected);
+        }
+
+        if (state.selected.Count >= state.requiredCount)
+        {
+            // Finalize: clear all highlights and resolve the effect.
+            var finalTargets = state.selected.Where(t => t != null).ToList();
+
+            foreach (var cand in state.candidates)
+            {
+                if (cand == null)
+                    continue;
+                var h = cand.GetComponent<TargetHighlightController>();
+                if (h != null)
+                    h.SetHighlighted(false);
+            }
+
+            var finalCard = state.card;
+            var finalOwner = state.owner;
+            manualEffectSelection = null;
+
+            StartCoroutine(PlayEffectCardRoutine(finalCard, finalOwner, finalTargets));
+        }
     }
 
     IEnumerator BeginResolve()

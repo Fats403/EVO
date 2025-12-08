@@ -108,7 +108,31 @@ public class EffectCardUI : BaseCardUI
         var target = FindNearestValidTarget(eventData.position, out float distPx);
         bool played = false;
 
-        if (effectData != null && effectData.isGlobal)
+        if (effectData != null && effectData.requiresManualSelection)
+        {
+            var dz = GlobalEffectDropZone.Instance;
+            if (dz != null && dz.IsPointerInside(eventData.position))
+            {
+                string reason = null;
+                if (
+                    GameManager.Instance != null
+                    && GameManager.Instance.TryBeginManualEffectSelection(
+                        effectData,
+                        owner,
+                        out reason
+                    )
+                )
+                {
+                    played = true;
+                }
+                else if (!string.IsNullOrEmpty(reason))
+                {
+                    FeedbackManager.Instance?.Log(reason);
+                    FeedbackManager.Instance?.ShowGlobalAlert(reason, new Color(1f, 0.5f, 0.5f));
+                }
+            }
+        }
+        else if (effectData != null && effectData.isGlobal)
         {
             var dz = GlobalEffectDropZone.Instance;
             if (dz != null && dz.IsPointerInside(eventData.position))
@@ -255,6 +279,10 @@ public class EffectCardUI : BaseCardUI
         highlighted.Clear();
 
         if (effectData == null)
+            return;
+        // Manual-selection effects do not use drag-based highlights; they highlight
+        // only when creatures are actually selected via clicks.
+        if (effectData.requiresManualSelection)
             return;
         if (effectData.isGlobal)
         {

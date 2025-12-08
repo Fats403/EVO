@@ -73,9 +73,9 @@ public class Creature : MonoBehaviour
             artworkImage.sprite = data.artwork;
         }
 
-        // Ensure hover handler and a 2D collider for mouse events
-        if (GetComponent<CreatureHoverHandler>() == null)
-            gameObject.AddComponent<CreatureHoverHandler>();
+        // Ensure interaction handler and a 2D collider for mouse events
+        if (GetComponent<CreatureInteractionHandler>() == null)
+            gameObject.AddComponent<CreatureInteractionHandler>();
         if (GetComponent<Collider2D>() == null)
         {
             var bc = gameObject.AddComponent<BoxCollider2D>();

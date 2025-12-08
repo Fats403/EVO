@@ -70,6 +70,10 @@ public class EffectsManager : MonoBehaviour
         if (card == null || targets == null)
             return;
 
+        // Materialize a list early so we can reuse it for trait attachment,
+        // runtime effects, and feedback.
+        var effectiveTargets = targets;
+
         // If card is global but also attaches traits to a side/type, derive targets now
         if (
             card.isGlobal
@@ -118,10 +122,12 @@ public class EffectsManager : MonoBehaviour
                     continue;
                 list.Add(c);
             }
-            targets = list;
+            effectiveTargets = list;
         }
 
-        foreach (var c in targets.Where(t => t != null))
+        var targetList = effectiveTargets.Where(t => t != null).ToList();
+
+        foreach (var c in targetList)
         {
             // Attach traits
             if (card.traitsToAttachToTargets != null)
@@ -146,8 +152,9 @@ public class EffectsManager : MonoBehaviour
                 }
             }
 
-            // Visual feedback: a smooth scale/bob when this effect actually hits the creature.
-            if (c.gameObject.activeInHierarchy)
+            // Visual feedback: a smooth scale/bob when this effect actually hits the creature,
+            // unless this card has explicitly disabled the default hit-bounce.
+            if (!card.suppressHitBounce && c.gameObject.activeInHierarchy)
             {
                 c.StartCoroutine(c.PlayEffectHitBounce(1.08f, 0.2f, 0.45f));
             }
@@ -158,6 +165,13 @@ public class EffectsManager : MonoBehaviour
         {
             var ge = ScriptableObject.Instantiate(card.globalEffect);
             resolutionManager.RegisterGlobalEffect(ge);
+        }
+
+        // Custom runtime effect hook for bespoke logic over the final target set
+        if (card.runtimeEffect != null && resolutionManager != null)
+        {
+            var re = ScriptableObject.Instantiate(card.runtimeEffect);
+            re.Apply(targetList, player, resolutionManager);
         }
 
         // Feedback
