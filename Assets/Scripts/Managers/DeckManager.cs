@@ -232,6 +232,16 @@ public class DeckManager : MonoBehaviour
     {
         if (handPanel == null)
             return 0;
+        // Prefer using the hand layout controller's logical count so that cards
+        // currently being dragged from the hand still count as "in hand" for
+        // max-hand and draw-limit calculations.
+        var layout = handPanel.GetComponentInParent<HandLayoutController>();
+        if (layout != null)
+        {
+            return layout.GetLogicalCardCount();
+        }
+
+        // Fallback to raw child count if no layout controller is present.
         return handPanel.childCount;
     }
 

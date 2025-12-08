@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CardPreviewManager : MonoBehaviour
 {
@@ -51,6 +52,10 @@ public class CardPreviewManager : MonoBehaviour
     private CanvasGroup effectGroup;
     private RectTransform effectRect;
     private Coroutine effectAnimRoutine;
+
+    // One-time flags so we only strip interaction from the HUD previews once.
+    private bool creaturePreviewMadePassive;
+    private bool effectPreviewMadePassive;
 
     void Awake()
     {
@@ -281,6 +286,29 @@ public class CardPreviewManager : MonoBehaviour
             if (creatureGroup == null)
                 creatureGroup = creaturePreviewUI.gameObject.AddComponent<CanvasGroup>();
         }
+
+        // Ensure the HUD preview cannot be dragged or intercept pointer events.
+        // We only want it to display information; all interaction should go to
+        // the actual hand cards / board.
+        if (!creaturePreviewMadePassive)
+        {
+            var baseCard = creaturePreviewUI.GetComponent<BaseCardUI>();
+            if (baseCard != null)
+            {
+                baseCard.enabled = false;
+            }
+
+            var graphics = creaturePreviewUI.GetComponentsInChildren<Graphic>(
+                includeInactive: true
+            );
+            foreach (var g in graphics)
+            {
+                if (g != null)
+                    g.raycastTarget = false;
+            }
+
+            creaturePreviewMadePassive = true;
+        }
     }
 
     void EnsureEffectPreviewComponents()
@@ -294,6 +322,25 @@ public class CardPreviewManager : MonoBehaviour
             effectGroup = effectPreviewUI.GetComponent<CanvasGroup>();
             if (effectGroup == null)
                 effectGroup = effectPreviewUI.gameObject.AddComponent<CanvasGroup>();
+        }
+
+        // Ensure the HUD preview for effect cards cannot be dragged or clicked.
+        if (!effectPreviewMadePassive)
+        {
+            var baseCard = effectPreviewUI.GetComponent<BaseCardUI>();
+            if (baseCard != null)
+            {
+                baseCard.enabled = false;
+            }
+
+            var graphics = effectPreviewUI.GetComponentsInChildren<Graphic>(includeInactive: true);
+            foreach (var g in graphics)
+            {
+                if (g != null)
+                    g.raycastTarget = false;
+            }
+
+            effectPreviewMadePassive = true;
         }
     }
 

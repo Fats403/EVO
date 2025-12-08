@@ -603,9 +603,11 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
-        // Manual-selection cards should not be resolved through this path; they are
-        // started via TryBeginManualEffectSelection and completed via clicks.
-        if (card.requiresManualSelection)
+        // Manual-selection cards should not be resolved through this path for the
+        // human player; they are started via TryBeginManualEffectSelection and
+        // completed via clicks. The AI, however, can still resolve them directly
+        // by providing an auto-chosen target set.
+        if (card.requiresManualSelection && owner == SlotOwner.Player1)
         {
             failureReason = "This effect requires you to select targets manually.";
             return false;

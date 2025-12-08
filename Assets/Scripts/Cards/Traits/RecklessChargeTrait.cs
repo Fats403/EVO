@@ -48,11 +48,14 @@ public class RecklessChargeTrait : Trait
         // Recoil only on successful (non-negated) attacks.
         if (wasNegated)
             return;
-        self.ApplyDamage(1, self);
-        FeedbackManager.Instance?.ShowFloatingText(
-            "-1 HP [Recoil]",
-            self.transform.position,
-            new Color(1f, 0.5f, 0.2f)
-        );
+        int applied = self.ApplyDamage(1, self);
+        if (applied > 0)
+        {
+            FeedbackManager.Instance?.ShowFloatingText(
+                $"-{applied} HP [Recoil]",
+                self.transform.position,
+                new Color(1f, 0.5f, 0.2f)
+            );
+        }
     }
 }

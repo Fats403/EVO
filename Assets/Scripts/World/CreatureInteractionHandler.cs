@@ -20,6 +20,24 @@ public class CreatureInteractionHandler
         creature = GetComponent<Creature>();
     }
 
+    private void OnDisable()
+    {
+        // If this creature is going away (death, scene unload, etc.), make sure
+        // any hover preview tied to it is cleared so the HUD doesn't show a
+        // ghost card.
+        pointerInside = false;
+        if (hoverRoutine != null)
+        {
+            StopCoroutine(hoverRoutine);
+            hoverRoutine = null;
+        }
+
+        if (creature != null && CardPreviewManager.Instance != null)
+        {
+            CardPreviewManager.Instance.HideHoverCreature(creature);
+        }
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         StartHover();

@@ -23,7 +23,15 @@ public class EnvironmentalToxinGlobalEffect : GlobalEffectBase
         {
             if (c == null)
                 continue;
-            c.ApplyDamage(1, null);
+            int applied = c.ApplyDamage(1, null, null, "Toxin");
+            if (applied > 0)
+            {
+                FeedbackManager.Instance?.ShowFloatingText(
+                    $"-{applied} HP (Toxin)",
+                    c.transform.position,
+                    new Color(0.7f, 0.9f, 1f)
+                );
+            }
         }
     }
 }

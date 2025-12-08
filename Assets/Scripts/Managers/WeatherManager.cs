@@ -215,12 +215,18 @@ public class WeatherManager : MonoBehaviour
         }
     }
 
-    public void ApplyEndOfRoundEffects()
+    /// <summary>
+    /// Applies any end-of-round weather effects and returns true if anything
+    /// visible or state-changing occurred (used to decide whether to pause).
+    /// </summary>
+    public bool ApplyEndOfRoundEffects()
     {
+        bool didAny = false;
         switch (currentWeather)
         {
             case WeatherType.Wildfire:
             {
+                didAny = true;
                 FeedbackManager.Instance?.ShowGlobalAlert(
                     "The wildfire burns!",
                     new Color(1f, 0.5f, 0.2f)
@@ -232,12 +238,15 @@ public class WeatherManager : MonoBehaviour
                 foreach (var c in all)
                 {
                     Vector3 pos = c.transform.position;
-                    c.ApplyDamage(1, null);
-                    FeedbackManager.Instance?.ShowFloatingText(
-                        "-1 HP",
-                        pos,
-                        new Color(1f, 0.5f, 0.2f)
-                    );
+                    int applied = c.ApplyDamage(1, null, null, "Wildfire");
+                    if (applied > 0)
+                    {
+                        FeedbackManager.Instance?.ShowFloatingText(
+                            $"-{applied} HP",
+                            pos,
+                            new Color(1f, 0.5f, 0.2f)
+                        );
+                    }
                 }
                 break;
             }
@@ -249,5 +258,6 @@ public class WeatherManager : MonoBehaviour
             default:
                 break;
         }
+        return didAny;
     }
 }

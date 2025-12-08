@@ -406,24 +406,48 @@ public class Creature : MonoBehaviour
         }
     }
 
-    public void ApplyDamage(int amount, Creature source, GameObject vfxPrefab = null)
+    /// <summary>
+    /// Apply incoming damage to this creature, returning the actual HP lost after
+    /// shields, absorb, reflect, etc. This value is also what contributes to
+    /// roundDamageDealt and scoring.
+    /// </summary>
+    public int ApplyDamage(
+        int amount,
+        Creature source,
+        GameObject vfxPrefab = null,
+        string damageSourceLabel = null
+    )
     {
-        ApplyDamageInternal(amount, source, allowReflect: true, vfxPrefab);
+        return ApplyDamageInternal(
+            amount,
+            source,
+            allowReflect: true,
+            vfxPrefab,
+            damageSourceLabel
+        );
     }
 
-    private void ApplyDamageInternal(
+    /// <summary>
+    /// Internal damage routine that can optionally skip reflect (used when
+    /// reflecting damage back to an attacker to avoid infinite loops).
+    /// Returns the actual HP lost by this creature.
+    /// </summary>
+    private int ApplyDamageInternal(
         int amount,
         Creature source,
         bool allowReflect,
-        GameObject vfxPrefab = null
+        GameObject vfxPrefab = null,
+        string damageSourceLabel = null
     )
     {
         // Shielded negates the next incoming damage instance per charge
         if (amount > 0 && GetStatus(StatusTag.Shielded) > 0)
         {
             DecrementStatus(StatusTag.Shielded, 1);
-            FeedbackManager.Instance?.ShowFloatingText("Shielded", transform.position, Color.cyan);
-            return;
+            string label =
+                damageSourceLabel != null ? $"Shielded ({damageSourceLabel})" : "Shielded";
+            FeedbackManager.Instance?.ShowFloatingText(label, transform.position, Color.cyan);
+            return 0;
         }
 
         // Reflect: negate and reflect the would-be damage (one charge), but do not re-reflect
@@ -434,11 +458,26 @@ public class Creature : MonoBehaviour
             int reflected = Mathf.Max(0, amount);
             if (source != null)
             {
-                // Apply reflected damage to the attacker; allow their Shielded but not their Reflect to trigger
-                // Pass null VFX for reflection or maybe a specific one later
-                source.ApplyDamageInternal(reflected, this, allowReflect: false, vfxPrefab: null);
+                // Apply reflected damage to the attacker; allow their Shielded but not their Reflect to trigger.
+                // Pass null VFX for reflection or maybe a specific one later.
+                int reflectedApplied = source.ApplyDamageInternal(
+                    reflected,
+                    this,
+                    allowReflect: false,
+                    vfxPrefab: null,
+                    damageSourceLabel: null
+                );
+                if (reflectedApplied > 0)
+                {
+                    FeedbackManager.Instance?.ShowFloatingText(
+                        $"-{reflectedApplied} HP [Reflect]",
+                        source.transform.position,
+                        new Color(1f, 0.8f, 0.3f)
+                    );
+                }
             }
-            return;
+            // Original target took no damage.
+            return 0;
         }
 
         // Absorb: stacks reduce damage cumulatively; allow damage to be 0; decrement stacks by absorbed amount
@@ -452,22 +491,26 @@ public class Creature : MonoBehaviour
                 DecrementStatus(StatusTag.Absorb, absorbed);
                 if (absorbed > 0)
                 {
+                    string label =
+                        damageSourceLabel != null
+                            ? $"Absorbed [{absorbed}] ({damageSourceLabel})"
+                            : $"Absorbed [{absorbed}]";
                     FeedbackManager.Instance?.ShowFloatingText(
-                        $"Absorbed [{absorbed}]",
+                        label,
                         transform.position,
                         Color.cyan
                     );
                 }
                 if (amount <= 0)
                 {
-                    return;
+                    return 0;
                 }
             }
         }
 
         int dmg = Mathf.Max(0, amount);
         if (dmg == 0)
-            return;
+            return 0;
 
         // Play VFX if provided
         PlayVFX(vfxPrefab);
@@ -475,10 +518,16 @@ public class Creature : MonoBehaviour
         // Taking real damage breaks Stealth
         if (GetStatus(StatusTag.Stealth) > 0)
             ClearStatus(StatusTag.Stealth);
+        int prevHealth = currentHealth;
         currentHealth = Mathf.Max(0, currentHealth - dmg);
+        int applied = Mathf.Max(0, prevHealth - currentHealth);
+        if (applied <= 0)
+            return 0;
         if (source != null)
         {
-            source.roundDamageDealt += dmg;
+            // Clamp scored/recorded damage to the actual HP lost so damage and
+            // scoring never exceed the victim's remaining health.
+            source.roundDamageDealt += applied;
             if (!source.damagedTargetsThisRound.Contains(this))
                 source.damagedTargetsThisRound.Add(this);
         }
@@ -489,7 +538,7 @@ public class Creature : MonoBehaviour
             foreach (var tr in source.traits)
             {
                 if (tr != null)
-                    tr.OnDamageDealt(source, this, dmg);
+                    tr.OnDamageDealt(source, this, applied);
             }
         }
         if (traits != null)
@@ -497,7 +546,7 @@ public class Creature : MonoBehaviour
             foreach (var tr in traits)
             {
                 if (tr != null)
-                    tr.OnDamageTaken(this, source, dmg);
+                    tr.OnDamageTaken(this, source, applied);
             }
         }
         // Global post-damage notification
@@ -509,7 +558,7 @@ public class Creature : MonoBehaviour
             foreach (var tr in other.traits.ToArray())
             {
                 if (tr != null)
-                    tr.OnAnyDamage(other, this, source, dmg);
+                    tr.OnAnyDamage(other, this, source, applied);
             }
         }
         RefreshStatsUI();
@@ -517,6 +566,8 @@ public class Creature : MonoBehaviour
         {
             Kill("Damage");
         }
+
+        return applied;
     }
 
     public void Heal(int amount)
@@ -789,47 +840,76 @@ public class Creature : MonoBehaviour
 
     public void ApplyFatigued(int stacks) => AddStatus(StatusTag.Fatigued, stacks);
 
-    public void TickStatusesAtRoundStart()
+    /// <summary>
+    /// Ticks start-of-round status effects and returns true if any visible or
+    /// state-changing effect occurred (used to decide whether to pause for UI).
+    /// </summary>
+    public bool TickStatusesAtRoundStart()
     {
+        bool didAny = false;
         // Infected: deal 1, then -1 stack
         if (GetStatus(StatusTag.Infected) > 0)
         {
-            ApplyDamage(1, null);
+            didAny = true;
+            int applied = ApplyDamage(1, null, null, "Infected");
             DecrementStatus(StatusTag.Infected, 1);
-            FeedbackManager.Instance?.ShowFloatingText(
-                "-1 HP (Infected)",
-                transform.position,
-                new Color(0.8f, 0.5f, 0.9f)
-            );
+            if (applied > 0)
+            {
+                FeedbackManager.Instance?.ShowFloatingText(
+                    $"-{applied} HP (Infected)",
+                    transform.position,
+                    new Color(0.8f, 0.5f, 0.9f)
+                );
+            }
         }
         // Convert pending next-round DamageUp into active stacks
         if (pendingDamageUp > 0)
         {
+            didAny = true;
             AddStatus(StatusTag.DamageUp, pendingDamageUp);
             pendingDamageUp = 0;
         }
+        return didAny;
     }
 
-    public void TickStatusesAtRoundEnd()
+    /// <summary>
+    /// Ticks end-of-round status effects and returns true if any visible or
+    /// state-changing effect occurred (used to decide whether to pause for UI).
+    /// </summary>
+    public bool TickStatusesAtRoundEnd()
     {
+        bool didAny = false;
         // Fatigued: -1
         if (GetStatus(StatusTag.Fatigued) > 0)
+        {
             DecrementStatus(StatusTag.Fatigued, 1);
+            didAny = true;
+        }
         // SpeedUp: -1
         if (GetStatus(StatusTag.SpeedUp) > 0)
+        {
             DecrementStatus(StatusTag.SpeedUp, 1);
+            didAny = true;
+        }
         // Taunt: -1
         if (GetStatus(StatusTag.Taunt) > 0)
+        {
             DecrementStatus(StatusTag.Taunt, 1);
+            didAny = true;
+        }
 
         // DamageUp: clear all
         if (GetStatus(StatusTag.DamageUp) > 0)
+        {
             ClearStatus(StatusTag.DamageUp);
+            didAny = true;
+        }
 
         // Regen: heal equal to stacks, then -1
         int regen = GetStatus(StatusTag.Regen);
         if (regen > 0)
         {
+            didAny = true;
             Heal(regen);
             DecrementStatus(StatusTag.Regen, 1);
             FeedbackManager.Instance?.ShowFloatingText(
@@ -843,35 +923,58 @@ public class Creature : MonoBehaviour
         int bleed = GetStatus(StatusTag.Bleeding);
         if (bleed > 0)
         {
-            ApplyDamage(bleed, null);
-            FeedbackManager.Instance?.ShowFloatingText(
-                $"-{bleed} HP (Bleed)",
-                transform.position,
-                new Color(1f, 0.4f, 0.4f)
-            );
+            didAny = true;
+            int applied = ApplyDamage(bleed, null, null, "Bleed");
+            if (applied > 0)
+            {
+                FeedbackManager.Instance?.ShowFloatingText(
+                    $"-{applied} HP (Bleed)",
+                    transform.position,
+                    new Color(1f, 0.4f, 0.4f)
+                );
+            }
         }
 
         // BodyUp: -1 ; Malnourished: -1
         if (GetStatus(StatusTag.BodyUp) > 0)
+        {
             DecrementStatus(StatusTag.BodyUp, 1);
+            didAny = true;
+        }
 
         if (GetStatus(StatusTag.Malnourished) > 0)
+        {
             DecrementStatus(StatusTag.Malnourished, 1);
+            didAny = true;
+        }
         // Absorb: clear remaining stacks at end of round
         if (GetStatus(StatusTag.Absorb) > 0)
+        {
             ClearStatus(StatusTag.Absorb);
+            didAny = true;
+        }
 
         // Suppressed: -1
         if (GetStatus(StatusTag.Suppressed) > 0)
+        {
             DecrementStatus(StatusTag.Suppressed, 1);
+            didAny = true;
+        }
 
         // Stunned: -1
         if (GetStatus(StatusTag.Stunned) > 0)
+        {
             DecrementStatus(StatusTag.Stunned, 1);
+            didAny = true;
+        }
 
         // NoForage: -1
         if (GetStatus(StatusTag.NoForage) > 0)
+        {
             DecrementStatus(StatusTag.NoForage, 1);
+            didAny = true;
+        }
+        return didAny;
     }
 
     private BoardSlot FindSlotOf(Creature c)

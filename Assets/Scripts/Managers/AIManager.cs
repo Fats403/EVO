@@ -59,6 +59,19 @@ public class AIManager : MonoBehaviour
     [Range(0f, 5f)]
     public float passThreshold = 0.2f;
 
+    [Header("Board Control")]
+    [Tooltip(
+        "Minimum total threat value of enemies before AI considers symmetric effects highly valuable."
+    )]
+    [Range(5f, 25f)]
+    public float symmetricEffectThreatThreshold = 12f;
+
+    [Tooltip(
+        "How much AI weights its own board when evaluating symmetric effects (1.0 = equal, <1.0 = more willing to sacrifice)."
+    )]
+    [Range(0.3f, 1.5f)]
+    public float ownBoardValueMultiplier = 0.7f;
+
     [Header("Deck Building")]
     [Tooltip("DraftConfig used to build balanced AI decks (same rules as player draft).")]
     public DraftConfig draftConfig;
@@ -412,17 +425,67 @@ public class AIManager : MonoBehaviour
                 momentumPenalty *= lowMomentumPenalty;
             }
 
-            // Global effects: no direct targets; evaluate based on how many creatures match filters.
+            // Global effects: no direct per-creature targets passed to GameManager; EffectsManager
+            // handles them based on side/type filters. For evaluation, build a synthetic list of
+            // affected creatures so ScoreEffectTargets / EvaluateSymmetricEffect can reason about
+            // their impact.
             if (card.isGlobal)
             {
-                var potentialTargets = allCreatures
-                    .Where(c =>
-                        EffectsManager.Instance != null
-                        && EffectsManager.Instance.IsValidTarget(card, c, SlotOwner.Player2)
-                    )
-                    .ToList();
+                // For symmetric globals (targetSide = Any), consider all creatures; the
+                // internal scorer will route to EvaluateSymmetricEffect.
+                List<Creature> evalTargets;
+                if (card.targetSide == EffectTargetSide.Ally)
+                {
+                    evalTargets = allCreatures
+                        .Where(c => c != null && c.owner == SlotOwner.Player2)
+                        .ToList();
+                }
+                else if (card.targetSide == EffectTargetSide.Enemy)
+                {
+                    evalTargets = allCreatures
+                        .Where(c => c != null && c.owner == SlotOwner.Player1)
+                        .ToList();
+                }
+                else
+                {
+                    evalTargets = allCreatures.Where(c => c != null).ToList();
+                }
 
-                float baseValue = ScoreEffectTargets(card, potentialTargets, SlotOwner.Player2);
+                // Apply type filter when relevant so we approximate which bodies will
+                // actually be affected by trait attachments / runtime logic.
+                if (card.targetType != EffectTargetType.Any)
+                {
+                    evalTargets = evalTargets
+                        .Where(c =>
+                            c != null
+                            && c.data != null
+                            && (
+                                (
+                                    card.targetType == EffectTargetType.Herbivore
+                                    && c.data.type == CardType.Herbivore
+                                )
+                                || (
+                                    card.targetType == EffectTargetType.Carnivore
+                                    && c.data.type == CardType.Carnivore
+                                )
+                                || (
+                                    card.targetType == EffectTargetType.Avian
+                                    && c.data.type == CardType.Avian
+                                )
+                            )
+                        )
+                        .ToList();
+                }
+
+                if (evalTargets.Count == 0)
+                    continue;
+
+                float baseValue = ScoreEffectTargets(
+                    card,
+                    evalTargets,
+                    SlotOwner.Player2,
+                    allCreatures
+                );
 
                 float score = baseValue - momentumPenalty;
                 if (score <= 0f)
@@ -433,7 +496,9 @@ public class AIManager : MonoBehaviour
                     {
                         type = AIActionType.PlayEffect,
                         effectCard = card,
-                        effectTargets = new List<Creature>(), // handled as global by EffectsManager
+                        // Global resolution ignores explicit per-creature targets; EffectsManager
+                        // derives targets from side/type filters. We pass an empty list here.
+                        effectTargets = new List<Creature>(),
                         score = score,
                     }
                 );
@@ -456,7 +521,12 @@ public class AIManager : MonoBehaviour
                 foreach (var tgt in validTargets)
                 {
                     var list = new List<Creature> { tgt };
-                    float baseValue = ScoreEffectTargets(card, list, SlotOwner.Player2);
+                    float baseValue = ScoreEffectTargets(
+                        card,
+                        list,
+                        SlotOwner.Player2,
+                        allCreatures
+                    );
                     if (baseValue <= 0f)
                         continue;
                     float score = baseValue - momentumPenalty;
@@ -482,17 +552,27 @@ public class AIManager : MonoBehaviour
                 var ordered =
                     card.targetSide == EffectTargetSide.Enemy
                         ? enemyTargets.OrderByDescending(c =>
-                            ScoreEffectTargets(card, new List<Creature> { c }, SlotOwner.Player2)
+                            ScoreEffectTargets(
+                                card,
+                                new List<Creature> { c },
+                                SlotOwner.Player2,
+                                allCreatures
+                            )
                         )
                         : allyTargets.OrderByDescending(c =>
-                            ScoreEffectTargets(card, new List<Creature> { c }, SlotOwner.Player2)
+                            ScoreEffectTargets(
+                                card,
+                                new List<Creature> { c },
+                                SlotOwner.Player2,
+                                allCreatures
+                            )
                         );
 
                 var picks = ordered.Take(maxTargets).Where(c => c != null).ToList();
                 if (picks.Count == 0)
                     continue;
 
-                float baseValue = ScoreEffectTargets(card, picks, SlotOwner.Player2);
+                float baseValue = ScoreEffectTargets(card, picks, SlotOwner.Player2, allCreatures);
                 if (baseValue <= 0f)
                     continue;
 
@@ -517,7 +597,7 @@ public class AIManager : MonoBehaviour
                 if (picks.Count == 0)
                     continue;
 
-                float baseValue = ScoreEffectTargets(card, picks, SlotOwner.Player2);
+                float baseValue = ScoreEffectTargets(card, picks, SlotOwner.Player2, allCreatures);
                 if (baseValue <= 0f)
                     continue;
 
@@ -538,7 +618,12 @@ public class AIManager : MonoBehaviour
         }
     }
 
-    float ScoreEffectTargets(EffectCard card, List<Creature> targets, SlotOwner owner)
+    float ScoreEffectTargets(
+        EffectCard card,
+        List<Creature> targets,
+        SlotOwner owner,
+        List<Creature> allCreatures
+    )
     {
         if (card == null || targets == null || targets.Count == 0)
             return 0f;
@@ -547,6 +632,7 @@ public class AIManager : MonoBehaviour
         float allyStatusValue = 0f;
         float enemyStatusValue = 0f;
         float attackSynergyValue = 0f;
+        float removalValue = 0f;
 
         foreach (var c in targets)
         {
@@ -580,6 +666,12 @@ public class AIManager : MonoBehaviour
             }
 
             totalThreatValue += threat;
+
+            // Removal value: extra scoring for effects that neutralize high-threat enemies.
+            if (isEnemy && card.aiRemovalValue > 0f)
+            {
+                removalValue += threat * card.aiRemovalValue * 0.5f;
+            }
 
             // Status-based value: assume negative statuses on allies and positive statuses on enemies
             // are high leverage for many common effects (cleanses, dispels, buffs).
@@ -616,11 +708,92 @@ public class AIManager : MonoBehaviour
         float perTarget = targetsEnemies ? enemyEffectPerTargetValue : allyEffectPerTargetValue;
         float countValue = targetCount * perTarget;
 
-        return totalThreatValue
+        // Special evaluation for symmetric global effects (affects both sides).
+        // These need completely different logic since they hurt both players.
+        if (card.isGlobal && card.targetSide == EffectTargetSide.Any)
+        {
+            return EvaluateSymmetricEffect(card, allCreatures, owner);
+        }
+
+        // For all other effects (including non-symmetric globals), use normal accumulated scoring.
+        float finalValue =
+            totalThreatValue
             + allyStatusValue
             + enemyStatusValue
             + attackSynergyValue
+            + removalValue
             + countValue;
+
+        return finalValue;
+    }
+
+    float EvaluateSymmetricEffect(EffectCard card, List<Creature> allCreatures, SlotOwner owner)
+    {
+        var enemies = allCreatures.Where(c => c != null && c.owner != owner).ToList();
+        var allies = allCreatures.Where(c => c != null && c.owner == owner).ToList();
+
+        // Calculate total threat value of each side.
+        float enemyThreat = 0f;
+        float allyThreat = 0f;
+
+        foreach (var enemy in enemies)
+        {
+            if (enemy == null || enemy.data == null)
+                continue;
+
+            float threat = enemy.data.size * creatureSizeWeight + enemy.maxHealth * 0.25f;
+            if (enemy.data.type == CardType.Carnivore)
+                threat += carnivoreBonus;
+            else if (enemy.data.type == CardType.Avian)
+                threat += avianBonus;
+
+            enemyThreat += threat;
+        }
+
+        foreach (var ally in allies)
+        {
+            if (ally == null || ally.data == null)
+                continue;
+
+            float threat = ally.data.size * creatureSizeWeight + ally.maxHealth * 0.25f;
+            if (ally.data.type == CardType.Carnivore)
+                threat += carnivoreBonus;
+            else if (ally.data.type == CardType.Avian)
+                threat += avianBonus;
+
+            allyThreat += threat;
+        }
+
+        // Apply multiplier to own board (AI is more willing to sacrifice own creatures).
+        allyThreat *= ownBoardValueMultiplier;
+
+        // Net value: difference between what we affect on enemies vs allies.
+        float netValue = enemyThreat - allyThreat;
+
+        // Only consider symmetric effects highly valuable if enemy threat exceeds threshold.
+        if (enemyThreat < symmetricEffectThreatThreshold)
+        {
+            // Heavily penalize symmetric effects against weak boards.
+            netValue *= 0.15f;
+        }
+
+        // Additional consideration: if we have very few creatures, symmetric effect is less punishing.
+        if (allies.Count <= 1)
+        {
+            netValue *= 1.3f; // Bonus for being behind on board
+        }
+
+        // If enemy has significantly more creatures, symmetric effect becomes more appealing.
+        if (enemies.Count >= allies.Count + 2)
+        {
+            netValue *= 1.5f;
+        }
+
+        // High-cost symmetric effects should require proportionally more value to justify.
+        float costScaling = 1f + (card.momentumCost * 0.1f);
+        netValue /= costScaling;
+
+        return Mathf.Max(0f, netValue);
     }
 
     static bool IsNegativeStatusForAI(StatusTag tag)

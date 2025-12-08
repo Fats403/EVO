@@ -4276,6 +4276,8 @@ MonoBehaviour:
   allyEffectPerTargetValue: 1.5
   enemyEffectPerTargetValue: 1.75
   passThreshold: 0.25
+  symmetricEffectThreatThreshold: 12
+  ownBoardValueMultiplier: 0.7
   draftConfig: {fileID: 11400000, guid: a9e78c42a4dd145d78f032cc83ddfa95, type: 2}
   allyNegativeStatusWeight: 1
   enemyPositiveStatusWeight: 1

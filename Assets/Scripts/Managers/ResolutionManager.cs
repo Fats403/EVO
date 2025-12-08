@@ -44,11 +44,16 @@ public class ResolutionManager : MonoBehaviour
 
     public IEnumerator RevealAndResolveRound()
     {
+        bool hadStartStatusOrGlobalEffects = false;
+
         // Round start hooks
         foreach (var c in AllCreatures())
         {
             // Status round-start ticks (e.g., Infected)
-            c.TickStatusesAtRoundStart();
+            if (c.TickStatusesAtRoundStart())
+            {
+                hadStartStatusOrGlobalEffects = true;
+            }
             if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
             {
                 var snapshot = c.traits != null ? c.traits.ToArray() : System.Array.Empty<Trait>();
@@ -63,10 +68,14 @@ public class ResolutionManager : MonoBehaviour
 
         // Global effects: round start
         InvokeGlobal(g => g.OnRoundStart(this));
+        if (activeGlobalEffects != null && activeGlobalEffects.Count > 0)
+        {
+            hadStartStatusOrGlobalEffects = true;
+        }
 
         // Allow start-of-round statuses and global effects to be visually digested before moving on.
         float startPause = Mathf.Max(0f, roundStartEffectPause) * pacingMultiplier;
-        if (startPause > 0f)
+        if (startPause > 0f && hadStartStatusOrGlobalEffects)
             yield return new WaitForSeconds(startPause);
 
         // Pre-herbivore traits
@@ -87,11 +96,15 @@ public class ResolutionManager : MonoBehaviour
 
         // Round end hooks
         // First apply status round-end ticks (fatigue decay, regen, bleeding, etc.)
+        bool hadEndStatusOrGlobalEffects = false;
         foreach (var c in AllCreatures())
         {
             if (c == null)
                 continue;
-            c.TickStatusesAtRoundEnd();
+            if (c.TickStatusesAtRoundEnd())
+            {
+                hadEndStatusOrGlobalEffects = true;
+            }
         }
 
         // Round end traits
@@ -114,6 +127,7 @@ public class ResolutionManager : MonoBehaviour
         InvokeGlobal(g => g.OnRoundEnd(this));
         if (activeGlobalEffects != null && activeGlobalEffects.Count > 0)
         {
+            hadEndStatusOrGlobalEffects = true;
             for (int i = activeGlobalEffects.Count - 1; i >= 0; i--)
             {
                 var ge = activeGlobalEffects[i];
@@ -130,12 +144,15 @@ public class ResolutionManager : MonoBehaviour
         // Weather end-of-round effects
         if (WeatherManager.Instance != null)
         {
-            WeatherManager.Instance.ApplyEndOfRoundEffects();
+            if (WeatherManager.Instance.ApplyEndOfRoundEffects())
+            {
+                hadEndStatusOrGlobalEffects = true;
+            }
         }
 
         // Brief pause after end-of-round statuses/global effects so players can see what happened.
         float endPause = Mathf.Max(0f, roundEndEffectPause) * pacingMultiplier;
-        if (endPause > 0f)
+        if (endPause > 0f && hadEndStatusOrGlobalEffects)
             yield return new WaitForSeconds(endPause);
     }
 
@@ -236,11 +253,31 @@ public class ResolutionManager : MonoBehaviour
                 }
                 desired = Mathf.Max(0, desired);
             }
+
+            // If, after trait modifications, there's no desire or no food, skip.
+            if (desired <= 0 || foodPile.count <= 0)
+                continue;
+
+            // Play the eat animation first so that the visible lunge happens before
+            // the pile count and "after eat" hooks fire.
+            if (foodPile != null)
+            {
+                yield return StartCoroutine(
+                    c.PlayEatAnimation(foodPile.transform.position, eatDelay * pacingMultiplier)
+                );
+            }
+            else
+            {
+                yield return new WaitForSeconds(eatDelay * pacingMultiplier);
+            }
+
+            // After the animation completes, actually remove food from the pile and
+            // apply "after eat" trait hooks so the visual and rules timing line up.
             int taken = foodPile.Take(desired);
-            c.eaten += taken;
             if (taken > 0)
             {
-                // Notify eater traits
+                c.eaten += taken;
+
                 if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
                 {
                     var eatSnap = c.traits.ToArray();
@@ -251,19 +288,6 @@ public class ResolutionManager : MonoBehaviour
                     }
                 }
 
-                // Lunge animation + VFX
-                if (foodPile != null)
-                {
-                    yield return StartCoroutine(
-                        c.PlayEatAnimation(foodPile.transform.position, eatDelay * pacingMultiplier)
-                    );
-                }
-                else
-                {
-                    yield return new WaitForSeconds(eatDelay * pacingMultiplier);
-                }
-
-                // Optional Eat VFX
                 if (eatVFX != null)
                 {
                     c.PlayVFX(eatVFX);
@@ -317,11 +341,15 @@ public class ResolutionManager : MonoBehaviour
                 !attacker.HasStatus(StatusTag.Suppressed)
                 && attacker.traits != null
                 && attacker.traits.Any(tr => tr != null && tr.CanTargetAny(attacker));
+            bool isAvianAttacker = attacker.data.type == CardType.Avian;
             var basePool =
                 (tauntTargets.Count > 0)
                     ? tauntTargets.AsEnumerable()
                     : (
-                        canTargetAny
+                        // Avians are allowed to harass any enemy type; they don't
+                        // exclude carnivores at the candidate level. The actual
+                        // speed/body rules are enforced inside IsValidAttackTarget.
+                        (canTargetAny || isAvianAttacker)
                             ? enemies
                             : enemies.Where(c => c.data.type != CardType.Carnivore)
                     );
@@ -539,15 +567,18 @@ public class ResolutionManager : MonoBehaviour
             baseDmg = Mathf.Max(0, baseDmg);
             if (baseDmg > 0)
             {
-                // Pass attackVFX to ApplyDamage
-                target.ApplyDamage(baseDmg, attacker, attackVFX);
-
-                /// var dmgTag = harass ? "Harass" : "Hit";
-                FeedbackManager.Instance?.ShowFloatingText(
-                    $"-{baseDmg} HP",
-                    target.transform.position,
-                    new Color(1f, 0.3f, 0.3f)
-                );
+                // Pass attackVFX to ApplyDamage and use the actual applied damage
+                // for feedback/scoring so it never exceeds remaining HP.
+                int applied = target.ApplyDamage(baseDmg, attacker, attackVFX);
+                if (applied > 0)
+                {
+                    /// var dmgTag = harass ? "Harass" : "Hit";
+                    FeedbackManager.Instance?.ShowFloatingText(
+                        $"-{applied} HP",
+                        target.transform.position,
+                        new Color(1f, 0.3f, 0.3f)
+                    );
+                }
                 // Carnivores count a successful damaging hit as "eating" for starvation purposes
                 if (
                     attacker != null
@@ -612,6 +643,23 @@ public class ResolutionManager : MonoBehaviour
             if (c.traits != null && c.traits.Any(t => t != null && !t.CanForage(c)))
                 continue;
 
+            // Play a quick "forage" lunge toward the food pile so avians feel
+            // visually consistent with herbivores, then apply the actual food
+            // removal and after-eat hooks.
+            if (foodPile != null)
+            {
+                yield return StartCoroutine(
+                    c.PlayEatAnimation(foodPile.transform.position, eatDelay * pacingMultiplier)
+                );
+            }
+            else
+            {
+                yield return new WaitForSeconds(eatDelay * pacingMultiplier);
+            }
+
+            if (foodPile.count <= 0)
+                continue;
+
             int taken = foodPile.Take(1);
             if (taken > 0)
             {
@@ -626,7 +674,7 @@ public class ResolutionManager : MonoBehaviour
                     }
                 }
                 FeedbackManager.Instance?.ShowFloatingText(
-                    "+1 Food",
+                    "+1 Food (Forage)",
                     c.transform.position,
                     new Color(0.5f, 0.8f, 1f)
                 );
@@ -634,7 +682,6 @@ public class ResolutionManager : MonoBehaviour
                     $"{FeedbackManager.TagOwner(c.owner)} {c.name} forages +1"
                 );
                 any = true;
-                yield return new WaitForSeconds(eatDelay * pacingMultiplier);
             }
         }
         if (!any)
@@ -644,11 +691,12 @@ public class ResolutionManager : MonoBehaviour
     IEnumerator ResolveStarvationAndScoring()
     {
         var creatures = FindObjectsByType<Creature>(FindObjectsSortMode.None);
+
+        // --- Pass 1: Apply starvation warnings/stacks/damage with a small delay per creature ---
         foreach (var c in creatures)
         {
             if (c == null)
                 continue;
-            bool didAny = false;
             bool didEat = c.eaten > 0;
             bool isStarvable =
                 c.data != null
@@ -658,22 +706,8 @@ public class ResolutionManager : MonoBehaviour
                     || c.data.type == CardType.Carnivore
                 );
 
-            // Food scoring for herbivores only
-            if (c.data != null && c.data.type == CardType.Herbivore && didEat)
-            {
-                int gain = c.eaten;
-                ScoreManager.Instance?.Add(c.owner, gain);
-                FeedbackManager.Instance?.ShowFloatingText(
-                    $"Score +{gain}",
-                    c.transform.position,
-                    Color.cyan
-                );
-                FeedbackManager.Instance?.Log(
-                    $"{FeedbackManager.TagOwner(c.owner)} {c.name} scores {gain} from food"
-                );
-                didAny = true;
-            }
-
+            bool didAnyStarveChange = false;
+            bool starveKilled = false;
             // Starvation rules for all starvable creature types (Herbivore / Avian / Carnivore).
             // First stack is a warning (no damage). On subsequent rounds of not eating,
             // damage per round is (stacks - 1).
@@ -685,7 +719,7 @@ public class ResolutionManager : MonoBehaviour
                     if (prevStacks > 0)
                     {
                         c.ClearStatus(StatusTag.Starvation);
-                        didAny = true;
+                        didAnyStarveChange = true;
                     }
                 }
                 else
@@ -695,7 +729,7 @@ public class ResolutionManager : MonoBehaviour
                     FeedbackManager.Instance?.Log(
                         $"{FeedbackManager.TagOwner(c.owner)} {c.name} gains Starvation (x{stacksNow})"
                     );
-                    didAny = true;
+                    didAnyStarveChange = true;
                 }
 
                 // End-of-round starvation damage: first stack is a warning, so only
@@ -704,28 +738,58 @@ public class ResolutionManager : MonoBehaviour
                 int dmg = Mathf.Max(0, stacksFinal - 1);
                 if (dmg > 0)
                 {
-                    c.ApplyDamage(dmg, null);
-                    FeedbackManager.Instance?.ShowFloatingText(
-                        $"-{dmg} HP (Starve)",
-                        c.transform.position,
-                        Color.red
-                    );
-                    didAny = true;
+                    int applied = c.ApplyDamage(dmg, null, null, "Starve");
+                    if (applied > 0)
+                    {
+                        FeedbackManager.Instance?.ShowFloatingText(
+                            $"-{applied} HP (Starve)",
+                            c.transform.position,
+                            Color.red
+                        );
+                    }
+                    didAnyStarveChange = true;
                     if (c == null || c.currentHealth == 0)
                     {
+                        starveKilled = true;
                         yield return new WaitForSeconds(starveDelay * pacingMultiplier);
                         continue;
                     }
                 }
             }
 
-            if (didAny)
+            if (didAnyStarveChange && !starveKilled)
                 yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
+        }
+
+        // --- Pass 2: Food-based scoring for herbivores, with a small delay per creature ---
+        foreach (var c in creatures)
+        {
+            if (c == null)
+                continue;
+            if (c.data != null && c.data.type == CardType.Herbivore && c.eaten > 0)
+            {
+                int gain = c.eaten;
+                ScoreManager.Instance?.Add(c.owner, gain);
+                FeedbackManager.Instance?.ShowFloatingText(
+                    $"Score +{gain}",
+                    c.transform.position,
+                    Color.cyan
+                );
+                FeedbackManager.Instance?.Log(
+                    $"{FeedbackManager.TagOwner(c.owner)} {c.name} scores {gain} from food"
+                );
+                yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
+            }
+        }
+
+        // After scoring from food, clear eaten counters for the next round.
+        foreach (var c in creatures)
+        {
             if (c != null)
                 c.eaten = 0;
         }
 
-        // Net damage scoring after processing food/starvation
+        // --- Pass 3: Net damage scoring from combat, with a small delay per creature ---
         foreach (var c in AllCreatures())
         {
             if (c == null)
@@ -742,6 +806,7 @@ public class ResolutionManager : MonoBehaviour
                 FeedbackManager.Instance?.Log(
                     $"{FeedbackManager.TagOwner(c.owner)} {c.name} nets {net} from combat"
                 );
+                yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
             }
         }
         yield break;
@@ -838,7 +903,17 @@ public class ResolutionManager : MonoBehaviour
             if (effAtkBody >= tgtBody)
                 return true;
         }
-        // Trait allowing any targeting skips carnivore exclusion/body gate but not stealth/taunt/speed-into-avian rule
+        else
+        {
+            // When ignoreBodyRule is true (e.g., Carnivore-vs-Carnivore fallback),
+            // we have already respected stealth, taunt, trait gating, and any
+            // special avian speed checks above, so we treat the target as valid
+            // regardless of relative body size.
+            return true;
+        }
+
+        // Trait allowing any targeting skips carnivore exclusion/body gate but not
+        // stealth/taunt/speed-into-avian rule.
         bool canTargetAny =
             !atk.HasStatus(StatusTag.Suppressed)
             && atk.traits != null
@@ -869,10 +944,18 @@ public class ResolutionManager : MonoBehaviour
             !attacker.HasStatus(StatusTag.Suppressed)
             && attacker.traits != null
             && attacker.traits.Any(tr => tr != null && tr.CanTargetAny(attacker));
+        bool isAvianAttacker = attacker.data != null && attacker.data.type == CardType.Avian;
         var basePool =
             (tauntTargets.Count > 0)
                 ? tauntTargets.AsEnumerable()
-                : (canTargetAny ? enemies : enemies.Where(c => c.data.type != CardType.Carnivore));
+                : (
+                    // For AI/util targeting, match the same rule as ResolveAttacks:
+                    // Avians may consider any enemy (including carnivores) as
+                    // candidates; speed/other rules are enforced in IsValidAttackTarget.
+                    (canTargetAny || isAvianAttacker)
+                        ? enemies
+                        : enemies.Where(c => c.data.type != CardType.Carnivore)
+                );
         var candidates = basePool
             .Where(c => IsValidAttackTarget(attacker, c))
             .OrderBy(c => Vector3.SqrMagnitude(c.transform.position - attacker.transform.position))
@@ -904,11 +987,64 @@ public class ResolutionManager : MonoBehaviour
         return candidates.Count > 0 ? candidates[0] : null;
     }
 
-    // Immediate single attack for reactive traits
+    // Immediate single attack for reactive traits.
+    // This now plays a short attack animation + hit flash so that
+    // extra attacks are visually readable instead of "instant".
     public void PerformImmediateAttack(
         Creature attacker,
         Creature target,
         bool ignoreBodyRules = false
+    )
+    {
+        if (!isActiveAndEnabled)
+        {
+            // Fallback: if for some reason the ResolutionManager isn't active,
+            // run the logic synchronously without animation.
+            PerformImmediateAttackInternal(attacker, target, ignoreBodyRules);
+            return;
+        }
+
+        StartCoroutine(PerformImmediateAttackRoutine(attacker, target, ignoreBodyRules));
+    }
+
+    private IEnumerator PerformImmediateAttackRoutine(
+        Creature attacker,
+        Creature target,
+        bool ignoreBodyRules
+    )
+    {
+        if (attacker == null || target == null)
+            yield break;
+        if (attacker.currentHealth <= 0 || target.currentHealth <= 0)
+            yield break;
+        if (target.HasStatus(StatusTag.Stealth))
+            yield break;
+        if (!ignoreBodyRules && !IsValidAttackTarget(attacker, target))
+            yield break;
+
+        // Simple bump on the attacker so reactive hits feel like real attacks.
+        if (attacker != null)
+        {
+            yield return attacker.StartCoroutine(
+                attacker.PlayAttackBump(0.35f, attackWindup * 0.7f)
+            );
+        }
+
+        // Brief damage flash on the target.
+        if (target != null)
+        {
+            yield return target.StartCoroutine(target.FlashDamage(0.18f));
+        }
+
+        PerformImmediateAttackInternal(attacker, target, ignoreBodyRules);
+        yield return new WaitForSeconds(attackResolvePause * 0.6f * pacingMultiplier);
+    }
+
+    // Core damage logic for immediate attacks (no animations).
+    private void PerformImmediateAttackInternal(
+        Creature attacker,
+        Creature target,
+        bool ignoreBodyRules
     )
     {
         if (attacker == null || target == null)
@@ -977,13 +1113,17 @@ public class ResolutionManager : MonoBehaviour
         baseDmg = Mathf.Max(0, baseDmg);
         if (baseDmg > 0)
         {
-            // Pass attackVFX here too
-            target.ApplyDamage(baseDmg, attacker, attackVFX);
-            FeedbackManager.Instance?.ShowFloatingText(
-                $"-{baseDmg} HP",
-                target.transform.position,
-                new Color(1f, 0.3f, 0.3f)
-            );
+            // Pass attackVFX here too and use the actual applied damage value
+            // so feedback never exceeds the victim's remaining HP.
+            int applied = target.ApplyDamage(baseDmg, attacker, attackVFX);
+            if (applied > 0)
+            {
+                FeedbackManager.Instance?.ShowFloatingText(
+                    $"-{applied} HP",
+                    target.transform.position,
+                    new Color(1f, 0.3f, 0.3f)
+                );
+            }
             if (
                 attacker != null
                 && attacker.data != null

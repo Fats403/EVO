@@ -27,12 +27,15 @@ public class ExtinctionEventGlobalEffect : GlobalEffectBase
                     {
                         if (target == null || target.isDying || target.currentHealth <= 0)
                             return;
-                        target.ApplyDamage(3, null);
-                        FeedbackManager.Instance?.ShowFloatingText(
-                            "-3 HP",
-                            c.transform.position,
-                            new Color(1f, 0.5f, 0.5f)
-                        );
+                        int applied = target.ApplyDamage(3, null, null, "Extinction Event");
+                        if (applied > 0)
+                        {
+                            FeedbackManager.Instance?.ShowFloatingText(
+                                $"-{applied} HP",
+                                c.transform.position,
+                                new Color(1f, 0.5f, 0.5f)
+                            );
+                        }
                     }
                 );
             }

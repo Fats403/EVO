@@ -3,17 +3,32 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Traits/Herbivores/Protector's Fury")]
 public class ProtectorsFuryTrait : Trait
 {
-    public override void OnAllyTargeted(Creature self, Creature ally, Creature attacker)
+    /// <summary>
+    /// Protector's Fury triggers *after* a protected herbivore ally actually
+    /// takes damage, instead of pre-emptively when they are merely targeted.
+    /// This makes the counter-attack feel fairer and less confusing, and the
+    /// immediate strike is still resolved with a visible attack animation.
+    /// </summary>
+    public override void OnAnyDamage(
+        Creature self,
+        Creature victim,
+        Creature attacker,
+        int finalDamage
+    )
     {
-        if (self == null || ally == null || attacker == null)
+        if (self == null || victim == null || attacker == null)
             return;
         if (self.HasStatus(StatusTag.Suppressed))
             return;
-        if (self.owner != ally.owner)
+        if (finalDamage <= 0)
             return;
-        if (ally.data == null || ally.data.type != CardType.Herbivore)
+        if (self.currentHealth <= 0 || self.isDying)
             return;
-        // Immediate strike ignoring body rules
+        if (self.owner != victim.owner)
+            return;
+        if (victim.data == null || victim.data.type != CardType.Herbivore)
+            return;
+        // Immediate retaliatory strike ignoring body rules, with animation.
         if (ResolutionManager.Instance != null)
         {
             ResolutionManager.Instance.PerformImmediateAttack(

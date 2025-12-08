@@ -94,6 +94,29 @@ public class HandLayoutController : MonoBehaviour
         LayoutCards();
     }
 
+    /// <summary>
+    /// Returns the logical number of cards in this hand, including any card that is
+    /// currently being dragged out of the hand so that draw logic does not treat it
+    /// as "missing" and allow an extra draw.
+    /// </summary>
+    public int GetLogicalCardCount()
+    {
+        if (handRect == null)
+            handRect = GetComponent<RectTransform>();
+
+        int count = handRect.childCount;
+
+        // While a card is being dragged, it is re-parented out of the hand, so it no
+        // longer appears as a child. However, from a game-rules perspective the card
+        // is still part of the player's hand until it is successfully played.
+        if (draggedCard != null)
+        {
+            count += 1;
+        }
+
+        return count;
+    }
+
     public void NotifyHoverEnter(BaseCardUI card)
     {
         hoveredCard = card;

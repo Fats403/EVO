@@ -65,7 +65,7 @@ public class EffectCard : ScriptableObject
     public bool allowInStorm = false;
     public bool allowInWildfire = false;
 
-    [Header("AI Hints (Optional)")]
+    [Header("AI Evaluation (Optional)")]
     [Tooltip(
         "How much this effect gains value from cleansing/removing negative statuses (0 = ignore)."
     )]
@@ -83,6 +83,10 @@ public class EffectCard : ScriptableObject
     )]
     [Range(1f, 3f)]
     public float aiBodyBuffMultiplier = 1f;
+
+    [Tooltip("Extra value when this effect removes/disables threats")]
+    [Range(0f, 5f)]
+    public float aiRemovalValue = 0f;
 
     public bool IsValidTarget(Creature candidate, SlotOwner player)
     {

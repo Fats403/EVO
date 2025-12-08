@@ -66,6 +66,10 @@ public class DraftManager : MonoBehaviour
             return;
         }
 
+        // Clear any lingering HUD card previews from a previous game state so
+        // the draft starts from a clean UI.
+        CardPreviewManager.Instance?.HideAll();
+
         BuildDraftPool();
         ResetDraftState();
         ShowDraftUI(true);
@@ -148,6 +152,7 @@ public class DraftManager : MonoBehaviour
         // Hide the draft UI and build a balanced random deck for the player
         // using the same rules as the normal draft.
         ShowDraftUI(false);
+        CardPreviewManager.Instance?.HideAll();
         var src = deckManager.allCards ?? new System.Collections.Generic.List<ScriptableObject>();
         var built = BalancedDeckBuilder.BuildDeck(src, config);
         deckManager.InitializeFromDraft(built);
@@ -309,6 +314,10 @@ public class DraftManager : MonoBehaviour
     private void FinalizeDraft()
     {
         ShowDraftUI(false);
+
+        // When we leave the draft and transition into normal play, make sure
+        // the in-game preview manager is reset as well.
+        CardPreviewManager.Instance?.HideAll();
 
         if (deckManager == null)
         {
