@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Carnivores/First Blood")]
-public class FirstBloodTrait : Trait
+[CreateAssetMenu(menuName = "Traits/Avians/Extinction Flyer")]
+public class ExtinctionFlyerTrait : Trait
 {
     public override int ModifyOutgoingDamage(Creature self, Creature target, int baseDamage)
     {
@@ -9,8 +9,12 @@ public class FirstBloodTrait : Trait
             return baseDamage;
         if (self.HasStatus(StatusTag.Suppressed))
             return baseDamage;
-        // Ensure the attack attempts at least 1 damage before shields/immune/absorb.
-        return Mathf.Max(baseDamage, 1);
+        if (GameManager.Instance == null)
+            return baseDamage;
+        if (GameManager.Instance.currentEra != Era.Extinction)
+            return baseDamage;
+
+        return Mathf.Max(0, baseDamage + 1);
     }
 
     public override void OnDamageDealt(Creature self, Creature target, int finalDamage)
@@ -21,12 +25,16 @@ public class FirstBloodTrait : Trait
             return;
         if (finalDamage <= 0)
             return;
+        if (GameManager.Instance == null)
+            return;
+        if (GameManager.Instance.currentEra != Era.Extinction)
+            return;
 
-        target.AddStatus(StatusTag.Bleeding, 1);
+        target.AddStatus(StatusTag.Suppressed, 1);
         FeedbackManager.Instance?.ShowFloatingText(
-            "Bleeding +1",
+            "Suppressed",
             target.transform.position,
-            new Color(1f, 0.3f, 0.3f)
+            Color.yellow
         );
     }
 }

@@ -10,7 +10,7 @@ public class RallyingCallTrait : Trait
             return;
         if (self.HasStatus(StatusTag.Suppressed))
             return;
-        // All allied avians: +1 Regen and remove 1 Fatigued
+        // All allied avians: +2 Regen and remove all Fatigued
         var allies = Object
             .FindObjectsByType<Creature>(FindObjectsSortMode.None)
             .Where(c =>
@@ -24,9 +24,10 @@ public class RallyingCallTrait : Trait
             .ToList();
         foreach (var ally in allies)
         {
-            ally.ApplyRegen(1);
-            if (ally.GetStatus(StatusTag.Fatigued) > 0)
-                ally.DecrementStatus(StatusTag.Fatigued, 1);
+            ally.AddStatus(StatusTag.Regen, 2);
+            int f = ally.GetStatus(StatusTag.Fatigued);
+            if (f > 0)
+                ally.ClearStatus(StatusTag.Fatigued);
         }
     }
 }

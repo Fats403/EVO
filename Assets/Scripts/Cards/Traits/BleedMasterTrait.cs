@@ -11,6 +11,11 @@ public class BleedMasterTrait : Trait
             return;
         if (finalDamage <= 0)
             return;
-        target.ApplyBleeding(1);
+        target.AddStatus(StatusTag.Bleeding, 1);
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Bleeding +1",
+            target.transform.position,
+            new Color(1f, 0.3f, 0.3f)
+        );
     }
 }

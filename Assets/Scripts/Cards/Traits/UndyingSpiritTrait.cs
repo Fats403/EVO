@@ -19,7 +19,7 @@ public class UndyingSpiritTrait : Trait
         {
             self.currentHealth = 1;
             self.RefreshStatsUI();
-            self.ApplyRegen(2);
+            self.AddStatus(StatusTag.Regen, 3);
 
             // Clear negative statuses
             self.ClearAllNegativeStatuses();

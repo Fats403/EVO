@@ -8,7 +8,7 @@ public class FeralRageEffect : EffectTraitBase
     {
         if (self == null)
             return;
-        self.ApplyRage();
+        self.AddStatus(StatusTag.Rage, 1);
         remainingRounds = 0;
     }
 }

@@ -16,8 +16,10 @@ public class WildfireBornTrait : Trait
         if (wm.CurrentWeather != WeatherType.Wildfire)
             return;
 
-        self.AddStatus(StatusTag.DamageUp, 1);
-        self.ApplyImmune();
+        int currentDamageUp = self.GetStatus(StatusTag.DamageUp);
+
+        self.AddStatus(StatusTag.DamageUp, 1 + currentDamageUp);
+        self.AddStatus(StatusTag.Immune, 1);
         FeedbackManager.Instance?.ShowFloatingText(
             "DamageUp +1, Immune",
             self.transform.position,

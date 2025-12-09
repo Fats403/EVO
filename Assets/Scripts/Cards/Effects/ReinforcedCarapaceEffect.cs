@@ -1,17 +1,14 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 [CreateAssetMenu(menuName = "Effects/Reinforced Carapace")]
 public class ReinforcedCarapaceEffect : EffectTraitBase
 {
-    [SerializeField] public int shieldCharges = 1;
-
     public override void OnApply(Creature self)
     {
-        if (self == null) return;
-        self.ApplyShield(Mathf.Max(1, shieldCharges));
+        if (self == null)
+            return;
+        self.AddStatus(StatusTag.Shielded, 1);
         remainingRounds = 0;
     }
 }
-
-

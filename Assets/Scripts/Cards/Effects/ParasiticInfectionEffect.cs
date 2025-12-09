@@ -4,15 +4,11 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Effects/Parasitic Infection")]
 public class ParasiticInfectionEffect : EffectTraitBase
 {
-    [SerializeField]
-    public int stacksOnApply = 2;
-
     public override void OnApply(Creature self)
     {
         if (self == null)
             return;
-        int n = Mathf.Max(1, stacksOnApply);
-        self.ApplyInfected(n);
+        self.AddStatus(StatusTag.Infected, 2);
         remainingRounds = 0;
     }
 }

@@ -20,7 +20,7 @@ public class FlameDancerTrait : Trait
             && wm.LastWeather.Value != WeatherType.Wildfire
         )
         {
-            self.ApplyRegen(2);
+            self.AddStatus(StatusTag.Regen, 2);
             FeedbackManager.Instance?.ShowFloatingText(
                 "Regen +2",
                 self.transform.position,

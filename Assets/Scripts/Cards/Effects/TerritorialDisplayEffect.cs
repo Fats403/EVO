@@ -7,7 +7,7 @@ public class TerritorialDisplayEffect : EffectTraitBase
     {
         if (self == null)
             return;
-        self.ApplyFatigued(1);
+        self.AddStatus(StatusTag.Fatigued, 1);
         remainingRounds = 0;
     }
 }

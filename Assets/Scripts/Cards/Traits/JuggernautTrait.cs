@@ -12,7 +12,7 @@ public class JuggernautTrait : Trait
         if (finalDamage <= 0)
             return;
 
-        target.ApplySuppressed(1);
+        target.AddStatus(StatusTag.Suppressed, 1);
         FeedbackManager.Instance?.ShowFloatingText(
             "Suppressed",
             target.transform.position,

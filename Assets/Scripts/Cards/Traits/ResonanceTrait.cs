@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Carnivores/First Blood")]
-public class FirstBloodTrait : Trait
+[CreateAssetMenu(menuName = "Traits/Avians/Resonance")]
+public class ResonanceTrait : Trait
 {
     public override int ModifyOutgoingDamage(Creature self, Creature target, int baseDamage)
     {
@@ -9,8 +9,13 @@ public class FirstBloodTrait : Trait
             return baseDamage;
         if (self.HasStatus(StatusTag.Suppressed))
             return baseDamage;
-        // Ensure the attack attempts at least 1 damage before shields/immune/absorb.
-        return Mathf.Max(baseDamage, 1);
+
+        // If target already has Suppressed, deal +1 damage instead.
+        if (target.GetStatus(StatusTag.Suppressed) > 0)
+        {
+            return Mathf.Max(0, baseDamage + 1);
+        }
+        return baseDamage;
     }
 
     public override void OnDamageDealt(Creature self, Creature target, int finalDamage)
@@ -22,11 +27,12 @@ public class FirstBloodTrait : Trait
         if (finalDamage <= 0)
             return;
 
-        target.AddStatus(StatusTag.Bleeding, 1);
+        // All attacks apply Suppressed (1).
+        target.AddStatus(StatusTag.Suppressed, 1);
         FeedbackManager.Instance?.ShowFloatingText(
-            "Bleeding +1",
+            "Suppressed",
             target.transform.position,
-            new Color(1f, 0.3f, 0.3f)
+            Color.yellow
         );
     }
 }

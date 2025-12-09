@@ -96,32 +96,10 @@ public class AIManager : MonoBehaviour
     public float allyAttackOpportunityBonus = 2.0f;
 
     // Local AI view of which statuses are generally harmful/beneficial.
-    // Kept in sync conceptually with Creature.NegativeStatusTags.
-    static readonly StatusTag[] NegativeStatusTagsForAI = new StatusTag[]
-    {
-        StatusTag.Infected,
-        StatusTag.Fatigued,
-        StatusTag.Starvation,
-        StatusTag.Taunt,
-        StatusTag.Stunned,
-        StatusTag.Suppressed,
-        StatusTag.NoForage,
-        StatusTag.Bleeding,
-        StatusTag.Malnourished,
-    };
+    // Mirrors StatusTagGroups.Negative/Positive so there's a single source of truth.
+    static readonly StatusTag[] NegativeStatusTagsForAI = StatusTagGroups.Negative;
 
-    static readonly StatusTag[] PositiveStatusTagsForAI = new StatusTag[]
-    {
-        StatusTag.Shielded,
-        StatusTag.Reflect,
-        StatusTag.DamageUp,
-        StatusTag.Regen,
-        StatusTag.Stealth,
-        StatusTag.Absorb,
-        StatusTag.BodyUp,
-        StatusTag.SpeedUp,
-        StatusTag.Immune,
-    };
+    static readonly StatusTag[] PositiveStatusTagsForAI = StatusTagGroups.Positive;
 
     void Awake()
     {

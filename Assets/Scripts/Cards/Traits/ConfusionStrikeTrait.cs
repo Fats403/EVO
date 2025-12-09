@@ -26,7 +26,7 @@ public class ConfusionStrikeTrait : Trait
             );
         if (anyOtherAvian)
         {
-            target.ApplySuppressed(1);
+            target.AddStatus(StatusTag.Suppressed, 2);
         }
     }
 }

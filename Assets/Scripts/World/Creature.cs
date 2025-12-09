@@ -84,20 +84,6 @@ public class Creature : MonoBehaviour
         }
     }
 
-    // Single source of truth for negative statuses
-    private static readonly StatusTag[] NegativeStatusTags = new StatusTag[]
-    {
-        StatusTag.Infected,
-        StatusTag.Fatigued,
-        StatusTag.Starvation,
-        StatusTag.Taunt,
-        StatusTag.Stunned,
-        StatusTag.Suppressed,
-        StatusTag.NoForage,
-        StatusTag.Bleeding,
-        StatusTag.Malnourished,
-    };
-
     private void OnEnable()
     {
         OnAnyCreatureHealed += HandleAnyCreatureHealed;
@@ -756,6 +742,7 @@ public class Creature : MonoBehaviour
             FeedbackManager.Instance?.ShowFloatingText("Immune", transform.position, Color.cyan);
             return;
         }
+
         // Mutual exclusivity: BodyUp vs Malnourished; SpeedUp vs Fatigued
         if (tag == StatusTag.BodyUp)
             ClearStatus(StatusTag.Malnourished);
@@ -765,9 +752,21 @@ public class Creature : MonoBehaviour
             ClearStatus(StatusTag.Fatigued);
         if (tag == StatusTag.Fatigued)
             ClearStatus(StatusTag.SpeedUp);
+
         int newValue = GetStatus(tag) + stacks;
-        // Stealth is non-stacking: clamp to 1
+
+        // Stealth, Sheilded, Stunned, No Forage, Rage, Immune is non-stacking: clamp to 1
         if (tag == StatusTag.Stealth)
+            newValue = newValue > 0 ? 1 : 0;
+        if (tag == StatusTag.Shielded)
+            newValue = newValue > 0 ? 1 : 0;
+        if (tag == StatusTag.Stunned)
+            newValue = newValue > 0 ? 1 : 0;
+        if (tag == StatusTag.NoForage)
+            newValue = newValue > 0 ? 1 : 0;
+        if (tag == StatusTag.Rage)
+            newValue = newValue > 0 ? 1 : 0;
+        if (tag == StatusTag.Immune)
             newValue = newValue > 0 ? 1 : 0;
 
         statuses[tag] = newValue;
@@ -803,39 +802,16 @@ public class Creature : MonoBehaviour
 
     private static bool IsNegativeStatus(StatusTag tag)
     {
-        return NegativeStatusTags.Contains(tag);
+        return StatusTagGroups.Negative.Contains(tag);
     }
 
     public void ClearAllNegativeStatuses()
     {
-        foreach (var tag in NegativeStatusTags)
+        foreach (var tag in StatusTagGroups.Negative)
         {
             ClearStatus(tag);
         }
     }
-
-    // Convenience
-    public void ApplyInfected(int stacks) => AddStatus(StatusTag.Infected, stacks);
-
-    public void ApplyShield(int charges) => AddStatus(StatusTag.Shielded, charges);
-
-    public void ApplyBleeding(int stacks) => AddStatus(StatusTag.Bleeding, stacks);
-
-    public void ApplyRegen(int stacks) => AddStatus(StatusTag.Regen, stacks);
-
-    public void ApplyRage() => AddStatus(StatusTag.Rage, 1);
-
-    public void ApplyStunned(int rounds = 1) => AddStatus(StatusTag.Stunned, rounds);
-
-    public void ApplySuppressed(int rounds) => AddStatus(StatusTag.Suppressed, rounds);
-
-    public void ApplyDamageUp(int stacks) => AddStatus(StatusTag.DamageUp, stacks);
-
-    public void ApplyNoForage(int rounds) => AddStatus(StatusTag.NoForage, rounds);
-
-    public void ApplyImmune() => AddStatus(StatusTag.Immune, 1);
-
-    public void ApplyFatigued(int stacks) => AddStatus(StatusTag.Fatigued, stacks);
 
     /// <summary>
     /// Ticks start-of-round status effects and returns true if any visible or

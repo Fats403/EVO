@@ -25,7 +25,7 @@ public class ApexPredatorTrait : Trait
             .ToList();
         foreach (var ally in allies)
         {
-            ally.ApplyRage();
+            ally.AddStatus(StatusTag.Rage, 1);
             FeedbackManager.Instance?.ShowFloatingText(
                 "Rage",
                 ally.transform.position,
@@ -33,6 +33,9 @@ public class ApexPredatorTrait : Trait
             );
         }
     }
+
+    // TODO: this seems like a hack to ignore body-size restrictions for this attacker while not suppressed.
+    // We should probably have a better way to handle this.
 
     public override int PredatorBodyBonusForTargeting(Creature self)
     {

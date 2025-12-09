@@ -205,7 +205,22 @@ public class WeatherManager : MonoBehaviour
                     .ToList();
                 foreach (var a in avians)
                 {
-                    a.ApplyFatigued(1);
+                    // Allow traits to negate storm fatigue as a weather penalty.
+                    bool negated = false;
+                    if (!a.HasStatus(StatusTag.Suppressed) && a.traits != null)
+                    {
+                        foreach (var tr in a.traits.ToArray())
+                        {
+                            if (tr != null && tr.NegateWeatherPenalty(a, currentWeather))
+                            {
+                                negated = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (negated)
+                        continue;
+                    a.AddStatus(StatusTag.Fatigued, 1);
                 }
                 break;
             }
@@ -237,6 +252,21 @@ public class WeatherManager : MonoBehaviour
                     .ToList();
                 foreach (var c in all)
                 {
+                    // Allow traits to negate wildfire damage as a weather penalty.
+                    bool negated = false;
+                    if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+                    {
+                        foreach (var tr in c.traits.ToArray())
+                        {
+                            if (tr != null && tr.NegateWeatherPenalty(c, currentWeather))
+                            {
+                                negated = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (negated)
+                        continue;
                     Vector3 pos = c.transform.position;
                     int applied = c.ApplyDamage(1, null, null, "Wildfire");
                     if (applied > 0)

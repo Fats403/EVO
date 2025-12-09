@@ -12,7 +12,7 @@ public class PlagueCarrierTrait : Trait
         // Apply only on successful attacks (not negated)
         if (wasNegated)
             return;
-        target.ApplyInfected(1);
-        target.ApplyNoForage(1);
+        target.AddStatus(StatusTag.Infected, 1);
+        target.AddStatus(StatusTag.NoForage, 1);
     }
 }

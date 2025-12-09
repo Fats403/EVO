@@ -22,6 +22,7 @@ public class LayInWakeTrait : Trait
         // Refresh era-based buff each round while in Cretaceous/Extinction.
         self.ClearStatus(StatusTag.BodyUp);
         self.ClearStatus(StatusTag.SpeedUp);
+
         self.AddStatus(StatusTag.SpeedUp, 2 + currentSpeedUp);
         self.AddStatus(StatusTag.BodyUp, 1 + currentBodyUp);
     }

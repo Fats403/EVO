@@ -1,8 +1,8 @@
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Traits/Herbivores/Guardian")]
-public class GuardianTrait : Trait
+[CreateAssetMenu(menuName = "Traits/Avians/Illusionist")]
+public class IllusionistTrait : Trait
 {
     public override void OnAnyDamage(
         Creature self,
@@ -15,22 +15,21 @@ public class GuardianTrait : Trait
             return;
         if (finalDamage <= 0)
             return;
+        if (self.HasStatus(StatusTag.Suppressed))
+            return;
         if (self == victim)
             return;
         if (self.owner != victim.owner)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
-            return;
 
-        // Adjacent ally took damage
         var adj = BoardUtils.GetAdjacentAllies(self);
         if (adj != null && adj.Contains(victim))
         {
-            self.AddStatus(StatusTag.Shielded, 1);
+            self.AddStatus(StatusTag.Stealth, 1);
             FeedbackManager.Instance?.ShowFloatingText(
-                "Shield +1",
+                "Stealth",
                 self.transform.position,
-                Color.cyan
+                Color.gray
             );
         }
     }

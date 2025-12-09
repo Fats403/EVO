@@ -11,21 +11,7 @@ public class AmbushTrait : Trait
         if (self.HasStatus(StatusTag.Suppressed))
             return baseDamage;
 
-        // Treat common debuff statuses as "negative effects".
-        StatusTag[] negativeTags = new StatusTag[]
-        {
-            StatusTag.Infected,
-            StatusTag.Fatigued,
-            StatusTag.Starvation,
-            StatusTag.Taunt,
-            StatusTag.Stunned,
-            StatusTag.Suppressed,
-            StatusTag.NoForage,
-            StatusTag.Bleeding,
-            StatusTag.Malnourished,
-        };
-
-        bool hasNegative = negativeTags.Any(tag => target.GetStatus(tag) > 0);
+        bool hasNegative = StatusTagGroups.Negative.Any(tag => target.GetStatus(tag) > 0);
         if (hasNegative)
         {
             return Mathf.Max(0, baseDamage + 1);

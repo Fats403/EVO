@@ -127,4 +127,11 @@ public abstract class Trait : ScriptableObject
         Creature attacker,
         int finalDamage
     ) { }
+
+    // Weather penalty hook: traits can opt a creature out of negative weather effects
+    // (e.g., storm fatigue, wildfire damage) for the current weather.
+    public virtual bool NegateWeatherPenalty(Creature self, WeatherType weather)
+    {
+        return false;
+    }
 }

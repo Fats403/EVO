@@ -30,7 +30,7 @@ public class SolarRecoveryGlobalEffect : GlobalEffectBase
             .ToList();
         foreach (var c in all)
         {
-            c.ApplyRegen(2);
+            c.AddStatus(StatusTag.Regen, 2);
         }
         remainingRounds = 0;
     }

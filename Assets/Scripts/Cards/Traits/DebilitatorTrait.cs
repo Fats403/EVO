@@ -11,6 +11,6 @@ public class DebilitatorTrait : Trait
             return;
         if (finalDamage <= 0)
             return;
-        target.ApplyFatigued(1);
+        target.AddStatus(StatusTag.Fatigued, 2);
     }
 }

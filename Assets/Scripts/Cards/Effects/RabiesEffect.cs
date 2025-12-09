@@ -7,7 +7,7 @@ public class RabiesEffect : EffectTraitBase
     {
         if (self == null)
             return;
-        self.ApplyInfected(2);
+        self.AddStatus(StatusTag.Infected, 2);
         self.AddStatus(StatusTag.NoForage, 1);
         remainingRounds = 0;
     }

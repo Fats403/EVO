@@ -25,7 +25,7 @@ public class SacrificeTrait : Trait
             .FirstOrDefault();
         if (target != null)
         {
-            target.ApplyRegen(2);
+            target.AddStatus(StatusTag.Regen, 2);
             FeedbackManager.Instance?.ShowFloatingText(
                 "Regen +2",
                 target.transform.position,

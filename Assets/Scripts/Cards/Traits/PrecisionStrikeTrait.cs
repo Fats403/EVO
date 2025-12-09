@@ -24,7 +24,7 @@ public class PrecisionStrikeTrait : Trait
             return;
         if (self.HasStatus(StatusTag.Suppressed))
             return;
-        target.ApplyStunned(1);
+        target.AddStatus(StatusTag.Stunned, 1);
         FeedbackManager.Instance?.ShowFloatingText(
             "Stunned",
             target.transform.position,

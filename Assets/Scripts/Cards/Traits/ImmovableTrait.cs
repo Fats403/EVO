@@ -18,7 +18,7 @@ public class ImmovableTrait : Trait
             return;
         if (wm.LastWeather.Value != wm.CurrentWeather)
         {
-            self.ApplyShield(1);
+            self.AddStatus(StatusTag.Shielded, 1);
             FeedbackManager.Instance?.ShowFloatingText(
                 "Shield +1",
                 self.transform.position,

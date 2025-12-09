@@ -7,7 +7,7 @@ public class MassFortificationEffect : EffectTraitBase
     {
         if (self == null)
             return;
-        self.ApplyShield(1);
+        self.AddStatus(StatusTag.Shielded, 1);
         remainingRounds = 0;
     }
 }

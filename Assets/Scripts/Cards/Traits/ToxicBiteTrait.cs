@@ -10,7 +10,7 @@ public class ToxicBiteTrait : Trait
             return;
         if (self.HasStatus(StatusTag.Suppressed))
             return;
-        target.ApplyInfected(2);
+        target.AddStatus(StatusTag.Infected, 2);
         FeedbackManager.Instance?.ShowFloatingText(
             "Infected +2",
             target.transform.position,
@@ -21,7 +21,7 @@ public class ToxicBiteTrait : Trait
         {
             foreach (var c in adj.Where(c => c != null))
             {
-                c.ApplyInfected(1);
+                c.AddStatus(StatusTag.Infected, 1);
                 FeedbackManager.Instance?.ShowFloatingText(
                     "Infected +1",
                     c.transform.position,

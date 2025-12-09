@@ -30,7 +30,7 @@ public class ImmovableTitanTrait : Trait
             .ToList();
         foreach (var ally in allies)
         {
-            ally.ApplyRegen(1);
+            ally.AddStatus(StatusTag.Regen, 1);
             FeedbackManager.Instance?.ShowFloatingText(
                 "Regen +1",
                 ally.transform.position,

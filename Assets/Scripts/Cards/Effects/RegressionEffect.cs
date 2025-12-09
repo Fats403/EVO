@@ -1,17 +1,14 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 [CreateAssetMenu(menuName = "Effects/Evolutionary Regression")]
 public class RegressionEffect : EffectTraitBase
 {
-    [SerializeField] public int suppressionRounds = 2;
-
     public override void OnApply(Creature self)
     {
-        if (self == null) return;
-        self.ApplySuppressed(Mathf.Max(1, suppressionRounds));
+        if (self == null)
+            return;
+        self.AddStatus(StatusTag.Suppressed, 2);
         remainingRounds = 0;
     }
 }
-
-

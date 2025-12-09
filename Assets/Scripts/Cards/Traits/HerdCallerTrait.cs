@@ -17,7 +17,7 @@ public class HerdCallerTrait : Trait
                 continue;
             if (ally.data.type != CardType.Herbivore)
                 continue;
-            ally.ApplyRegen(1);
+            ally.AddStatus(StatusTag.Regen, 1);
             FeedbackManager.Instance?.ShowFloatingText(
                 "Regen +1",
                 ally.transform.position,

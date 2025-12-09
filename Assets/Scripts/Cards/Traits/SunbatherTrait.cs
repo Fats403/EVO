@@ -30,7 +30,7 @@ public class SunbatherTrait : Trait
             return;
         if (wm.CurrentWeather == WeatherType.Clear && wm.LastWeather.Value != WeatherType.Clear)
         {
-            self.ApplyRegen(1);
+            self.AddStatus(StatusTag.Regen, 1);
             FeedbackManager.Instance?.ShowFloatingText(
                 "Regen +1",
                 self.transform.position,

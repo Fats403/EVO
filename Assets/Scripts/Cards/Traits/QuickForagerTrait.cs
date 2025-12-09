@@ -16,7 +16,7 @@ public class QuickForagerTrait : Trait
         int prePile = Mathf.Max(0, pile.count + amountTaken);
         if (prePile >= 4)
         {
-            self.ApplyRegen(1);
+            self.AddStatus(StatusTag.Regen, 1);
             FeedbackManager.Instance?.ShowFloatingText(
                 "Regen +1",
                 self.transform.position,

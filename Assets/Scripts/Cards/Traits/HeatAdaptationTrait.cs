@@ -13,15 +13,15 @@ public class HeatAdaptationTrait : Trait
         var wm = WeatherManager.Instance;
         if (wm == null)
             return;
+
         if (wm.CurrentWeather != WeatherType.Wildfire)
             return;
 
         // Refresh wildfire adaptation each round while Wildfire is active.
         int currentBodyUp = self.GetStatus(StatusTag.BodyUp);
-        int currentImmune = self.GetStatus(StatusTag.Immune);
 
         self.ClearStatus(StatusTag.BodyUp);
         self.AddStatus(StatusTag.BodyUp, 2 + currentBodyUp);
-        self.ApplyImmune();
+        self.AddStatus(StatusTag.Immune, 1);
     }
 }

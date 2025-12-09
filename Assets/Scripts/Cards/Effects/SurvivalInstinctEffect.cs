@@ -7,9 +7,9 @@ public class SurvivalInstinctEffect : EffectTraitBase
     {
         if (self == null)
             return;
-        self.maxHealth += 2;
+        self.maxHealth += 1;
         self.currentHealth = Mathf.Min(self.maxHealth, self.currentHealth + 2);
-        self.ApplyImmune();
+        self.AddStatus(StatusTag.Immune, 1);
         self.RefreshStatsUI();
         remainingRounds = 0;
     }
