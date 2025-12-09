@@ -12,9 +12,9 @@ public class IntimidateTrait : Trait
         var enemy = BoardUtils.GetClosestEnemy(self);
         if (enemy == null)
             return;
-        enemy.ApplyFatigued(1);
+        enemy.ApplyFatigued(2);
         FeedbackManager.Instance?.ShowFloatingText(
-            "Fatigued +1",
+            "Fatigued +2",
             enemy.transform.position,
             Color.yellow
         );

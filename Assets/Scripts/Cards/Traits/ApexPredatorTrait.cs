@@ -12,8 +12,16 @@ public class ApexPredatorTrait : Trait
             return;
         var allies = Object
             .FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c => c != null && c.owner == self.owner && c.currentHealth > 0 && !c.isDying)
-            .Where(c => c.data != null && c.data.type == CardType.Carnivore)
+            .Where(c =>
+                c != null
+                && c.owner == self.owner
+                && c.currentHealth > 0
+                && !c.isDying
+                && c.data != null
+                && c.data.type == CardType.Carnivore
+            )
+            .OrderBy(c => Vector3.SqrMagnitude(c.transform.position - self.transform.position))
+            .Take(2)
             .ToList();
         foreach (var ally in allies)
         {
@@ -24,5 +32,13 @@ public class ApexPredatorTrait : Trait
                 new Color(1f, 0.4f, 0.2f)
             );
         }
+    }
+
+    public override int PredatorBodyBonusForTargeting(Creature self)
+    {
+        // Effectively ignore body-size restrictions for this attacker while not suppressed.
+        if (self == null || self.HasStatus(StatusTag.Suppressed))
+            return 0;
+        return 100;
     }
 }

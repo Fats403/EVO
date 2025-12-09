@@ -5,6 +5,10 @@ public class PrecisionStrikeTrait : Trait
 {
     public override bool CanTargetAny(Creature self)
     {
+        if (self == null)
+            return false;
+        if (self.HasStatus(StatusTag.Suppressed))
+            return false;
         return true;
     }
 
@@ -17,6 +21,8 @@ public class PrecisionStrikeTrait : Trait
     public override void OnDamageDealt(Creature self, Creature target, int finalDamage)
     {
         if (target == null)
+            return;
+        if (self.HasStatus(StatusTag.Suppressed))
             return;
         target.ApplyStunned(1);
         FeedbackManager.Instance?.ShowFloatingText(
