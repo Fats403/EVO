@@ -19,6 +19,12 @@ public class CreatureCard : ScriptableObject
     [Header("Vitals")]
     public int maxHealth = 3;
 
+    [Header("Position / Movement Flags")]
+    [Tooltip(
+        "If true, this creature cannot be moved by board-position effects (e.g., Forced Migration)."
+    )]
+    public bool isImmovable = false;
+
     [Header("Cost & Conditions")]
     [Tooltip("Momentum cost to play this creature card")]
     [Min(1)]

@@ -1,0 +1,884 @@
+fileFormatVersion: 2
+guid: 967c9481184d648258c9b163f3665b17
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4840352007894400593
+    second: draught-bringer_0
+  - first:
+      213: -3761386261135244320
+    second: draught-bringer_1
+  - first:
+      213: -8827052860044128374
+    second: draught-bringer_2
+  - first:
+      213: -8462814799356364521
+    second: draught-bringer_3
+  - first:
+      213: -8458757682686434565
+    second: draught-bringer_4
+  - first:
+      213: 531513176247377095
+    second: draught-bringer_5
+  - first:
+      213: -1333831390749586385
+    second: draught-bringer_6
+  - first:
+      213: -5320860480926065973
+    second: draught-bringer_7
+  - first:
+      213: 6456526551951694653
+    second: draught-bringer_8
+  - first:
+      213: 8963265888525958427
+    second: draught-bringer_9
+  - first:
+      213: -8012661096526462447
+    second: draught-bringer_10
+  - first:
+      213: -2693519532352151368
+    second: draught-bringer_11
+  - first:
+      213: 4472206828876117409
+    second: draught-bringer_12
+  - first:
+      213: 4213845865318759843
+    second: draught-bringer_13
+  - first:
+      213: -5851052032198932234
+    second: draught-bringer_14
+  - first:
+      213: 6062697694229881400
+    second: draught-bringer_15
+  - first:
+      213: 6006182603168533694
+    second: draught-bringer_16
+  - first:
+      213: -2446637202675812405
+    second: draught-bringer_17
+  - first:
+      213: -142864523063147587
+    second: draught-bringer_18
+  - first:
+      213: 3400024362329678574
+    second: draught-bringer_19
+  - first:
+      213: -4761362781118299487
+    second: draught-bringer_20
+  - first:
+      213: 3581403792743857200
+    second: draught-bringer_21
+  - first:
+      213: -2056093529799450367
+    second: draught-bringer_22
+  - first:
+      213: -5777762196220784436
+    second: draught-bringer_23
+  - first:
+      213: 7784911718560972133
+    second: draught-bringer_24
+  - first:
+      213: 4008064644746068949
+    second: draught-bringer_25
+  - first:
+      213: -7324363886751583344
+    second: draught-bringer_26
+  - first:
+      213: -8856857174763506331
+    second: draught-bringer_27
+  - first:
+      213: 1727963002017194869
+    second: draught-bringer_28
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: draught-bringer_0
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 706
+        width: 182
+        height: 155
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15ef46281826c2340800000000000000
+      internalID: 4840352007894400593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_1
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 927
+        width: 84
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e3cff9cf1fdccbc0800000000000000
+      internalID: -3761386261135244320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_2
+      rect:
+        serializedVersion: 2
+        x: 187
+        y: 764
+        width: 94
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8f49770132008580800000000000000
+      internalID: -8827052860044128374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_3
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 858
+        width: 176
+        height: 161
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 719f17427ca0e8a80800000000000000
+      internalID: -8462814799356364521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_4
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 664
+        width: 311
+        height: 299
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf26e5a34b47c9a80800000000000000
+      internalID: -8458757682686434565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_5
+      rect:
+        serializedVersion: 2
+        x: 742
+        y: 858
+        width: 56
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cc1aafea60506700800000000000000
+      internalID: 531513176247377095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_6
+      rect:
+        serializedVersion: 2
+        x: 812
+        y: 672
+        width: 186
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2c0b14ca674d7de0800000000000000
+      internalID: -1333831390749586385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_7
+      rect:
+        serializedVersion: 2
+        x: 899
+        y: 895
+        width: 17
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcadcfe65918826b0800000000000000
+      internalID: -5320860480926065973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_8
+      rect:
+        serializedVersion: 2
+        x: 915
+        y: 897
+        width: 6
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3b55fbd0b03a9950800000000000000
+      internalID: 6456526551951694653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_9
+      rect:
+        serializedVersion: 2
+        x: 91
+        y: 731
+        width: 39
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1d37f016dae36c70800000000000000
+      internalID: 8963265888525958427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_10
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 776
+        width: 18
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 112c2f38f2f4dc090800000000000000
+      internalID: -8012661096526462447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_11
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 656
+        width: 109
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b0e2969142be9ad0800000000000000
+      internalID: -2693519532352151368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_12
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 778
+        width: 42
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a5bc358a68701e30800000000000000
+      internalID: 4472206828876117409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_13
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 784
+        width: 11
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3adb2941d769a7a30800000000000000
+      internalID: 4213845865318759843
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_14
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 712
+        width: 149
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f8847a4d23eccea0800000000000000
+      internalID: -5851052032198932234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_15
+      rect:
+        serializedVersion: 2
+        x: 375
+        y: 743
+        width: 15
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 832e62d6e67032450800000000000000
+      internalID: 6062697694229881400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_16
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 725
+        width: 46
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebccdf5614f3a5350800000000000000
+      internalID: 6006182603168533694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_17
+      rect:
+        serializedVersion: 2
+        x: 416
+        y: 776
+        width: 29
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc7b0405d6ccb0ed0800000000000000
+      internalID: -2446637202675812405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_18
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 753
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db3c0d32971740ef0800000000000000
+      internalID: -142864523063147587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_19
+      rect:
+        serializedVersion: 2
+        x: 747
+        y: 720
+        width: 59
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee2a558b4205f2f20800000000000000
+      internalID: 3400024362329678574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_20
+      rect:
+        serializedVersion: 2
+        x: 824
+        y: 727
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a28da007cd3cedb0800000000000000
+      internalID: -4761362781118299487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_21
+      rect:
+        serializedVersion: 2
+        x: 910
+        y: 735
+        width: 19
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03cfbbf36c3b3b130800000000000000
+      internalID: 3581403792743857200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_22
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 656
+        width: 54
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 101235b04d94773e0800000000000000
+      internalID: -2056093529799450367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_23
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 673
+        width: 26
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc05499f4e341dfa0800000000000000
+      internalID: -5777762196220784436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_24
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 658
+        width: 38
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56d3a9836ff890c60800000000000000
+      internalID: 7784911718560972133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_25
+      rect:
+        serializedVersion: 2
+        x: 883
+        y: 672
+        width: 30
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d344ea0f818f9730800000000000000
+      internalID: 4008064644746068949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_26
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1024
+        height: 659
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 093f874e9d1aa5a90800000000000000
+      internalID: -7324363886751583344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_27
+      rect:
+        serializedVersion: 2
+        x: 627
+        y: 641
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 565f9df335f161580800000000000000
+      internalID: -8856857174763506331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: draught-bringer_28
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 640
+        width: 26
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 573a048f135faf710800000000000000
+      internalID: 1727963002017194869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      draught-bringer_0: 4840352007894400593
+      draught-bringer_1: -3761386261135244320
+      draught-bringer_10: -8012661096526462447
+      draught-bringer_11: -2693519532352151368
+      draught-bringer_12: 4472206828876117409
+      draught-bringer_13: 4213845865318759843
+      draught-bringer_14: -5851052032198932234
+      draught-bringer_15: 6062697694229881400
+      draught-bringer_16: 6006182603168533694
+      draught-bringer_17: -2446637202675812405
+      draught-bringer_18: -142864523063147587
+      draught-bringer_19: 3400024362329678574
+      draught-bringer_2: -8827052860044128374
+      draught-bringer_20: -4761362781118299487
+      draught-bringer_21: 3581403792743857200
+      draught-bringer_22: -2056093529799450367
+      draught-bringer_23: -5777762196220784436
+      draught-bringer_24: 7784911718560972133
+      draught-bringer_25: 4008064644746068949
+      draught-bringer_26: -7324363886751583344
+      draught-bringer_27: -8856857174763506331
+      draught-bringer_28: 1727963002017194869
+      draught-bringer_3: -8462814799356364521
+      draught-bringer_4: -8458757682686434565
+      draught-bringer_5: 531513176247377095
+      draught-bringer_6: -1333831390749586385
+      draught-bringer_7: -5320860480926065973
+      draught-bringer_8: 6456526551951694653
+      draught-bringer_9: 8963265888525958427
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

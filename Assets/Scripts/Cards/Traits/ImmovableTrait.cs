@@ -7,22 +7,23 @@ public class ImmovableTrait : Trait
     {
         if (self == null)
             return;
-        // Gains Taunt each round (refresh)
-        self.AddStatus(StatusTag.Taunt, 1);
-    }
+        if (self.HasStatus(StatusTag.Suppressed))
+            return;
 
-    public override void OnAfterEat(Creature self, int amountTaken, FoodPile pile)
-    {
-        if (self == null || amountTaken <= 0)
+        // Gain +1 Shield whenever the weather changes.
+        var wm = WeatherManager.Instance;
+        if (wm == null)
             return;
-        if (pile == null)
+        if (!wm.LastWeather.HasValue)
             return;
-        pile.count = Mathf.Max(0, pile.count + 2);
-        pile.UpdateUI();
-        FeedbackManager.Instance?.ShowFloatingText(
-            "Food +2",
-            pile.transform.position,
-            new Color(0.5f, 0.9f, 0.5f)
-        );
+        if (wm.LastWeather.Value != wm.CurrentWeather)
+        {
+            self.ApplyShield(1);
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Shield +1",
+                self.transform.position,
+                Color.cyan
+            );
+        }
     }
 }

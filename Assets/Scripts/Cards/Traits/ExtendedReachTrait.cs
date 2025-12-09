@@ -7,9 +7,11 @@ public class ExtendedReachTrait : Trait
     {
         if (self == null || amountTaken <= 0)
             return;
+        if (self.HasStatus(StatusTag.Suppressed))
+            return;
         self.eaten += 1;
         FeedbackManager.Instance?.ShowFloatingText(
-            "Bonus +1",
+            "Food +1 [Extended Reach]",
             self.transform.position,
             new Color(0.3f, 1f, 0.3f)
         );

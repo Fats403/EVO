@@ -1,0 +1,494 @@
+fileFormatVersion: 2
+guid: d27ed56474189442da55de46ca4cd262
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5073644869123387334
+    second: natures-blessings_0
+  - first:
+      213: -7513156799130807518
+    second: natures-blessings_1
+  - first:
+      213: -1310960656531580603
+    second: natures-blessings_2
+  - first:
+      213: -2942691246343705192
+    second: natures-blessings_3
+  - first:
+      213: 4195365409489944735
+    second: natures-blessings_4
+  - first:
+      213: -7571265503274837461
+    second: natures-blessings_5
+  - first:
+      213: -6135192861534410570
+    second: natures-blessings_6
+  - first:
+      213: 1275559859591114587
+    second: natures-blessings_7
+  - first:
+      213: -1304934254816056581
+    second: natures-blessings_8
+  - first:
+      213: 3370536268125016875
+    second: natures-blessings_9
+  - first:
+      213: 8456604804903899025
+    second: natures-blessings_10
+  - first:
+      213: -1764152627015077602
+    second: natures-blessings_11
+  - first:
+      213: -6134452026378427312
+    second: natures-blessings_12
+  - first:
+      213: 1901963493235471756
+    second: natures-blessings_13
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: natures-blessings_0
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 716
+        width: 292
+        height: 279
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cf259c8025396640800000000000000
+      internalID: 5073644869123387334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: natures-blessings_1
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 0
+        width: 811
+        height: 632
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2235ff592b7ebb790800000000000000
+      internalID: -7513156799130807518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: natures-blessings_2
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 535
+        width: 89
+        height: 106
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5491ce88a388ecde0800000000000000
+      internalID: -1310960656531580603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: natures-blessings_3
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 610
+        width: 101
+        height: 111
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89d280a07e57927d0800000000000000
+      internalID: -2942691246343705192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: natures-blessings_4
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 767
+        width: 179
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f900c97ac9ee83a30800000000000000
+      internalID: 4195365409489944735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: natures-blessings_5
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 639
+        width: 302
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2a522993267de690800000000000000
+      internalID: -7571265503274837461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: natures-blessings_6
+      rect:
+        serializedVersion: 2
+        x: 551
+        y: 783
+        width: 57
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b8aabb199a6bdaa0800000000000000
+      internalID: -6135192861534410570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: natures-blessings_7
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 631
+        width: 25
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5feca02fe2b3b110800000000000000
+      internalID: 1275559859591114587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: natures-blessings_8
+      rect:
+        serializedVersion: 2
+        x: 611
+        y: 576
+        width: 411
+        height: 435
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfa23768531f3ede0800000000000000
+      internalID: -1304934254816056581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: natures-blessings_9
+      rect:
+        serializedVersion: 2
+        x: 735
+        y: 622
+        width: 89
+        height: 147
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b239924c0ec86ce20800000000000000
+      internalID: 3370536268125016875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: natures-blessings_10
+      rect:
+        serializedVersion: 2
+        x: 801
+        y: 535
+        width: 64
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19f882ad345eb5570800000000000000
+      internalID: 8456604804903899025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: natures-blessings_11
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 199
+        width: 127
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e11b13958887487e0800000000000000
+      internalID: -1764152627015077602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: natures-blessings_12
+      rect:
+        serializedVersion: 2
+        x: 648
+        y: 119
+        width: 90
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 054e90c326c0edaa0800000000000000
+      internalID: -6134452026378427312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: natures-blessings_13
+      rect:
+        serializedVersion: 2
+        x: 733
+        y: 213
+        width: 289
+        height: 203
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c85bf0658b1256a10800000000000000
+      internalID: 1901963493235471756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      natures-blessings_0: 5073644869123387334
+      natures-blessings_1: -7513156799130807518
+      natures-blessings_10: 8456604804903899025
+      natures-blessings_11: -1764152627015077602
+      natures-blessings_12: -6134452026378427312
+      natures-blessings_13: 1901963493235471756
+      natures-blessings_2: -1310960656531580603
+      natures-blessings_3: -2942691246343705192
+      natures-blessings_4: 4195365409489944735
+      natures-blessings_5: -7571265503274837461
+      natures-blessings_6: -6135192861534410570
+      natures-blessings_7: 1275559859591114587
+      natures-blessings_8: -1304934254816056581
+      natures-blessings_9: 3370536268125016875
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

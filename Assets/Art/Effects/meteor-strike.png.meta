@@ -1,0 +1,598 @@
+fileFormatVersion: 2
+guid: 439cdffa7e76646f2b6c61ff5231c900
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6456805805026357435
+    second: meteor-strike_0
+  - first:
+      213: 1195508248867731070
+    second: meteor-strike_1
+  - first:
+      213: -391856542727532488
+    second: meteor-strike_2
+  - first:
+      213: -1468258097518158482
+    second: meteor-strike_3
+  - first:
+      213: -4257427291556303639
+    second: meteor-strike_4
+  - first:
+      213: 5732306313149333546
+    second: meteor-strike_5
+  - first:
+      213: -1192394231324950979
+    second: meteor-strike_6
+  - first:
+      213: -4036381145925699681
+    second: meteor-strike_7
+  - first:
+      213: 924271554584084416
+    second: meteor-strike_8
+  - first:
+      213: 3268848429536703111
+    second: meteor-strike_9
+  - first:
+      213: -5141391680602064046
+    second: meteor-strike_10
+  - first:
+      213: 4546494677944539774
+    second: meteor-strike_11
+  - first:
+      213: 9035403302203774499
+    second: meteor-strike_12
+  - first:
+      213: -1316220203573968958
+    second: meteor-strike_13
+  - first:
+      213: 1762281721447892363
+    second: meteor-strike_14
+  - first:
+      213: -8445099147235484862
+    second: meteor-strike_15
+  - first:
+      213: -1011642946725533672
+    second: meteor-strike_16
+  - first:
+      213: 4883906928405097562
+    second: meteor-strike_17
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: meteor-strike_0
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 0
+        width: 935
+        height: 1019
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54f49b77451d466a0800000000000000
+      internalID: -6456805805026357435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_1
+      rect:
+        serializedVersion: 2
+        x: 898
+        y: 631
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e767fc31b6c479010800000000000000
+      internalID: 1195508248867731070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_2
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 423
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83010dfec88df8af0800000000000000
+      internalID: -391856542727532488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_3
+      rect:
+        serializedVersion: 2
+        x: 846
+        y: 383
+        width: 59
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6dd6da1a03bf9be0800000000000000
+      internalID: -1468258097518158482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_4
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 336
+        width: 160
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ecabb56f649ae4c0800000000000000
+      internalID: -4257427291556303639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_5
+      rect:
+        serializedVersion: 2
+        x: 815
+        y: 335
+        width: 146
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a20cef2883e3d8f40800000000000000
+      internalID: 5732306313149333546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_6
+      rect:
+        serializedVersion: 2
+        x: 966
+        y: 335
+        width: 56
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3eb6a1a3c3c37fe0800000000000000
+      internalID: -1192394231324950979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_7
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 286
+        width: 167
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f97b303cbb4ebf7c0800000000000000
+      internalID: -4036381145925699681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_8
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 286
+        width: 166
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cf7bf6f41ca3dc00800000000000000
+      internalID: 924271554584084416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_9
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 226
+        width: 25
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 782f02bd3584d5d20800000000000000
+      internalID: 3268848429536703111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_10
+      rect:
+        serializedVersion: 2
+        x: 783
+        y: 226
+        width: 160
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25bb09ab18b16a8b0800000000000000
+      internalID: -5141391680602064046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_11
+      rect:
+        serializedVersion: 2
+        x: 957
+        y: 227
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7a961c32d4681f30800000000000000
+      internalID: 4546494677944539774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_12
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 151
+        width: 24
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3265f368e63346d70800000000000000
+      internalID: 9035403302203774499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_13
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 55
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cff7cfc2b8dbbde0800000000000000
+      internalID: -1316220203573968958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_14
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 38
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b85c01183e1e47810800000000000000
+      internalID: 1762281721447892363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_15
+      rect:
+        serializedVersion: 2
+        x: 461
+        y: 31
+        width: 76
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24b1314d11bfcca80800000000000000
+      internalID: -8445099147235484862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_16
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 31
+        width: 54
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81825e0991ce5f1f0800000000000000
+      internalID: -1011642946725533672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: meteor-strike_17
+      rect:
+        serializedVersion: 2
+        x: 787
+        y: 36
+        width: 22
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5ca7afa97f17c340800000000000000
+      internalID: 4883906928405097562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      meteor-strike_0: -6456805805026357435
+      meteor-strike_1: 1195508248867731070
+      meteor-strike_10: -5141391680602064046
+      meteor-strike_11: 4546494677944539774
+      meteor-strike_12: 9035403302203774499
+      meteor-strike_13: -1316220203573968958
+      meteor-strike_14: 1762281721447892363
+      meteor-strike_15: -8445099147235484862
+      meteor-strike_16: -1011642946725533672
+      meteor-strike_17: 4883906928405097562
+      meteor-strike_2: -391856542727532488
+      meteor-strike_3: -1468258097518158482
+      meteor-strike_4: -4257427291556303639
+      meteor-strike_5: 5732306313149333546
+      meteor-strike_6: -1192394231324950979
+      meteor-strike_7: -4036381145925699681
+      meteor-strike_8: 924271554584084416
+      meteor-strike_9: 3268848429536703111
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

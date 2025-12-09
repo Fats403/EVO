@@ -1,0 +1,1222 @@
+fileFormatVersion: 2
+guid: ed909fb4a762b425a8b7a1d20293d91c
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6377998953933956063
+    second: cyclone_0
+  - first:
+      213: 2582440890999215342
+    second: cyclone_1
+  - first:
+      213: 2153061013018648718
+    second: cyclone_2
+  - first:
+      213: 3197083685597692904
+    second: cyclone_3
+  - first:
+      213: 3412586698278312354
+    second: cyclone_4
+  - first:
+      213: 925623221603546182
+    second: cyclone_5
+  - first:
+      213: -4692312648011154420
+    second: cyclone_6
+  - first:
+      213: 6894755309318731261
+    second: cyclone_7
+  - first:
+      213: 2425750746630263610
+    second: cyclone_8
+  - first:
+      213: 6491901402028486937
+    second: cyclone_9
+  - first:
+      213: -8402475434452054615
+    second: cyclone_10
+  - first:
+      213: 6700662905542546799
+    second: cyclone_11
+  - first:
+      213: 6298697826872249377
+    second: cyclone_12
+  - first:
+      213: -5299488878409666620
+    second: cyclone_13
+  - first:
+      213: 5593375254925488326
+    second: cyclone_14
+  - first:
+      213: 8169637676977397691
+    second: cyclone_15
+  - first:
+      213: 4018168701866615697
+    second: cyclone_16
+  - first:
+      213: -3005677206847608236
+    second: cyclone_17
+  - first:
+      213: 7794608267280563662
+    second: cyclone_18
+  - first:
+      213: 639946821297826888
+    second: cyclone_19
+  - first:
+      213: 5569126357073148881
+    second: cyclone_20
+  - first:
+      213: -6011637143560463677
+    second: cyclone_21
+  - first:
+      213: -223636912069628292
+    second: cyclone_22
+  - first:
+      213: 3446785507371456278
+    second: cyclone_23
+  - first:
+      213: -1568682223333570826
+    second: cyclone_24
+  - first:
+      213: 6386287954250890287
+    second: cyclone_25
+  - first:
+      213: -6842808708239816136
+    second: cyclone_26
+  - first:
+      213: -2551325052016349571
+    second: cyclone_27
+  - first:
+      213: -8486394309481030083
+    second: cyclone_28
+  - first:
+      213: 1325971172377203473
+    second: cyclone_29
+  - first:
+      213: 6610206985877543030
+    second: cyclone_30
+  - first:
+      213: -4883518502839783107
+    second: cyclone_31
+  - first:
+      213: -5337827939931398941
+    second: cyclone_32
+  - first:
+      213: -8005915676542115753
+    second: cyclone_33
+  - first:
+      213: -8860794897503158499
+    second: cyclone_34
+  - first:
+      213: -1603544608610797670
+    second: cyclone_35
+  - first:
+      213: 4667979120377632620
+    second: cyclone_36
+  - first:
+      213: 3348791128595664991
+    second: cyclone_37
+  - first:
+      213: -6679097036983433903
+    second: cyclone_38
+  - first:
+      213: 5231981979040843740
+    second: cyclone_39
+  - first:
+      213: 6756104938703653072
+    second: cyclone_40
+  - first:
+      213: 3897703946012829469
+    second: cyclone_41
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: cyclone_0
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 0
+        width: 1020
+        height: 1019
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd3eb0ba144338850800000000000000
+      internalID: 6377998953933956063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_1
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 255
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee49379de4ca6d320800000000000000
+      internalID: 2582440890999215342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_2
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 252
+        width: 15
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8028bc759531ed10800000000000000
+      internalID: 2153061013018648718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_3
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 240
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e34f355ca25e5c20800000000000000
+      internalID: 3197083685597692904
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_4
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 241
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a91a1c7581fb5f20800000000000000
+      internalID: 3412586698278312354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_5
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 238
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64438877a6978dc00800000000000000
+      internalID: 925623221603546182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_6
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 255
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0cf830f18e81eeb0800000000000000
+      internalID: -4692312648011154420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_7
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 208
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df57e218c671faf50800000000000000
+      internalID: 6894755309318731261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_8
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 211
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a33198ea37ff9a120800000000000000
+      internalID: 2425750746630263610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_9
+      rect:
+        serializedVersion: 2
+        x: 331
+        y: 207
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 911b4c8fdedd71a50800000000000000
+      internalID: 6491901402028486937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_10
+      rect:
+        serializedVersion: 2
+        x: 346
+        y: 206
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ad0a8f4c19646b80800000000000000
+      internalID: -8402475434452054615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_11
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 157
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f65108439698dfc50800000000000000
+      internalID: 6700662905542546799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_12
+      rect:
+        serializedVersion: 2
+        x: 361
+        y: 197
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12cce363d48796750800000000000000
+      internalID: 6298697826872249377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_13
+      rect:
+        serializedVersion: 2
+        x: 371
+        y: 195
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4cf224761fe6476b0800000000000000
+      internalID: -5299488878409666620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_14
+      rect:
+        serializedVersion: 2
+        x: 390
+        y: 201
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c03b4dc829af9d40800000000000000
+      internalID: 5593375254925488326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_15
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 194
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbf92efbe22606170800000000000000
+      internalID: 8169637676977397691
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_16
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 203
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1932a5a252763c730800000000000000
+      internalID: 4018168701866615697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_17
+      rect:
+        serializedVersion: 2
+        x: 409
+        y: 107
+        width: 59
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45a2c505180b946d0800000000000000
+      internalID: -3005677206847608236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_18
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 194
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecdb496ebe20c2c60800000000000000
+      internalID: 7794608267280563662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_19
+      rect:
+        serializedVersion: 2
+        x: 418
+        y: 183
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84ce89e4e3c81e800800000000000000
+      internalID: 639946821297826888
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_20
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 183
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1db3c9e4ae2894d40800000000000000
+      internalID: 5569126357073148881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_21
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 191
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cad8837edf529ca0800000000000000
+      internalID: -6011637143560463677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_22
+      rect:
+        serializedVersion: 2
+        x: 459
+        y: 182
+        width: 15
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7eac61d96b75ecf0800000000000000
+      internalID: -223636912069628292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_23
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 95
+        width: 14
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61717d7382175df20800000000000000
+      internalID: 3446785507371456278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_24
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 115
+        width: 11
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f68bb044dbea3ae0800000000000000
+      internalID: -1568682223333570826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_25
+      rect:
+        serializedVersion: 2
+        x: 472
+        y: 192
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2cfa72fe07a0a850800000000000000
+      internalID: 6386287954250890287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_26
+      rect:
+        serializedVersion: 2
+        x: 473
+        y: 90
+        width: 77
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83a8a6f0cb57901a0800000000000000
+      internalID: -6842808708239816136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_27
+      rect:
+        serializedVersion: 2
+        x: 475
+        y: 183
+        width: 14
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7ea208f16fd79cd0800000000000000
+      internalID: -2551325052016349571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_28
+      rect:
+        serializedVersion: 2
+        x: 505
+        y: 192
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3e9c7f96554a3a80800000000000000
+      internalID: -8486394309481030083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_29
+      rect:
+        serializedVersion: 2
+        x: 505
+        y: 186
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11393f781cbc66210800000000000000
+      internalID: 1325971172377203473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_30
+      rect:
+        serializedVersion: 2
+        x: 510
+        y: 112
+        width: 52
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67859053b3c2cbb50800000000000000
+      internalID: 6610206985877543030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_31
+      rect:
+        serializedVersion: 2
+        x: 520
+        y: 192
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d31ff20bbc14a3cb0800000000000000
+      internalID: -4883518502839783107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_32
+      rect:
+        serializedVersion: 2
+        x: 538
+        y: 195
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ecdb3805c93ce5b0800000000000000
+      internalID: -5337827939931398941
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_33
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 92
+        width: 11
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 750e9fdfb1645e090800000000000000
+      internalID: -8005915676542115753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_34
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 101
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1ffababcf1280580800000000000000
+      internalID: -8860794897503158499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_35
+      rect:
+        serializedVersion: 2
+        x: 563
+        y: 199
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a97b246aca01fb9e0800000000000000
+      internalID: -1603544608610797670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_36
+      rect:
+        serializedVersion: 2
+        x: 570
+        y: 113
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c679c09274ef7c040800000000000000
+      internalID: 4667979120377632620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_37
+      rect:
+        serializedVersion: 2
+        x: 578
+        y: 199
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f509ceee9cb497e20800000000000000
+      internalID: 3348791128595664991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_38
+      rect:
+        serializedVersion: 2
+        x: 579
+        y: 208
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1550d3ad1a41f43a0800000000000000
+      internalID: -6679097036983433903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_39
+      rect:
+        serializedVersion: 2
+        x: 623
+        y: 207
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd789f3c3ebbb9840800000000000000
+      internalID: 5231981979040843740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_40
+      rect:
+        serializedVersion: 2
+        x: 639
+        y: 112
+        width: 26
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d881b875a182cd50800000000000000
+      internalID: 6756104938703653072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cyclone_41
+      rect:
+        serializedVersion: 2
+        x: 874
+        y: 182
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d17abb5861d671630800000000000000
+      internalID: 3897703946012829469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      cyclone_0: 6377998953933956063
+      cyclone_1: 2582440890999215342
+      cyclone_10: -8402475434452054615
+      cyclone_11: 6700662905542546799
+      cyclone_12: 6298697826872249377
+      cyclone_13: -5299488878409666620
+      cyclone_14: 5593375254925488326
+      cyclone_15: 8169637676977397691
+      cyclone_16: 4018168701866615697
+      cyclone_17: -3005677206847608236
+      cyclone_18: 7794608267280563662
+      cyclone_19: 639946821297826888
+      cyclone_2: 2153061013018648718
+      cyclone_20: 5569126357073148881
+      cyclone_21: -6011637143560463677
+      cyclone_22: -223636912069628292
+      cyclone_23: 3446785507371456278
+      cyclone_24: -1568682223333570826
+      cyclone_25: 6386287954250890287
+      cyclone_26: -6842808708239816136
+      cyclone_27: -2551325052016349571
+      cyclone_28: -8486394309481030083
+      cyclone_29: 1325971172377203473
+      cyclone_3: 3197083685597692904
+      cyclone_30: 6610206985877543030
+      cyclone_31: -4883518502839783107
+      cyclone_32: -5337827939931398941
+      cyclone_33: -8005915676542115753
+      cyclone_34: -8860794897503158499
+      cyclone_35: -1603544608610797670
+      cyclone_36: 4667979120377632620
+      cyclone_37: 3348791128595664991
+      cyclone_38: -6679097036983433903
+      cyclone_39: 5231981979040843740
+      cyclone_4: 3412586698278312354
+      cyclone_40: 6756104938703653072
+      cyclone_41: 3897703946012829469
+      cyclone_5: 925623221603546182
+      cyclone_6: -4692312648011154420
+      cyclone_7: 6894755309318731261
+      cyclone_8: 2425750746630263610
+      cyclone_9: 6491901402028486937
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

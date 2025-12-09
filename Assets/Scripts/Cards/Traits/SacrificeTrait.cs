@@ -32,9 +32,10 @@ public class SacrificeTrait : Trait
                 new Color(0.3f, 1f, 0.3f)
             );
         }
-        self.ApplyFatigued(2);
+        // Self becomes malnourished from over-sacrificing its own food.
+        self.AddStatus(StatusTag.Malnourished, 1);
         FeedbackManager.Instance?.ShowFloatingText(
-            "Fatigued +2",
+            "Malnourished +1",
             self.transform.position,
             Color.yellow
         );

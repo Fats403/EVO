@@ -1,0 +1,2158 @@
+fileFormatVersion: 2
+guid: 7686895ed522e46bb9cb8e8569fb7909
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8440487317480056216
+    second: ashen_0
+  - first:
+      213: -4159737252884909764
+    second: ashen_1
+  - first:
+      213: 23393062941494067
+    second: ashen_2
+  - first:
+      213: -5782971500147260060
+    second: ashen_3
+  - first:
+      213: -2643547994628496420
+    second: ashen_4
+  - first:
+      213: 4866324946761757958
+    second: ashen_5
+  - first:
+      213: -7359690484022039802
+    second: ashen_6
+  - first:
+      213: -8166005035880054627
+    second: ashen_7
+  - first:
+      213: -5584712530739482254
+    second: ashen_8
+  - first:
+      213: 2716341248245010456
+    second: ashen_9
+  - first:
+      213: 1723799208130172570
+    second: ashen_10
+  - first:
+      213: 1829283351638437477
+    second: ashen_11
+  - first:
+      213: 1806077262806132695
+    second: ashen_12
+  - first:
+      213: 4538098007144527110
+    second: ashen_13
+  - first:
+      213: -1358901010962672561
+    second: ashen_14
+  - first:
+      213: 7874656692255843244
+    second: ashen_15
+  - first:
+      213: -312886101326417643
+    second: ashen_16
+  - first:
+      213: 730437838210521345
+    second: ashen_17
+  - first:
+      213: -1448804472420063776
+    second: ashen_18
+  - first:
+      213: -188833347429013820
+    second: ashen_19
+  - first:
+      213: -5504231078542635818
+    second: ashen_20
+  - first:
+      213: -5050917605783208747
+    second: ashen_21
+  - first:
+      213: -525811428745044176
+    second: ashen_22
+  - first:
+      213: 5951858224353959919
+    second: ashen_23
+  - first:
+      213: -2758022977161044773
+    second: ashen_24
+  - first:
+      213: 6012352000618113949
+    second: ashen_25
+  - first:
+      213: 368365889936820137
+    second: ashen_26
+  - first:
+      213: 5516646527294156040
+    second: ashen_27
+  - first:
+      213: -4959429859784423967
+    second: ashen_28
+  - first:
+      213: 2410199549520021858
+    second: ashen_29
+  - first:
+      213: 8787531338166616282
+    second: ashen_30
+  - first:
+      213: -2139885946239695962
+    second: ashen_31
+  - first:
+      213: 7294322297200369385
+    second: ashen_32
+  - first:
+      213: 8727246771636721989
+    second: ashen_33
+  - first:
+      213: 4010702545201972331
+    second: ashen_34
+  - first:
+      213: -3473138932717011838
+    second: ashen_35
+  - first:
+      213: 6740041078219998901
+    second: ashen_36
+  - first:
+      213: 7731540042626286074
+    second: ashen_37
+  - first:
+      213: 943278945797936093
+    second: ashen_38
+  - first:
+      213: 958586268088388488
+    second: ashen_39
+  - first:
+      213: 2199009339505655231
+    second: ashen_40
+  - first:
+      213: -810683574770964484
+    second: ashen_41
+  - first:
+      213: 3844375758846095599
+    second: ashen_42
+  - first:
+      213: 2193258592409786687
+    second: ashen_43
+  - first:
+      213: 2131572270823237031
+    second: ashen_44
+  - first:
+      213: -3627831361025384101
+    second: ashen_45
+  - first:
+      213: 9168688559687641933
+    second: ashen_46
+  - first:
+      213: 7653434494897204587
+    second: ashen_47
+  - first:
+      213: 1733663720057942374
+    second: ashen_48
+  - first:
+      213: -3411498961322631648
+    second: ashen_49
+  - first:
+      213: 2796304245622466997
+    second: ashen_50
+  - first:
+      213: -5576293929136348481
+    second: ashen_51
+  - first:
+      213: 2481400901086392436
+    second: ashen_52
+  - first:
+      213: -4260030881818128710
+    second: ashen_53
+  - first:
+      213: -5148384399300869909
+    second: ashen_54
+  - first:
+      213: 2884540968596153857
+    second: ashen_55
+  - first:
+      213: 192164189728807568
+    second: ashen_56
+  - first:
+      213: -5011959273790894122
+    second: ashen_57
+  - first:
+      213: 2853923249257614951
+    second: ashen_58
+  - first:
+      213: 1371407640112186609
+    second: ashen_59
+  - first:
+      213: -101961604981215525
+    second: ashen_60
+  - first:
+      213: -7357260589889290664
+    second: ashen_61
+  - first:
+      213: 3735674036201526864
+    second: ashen_62
+  - first:
+      213: 1102186284703272493
+    second: ashen_63
+  - first:
+      213: 7554722016975486319
+    second: ashen_64
+  - first:
+      213: 2692007509702416384
+    second: ashen_65
+  - first:
+      213: -3846447554284766233
+    second: ashen_66
+  - first:
+      213: -7662261533058764859
+    second: ashen_67
+  - first:
+      213: -3793682554556369398
+    second: ashen_68
+  - first:
+      213: 6708465240007446596
+    second: ashen_69
+  - first:
+      213: -1733929958984110555
+    second: ashen_70
+  - first:
+      213: -8244378071820346007
+    second: ashen_71
+  - first:
+      213: 6024888226827413616
+    second: ashen_72
+  - first:
+      213: -7786443579745443035
+    second: ashen_73
+  - first:
+      213: 6093784090224434416
+    second: ashen_74
+  - first:
+      213: -3282213115199267370
+    second: ashen_75
+  - first:
+      213: 2173901837580783312
+    second: ashen_76
+  - first:
+      213: 4319685184856367386
+    second: ashen_77
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: ashen_0
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 691
+        width: 494
+        height: 328
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86a596e118d5dda80800000000000000
+      internalID: -8440487317480056216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_1
+      rect:
+        serializedVersion: 2
+        x: 494
+        y: 552
+        width: 528
+        height: 467
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c31f5daf105a546c0800000000000000
+      internalID: -4159737252884909764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_2
+      rect:
+        serializedVersion: 2
+        x: 632
+        y: 876
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33b06d6eddb135000800000000000000
+      internalID: 23393062941494067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_3
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 878
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 465c3836f02cebfa0800000000000000
+      internalID: -5782971500147260060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_4
+      rect:
+        serializedVersion: 2
+        x: 696
+        y: 860
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd3e871ea1b305bd0800000000000000
+      internalID: -2643547994628496420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_5
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 861
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6053b5591c8a88340800000000000000
+      internalID: 4866324946761757958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_6
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 831
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60b2b038f702dd990800000000000000
+      internalID: -7359690484022039802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_7
+      rect:
+        serializedVersion: 2
+        x: 521
+        y: 826
+        width: 16
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d90815a6fa58cae80800000000000000
+      internalID: -8166005035880054627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_8
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 815
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 271b998da8d1f72b0800000000000000
+      internalID: -5584712530739482254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_9
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 809
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 810926639f162b520800000000000000
+      internalID: 2716341248245010456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_10
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 816
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a96d2b82f3a2ce710800000000000000
+      internalID: 1723799208130172570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_11
+      rect:
+        serializedVersion: 2
+        x: 514
+        y: 725
+        width: 37
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56ee1ff248be26910800000000000000
+      internalID: 1829283351638437477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_12
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 799
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d7287693b9701910800000000000000
+      internalID: 1806077262806132695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_13
+      rect:
+        serializedVersion: 2
+        x: 235
+        y: 807
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 605f1c7f7109afe30800000000000000
+      internalID: 4538098007144527110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_14
+      rect:
+        serializedVersion: 2
+        x: 416
+        y: 799
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4496a4fab6342de0800000000000000
+      internalID: -1358901010962672561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_15
+      rect:
+        serializedVersion: 2
+        x: 613
+        y: 791
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca3ef063a86684d60800000000000000
+      internalID: 7874656692255843244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_16
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 783
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5113843afb768abf0800000000000000
+      internalID: -312886101326417643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_17
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 771
+        width: 10
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 109da050859032a00800000000000000
+      internalID: 730437838210521345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_18
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 783
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e5a7682200d4ebe0800000000000000
+      internalID: -1448804472420063776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_19
+      rect:
+        serializedVersion: 2
+        x: 286
+        y: 776
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c6eebc2211216df0800000000000000
+      internalID: -188833347429013820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_20
+      rect:
+        serializedVersion: 2
+        x: 620
+        y: 773
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dc0dc92ffa0d93b0800000000000000
+      internalID: -5504231078542635818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_21
+      rect:
+        serializedVersion: 2
+        x: 659
+        y: 775
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5dc768dc23987e9b0800000000000000
+      internalID: -5050917605783208747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_22
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 761
+        width: 12
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03f9fca9a41f3b8f0800000000000000
+      internalID: -525811428745044176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_23
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 775
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fefda10558f399250800000000000000
+      internalID: 5951858224353959919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_24
+      rect:
+        serializedVersion: 2
+        x: 371
+        y: 768
+        width: 14
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdc53f307b889b9d0800000000000000
+      internalID: -2758022977161044773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_25
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 759
+        width: 25
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9ba37d2a4a207350800000000000000
+      internalID: 6012352000618113949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_26
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 743
+        width: 17
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a70e0143d2bc1500800000000000000
+      internalID: 368365889936820137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_27
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 757
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80da2c2c9c01f8c40800000000000000
+      internalID: 5516646527294156040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_28
+      rect:
+        serializedVersion: 2
+        x: 349
+        y: 751
+        width: 12
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e5851791d09c2bb0800000000000000
+      internalID: -4959429859784423967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_29
+      rect:
+        serializedVersion: 2
+        x: 570
+        y: 747
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26982f278bfb27120800000000000000
+      internalID: 2410199549520021858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_30
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 743
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad0c808913593f970800000000000000
+      internalID: 8787531338166616282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_31
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 725
+        width: 22
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a3488ac1199d42e0800000000000000
+      internalID: -2139885946239695962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_32
+      rect:
+        serializedVersion: 2
+        x: 542
+        y: 736
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9eed6d97b73aa3560800000000000000
+      internalID: 7294322297200369385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_33
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 733
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 549d49a23b86d1970800000000000000
+      internalID: 8727246771636721989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_34
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 727
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b64c48a17b0e8a730800000000000000
+      internalID: 4010702545201972331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_35
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 723
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28cb2dbca8eeccfc0800000000000000
+      internalID: -3473138932717011838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_36
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 728
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b608de76af698d50800000000000000
+      internalID: 6740041078219998901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_37
+      rect:
+        serializedVersion: 2
+        x: 417
+        y: 727
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af1c27f84b2fb4b60800000000000000
+      internalID: 7731540042626286074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_38
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 723
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd314681433371d00800000000000000
+      internalID: 943278945797936093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_39
+      rect:
+        serializedVersion: 2
+        x: 505
+        y: 733
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88bc9fbc1259d4d00800000000000000
+      internalID: 958586268088388488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_40
+      rect:
+        serializedVersion: 2
+        x: 658
+        y: 723
+        width: 16
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbd300be753748e10800000000000000
+      internalID: 2199009339505655231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_41
+      rect:
+        serializedVersion: 2
+        x: 664
+        y: 735
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf7688c759fdfb4f0800000000000000
+      internalID: -810683574770964484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_42
+      rect:
+        serializedVersion: 2
+        x: 769
+        y: 719
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe0f4216267f95530800000000000000
+      internalID: 3844375758846095599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_43
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 705
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f399825c115007e10800000000000000
+      internalID: 2193258592409786687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_44
+      rect:
+        serializedVersion: 2
+        x: 418
+        y: 715
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a5ed7fcfadd49d10800000000000000
+      internalID: 2131572270823237031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_45
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 707
+        width: 29
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b516f05299a57adc0800000000000000
+      internalID: -3627831361025384101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_46
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 719
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4bae50daa9bd3f70800000000000000
+      internalID: 9168688559687641933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_47
+      rect:
+        serializedVersion: 2
+        x: 696
+        y: 720
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6da11c9f16763a60800000000000000
+      internalID: 7653434494897204587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_48
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 698
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6613902d7f53f0810800000000000000
+      internalID: 1733663720057942374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_49
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 695
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02e10c205cbe7a0d0800000000000000
+      internalID: -3411498961322631648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_50
+      rect:
+        serializedVersion: 2
+        x: 499
+        y: 702
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b96e3c55e77ec620800000000000000
+      internalID: 2796304245622466997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_51
+      rect:
+        serializedVersion: 2
+        x: 519
+        y: 679
+        width: 18
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb229a647360d92b0800000000000000
+      internalID: -5576293929136348481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_52
+      rect:
+        serializedVersion: 2
+        x: 538
+        y: 698
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 470b696f8f4bf6220800000000000000
+      internalID: 2481400901086392436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_53
+      rect:
+        serializedVersion: 2
+        x: 703
+        y: 704
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abe490dcb7451e4c0800000000000000
+      internalID: -4260030881818128710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_54
+      rect:
+        serializedVersion: 2
+        x: 718
+        y: 696
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be042888aa34d88b0800000000000000
+      internalID: -5148384399300869909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_55
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 0
+        width: 1019
+        height: 698
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1062c3d5ab2f70820800000000000000
+      internalID: 2884540968596153857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_56
+      rect:
+        serializedVersion: 2
+        x: 308
+        y: 680
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09a165bff44baa200800000000000000
+      internalID: 192164189728807568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_57
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 697
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6df08f05891f17ab0800000000000000
+      internalID: -5011959273790894122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_58
+      rect:
+        serializedVersion: 2
+        x: 647
+        y: 680
+        width: 17
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76e8a30131c2b9720800000000000000
+      internalID: 2853923249257614951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_59
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 442
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f4c42f8bf7380310800000000000000
+      internalID: 1371407640112186609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_60
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 426
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdead52e572c59ef0800000000000000
+      internalID: -101961604981215525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_61
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 407
+        width: 6
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85efaa35972c5e990800000000000000
+      internalID: -7357260589889290664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_62
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 327
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05611745eb7c7d330800000000000000
+      internalID: 3735674036201526864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_63
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 320
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2ecb081690cb4f00800000000000000
+      internalID: 1102186284703272493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_64
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 295
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6d75a6d5a3c7d860800000000000000
+      internalID: 7554722016975486319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_65
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 99
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0081f74319eeb5520800000000000000
+      internalID: 2692007509702416384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_66
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 95
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ebbfa7245cae9ac0800000000000000
+      internalID: -3846447554284766233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_67
+      rect:
+        serializedVersion: 2
+        x: 418
+        y: 93
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cf64e96bbd2aa590800000000000000
+      internalID: -7662261533058764859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_68
+      rect:
+        serializedVersion: 2
+        x: 419
+        y: 86
+        width: 22
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a06321101d12a5bc0800000000000000
+      internalID: -3793682554556369398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_69
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 98
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44013b2c791491d50800000000000000
+      internalID: 6708465240007446596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_70
+      rect:
+        serializedVersion: 2
+        x: 632
+        y: 96
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52e285993e7dfe7e0800000000000000
+      internalID: -1733929958984110555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_71
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 97
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96dd02303d5169d80800000000000000
+      internalID: -8244378071820346007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_72
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 85
+        width: 32
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0782b7bcbe3bc9350800000000000000
+      internalID: 6024888226827413616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_73
+      rect:
+        serializedVersion: 2
+        x: 769
+        y: 85
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 523e6ad81def0f390800000000000000
+      internalID: -7786443579745443035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_74
+      rect:
+        serializedVersion: 2
+        x: 400
+        y: 88
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fc11c30858719450800000000000000
+      internalID: 6093784090224434416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_75
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 87
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dd5b67cf8c3372d0800000000000000
+      internalID: -3282213115199267370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_76
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 86
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0de429514304b2e10800000000000000
+      internalID: 2173901837580783312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ashen_77
+      rect:
+        serializedVersion: 2
+        x: 750
+        y: 88
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a11a1e8f9ca92fb30800000000000000
+      internalID: 4319685184856367386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      ashen_0: -8440487317480056216
+      ashen_1: -4159737252884909764
+      ashen_10: 1723799208130172570
+      ashen_11: 1829283351638437477
+      ashen_12: 1806077262806132695
+      ashen_13: 4538098007144527110
+      ashen_14: -1358901010962672561
+      ashen_15: 7874656692255843244
+      ashen_16: -312886101326417643
+      ashen_17: 730437838210521345
+      ashen_18: -1448804472420063776
+      ashen_19: -188833347429013820
+      ashen_2: 23393062941494067
+      ashen_20: -5504231078542635818
+      ashen_21: -5050917605783208747
+      ashen_22: -525811428745044176
+      ashen_23: 5951858224353959919
+      ashen_24: -2758022977161044773
+      ashen_25: 6012352000618113949
+      ashen_26: 368365889936820137
+      ashen_27: 5516646527294156040
+      ashen_28: -4959429859784423967
+      ashen_29: 2410199549520021858
+      ashen_3: -5782971500147260060
+      ashen_30: 8787531338166616282
+      ashen_31: -2139885946239695962
+      ashen_32: 7294322297200369385
+      ashen_33: 8727246771636721989
+      ashen_34: 4010702545201972331
+      ashen_35: -3473138932717011838
+      ashen_36: 6740041078219998901
+      ashen_37: 7731540042626286074
+      ashen_38: 943278945797936093
+      ashen_39: 958586268088388488
+      ashen_4: -2643547994628496420
+      ashen_40: 2199009339505655231
+      ashen_41: -810683574770964484
+      ashen_42: 3844375758846095599
+      ashen_43: 2193258592409786687
+      ashen_44: 2131572270823237031
+      ashen_45: -3627831361025384101
+      ashen_46: 9168688559687641933
+      ashen_47: 7653434494897204587
+      ashen_48: 1733663720057942374
+      ashen_49: -3411498961322631648
+      ashen_5: 4866324946761757958
+      ashen_50: 2796304245622466997
+      ashen_51: -5576293929136348481
+      ashen_52: 2481400901086392436
+      ashen_53: -4260030881818128710
+      ashen_54: -5148384399300869909
+      ashen_55: 2884540968596153857
+      ashen_56: 192164189728807568
+      ashen_57: -5011959273790894122
+      ashen_58: 2853923249257614951
+      ashen_59: 1371407640112186609
+      ashen_6: -7359690484022039802
+      ashen_60: -101961604981215525
+      ashen_61: -7357260589889290664
+      ashen_62: 3735674036201526864
+      ashen_63: 1102186284703272493
+      ashen_64: 7554722016975486319
+      ashen_65: 2692007509702416384
+      ashen_66: -3846447554284766233
+      ashen_67: -7662261533058764859
+      ashen_68: -3793682554556369398
+      ashen_69: 6708465240007446596
+      ashen_7: -8166005035880054627
+      ashen_70: -1733929958984110555
+      ashen_71: -8244378071820346007
+      ashen_72: 6024888226827413616
+      ashen_73: -7786443579745443035
+      ashen_74: 6093784090224434416
+      ashen_75: -3282213115199267370
+      ashen_76: 2173901837580783312
+      ashen_77: 4319685184856367386
+      ashen_8: -5584712530739482254
+      ashen_9: 2716341248245010456
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

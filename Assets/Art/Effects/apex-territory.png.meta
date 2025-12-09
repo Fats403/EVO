@@ -1,0 +1,910 @@
+fileFormatVersion: 2
+guid: 566f7846f11584d41b1ce2622fce32fa
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 444818607943596330
+    second: apex-territory_0
+  - first:
+      213: 2258747245365432308
+    second: apex-territory_1
+  - first:
+      213: 615589172971318716
+    second: apex-territory_2
+  - first:
+      213: 1353664733465440426
+    second: apex-territory_3
+  - first:
+      213: 233314147497959484
+    second: apex-territory_4
+  - first:
+      213: -2933390778014524037
+    second: apex-territory_5
+  - first:
+      213: 6860382520265289520
+    second: apex-territory_6
+  - first:
+      213: 5182437224695946852
+    second: apex-territory_7
+  - first:
+      213: 240135783855518569
+    second: apex-territory_8
+  - first:
+      213: 8133077741766976192
+    second: apex-territory_9
+  - first:
+      213: -3383086120467301012
+    second: apex-territory_10
+  - first:
+      213: 770895370138990185
+    second: apex-territory_11
+  - first:
+      213: 1018606846772620733
+    second: apex-territory_12
+  - first:
+      213: 4136762661039371738
+    second: apex-territory_13
+  - first:
+      213: -3510891705159298088
+    second: apex-territory_14
+  - first:
+      213: -1339300552535228683
+    second: apex-territory_15
+  - first:
+      213: -5076738943056771240
+    second: apex-territory_16
+  - first:
+      213: 2382013779716448058
+    second: apex-territory_17
+  - first:
+      213: 9101842958636531175
+    second: apex-territory_18
+  - first:
+      213: -855047960482547788
+    second: apex-territory_19
+  - first:
+      213: 6167628391287274949
+    second: apex-territory_20
+  - first:
+      213: 2687066845508399031
+    second: apex-territory_21
+  - first:
+      213: 1169698656923259878
+    second: apex-territory_22
+  - first:
+      213: 1555749177730555263
+    second: apex-territory_23
+  - first:
+      213: -3977813626485597567
+    second: apex-territory_24
+  - first:
+      213: -4223822896908783993
+    second: apex-territory_25
+  - first:
+      213: -8487825255636009729
+    second: apex-territory_26
+  - first:
+      213: 122905624188109222
+    second: apex-territory_27
+  - first:
+      213: 2702247410509859258
+    second: apex-territory_28
+  - first:
+      213: 1358631877934594948
+    second: apex-territory_29
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: apex-territory_0
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 939
+        width: 24
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2936fbca205c2600800000000000000
+      internalID: 444818607943596330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_1
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 922
+        width: 92
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ff066df6aea85f10800000000000000
+      internalID: 2258747245365432308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_2
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 897
+        width: 75
+        height: 122
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbd288e57130b8800800000000000000
+      internalID: 615589172971318716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_3
+      rect:
+        serializedVersion: 2
+        x: 550
+        y: 931
+        width: 64
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa07e2f27ee29c210800000000000000
+      internalID: 1353664733465440426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_4
+      rect:
+        serializedVersion: 2
+        x: 622
+        y: 949
+        width: 44
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3060b22bf5ec3300800000000000000
+      internalID: 233314147497959484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_5
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 923
+        width: 18
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7d990111a08a47d0800000000000000
+      internalID: -2933390778014524037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_6
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 923
+        width: 24
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03f26b7ed89f43f50800000000000000
+      internalID: 6860382520265289520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_7
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 936
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46e53c8b237bbe740800000000000000
+      internalID: 5182437224695946852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_8
+      rect:
+        serializedVersion: 2
+        x: 691
+        y: 939
+        width: 37
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 963719e1932255300800000000000000
+      internalID: 240135783855518569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_9
+      rect:
+        serializedVersion: 2
+        x: 723
+        y: 921
+        width: 83
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c228a08d1f7ed070800000000000000
+      internalID: 8133077741766976192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_10
+      rect:
+        serializedVersion: 2
+        x: 843
+        y: 923
+        width: 54
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6dfdf8091ddc01d0800000000000000
+      internalID: -3383086120467301012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_11
+      rect:
+        serializedVersion: 2
+        x: 302
+        y: 930
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 966b0283145c2ba00800000000000000
+      internalID: 770895370138990185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_12
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 903
+        width: 20
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbda9a3c781d22e00800000000000000
+      internalID: 1018606846772620733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_13
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 0
+        width: 1021
+        height: 926
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad5f95309bbb86930800000000000000
+      internalID: 4136762661039371738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_14
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 919
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d35d1d789ec64fc0800000000000000
+      internalID: -3510891705159298088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_15
+      rect:
+        serializedVersion: 2
+        x: 495
+        y: 917
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fe37ae4e39d96de0800000000000000
+      internalID: -1339300552535228683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_16
+      rect:
+        serializedVersion: 2
+        x: 455
+        y: 897
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85785b934dccb89b0800000000000000
+      internalID: -5076738943056771240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_17
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 889
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3f951689ec9e0120800000000000000
+      internalID: 2382013779716448058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_18
+      rect:
+        serializedVersion: 2
+        x: 591
+        y: 899
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7edbbee72fd305e70800000000000000
+      internalID: 9101842958636531175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_19
+      rect:
+        serializedVersion: 2
+        x: 995
+        y: 583
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b7f38109624224f0800000000000000
+      internalID: -855047960482547788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_20
+      rect:
+        serializedVersion: 2
+        x: 993
+        y: 567
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cdba492851d79550800000000000000
+      internalID: 6167628391287274949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_21
+      rect:
+        serializedVersion: 2
+        x: 985
+        y: 392
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bfe14e2f016a4520800000000000000
+      internalID: 2687066845508399031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_22
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 384
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e3992c2bba9b3010800000000000000
+      internalID: 1169698656923259878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_23
+      rect:
+        serializedVersion: 2
+        x: 979
+        y: 287
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7d5c3a62a1279510800000000000000
+      internalID: 1555749177730555263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_24
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 56
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18a1e920597fbc8c0800000000000000
+      internalID: -3977813626485597567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_25
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 55
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78e279b3477f165c0800000000000000
+      internalID: -4223822896908783993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_26
+      rect:
+        serializedVersion: 2
+        x: 538
+        y: 59
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffcf93286ef253a80800000000000000
+      internalID: -8487825255636009729
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_27
+      rect:
+        serializedVersion: 2
+        x: 791
+        y: 56
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a141a69306a4b100800000000000000
+      internalID: 122905624188109222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_28
+      rect:
+        serializedVersion: 2
+        x: 631
+        y: 48
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab9c8a6e3bf408520800000000000000
+      internalID: 2702247410509859258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: apex-territory_29
+      rect:
+        serializedVersion: 2
+        x: 817
+        y: 47
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48b30d0ae74dad210800000000000000
+      internalID: 1358631877934594948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      apex-territory_0: 444818607943596330
+      apex-territory_1: 2258747245365432308
+      apex-territory_10: -3383086120467301012
+      apex-territory_11: 770895370138990185
+      apex-territory_12: 1018606846772620733
+      apex-territory_13: 4136762661039371738
+      apex-territory_14: -3510891705159298088
+      apex-territory_15: -1339300552535228683
+      apex-territory_16: -5076738943056771240
+      apex-territory_17: 2382013779716448058
+      apex-territory_18: 9101842958636531175
+      apex-territory_19: -855047960482547788
+      apex-territory_2: 615589172971318716
+      apex-territory_20: 6167628391287274949
+      apex-territory_21: 2687066845508399031
+      apex-territory_22: 1169698656923259878
+      apex-territory_23: 1555749177730555263
+      apex-territory_24: -3977813626485597567
+      apex-territory_25: -4223822896908783993
+      apex-territory_26: -8487825255636009729
+      apex-territory_27: 122905624188109222
+      apex-territory_28: 2702247410509859258
+      apex-territory_29: 1358631877934594948
+      apex-territory_3: 1353664733465440426
+      apex-territory_4: 233314147497959484
+      apex-territory_5: -2933390778014524037
+      apex-territory_6: 6860382520265289520
+      apex-territory_7: 5182437224695946852
+      apex-territory_8: 240135783855518569
+      apex-territory_9: 8133077741766976192
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

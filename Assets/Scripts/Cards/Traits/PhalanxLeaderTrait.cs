@@ -33,9 +33,9 @@ public class PhalanxLeaderTrait : Trait
             return;
         if (self.HasStatus(StatusTag.Suppressed))
             return;
-        attacker.ApplyBleeding(1);
+        attacker.ApplyBleeding(2);
         FeedbackManager.Instance?.ShowFloatingText(
-            "Bleeding +1",
+            "Bleeding +2",
             attacker.transform.position,
             new Color(1f, 0.4f, 0.4f)
         );

@@ -1,0 +1,780 @@
+fileFormatVersion: 2
+guid: efe022b6558114b27ab95a90707276e8
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 468943900444649270
+    second: stealth-veil_0
+  - first:
+      213: -6966602304111567060
+    second: stealth-veil_1
+  - first:
+      213: 5284641801386173029
+    second: stealth-veil_2
+  - first:
+      213: 5911685597350614211
+    second: stealth-veil_3
+  - first:
+      213: -792188498941658492
+    second: stealth-veil_4
+  - first:
+      213: -7298046516854719290
+    second: stealth-veil_5
+  - first:
+      213: 584197407537030842
+    second: stealth-veil_6
+  - first:
+      213: 7287422230203594849
+    second: stealth-veil_7
+  - first:
+      213: -8004149557654585785
+    second: stealth-veil_8
+  - first:
+      213: 6565067433289184849
+    second: stealth-veil_9
+  - first:
+      213: -8764483508670555119
+    second: stealth-veil_10
+  - first:
+      213: 5318698510177347252
+    second: stealth-veil_11
+  - first:
+      213: 6749395501812621839
+    second: stealth-veil_12
+  - first:
+      213: -1747764203864308849
+    second: stealth-veil_13
+  - first:
+      213: -1110175573852635523
+    second: stealth-veil_14
+  - first:
+      213: -2522161691254714294
+    second: stealth-veil_15
+  - first:
+      213: -4408858515081824492
+    second: stealth-veil_16
+  - first:
+      213: -6840829785260137179
+    second: stealth-veil_17
+  - first:
+      213: 1511203832376390248
+    second: stealth-veil_18
+  - first:
+      213: 3540927330466389396
+    second: stealth-veil_19
+  - first:
+      213: -557928125197388644
+    second: stealth-veil_20
+  - first:
+      213: -7572034928514799091
+    second: stealth-veil_21
+  - first:
+      213: 4951759434054725288
+    second: stealth-veil_22
+  - first:
+      213: -1559887090655378383
+    second: stealth-veil_23
+  - first:
+      213: 4512428536567944472
+    second: stealth-veil_24
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: stealth-veil_0
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 646
+        width: 404
+        height: 373
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 637e69d2ef5028600800000000000000
+      internalID: 468943900444649270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_1
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 147
+        width: 740
+        height: 776
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2f13047d18a15f90800000000000000
+      internalID: -6966602304111567060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_2
+      rect:
+        serializedVersion: 2
+        x: 638
+        y: 919
+        width: 67
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 562adc818b1d65940800000000000000
+      internalID: 5284641801386173029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_3
+      rect:
+        serializedVersion: 2
+        x: 711
+        y: 783
+        width: 153
+        height: 228
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c450e5bab68a0250800000000000000
+      internalID: 5911685597350614211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_4
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 520
+        width: 163
+        height: 339
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48abe65e1c49105f0800000000000000
+      internalID: -792188498941658492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_5
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 855
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ccf8901c5128ba90800000000000000
+      internalID: -7298046516854719290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_6
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 568
+        width: 186
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab6e2fa627c7b1800800000000000000
+      internalID: 584197407537030842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_7
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 556
+        width: 6
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 168f19f68ef122560800000000000000
+      internalID: 7287422230203594849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_8
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 535
+        width: 51
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74ef5e6926c8be090800000000000000
+      internalID: -8004149557654585785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_9
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 0
+        width: 611
+        height: 558
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 156ffaf1c0ecb1b50800000000000000
+      internalID: 6565067433289184849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_10
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 78
+        width: 352
+        height: 196
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11c1ce16fac4e5680800000000000000
+      internalID: -8764483508670555119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_11
+      rect:
+        serializedVersion: 2
+        x: 666
+        y: 135
+        width: 141
+        height: 195
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b625868d10dfc940800000000000000
+      internalID: 5318698510177347252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_12
+      rect:
+        serializedVersion: 2
+        x: 784
+        y: 273
+        width: 169
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f022926f27baaad50800000000000000
+      internalID: 6749395501812621839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_13
+      rect:
+        serializedVersion: 2
+        x: 904
+        y: 247
+        width: 38
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f83468577b1beb7e0800000000000000
+      internalID: -1747764203864308849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_14
+      rect:
+        serializedVersion: 2
+        x: 635
+        y: 0
+        width: 283
+        height: 253
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7eb232923dd790f0800000000000000
+      internalID: -1110175573852635523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_15
+      rect:
+        serializedVersion: 2
+        x: 947
+        y: 243
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a401aa60e4b7ffcd0800000000000000
+      internalID: -2522161691254714294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_16
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 209
+        width: 25
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41777972a8690d2c0800000000000000
+      internalID: -4408858515081824492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_17
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 220
+        width: 15
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52568a8fd8d7011a0800000000000000
+      internalID: -6840829785260137179
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_18
+      rect:
+        serializedVersion: 2
+        x: 941
+        y: 207
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 862f00cf0efd8f410800000000000000
+      internalID: 1511203832376390248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_19
+      rect:
+        serializedVersion: 2
+        x: 378
+        y: 81
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49ddbeb75a6e32130800000000000000
+      internalID: 3540927330466389396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_20
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 74
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c94f86f7357d148f0800000000000000
+      internalID: -557928125197388644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_21
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 86
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0a6603d95abae690800000000000000
+      internalID: -7572034928514799091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_22
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 83
+        width: 8
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ae650048fe28b440800000000000000
+      internalID: 4951759434054725288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_23
+      rect:
+        serializedVersion: 2
+        x: 586
+        y: 64
+        width: 102
+        height: 123
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 134c4c7a4fa2a5ae0800000000000000
+      internalID: -1559887090655378383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stealth-veil_24
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 133
+        width: 20
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 815d77c98dd5f9e30800000000000000
+      internalID: 4512428536567944472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      stealth-veil_0: 468943900444649270
+      stealth-veil_1: -6966602304111567060
+      stealth-veil_10: -8764483508670555119
+      stealth-veil_11: 5318698510177347252
+      stealth-veil_12: 6749395501812621839
+      stealth-veil_13: -1747764203864308849
+      stealth-veil_14: -1110175573852635523
+      stealth-veil_15: -2522161691254714294
+      stealth-veil_16: -4408858515081824492
+      stealth-veil_17: -6840829785260137179
+      stealth-veil_18: 1511203832376390248
+      stealth-veil_19: 3540927330466389396
+      stealth-veil_2: 5284641801386173029
+      stealth-veil_20: -557928125197388644
+      stealth-veil_21: -7572034928514799091
+      stealth-veil_22: 4951759434054725288
+      stealth-veil_23: -1559887090655378383
+      stealth-veil_24: 4512428536567944472
+      stealth-veil_3: 5911685597350614211
+      stealth-veil_4: -792188498941658492
+      stealth-veil_5: -7298046516854719290
+      stealth-veil_6: 584197407537030842
+      stealth-veil_7: 7287422230203594849
+      stealth-veil_8: -8004149557654585785
+      stealth-veil_9: 6565067433289184849
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -17,9 +17,7 @@ public class Creature : MonoBehaviour
     public List<Trait> traits = new();
     public int maxHealth;
     public int currentHealth;
-    public int fatigueStacks;
     public bool isDying;
-    private int pendingDamageUp;
 
     // Status stacks (Shielded, Infected, etc.)
     private readonly Dictionary<StatusTag, int> statuses = new();
@@ -31,6 +29,7 @@ public class Creature : MonoBehaviour
     public static event Action<Creature, int> OnAnyCreatureHealed;
 
     public bool IsWounded => currentHealth < maxHealth;
+    public bool IsImmovable => data != null && data.isImmovable;
 
     [SerializeField]
     private TMP_Text speedText;
@@ -55,12 +54,10 @@ public class Creature : MonoBehaviour
         eaten = 0;
         maxHealth = Mathf.Max(1, data != null ? data.maxHealth : 1);
         currentHealth = maxHealth;
-        fatigueStacks = 0;
         isDying = false;
         roundDamageDealt = 0;
         roundHealingUndone = 0;
         damagedTargetsThisRound.Clear();
-        pendingDamageUp = 0;
 
         traits.Clear();
         if (data.baseTraits != null && data.baseTraits.Length > 0)
@@ -836,7 +833,7 @@ public class Creature : MonoBehaviour
 
     public void ApplyNoForage(int rounds) => AddStatus(StatusTag.NoForage, rounds);
 
-    public void ApplyImmune(int charges = 1) => AddStatus(StatusTag.Immune, charges);
+    public void ApplyImmune() => AddStatus(StatusTag.Immune, 1);
 
     public void ApplyFatigued(int stacks) => AddStatus(StatusTag.Fatigued, stacks);
 
@@ -861,13 +858,6 @@ public class Creature : MonoBehaviour
                     new Color(0.8f, 0.5f, 0.9f)
                 );
             }
-        }
-        // Convert pending next-round DamageUp into active stacks
-        if (pendingDamageUp > 0)
-        {
-            didAny = true;
-            AddStatus(StatusTag.DamageUp, pendingDamageUp);
-            pendingDamageUp = 0;
         }
         return didAny;
     }
@@ -986,12 +976,5 @@ public class Creature : MonoBehaviour
                 return s;
         }
         return null;
-    }
-
-    public void GrantNextRoundDamageUp(int stacks)
-    {
-        if (stacks <= 0)
-            return;
-        pendingDamageUp += stacks;
     }
 }

@@ -1,0 +1,598 @@
+fileFormatVersion: 2
+guid: 6f17a48304fa74778a2be499def15839
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6914410508920273380
+    second: primordial-awakening_0
+  - first:
+      213: 7562371489732201753
+    second: primordial-awakening_1
+  - first:
+      213: -1689328194301238515
+    second: primordial-awakening_2
+  - first:
+      213: 3046823321939726488
+    second: primordial-awakening_3
+  - first:
+      213: -6085666289789810652
+    second: primordial-awakening_4
+  - first:
+      213: 5642068883140266333
+    second: primordial-awakening_5
+  - first:
+      213: 4761685718209851151
+    second: primordial-awakening_6
+  - first:
+      213: 3853915985697044820
+    second: primordial-awakening_7
+  - first:
+      213: 6776955684812803090
+    second: primordial-awakening_8
+  - first:
+      213: 403856846618590466
+    second: primordial-awakening_9
+  - first:
+      213: -1590766416563290076
+    second: primordial-awakening_10
+  - first:
+      213: -1998065458763022196
+    second: primordial-awakening_11
+  - first:
+      213: -2791823024178365099
+    second: primordial-awakening_12
+  - first:
+      213: -500464122773666246
+    second: primordial-awakening_13
+  - first:
+      213: 3825585806897555104
+    second: primordial-awakening_14
+  - first:
+      213: 3697560269212953976
+    second: primordial-awakening_15
+  - first:
+      213: -8605592104484467440
+    second: primordial-awakening_16
+  - first:
+      213: -8608874964863995187
+    second: primordial-awakening_17
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: primordial-awakening_0
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 0
+        width: 1019
+        height: 1022
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c164498b6441b00a0800000000000000
+      internalID: -6914410508920273380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_1
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 695
+        width: 30
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91d87018dc0f2f860800000000000000
+      internalID: 7562371489732201753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_2
+      rect:
+        serializedVersion: 2
+        x: 914
+        y: 687
+        width: 23
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d036f9d25fc4e88e0800000000000000
+      internalID: -1689328194301238515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_3
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 603
+        width: 22
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 890d7952bad784a20800000000000000
+      internalID: 3046823321939726488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_4
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 568
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 428428fa0ce5b8ba0800000000000000
+      internalID: -6085666289789810652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_5
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 551
+        width: 15
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d594cd991c7ac4e40800000000000000
+      internalID: 5642068883140266333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_6
+      rect:
+        serializedVersion: 2
+        x: 921
+        y: 543
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0fe2f5aee7e41240800000000000000
+      internalID: 4761685718209851151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_7
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 499
+        width: 24
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 459fba98b2cdb7530800000000000000
+      internalID: 3853915985697044820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_8
+      rect:
+        serializedVersion: 2
+        x: 920
+        y: 515
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21cc4db1a459c0e50800000000000000
+      internalID: 6776955684812803090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_9
+      rect:
+        serializedVersion: 2
+        x: 921
+        y: 495
+        width: 32
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20d7fca89a9ca9500800000000000000
+      internalID: 403856846618590466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_10
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 454
+        width: 55
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 420cf145f567ce9e0800000000000000
+      internalID: -1590766416563290076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_11
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 398
+        width: 24
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c80c37c2d027544e0800000000000000
+      internalID: -1998065458763022196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_12
+      rect:
+        serializedVersion: 2
+        x: 910
+        y: 414
+        width: 27
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55d771050c37149d0800000000000000
+      internalID: -2791823024178365099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_13
+      rect:
+        serializedVersion: 2
+        x: 898
+        y: 374
+        width: 37
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a368f3b288efd09f0800000000000000
+      internalID: -500464122773666246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_14
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 394
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a6a7e5c506371530800000000000000
+      internalID: 3825585806897555104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_15
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 359
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87d290e697f505330800000000000000
+      internalID: 3697560269212953976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_16
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 335
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01d0c4a439bc29880800000000000000
+      internalID: -8605592104484467440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: primordial-awakening_17
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 311
+        width: 35
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc2378bc4d1278880800000000000000
+      internalID: -8608874964863995187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      primordial-awakening_0: -6914410508920273380
+      primordial-awakening_1: 7562371489732201753
+      primordial-awakening_10: -1590766416563290076
+      primordial-awakening_11: -1998065458763022196
+      primordial-awakening_12: -2791823024178365099
+      primordial-awakening_13: -500464122773666246
+      primordial-awakening_14: 3825585806897555104
+      primordial-awakening_15: 3697560269212953976
+      primordial-awakening_16: -8605592104484467440
+      primordial-awakening_17: -8608874964863995187
+      primordial-awakening_2: -1689328194301238515
+      primordial-awakening_3: 3046823321939726488
+      primordial-awakening_4: -6085666289789810652
+      primordial-awakening_5: 5642068883140266333
+      primordial-awakening_6: 4761685718209851151
+      primordial-awakening_7: 3853915985697044820
+      primordial-awakening_8: 6776955684812803090
+      primordial-awakening_9: 403856846618590466
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

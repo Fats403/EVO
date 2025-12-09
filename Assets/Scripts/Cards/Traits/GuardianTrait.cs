@@ -21,6 +21,9 @@ public class GuardianTrait : Trait
             return;
         if (self.HasStatus(StatusTag.Suppressed))
             return;
+        if (self.GetStatus(StatusTag.Shielded) > 0)
+            return;
+
         // Adjacent ally took damage
         var adj = BoardUtils.GetAdjacentAllies(self);
         if (adj != null && adj.Contains(victim))

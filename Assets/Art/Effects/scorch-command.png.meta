@@ -1,0 +1,2756 @@
+fileFormatVersion: 2
+guid: 4514cc5acd56b4108a03ecd65c0cf650
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1864763613578552041
+    second: scorch-command_0
+  - first:
+      213: -5156884397465521666
+    second: scorch-command_1
+  - first:
+      213: -3815532818913303007
+    second: scorch-command_2
+  - first:
+      213: -5787142860950330980
+    second: scorch-command_3
+  - first:
+      213: 1904660566061818708
+    second: scorch-command_4
+  - first:
+      213: 5613243774599281883
+    second: scorch-command_5
+  - first:
+      213: -449117146416444218
+    second: scorch-command_6
+  - first:
+      213: -1916436073235494693
+    second: scorch-command_7
+  - first:
+      213: -3257473522408783113
+    second: scorch-command_8
+  - first:
+      213: 9202132862783718467
+    second: scorch-command_9
+  - first:
+      213: -5022750343050228564
+    second: scorch-command_10
+  - first:
+      213: -4666849221314362512
+    second: scorch-command_11
+  - first:
+      213: 954464418193177426
+    second: scorch-command_12
+  - first:
+      213: 4668327859336183026
+    second: scorch-command_13
+  - first:
+      213: 2844912367605882121
+    second: scorch-command_14
+  - first:
+      213: 2011176557539579162
+    second: scorch-command_15
+  - first:
+      213: -5801514191214747734
+    second: scorch-command_16
+  - first:
+      213: 9097048367418642123
+    second: scorch-command_17
+  - first:
+      213: 5626664621953779400
+    second: scorch-command_18
+  - first:
+      213: -1640584400597201611
+    second: scorch-command_19
+  - first:
+      213: 9213205677986060792
+    second: scorch-command_20
+  - first:
+      213: 2419131879337358071
+    second: scorch-command_21
+  - first:
+      213: 5753065791970847658
+    second: scorch-command_22
+  - first:
+      213: -9039579798267514663
+    second: scorch-command_23
+  - first:
+      213: 2638775890528018812
+    second: scorch-command_24
+  - first:
+      213: 6719571450447042850
+    second: scorch-command_25
+  - first:
+      213: 3308602539395551710
+    second: scorch-command_26
+  - first:
+      213: 1890600232480381245
+    second: scorch-command_27
+  - first:
+      213: -6626387592231230091
+    second: scorch-command_28
+  - first:
+      213: 5475196421322493780
+    second: scorch-command_29
+  - first:
+      213: 6626257261593592138
+    second: scorch-command_30
+  - first:
+      213: 2431861790317813017
+    second: scorch-command_31
+  - first:
+      213: -5544286701834089689
+    second: scorch-command_32
+  - first:
+      213: 5855519061741780721
+    second: scorch-command_33
+  - first:
+      213: -3414861433028771966
+    second: scorch-command_34
+  - first:
+      213: -1007199003590987885
+    second: scorch-command_35
+  - first:
+      213: 2165852305658988003
+    second: scorch-command_36
+  - first:
+      213: -7638268093518095490
+    second: scorch-command_37
+  - first:
+      213: -2738829989394296487
+    second: scorch-command_38
+  - first:
+      213: 3499776822572384518
+    second: scorch-command_39
+  - first:
+      213: -9056839380620131077
+    second: scorch-command_40
+  - first:
+      213: 6076825063986633678
+    second: scorch-command_41
+  - first:
+      213: -7470826892395300083
+    second: scorch-command_42
+  - first:
+      213: -898816370820172707
+    second: scorch-command_43
+  - first:
+      213: 4770702008337593287
+    second: scorch-command_44
+  - first:
+      213: 6421847779403977078
+    second: scorch-command_45
+  - first:
+      213: -1712841471112992246
+    second: scorch-command_46
+  - first:
+      213: 8146515168682832390
+    second: scorch-command_47
+  - first:
+      213: -2669469133934560499
+    second: scorch-command_48
+  - first:
+      213: -3214244635130564671
+    second: scorch-command_49
+  - first:
+      213: 46153316748199165
+    second: scorch-command_50
+  - first:
+      213: -2624873936829990863
+    second: scorch-command_51
+  - first:
+      213: -7547447313995245614
+    second: scorch-command_52
+  - first:
+      213: -9124081597089650886
+    second: scorch-command_53
+  - first:
+      213: 7735743072370858566
+    second: scorch-command_54
+  - first:
+      213: -1019940950693766719
+    second: scorch-command_55
+  - first:
+      213: 4459844646407911166
+    second: scorch-command_56
+  - first:
+      213: 9059831584863203119
+    second: scorch-command_57
+  - first:
+      213: 4573444987310683773
+    second: scorch-command_58
+  - first:
+      213: 6025301767103296361
+    second: scorch-command_59
+  - first:
+      213: -4177931998084608766
+    second: scorch-command_60
+  - first:
+      213: 5764297615748896977
+    second: scorch-command_61
+  - first:
+      213: -486114533035296701
+    second: scorch-command_62
+  - first:
+      213: -4251955654915006654
+    second: scorch-command_63
+  - first:
+      213: 2349131220298160372
+    second: scorch-command_64
+  - first:
+      213: 561071185602090725
+    second: scorch-command_65
+  - first:
+      213: 6762075700996521136
+    second: scorch-command_66
+  - first:
+      213: -3517871883430879578
+    second: scorch-command_67
+  - first:
+      213: -845425060856847810
+    second: scorch-command_68
+  - first:
+      213: 6069953645037631276
+    second: scorch-command_69
+  - first:
+      213: -5898535061834671916
+    second: scorch-command_70
+  - first:
+      213: 5304585626175206371
+    second: scorch-command_71
+  - first:
+      213: -3685716953607633060
+    second: scorch-command_72
+  - first:
+      213: 80548080816697638
+    second: scorch-command_73
+  - first:
+      213: 2623795390087191503
+    second: scorch-command_74
+  - first:
+      213: 2275027369807069874
+    second: scorch-command_75
+  - first:
+      213: 6769891124480790999
+    second: scorch-command_76
+  - first:
+      213: -294250848827749209
+    second: scorch-command_77
+  - first:
+      213: 4182942209227610893
+    second: scorch-command_78
+  - first:
+      213: 3993555178369513082
+    second: scorch-command_79
+  - first:
+      213: -6850288916666877146
+    second: scorch-command_80
+  - first:
+      213: 8958323795918409773
+    second: scorch-command_81
+  - first:
+      213: 2586483583063290715
+    second: scorch-command_82
+  - first:
+      213: -3873173710969906307
+    second: scorch-command_83
+  - first:
+      213: 8536061328249864806
+    second: scorch-command_84
+  - first:
+      213: 1318955632874308070
+    second: scorch-command_85
+  - first:
+      213: -6851365641404027139
+    second: scorch-command_86
+  - first:
+      213: 7072982185907591303
+    second: scorch-command_87
+  - first:
+      213: -941381202058195781
+    second: scorch-command_88
+  - first:
+      213: 6193397919521426187
+    second: scorch-command_89
+  - first:
+      213: -5667176979382902545
+    second: scorch-command_90
+  - first:
+      213: 7981525314775479370
+    second: scorch-command_91
+  - first:
+      213: -6788949527958080215
+    second: scorch-command_92
+  - first:
+      213: -7517063958344109738
+    second: scorch-command_93
+  - first:
+      213: 4665183252065697455
+    second: scorch-command_94
+  - first:
+      213: -2530801172436001626
+    second: scorch-command_95
+  - first:
+      213: 1341968517952337187
+    second: scorch-command_96
+  - first:
+      213: 9023011128635190809
+    second: scorch-command_97
+  - first:
+      213: -3981162033184910304
+    second: scorch-command_98
+  - first:
+      213: 7300132168516013030
+    second: scorch-command_99
+  - first:
+      213: -4355009557326338669
+    second: scorch-command_100
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: scorch-command_0
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 974
+        width: 37
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e26c6960a8f0e910800000000000000
+      internalID: 1864763613578552041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_1
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 926
+        width: 94
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef1305d76f01f68b0800000000000000
+      internalID: -5156884397465521666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_2
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 896
+        width: 102
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 126e3d3ed118c0bc0800000000000000
+      internalID: -3815532818913303007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_3
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 933
+        width: 59
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c912e94ca30ffafa0800000000000000
+      internalID: -5787142860950330980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_4
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 995
+        width: 55
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4532fc981b6be6a10800000000000000
+      internalID: 1904660566061818708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_5
+      rect:
+        serializedVersion: 2
+        x: 449
+        y: 983
+        width: 24
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdcb9a6097f36ed40800000000000000
+      internalID: 5613243774599281883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_6
+      rect:
+        serializedVersion: 2
+        x: 475
+        y: 960
+        width: 25
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cc8f49b55a64c9f0800000000000000
+      internalID: -449117146416444218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_7
+      rect:
+        serializedVersion: 2
+        x: 499
+        y: 981
+        width: 43
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd8cd0c8b837765e0800000000000000
+      internalID: -1916436073235494693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_8
+      rect:
+        serializedVersion: 2
+        x: 687
+        y: 824
+        width: 99
+        height: 187
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f2859717112bc2d0800000000000000
+      internalID: -3257473522408783113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_9
+      rect:
+        serializedVersion: 2
+        x: 795
+        y: 912
+        width: 83
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3440c2e651b84bf70800000000000000
+      internalID: 9202132862783718467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_10
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 981
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cac0507bc2b9b4ab0800000000000000
+      internalID: -5022750343050228564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_11
+      rect:
+        serializedVersion: 2
+        x: 443
+        y: 975
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 073cf37fb550c3fb0800000000000000
+      internalID: -4666849221314362512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_12
+      rect:
+        serializedVersion: 2
+        x: 545
+        y: 952
+        width: 37
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25b7725d450fe3d00800000000000000
+      internalID: 954464418193177426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_13
+      rect:
+        serializedVersion: 2
+        x: 727
+        y: 966
+        width: 34
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fcfac6447b39c040800000000000000
+      internalID: 4668327859336183026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_14
+      rect:
+        serializedVersion: 2
+        x: 907
+        y: 876
+        width: 59
+        height: 117
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90d9340b9b82b7720800000000000000
+      internalID: 2844912367605882121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_15
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 799
+        width: 106
+        height: 170
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a155db46c6229eb10800000000000000
+      internalID: 2011176557539579162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_16
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 951
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aafd141b491ec7fa0800000000000000
+      internalID: -5801514191214747734
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_17
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 827
+        width: 88
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bce098cba453f3e70800000000000000
+      internalID: 9097048367418642123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_18
+      rect:
+        serializedVersion: 2
+        x: 500
+        y: 935
+        width: 13
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c600dd89ade51e40800000000000000
+      internalID: 5626664621953779400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_19
+      rect:
+        serializedVersion: 2
+        x: 515
+        y: 951
+        width: 30
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53d4b5a0e297b39e0800000000000000
+      internalID: -1640584400597201611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_20
+      rect:
+        serializedVersion: 2
+        x: 579
+        y: 843
+        width: 107
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f998fe10c1ebdf70800000000000000
+      internalID: 9213205677986060792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_21
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 944
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f2f9bc80ab729120800000000000000
+      internalID: 2419131879337358071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_22
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 919
+        width: 46
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aabafd35bdef6df40800000000000000
+      internalID: 5753065791970847658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_23
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 940
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d0b7753116fc8280800000000000000
+      internalID: -9039579798267514663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_24
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 927
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c71a9cc01b0de9420800000000000000
+      internalID: 2638775890528018812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_25
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 906
+        width: 13
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22990c2e1a6b04d50800000000000000
+      internalID: 6719571450447042850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_26
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 919
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed190a7da748aed20800000000000000
+      internalID: 3308602539395551710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_27
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 911
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d39934505e2cc3a10800000000000000
+      internalID: 1890600232480381245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_28
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 911
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 575600dc7975a04a0800000000000000
+      internalID: -6626387592231230091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_29
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 888
+        width: 54
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45fca68e22ecbfb40800000000000000
+      internalID: 5475196421322493780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_30
+      rect:
+        serializedVersion: 2
+        x: 806
+        y: 911
+        width: 14
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4183ab3fd135fb50800000000000000
+      internalID: 6626257261593592138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_31
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 888
+        width: 17
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91d1dbae965bfb120800000000000000
+      internalID: 2431861790317813017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_32
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 877
+        width: 31
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72bc14c9e9cbe03b0800000000000000
+      internalID: -5544286701834089689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_33
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 879
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1feb5a2109bf24150800000000000000
+      internalID: 5855519061741780721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_34
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 867
+        width: 53
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28f732f8e99fb90d0800000000000000
+      internalID: -3414861433028771966
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_35
+      rect:
+        serializedVersion: 2
+        x: 545
+        y: 873
+        width: 16
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39fe4d4b7d5b502f0800000000000000
+      internalID: -1007199003590987885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_36
+      rect:
+        serializedVersion: 2
+        x: 561
+        y: 880
+        width: 13
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e5c3c26237ae0e10800000000000000
+      internalID: 2165852305658988003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_37
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 903
+        width: 16
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7b57a263ab6ff590800000000000000
+      internalID: -7638268093518095490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_38
+      rect:
+        serializedVersion: 2
+        x: 614
+        y: 887
+        width: 27
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95157f5b2a8bdf9d0800000000000000
+      internalID: -2738829989394296487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_39
+      rect:
+        serializedVersion: 2
+        x: 750
+        y: 887
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 601829e3a74b19030800000000000000
+      internalID: 3499776822572384518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_40
+      rect:
+        serializedVersion: 2
+        x: 819
+        y: 896
+        width: 22
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf44e5a8194af4280800000000000000
+      internalID: -9056839380620131077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_41
+      rect:
+        serializedVersion: 2
+        x: 831
+        y: 888
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecb1d150338355450800000000000000
+      internalID: 6076825063986633678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_42
+      rect:
+        serializedVersion: 2
+        x: 763
+        y: 887
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0bb754068a425890800000000000000
+      internalID: -7470826892395300083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_43
+      rect:
+        serializedVersion: 2
+        x: 805
+        y: 865
+        width: 15
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5435fad543c683f0800000000000000
+      internalID: -898816370820172707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_44
+      rect:
+        serializedVersion: 2
+        x: 817
+        y: 872
+        width: 13
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c374384330f43240800000000000000
+      internalID: 4770702008337593287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_45
+      rect:
+        serializedVersion: 2
+        x: 931
+        y: 877
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 671510de78cfe1950800000000000000
+      internalID: 6421847779403977078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_46
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 824
+        width: 59
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0aa0cdc1c3ca38e0800000000000000
+      internalID: -1712841471112992246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_47
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 863
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 602fba2426c3e0170800000000000000
+      internalID: 8146515168682832390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_48
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 872
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0bf5f457f324fad0800000000000000
+      internalID: -2669469133934560499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_49
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 687
+        width: 91
+        height: 174
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cf66ddb885b463d0800000000000000
+      internalID: -3214244635130564671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_50
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 867
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df48bf17238f3a000800000000000000
+      internalID: 46153316748199165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_51
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 863
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1383117cf03929bd0800000000000000
+      internalID: -2624873936829990863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_52
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 853
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d75650f7a4124790800000000000000
+      internalID: -7547447313995245614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_53
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 849
+        width: 43
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a37eacff020c06180800000000000000
+      internalID: -9124081597089650886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_54
+      rect:
+        serializedVersion: 2
+        x: 345
+        y: 852
+        width: 11
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64a9a5ea651ea5b60800000000000000
+      internalID: 7735743072370858566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_55
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 809
+        width: 69
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c91606fb1178d1f0800000000000000
+      internalID: -1019940950693766719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_56
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 872
+        width: 20
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef6329e931d84ed30800000000000000
+      internalID: 4459844646407911166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_57
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 848
+        width: 30
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2fa2ac43dcfabd70800000000000000
+      internalID: 9059831584863203119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_58
+      rect:
+        serializedVersion: 2
+        x: 427
+        y: 863
+        width: 19
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d76b17c1cf3287f30800000000000000
+      internalID: 4573444987310683773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_59
+      rect:
+        serializedVersion: 2
+        x: 435
+        y: 840
+        width: 46
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 963b9b4a80c2e9350800000000000000
+      internalID: 6025301767103296361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_60
+      rect:
+        serializedVersion: 2
+        x: 631
+        y: 864
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20dcd6ebbf00506c0800000000000000
+      internalID: -4177931998084608766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_61
+      rect:
+        serializedVersion: 2
+        x: 659
+        y: 815
+        width: 44
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d818561426eeff40800000000000000
+      internalID: 5764297615748896977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_62
+      rect:
+        serializedVersion: 2
+        x: 740
+        y: 849
+        width: 13
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 348b6426869f049f0800000000000000
+      internalID: -486114533035296701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_63
+      rect:
+        serializedVersion: 2
+        x: 799
+        y: 863
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24fd3141cd40ef4c0800000000000000
+      internalID: -4251955654915006654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_64
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 816
+        width: 78
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f8d6ac066ac99020800000000000000
+      internalID: 2349131220298160372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_65
+      rect:
+        serializedVersion: 2
+        x: 891
+        y: 751
+        width: 103
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e61587454359c700800000000000000
+      internalID: 561071185602090725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_66
+      rect:
+        serializedVersion: 2
+        x: 918
+        y: 856
+        width: 25
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bcb236e508b7dd50800000000000000
+      internalID: 6762075700996521136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_67
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 819
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ae94c619220e2fc0800000000000000
+      internalID: -3517871883430879578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_68
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 811
+        width: 38
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e322a6be2627444f0800000000000000
+      internalID: -845425060856847810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_69
+      rect:
+        serializedVersion: 2
+        x: 418
+        y: 816
+        width: 15
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c273e8f1eaecc3450800000000000000
+      internalID: 6069953645037631276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_70
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 831
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d85820fc91342ea0800000000000000
+      internalID: -5898535061834671916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_71
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 831
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e3f0d8a58cad9940800000000000000
+      internalID: 5304585626175206371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_72
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 815
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c57059d55f3b9dcc0800000000000000
+      internalID: -3685716953607633060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_73
+      rect:
+        serializedVersion: 2
+        x: 539
+        y: 813
+        width: 18
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6213b608d0a2e1100800000000000000
+      internalID: 80548080816697638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_74
+      rect:
+        serializedVersion: 2
+        x: 565
+        y: 809
+        width: 58
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcb547d7108996420800000000000000
+      internalID: 2623795390087191503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_75
+      rect:
+        serializedVersion: 2
+        x: 622
+        y: 821
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b244a7d655829f10800000000000000
+      internalID: 2275027369807069874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_76
+      rect:
+        serializedVersion: 2
+        x: 647
+        y: 824
+        width: 11
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d15fbafb1c73fd50800000000000000
+      internalID: 6769891124480790999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_77
+      rect:
+        serializedVersion: 2
+        x: 708
+        y: 770
+        width: 73
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7acc3c8796c9aebf0800000000000000
+      internalID: -294250848827749209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_78
+      rect:
+        serializedVersion: 2
+        x: 735
+        y: 831
+        width: 18
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0bdff0f6cbcc0a30800000000000000
+      internalID: 4182942209227610893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_79
+      rect:
+        serializedVersion: 2
+        x: 777
+        y: 815
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a76f2a5a645fb6730800000000000000
+      internalID: 3993555178369513082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_80
+      rect:
+        serializedVersion: 2
+        x: 811
+        y: 815
+        width: 19
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62b76415682eee0a0800000000000000
+      internalID: -6850288916666877146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_81
+      rect:
+        serializedVersion: 2
+        x: 867
+        y: 811
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2055a6770c525c70800000000000000
+      internalID: 8958323795918409773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_82
+      rect:
+        serializedVersion: 2
+        x: 883
+        y: 814
+        width: 15
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b53fdd17d1905e320800000000000000
+      internalID: 2586483583063290715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_83
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1024
+        height: 814
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7bd144e709bf3ac0800000000000000
+      internalID: -3873173710969906307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_84
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 791
+        width: 11
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66248435d8e267670800000000000000
+      internalID: 8536061328249864806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_85
+      rect:
+        serializedVersion: 2
+        x: 319
+        y: 799
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e149f3f82fdd4210800000000000000
+      internalID: 1318955632874308070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_86
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 808
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfeebcdcf3f0be0a0800000000000000
+      internalID: -6851365641404027139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_87
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 804
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78810b5e2d7482260800000000000000
+      internalID: 7072982185907591303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_88
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 807
+        width: 26
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbc471dc8ca8fe2f0800000000000000
+      internalID: -941381202058195781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_89
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 799
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0bc7b1089e53f550800000000000000
+      internalID: 6193397919521426187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_90
+      rect:
+        serializedVersion: 2
+        x: 483
+        y: 799
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe06c9030942a51b0800000000000000
+      internalID: -5667176979382902545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_91
+      rect:
+        serializedVersion: 2
+        x: 491
+        y: 807
+        width: 23
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a44faf06cf214ce60800000000000000
+      internalID: 7981525314775479370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_92
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 807
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 925b00caf5ec8c1a0800000000000000
+      internalID: -6788949527958080215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_93
+      rect:
+        serializedVersion: 2
+        x: 627
+        y: 799
+        width: 22
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 651f10138260ea790800000000000000
+      internalID: -7517063958344109738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_94
+      rect:
+        serializedVersion: 2
+        x: 652
+        y: 793
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fae3a77537f0eb040800000000000000
+      internalID: 4665183252065697455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_95
+      rect:
+        serializedVersion: 2
+        x: 670
+        y: 801
+        width: 11
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ac5fcf0eb9c0ecd0800000000000000
+      internalID: -2530801172436001626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_96
+      rect:
+        serializedVersion: 2
+        x: 849
+        y: 804
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3257e4cc141af9210800000000000000
+      internalID: 1341968517952337187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_97
+      rect:
+        serializedVersion: 2
+        x: 878
+        y: 805
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91e62b6c0dc283d70800000000000000
+      internalID: 9023011128635190809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_98
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 791
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 024ddb2593210c8c0800000000000000
+      internalID: -3981162033184910304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_99
+      rect:
+        serializedVersion: 2
+        x: 361
+        y: 15
+        width: 16
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6eb8ccd87874f4560800000000000000
+      internalID: 7300132168516013030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scorch-command_100
+      rect:
+        serializedVersion: 2
+        x: 744
+        y: 21
+        width: 27
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 395e126a1e5ef83c0800000000000000
+      internalID: -4355009557326338669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      scorch-command_0: 1864763613578552041
+      scorch-command_1: -5156884397465521666
+      scorch-command_10: -5022750343050228564
+      scorch-command_100: -4355009557326338669
+      scorch-command_11: -4666849221314362512
+      scorch-command_12: 954464418193177426
+      scorch-command_13: 4668327859336183026
+      scorch-command_14: 2844912367605882121
+      scorch-command_15: 2011176557539579162
+      scorch-command_16: -5801514191214747734
+      scorch-command_17: 9097048367418642123
+      scorch-command_18: 5626664621953779400
+      scorch-command_19: -1640584400597201611
+      scorch-command_2: -3815532818913303007
+      scorch-command_20: 9213205677986060792
+      scorch-command_21: 2419131879337358071
+      scorch-command_22: 5753065791970847658
+      scorch-command_23: -9039579798267514663
+      scorch-command_24: 2638775890528018812
+      scorch-command_25: 6719571450447042850
+      scorch-command_26: 3308602539395551710
+      scorch-command_27: 1890600232480381245
+      scorch-command_28: -6626387592231230091
+      scorch-command_29: 5475196421322493780
+      scorch-command_3: -5787142860950330980
+      scorch-command_30: 6626257261593592138
+      scorch-command_31: 2431861790317813017
+      scorch-command_32: -5544286701834089689
+      scorch-command_33: 5855519061741780721
+      scorch-command_34: -3414861433028771966
+      scorch-command_35: -1007199003590987885
+      scorch-command_36: 2165852305658988003
+      scorch-command_37: -7638268093518095490
+      scorch-command_38: -2738829989394296487
+      scorch-command_39: 3499776822572384518
+      scorch-command_4: 1904660566061818708
+      scorch-command_40: -9056839380620131077
+      scorch-command_41: 6076825063986633678
+      scorch-command_42: -7470826892395300083
+      scorch-command_43: -898816370820172707
+      scorch-command_44: 4770702008337593287
+      scorch-command_45: 6421847779403977078
+      scorch-command_46: -1712841471112992246
+      scorch-command_47: 8146515168682832390
+      scorch-command_48: -2669469133934560499
+      scorch-command_49: -3214244635130564671
+      scorch-command_5: 5613243774599281883
+      scorch-command_50: 46153316748199165
+      scorch-command_51: -2624873936829990863
+      scorch-command_52: -7547447313995245614
+      scorch-command_53: -9124081597089650886
+      scorch-command_54: 7735743072370858566
+      scorch-command_55: -1019940950693766719
+      scorch-command_56: 4459844646407911166
+      scorch-command_57: 9059831584863203119
+      scorch-command_58: 4573444987310683773
+      scorch-command_59: 6025301767103296361
+      scorch-command_6: -449117146416444218
+      scorch-command_60: -4177931998084608766
+      scorch-command_61: 5764297615748896977
+      scorch-command_62: -486114533035296701
+      scorch-command_63: -4251955654915006654
+      scorch-command_64: 2349131220298160372
+      scorch-command_65: 561071185602090725
+      scorch-command_66: 6762075700996521136
+      scorch-command_67: -3517871883430879578
+      scorch-command_68: -845425060856847810
+      scorch-command_69: 6069953645037631276
+      scorch-command_7: -1916436073235494693
+      scorch-command_70: -5898535061834671916
+      scorch-command_71: 5304585626175206371
+      scorch-command_72: -3685716953607633060
+      scorch-command_73: 80548080816697638
+      scorch-command_74: 2623795390087191503
+      scorch-command_75: 2275027369807069874
+      scorch-command_76: 6769891124480790999
+      scorch-command_77: -294250848827749209
+      scorch-command_78: 4182942209227610893
+      scorch-command_79: 3993555178369513082
+      scorch-command_8: -3257473522408783113
+      scorch-command_80: -6850288916666877146
+      scorch-command_81: 8958323795918409773
+      scorch-command_82: 2586483583063290715
+      scorch-command_83: -3873173710969906307
+      scorch-command_84: 8536061328249864806
+      scorch-command_85: 1318955632874308070
+      scorch-command_86: -6851365641404027139
+      scorch-command_87: 7072982185907591303
+      scorch-command_88: -941381202058195781
+      scorch-command_89: 6193397919521426187
+      scorch-command_9: 9202132862783718467
+      scorch-command_90: -5667176979382902545
+      scorch-command_91: 7981525314775479370
+      scorch-command_92: -6788949527958080215
+      scorch-command_93: -7517063958344109738
+      scorch-command_94: 4665183252065697455
+      scorch-command_95: -2530801172436001626
+      scorch-command_96: 1341968517952337187
+      scorch-command_97: 9023011128635190809
+      scorch-command_98: -3981162033184910304
+      scorch-command_99: 7300132168516013030
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

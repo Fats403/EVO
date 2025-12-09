@@ -1,0 +1,1638 @@
+fileFormatVersion: 2
+guid: 87667dedb840649c581477db6e767a52
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6914072176872757163
+    second: bastion_0
+  - first:
+      213: -5631977322176719211
+    second: bastion_1
+  - first:
+      213: 5286409234190679355
+    second: bastion_2
+  - first:
+      213: -5744264660142298399
+    second: bastion_3
+  - first:
+      213: 7550611127061723726
+    second: bastion_4
+  - first:
+      213: -6012495823175203529
+    second: bastion_5
+  - first:
+      213: 8447033351811584974
+    second: bastion_6
+  - first:
+      213: 5345737974179834852
+    second: bastion_7
+  - first:
+      213: 1313449659168557162
+    second: bastion_8
+  - first:
+      213: 3499862911897751031
+    second: bastion_9
+  - first:
+      213: 3454972701479112124
+    second: bastion_10
+  - first:
+      213: 2134189979334801660
+    second: bastion_11
+  - first:
+      213: -1819568048030824386
+    second: bastion_12
+  - first:
+      213: 6722912171427938570
+    second: bastion_13
+  - first:
+      213: -3415455949089513079
+    second: bastion_14
+  - first:
+      213: 4353876836920029042
+    second: bastion_15
+  - first:
+      213: 6739667022240017154
+    second: bastion_16
+  - first:
+      213: -1135454287756796321
+    second: bastion_17
+  - first:
+      213: -1875457448645989592
+    second: bastion_18
+  - first:
+      213: 5223445327152773216
+    second: bastion_19
+  - first:
+      213: 6052586261916532750
+    second: bastion_20
+  - first:
+      213: -5018322857032836846
+    second: bastion_21
+  - first:
+      213: 7879469501976634050
+    second: bastion_22
+  - first:
+      213: -8643410834304154536
+    second: bastion_23
+  - first:
+      213: 2401726737393190554
+    second: bastion_24
+  - first:
+      213: -1429263577928135174
+    second: bastion_25
+  - first:
+      213: -6514992913154659455
+    second: bastion_26
+  - first:
+      213: 437414120541099127
+    second: bastion_27
+  - first:
+      213: -2971006243896111818
+    second: bastion_28
+  - first:
+      213: -3289296315105062404
+    second: bastion_29
+  - first:
+      213: 7636345574063334088
+    second: bastion_30
+  - first:
+      213: 8698327554217889365
+    second: bastion_31
+  - first:
+      213: -2156162069333593152
+    second: bastion_32
+  - first:
+      213: 8912169692571514248
+    second: bastion_33
+  - first:
+      213: 4859555689739119626
+    second: bastion_34
+  - first:
+      213: 5079338227084944018
+    second: bastion_35
+  - first:
+      213: 7306215417240366767
+    second: bastion_36
+  - first:
+      213: 921992375688555962
+    second: bastion_37
+  - first:
+      213: -5953302202931132473
+    second: bastion_38
+  - first:
+      213: -7764008809756508339
+    second: bastion_39
+  - first:
+      213: 524518682171792825
+    second: bastion_40
+  - first:
+      213: 1415268303396621411
+    second: bastion_41
+  - first:
+      213: 1536414848191175883
+    second: bastion_42
+  - first:
+      213: 6618142270905956854
+    second: bastion_43
+  - first:
+      213: -6554755106029204998
+    second: bastion_44
+  - first:
+      213: -1910565212863160703
+    second: bastion_45
+  - first:
+      213: -7932437887118519725
+    second: bastion_46
+  - first:
+      213: -9127036778795710668
+    second: bastion_47
+  - first:
+      213: -4135690075420414162
+    second: bastion_48
+  - first:
+      213: -4614672769308719836
+    second: bastion_49
+  - first:
+      213: 2361880616243233607
+    second: bastion_50
+  - first:
+      213: 3582068191765875480
+    second: bastion_51
+  - first:
+      213: 7031416048136642311
+    second: bastion_52
+  - first:
+      213: -7511818592667409820
+    second: bastion_53
+  - first:
+      213: -4750903624667702878
+    second: bastion_54
+  - first:
+      213: -3452275937583672596
+    second: bastion_55
+  - first:
+      213: 5721445990562838409
+    second: bastion_56
+  - first:
+      213: -7695932163789509007
+    second: bastion_57
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: bastion_0
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 912
+        width: 63
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba799e53308b3ff50800000000000000
+      internalID: 6914072176872757163
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_1
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 968
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 596d998077237d1b0800000000000000
+      internalID: -5631977322176719211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_2
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 965
+        width: 17
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3db74d90391d5940800000000000000
+      internalID: 5286409234190679355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_3
+      rect:
+        serializedVersion: 2
+        x: 345
+        y: 975
+        width: 81
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ea636cd9b54840b0800000000000000
+      internalID: -5744264660142298399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_4
+      rect:
+        serializedVersion: 2
+        x: 487
+        y: 951
+        width: 75
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4a30a1b0d829c860800000000000000
+      internalID: 7550611127061723726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_5
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 910
+        width: 61
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7354f1687e25f8ca0800000000000000
+      internalID: -6012495823175203529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_6
+      rect:
+        serializedVersion: 2
+        x: 723
+        y: 923
+        width: 19
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec35b944414e93570800000000000000
+      internalID: 8447033351811584974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_7
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 19
+        width: 1022
+        height: 950
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4eb2e455d50ef2a40800000000000000
+      internalID: 5345737974179834852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_8
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 931
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a68891d818f4a3210800000000000000
+      internalID: 1313449659168557162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_9
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 927
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fdca3a76c2029030800000000000000
+      internalID: 3499862911897751031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_10
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 936
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbd8554ed5782ff20800000000000000
+      internalID: 3454972701479112124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_11
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 929
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf8f2719a7a2e9d10800000000000000
+      internalID: 2134189979334801660
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_12
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 927
+        width: 51
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e38c87430889fb6e0800000000000000
+      internalID: -1819568048030824386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_13
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 935
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a01cc1a10059c4d50800000000000000
+      internalID: 6722912171427938570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_14
+      rect:
+        serializedVersion: 2
+        x: 443
+        y: 922
+        width: 22
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 981668009ecd990d0800000000000000
+      internalID: -3415455949089513079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_15
+      rect:
+        serializedVersion: 2
+        x: 506
+        y: 922
+        width: 32
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27f6b645ae31c6c30800000000000000
+      internalID: 4353876836920029042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_16
+      rect:
+        serializedVersion: 2
+        x: 913
+        y: 724
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20be70dc27b188d50800000000000000
+      internalID: 6739667022240017154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_17
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 676
+        width: 13
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5edf87575e0e30f0800000000000000
+      internalID: -1135454287756796321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_18
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 623
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82b6816136909f5e0800000000000000
+      internalID: -1875457448645989592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_19
+      rect:
+        serializedVersion: 2
+        x: 916
+        y: 623
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0687d9c99d76d7840800000000000000
+      internalID: 5223445327152773216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_20
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 579
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e00c1f1232b1ff350800000000000000
+      internalID: 6052586261916532750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_21
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 546
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 219955223f55b5ab0800000000000000
+      internalID: -5018322857032836846
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_22
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 551
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c267dbc3cf795d60800000000000000
+      internalID: 7879469501976634050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_23
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 544
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 854c98514af6c0880800000000000000
+      internalID: -8643410834304154536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_24
+      rect:
+        serializedVersion: 2
+        x: 938
+        y: 525
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9601e52eb5a45120800000000000000
+      internalID: 2401726737393190554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_25
+      rect:
+        serializedVersion: 2
+        x: 918
+        y: 497
+        width: 11
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afd8033395c3a2ce0800000000000000
+      internalID: -1429263577928135174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_26
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 457
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18baa31a6781695a0800000000000000
+      internalID: -6514992913154659455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_27
+      rect:
+        serializedVersion: 2
+        x: 940
+        y: 457
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 774979a33d1021600800000000000000
+      internalID: 437414120541099127
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_28
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 431
+        width: 13
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63dca1fef8dd4c6d0800000000000000
+      internalID: -2971006243896111818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_29
+      rect:
+        serializedVersion: 2
+        x: 929
+        y: 412
+        width: 14
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf15929cd621a52d0800000000000000
+      internalID: -3289296315105062404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_30
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 400
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c2eb2c27dfb9f960800000000000000
+      internalID: 7636345574063334088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_31
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 359
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55e462923daa6b870800000000000000
+      internalID: 8698327554217889365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_32
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 368
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c333339506c312e0800000000000000
+      internalID: -2156162069333593152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_33
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 325
+        width: 13
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8853abfdd136eab70800000000000000
+      internalID: 8912169692571514248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_34
+      rect:
+        serializedVersion: 2
+        x: 921
+        y: 335
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0ce02d172c907340800000000000000
+      internalID: 4859555689739119626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_35
+      rect:
+        serializedVersion: 2
+        x: 917
+        y: 306
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 292e57fb43f6d7640800000000000000
+      internalID: 5079338227084944018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_36
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 303
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fae28154634e46560800000000000000
+      internalID: 7306215417240366767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_37
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 294
+        width: 12
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abde8864e239bcc00800000000000000
+      internalID: 921992375688555962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_38
+      rect:
+        serializedVersion: 2
+        x: 933
+        y: 280
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c74db9303f916da0800000000000000
+      internalID: -5953302202931132473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_39
+      rect:
+        serializedVersion: 2
+        x: 938
+        y: 279
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4fb57d7f13b04490800000000000000
+      internalID: -7764008809756508339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_40
+      rect:
+        serializedVersion: 2
+        x: 909
+        y: 241
+        width: 15
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bdd7e066f6774700800000000000000
+      internalID: 524518682171792825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_41
+      rect:
+        serializedVersion: 2
+        x: 922
+        y: 261
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36c43d5060b04a310800000000000000
+      internalID: 1415268303396621411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_42
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 235
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcc12160a21725510800000000000000
+      internalID: 1536414848191175883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_43
+      rect:
+        serializedVersion: 2
+        x: 923
+        y: 207
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f9b85ab45d58db50800000000000000
+      internalID: 6618142270905956854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_44
+      rect:
+        serializedVersion: 2
+        x: 930
+        y: 216
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af9837ba5f4d805a0800000000000000
+      internalID: -6554755106029204998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_45
+      rect:
+        serializedVersion: 2
+        x: 918
+        y: 167
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18e921fbf0f4c75e0800000000000000
+      internalID: -1910565212863160703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_46
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 111
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 352537ff4c15ae190800000000000000
+      internalID: -7932437887118519725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_47
+      rect:
+        serializedVersion: 2
+        x: 345
+        y: 62
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 437c4f32860465180800000000000000
+      internalID: -9127036778795710668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_48
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 56
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2f2579c9c31b96c0800000000000000
+      internalID: -4135690075420414162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_49
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 63
+        width: 13
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4258faed09365ffb0800000000000000
+      internalID: -4614672769308719836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_50
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 63
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7430f0d18e517c020800000000000000
+      internalID: 2361880616243233607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_51
+      rect:
+        serializedVersion: 2
+        x: 450
+        y: 69
+        width: 15
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81b4e63ba0016b130800000000000000
+      internalID: 3582068191765875480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_52
+      rect:
+        serializedVersion: 2
+        x: 808
+        y: 63
+        width: 6
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70f5a2944ab949160800000000000000
+      internalID: 7031416048136642311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_53
+      rect:
+        serializedVersion: 2
+        x: 851
+        y: 67
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46262ee0ac8a0c790800000000000000
+      internalID: -7511818592667409820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_54
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 55
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a9d0912356611eb0800000000000000
+      internalID: -4750903624667702878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_55
+      rect:
+        serializedVersion: 2
+        x: 423
+        y: 51
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce252b1635d0710d0800000000000000
+      internalID: -3452275937583672596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_56
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 48
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 987b41d90d8a66f40800000000000000
+      internalID: 5721445990562838409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bastion_57
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 54
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17ea2d9c87e823590800000000000000
+      internalID: -7695932163789509007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      bastion_0: 6914072176872757163
+      bastion_1: -5631977322176719211
+      bastion_10: 3454972701479112124
+      bastion_11: 2134189979334801660
+      bastion_12: -1819568048030824386
+      bastion_13: 6722912171427938570
+      bastion_14: -3415455949089513079
+      bastion_15: 4353876836920029042
+      bastion_16: 6739667022240017154
+      bastion_17: -1135454287756796321
+      bastion_18: -1875457448645989592
+      bastion_19: 5223445327152773216
+      bastion_2: 5286409234190679355
+      bastion_20: 6052586261916532750
+      bastion_21: -5018322857032836846
+      bastion_22: 7879469501976634050
+      bastion_23: -8643410834304154536
+      bastion_24: 2401726737393190554
+      bastion_25: -1429263577928135174
+      bastion_26: -6514992913154659455
+      bastion_27: 437414120541099127
+      bastion_28: -2971006243896111818
+      bastion_29: -3289296315105062404
+      bastion_3: -5744264660142298399
+      bastion_30: 7636345574063334088
+      bastion_31: 8698327554217889365
+      bastion_32: -2156162069333593152
+      bastion_33: 8912169692571514248
+      bastion_34: 4859555689739119626
+      bastion_35: 5079338227084944018
+      bastion_36: 7306215417240366767
+      bastion_37: 921992375688555962
+      bastion_38: -5953302202931132473
+      bastion_39: -7764008809756508339
+      bastion_4: 7550611127061723726
+      bastion_40: 524518682171792825
+      bastion_41: 1415268303396621411
+      bastion_42: 1536414848191175883
+      bastion_43: 6618142270905956854
+      bastion_44: -6554755106029204998
+      bastion_45: -1910565212863160703
+      bastion_46: -7932437887118519725
+      bastion_47: -9127036778795710668
+      bastion_48: -4135690075420414162
+      bastion_49: -4614672769308719836
+      bastion_5: -6012495823175203529
+      bastion_50: 2361880616243233607
+      bastion_51: 3582068191765875480
+      bastion_52: 7031416048136642311
+      bastion_53: -7511818592667409820
+      bastion_54: -4750903624667702878
+      bastion_55: -3452275937583672596
+      bastion_56: 5721445990562838409
+      bastion_57: -7695932163789509007
+      bastion_6: 8447033351811584974
+      bastion_7: 5345737974179834852
+      bastion_8: 1313449659168557162
+      bastion_9: 3499862911897751031
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

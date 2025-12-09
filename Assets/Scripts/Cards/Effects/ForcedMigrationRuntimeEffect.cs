@@ -33,6 +33,11 @@ public class ForcedMigrationRuntimeEffect : RuntimeEffectBase
             return;
         if (a == b)
             return;
+
+        // Respect immovable flag on the creature card: do not move creatures that are marked immovable.
+        if ((a != null && a.IsImmovable) || (b != null && b.IsImmovable))
+            return;
+
         if (a.currentHealth <= 0 || b.currentHealth <= 0 || a.isDying || b.isDying)
             return;
 

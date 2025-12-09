@@ -16,7 +16,7 @@ public static class DraftRules
         public ScriptableObject data;
         public bool isCreature;
         public int momentumCost;
-        public int costTier; // 0 = low, 1 = mid, 2 = high
+        public int costTier;
     }
 
     /// <summary>
@@ -257,5 +257,3 @@ public static class DraftRules
         }
     }
 }
-
-

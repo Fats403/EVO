@@ -1,0 +1,624 @@
+fileFormatVersion: 2
+guid: 6eef07032e9044975b9e29b90d76f9ae
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1491410556400256208
+    second: hardy_0
+  - first:
+      213: 5535414184669035913
+    second: hardy_1
+  - first:
+      213: -1273105157475356270
+    second: hardy_2
+  - first:
+      213: -7459015889545492278
+    second: hardy_3
+  - first:
+      213: 307720359383670093
+    second: hardy_4
+  - first:
+      213: -7223973409007941166
+    second: hardy_5
+  - first:
+      213: -487882710993278052
+    second: hardy_6
+  - first:
+      213: 6172363927086232419
+    second: hardy_7
+  - first:
+      213: 5644031835894446501
+    second: hardy_8
+  - first:
+      213: 6630446889605890183
+    second: hardy_9
+  - first:
+      213: 1616705848209868545
+    second: hardy_10
+  - first:
+      213: -6820897407773461847
+    second: hardy_11
+  - first:
+      213: 4505371776601600682
+    second: hardy_12
+  - first:
+      213: 6535213927383643012
+    second: hardy_13
+  - first:
+      213: 4763701586852720889
+    second: hardy_14
+  - first:
+      213: -1740480574636386127
+    second: hardy_15
+  - first:
+      213: -6306976239857376360
+    second: hardy_16
+  - first:
+      213: 4909228225630780285
+    second: hardy_17
+  - first:
+      213: 3321473561451465102
+    second: hardy_18
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: hardy_0
+      rect:
+        serializedVersion: 2
+        x: 259
+        y: 880
+        width: 235
+        height: 139
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03bbe7330027d4be0800000000000000
+      internalID: -1491410556400256208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_1
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 649
+        width: 707
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98d3bd18fddb1dc40800000000000000
+      internalID: 5535414184669035913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_2
+      rect:
+        serializedVersion: 2
+        x: 561
+        y: 844
+        width: 45
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 291b6feba95055ee0800000000000000
+      internalID: -1273105157475356270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_3
+      rect:
+        serializedVersion: 2
+        x: 723
+        y: 870
+        width: 75
+        height: 141
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac885a961904c7890800000000000000
+      internalID: -7459015889545492278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_4
+      rect:
+        serializedVersion: 2
+        x: 796
+        y: 874
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4d1837590e354400800000000000000
+      internalID: 307720359383670093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_5
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 807
+        width: 56
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d9c631757a4fbb90800000000000000
+      internalID: -7223973409007941166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_6
+      rect:
+        serializedVersion: 2
+        x: 235
+        y: 824
+        width: 35
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9be03f5241ba39f0800000000000000
+      internalID: -487882710993278052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_7
+      rect:
+        serializedVersion: 2
+        x: 855
+        y: 839
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 363f8620a44a8a550800000000000000
+      internalID: 6172363927086232419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_8
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 390
+        width: 288
+        height: 424
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a9fb772d01a35e40800000000000000
+      internalID: 5644031835894446501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_9
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 0
+        width: 979
+        height: 800
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7808d050154140c50800000000000000
+      internalID: 6630446889605890183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_10
+      rect:
+        serializedVersion: 2
+        x: 918
+        y: 752
+        width: 19
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10788dc3761bf6610800000000000000
+      internalID: 1616705848209868545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_11
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 673
+        width: 18
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a2b74042fd4751a0800000000000000
+      internalID: -6820897407773461847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_12
+      rect:
+        serializedVersion: 2
+        x: 951
+        y: 677
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa2b865a2cb468e30800000000000000
+      internalID: 4505371776601600682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_13
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 570
+        width: 17
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48333e0217eb1ba50800000000000000
+      internalID: 6535213927383643012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_14
+      rect:
+        serializedVersion: 2
+        x: 920
+        y: 547
+        width: 102
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f03254aa511c1240800000000000000
+      internalID: 4763701586852720889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_15
+      rect:
+        serializedVersion: 2
+        x: 909
+        y: 488
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b8945a832298d7e0800000000000000
+      internalID: -1740480574636386127
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_16
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 455
+        width: 21
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 893e870968e1978a0800000000000000
+      internalID: -6306976239857376360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_17
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 141
+        width: 14
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7b3b0e9f05112440800000000000000
+      internalID: 4909228225630780285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hardy_18
+      rect:
+        serializedVersion: 2
+        x: 446
+        y: 150
+        width: 14
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e898a213b9e381e20800000000000000
+      internalID: 3321473561451465102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      hardy_0: -1491410556400256208
+      hardy_1: 5535414184669035913
+      hardy_10: 1616705848209868545
+      hardy_11: -6820897407773461847
+      hardy_12: 4505371776601600682
+      hardy_13: 6535213927383643012
+      hardy_14: 4763701586852720889
+      hardy_15: -1740480574636386127
+      hardy_16: -6306976239857376360
+      hardy_17: 4909228225630780285
+      hardy_18: 3321473561451465102
+      hardy_2: -1273105157475356270
+      hardy_3: -7459015889545492278
+      hardy_4: 307720359383670093
+      hardy_5: -7223973409007941166
+      hardy_6: -487882710993278052
+      hardy_7: 6172363927086232419
+      hardy_8: 5644031835894446501
+      hardy_9: 6630446889605890183
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
