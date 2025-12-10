@@ -9,6 +9,8 @@ public class ApexTerritoryGlobalEffect : GlobalEffectBase
         if (rm == null)
             return;
 
+        // TODO: This should trigger the scale bump animation for affected allies
+
         // All allies gain +1 body permanently; center-position ally gains +2 instead.
         // We approximate center by choosing the occupied slot whose x-position is
         // closest to the midpoint between the leftmost and rightmost ally slots.

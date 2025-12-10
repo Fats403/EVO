@@ -25,10 +25,9 @@ public class NurturingTrait : Trait
                 FeedbackManager.Instance?.ShowFloatingText(
                     "Fatigue -1",
                     ally.transform.position,
-                    Color.yellow
+                    GameColorPalette.TextPositive
                 );
             }
         }
     }
 }
-

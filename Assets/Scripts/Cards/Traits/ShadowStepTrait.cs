@@ -50,8 +50,11 @@ public class ShadowStepTrait : Trait
             return;
 
         const float duration = 0.45f;
-        ResolutionManager.Instance.StartCoroutine(
-            BoardMovement.SwapCreatures(self, target, slotSelf, slotTarget, duration)
-        );
+        if (ResolutionManager.Instance != null)
+        {
+            ResolutionManager.Instance.EnqueueStartOfRoundAnimation(
+                BoardMovement.SwapCreatures(self, target, slotSelf, slotTarget, duration)
+            );
+        }
     }
 }

@@ -18,7 +18,7 @@ public class NutrientSurgeGlobalEffect : GlobalEffectBase
         {
             FeedbackManager.Instance.ShowGlobalAlert(
                 "Nutrient Surge: +3 food added to the pile.",
-                new Color(0.7f, 1f, 0.7f)
+                GameColorPalette.TextPositiveSoft
             );
             FeedbackManager.Instance.Log("Global Effect: Nutrient Surge adds +3 food to the pile.");
         }

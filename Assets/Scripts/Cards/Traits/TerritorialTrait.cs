@@ -40,7 +40,7 @@ public class TerritorialTrait : Trait
                 FeedbackManager.Instance?.ShowFloatingText(
                     $"-{applied} HP",
                     c.transform.position,
-                    new Color(1f, 0.3f, 0.3f)
+                    GameColorPalette.Damage
                 );
             }
         }
@@ -50,4 +50,3 @@ public class TerritorialTrait : Trait
         HitSlot(idx + 1);
     }
 }
-

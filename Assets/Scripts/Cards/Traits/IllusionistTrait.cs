@@ -29,9 +29,8 @@ public class IllusionistTrait : Trait
             FeedbackManager.Instance?.ShowFloatingText(
                 "Stealth",
                 self.transform.position,
-                Color.gray
+                GameColorPalette.TextMuted
             );
         }
     }
 }
-

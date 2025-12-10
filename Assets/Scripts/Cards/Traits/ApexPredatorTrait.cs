@@ -14,6 +14,7 @@ public class ApexPredatorTrait : Trait
             .FindObjectsByType<Creature>(FindObjectsSortMode.None)
             .Where(c =>
                 c != null
+                && c != self
                 && c.owner == self.owner
                 && c.currentHealth > 0
                 && !c.isDying
@@ -29,7 +30,7 @@ public class ApexPredatorTrait : Trait
             FeedbackManager.Instance?.ShowFloatingText(
                 "Rage",
                 ally.transform.position,
-                new Color(1f, 0.4f, 0.2f)
+                GameColorPalette.Rage
             );
         }
     }

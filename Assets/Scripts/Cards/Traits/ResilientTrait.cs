@@ -16,8 +16,7 @@ public class ResilientTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Absorb +1",
             self.transform.position,
-            Color.cyan
+            GameColorPalette.Absorb
         );
     }
 }
-

@@ -33,9 +33,8 @@ public class RadiantScalesTrait : Trait
             FeedbackManager.Instance?.ShowFloatingText(
                 "Reflect",
                 self.transform.position,
-                Color.cyan
+                GameColorPalette.Reflect
             );
         }
     }
 }
-

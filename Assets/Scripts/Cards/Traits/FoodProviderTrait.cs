@@ -17,8 +17,7 @@ public class FoodProviderTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Food +1",
             pile.transform.position,
-            new Color(0.5f, 0.9f, 0.5f)
+            GameColorPalette.TextPositive
         );
     }
 }
-

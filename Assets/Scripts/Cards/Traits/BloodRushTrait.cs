@@ -18,7 +18,7 @@ public class BloodRushTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Regen +2",
             self.transform.position,
-            new Color(0.3f, 1f, 0.3f)
+            GameColorPalette.Regen
         );
 
         // Flag to gain DamageUp at the start of the next round.
@@ -26,7 +26,7 @@ public class BloodRushTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "DamageUp (next)",
             self.transform.position,
-            new Color(1f, 0.7f, 0.3f)
+            GameColorPalette.Rage
         );
     }
 
@@ -42,7 +42,7 @@ public class BloodRushTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "DamageUp +1",
             self.transform.position,
-            new Color(1f, 0.7f, 0.3f)
+            GameColorPalette.Rage
         );
     }
 }

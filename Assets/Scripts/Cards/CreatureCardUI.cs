@@ -115,7 +115,7 @@ public class CreatureCardUI : BaseCardUI
                             FeedbackManager.Instance?.Log(reason);
                             FeedbackManager.Instance?.ShowGlobalAlert(
                                 reason,
-                                new Color(1f, 0.5f, 0.5f)
+                                GameColorPalette.AlertError
                             );
                         }
                     }

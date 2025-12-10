@@ -257,7 +257,7 @@ public class GameManager : MonoBehaviour
         UpdatePhaseLabel();
         FeedbackManager.Instance?.ShowGlobalAlert(
             $"The {currentEra} Era Has began!",
-            new Color(0.9f, 0.9f, 0.6f)
+            GameColorPalette.AlertInfo
         );
         BeginDraw();
     }
@@ -502,7 +502,7 @@ public class GameManager : MonoBehaviour
             {
                 FeedbackManager.Instance.ShowGlobalAlert(
                     "Player 2 passes",
-                    new Color(0.85f, 0.85f, 1f)
+                    GameColorPalette.AlertInfo
                 );
             }
         }
@@ -835,7 +835,7 @@ public class GameManager : MonoBehaviour
         // Single global alert when resolution begins so players can track pacing.
         FeedbackManager.Instance?.ShowGlobalAlert(
             $"Round {currentRound} Begins!",
-            new Color(1f, 1f, 1f)
+            GameColorPalette.AlertInfo
         );
 
         // Let the alert breathe before combat resolves.
@@ -879,7 +879,7 @@ public class GameManager : MonoBehaviour
                 {
                     FeedbackManager.Instance?.ShowGlobalAlert(
                         $"{remainingRounds} rounds until extinction event...",
-                        new Color(1f, 0.6f, 0.4f)
+                        GameColorPalette.TextWarning
                     );
                 }
             }
@@ -887,7 +887,7 @@ public class GameManager : MonoBehaviour
             {
                 FeedbackManager.Instance?.ShowGlobalAlert(
                     $"The {currentEra} Era Has Started",
-                    new Color(0.9f, 0.9f, 0.6f)
+                    GameColorPalette.AlertInfo
                 );
             }
         }
@@ -917,7 +917,7 @@ public class GameManager : MonoBehaviour
 
         FeedbackManager.Instance?.ShowGlobalAlert(
             "A final extinction event has wiped out all life.\nGame Over.",
-            new Color(1f, 0.4f, 0.3f)
+            GameColorPalette.Damage
         );
 
         // Drive the visual/gameplay extinction through the VFXManager if available.

@@ -27,8 +27,7 @@ public class DisorientingCryTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Stunned",
             target.transform.position,
-            Color.yellow
+            GameColorPalette.TextWarning
         );
     }
 }
-

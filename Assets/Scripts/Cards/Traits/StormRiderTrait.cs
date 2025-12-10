@@ -30,9 +30,8 @@ public class StormRiderTrait : Trait
             FeedbackManager.Instance?.ShowFloatingText(
                 "DamageUp +1",
                 self.transform.position,
-                new Color(1f, 0.7f, 0.3f)
+                GameColorPalette.Rage
             );
         }
     }
 }
-

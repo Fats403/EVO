@@ -14,7 +14,7 @@ public class ToxicBiteTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Infected +2",
             target.transform.position,
-            new Color(0.6f, 1f, 0.6f)
+            GameColorPalette.Poison
         );
         var adj = BoardUtils.GetAdjacentAllies(target);
         if (adj != null)
@@ -25,7 +25,7 @@ public class ToxicBiteTrait : Trait
                 FeedbackManager.Instance?.ShowFloatingText(
                     "Infected +1",
                     c.transform.position,
-                    new Color(0.6f, 1f, 0.6f)
+                    GameColorPalette.Poison
                 );
             }
         }

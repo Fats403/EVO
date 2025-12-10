@@ -5,7 +5,17 @@ public class ClearSkiesGlobalEffect : GlobalEffectBase
 {
     public override void OnPlay(ResolutionManager rm)
     {
-        GameManager.Instance.weatherVideoBackground.ForceTo(WeatherType.Clear);
+        if (WeatherManager.Instance != null)
+        {
+            WeatherManager.Instance.ForceWeather(WeatherType.Clear);
+        }
+        else if (
+            GameManager.Instance != null
+            && GameManager.Instance.weatherVideoBackground != null
+        )
+        {
+            GameManager.Instance.weatherVideoBackground.ForceTo(WeatherType.Clear);
+        }
 
         if (rm != null && rm.foodPile != null)
         {
@@ -14,4 +24,3 @@ public class ClearSkiesGlobalEffect : GlobalEffectBase
         }
     }
 }
-

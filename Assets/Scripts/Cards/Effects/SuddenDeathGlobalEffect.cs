@@ -36,7 +36,7 @@ public class SuddenDeathGlobalEffect : GlobalEffectBase
                 FeedbackManager.Instance?.ShowFloatingText(
                     "Sudden Death",
                     pick.transform.position,
-                    new Color(1f, 0.4f, 0.4f)
+                    GameColorPalette.Damage
                 );
                 pick.Kill("Sudden Death");
             }

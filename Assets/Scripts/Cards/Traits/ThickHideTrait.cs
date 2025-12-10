@@ -13,7 +13,7 @@ public class ThickHideTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Absorb +2",
             self.transform.position,
-            Color.cyan
+            GameColorPalette.Absorb
         );
     }
 }

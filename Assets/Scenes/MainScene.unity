@@ -3623,7 +3623,7 @@ MonoBehaviour:
   starveDelay: 1
   statusEffectDelay: 1
   roundStartEffectPause: 2
-  roundEndEffectPause: 2
+  roundEndEffectPause: 1
   pacingMultiplier: 2
   attackVFX: {fileID: 0}
   eatVFX: {fileID: 0}

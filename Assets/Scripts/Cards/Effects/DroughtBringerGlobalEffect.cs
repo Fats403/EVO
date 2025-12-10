@@ -6,7 +6,19 @@ public class DroughtBringerGlobalEffect : GlobalEffectBase
 {
     public override void OnPlay(ResolutionManager rm)
     {
-        GameManager.Instance.weatherVideoBackground.ForceTo(WeatherType.Drought);
+        // Smoothly crossfade the visual backdrop and sync the logical weather.
+        if (WeatherManager.Instance != null)
+        {
+            WeatherManager.Instance.ForceWeather(WeatherType.Drought);
+        }
+        else if (
+            GameManager.Instance != null
+            && GameManager.Instance.weatherVideoBackground != null
+        )
+        {
+            // Fallback: visual-only if no WeatherManager is present.
+            GameManager.Instance.weatherVideoBackground.ForceTo(WeatherType.Drought);
+        }
 
         var all = Object
             .FindObjectsByType<Creature>(FindObjectsSortMode.None)
@@ -20,4 +32,3 @@ public class DroughtBringerGlobalEffect : GlobalEffectBase
         remainingRounds = 0;
     }
 }
-

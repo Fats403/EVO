@@ -21,7 +21,7 @@ public class HerdCallerTrait : Trait
             FeedbackManager.Instance?.ShowFloatingText(
                 "Regen +1",
                 ally.transform.position,
-                new Color(0.3f, 1f, 0.3f)
+                GameColorPalette.Regen
             );
         }
     }

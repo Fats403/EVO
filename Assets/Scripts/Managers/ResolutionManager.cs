@@ -11,6 +11,10 @@ public class ResolutionManager : MonoBehaviour
     [Header("Active Global Effects")]
     public List<GlobalEffectBase> activeGlobalEffects = new();
 
+    // Queued animations that should fully complete during the start-of-round
+    // reveal step before normal resolution (attacks, etc.) proceeds.
+    private readonly Queue<IEnumerator> startOfRoundAnimations = new();
+
     [Header("Timing")]
     public float preStealDelay = 0.3f;
     public float eatDelay = 0.4f;
@@ -28,7 +32,7 @@ public class ResolutionManager : MonoBehaviour
     [Tooltip(
         "Minimum time to pause after end-of-round statuses/global effects so players can read them."
     )]
-    public float roundEndEffectPause = 2.0f;
+    public float roundEndEffectPause = 1.0f;
 
     [Tooltip("Global pacing multiplier for all waits (higher = slower)")]
     public float pacingMultiplier = 1.0f;
@@ -49,10 +53,13 @@ public class ResolutionManager : MonoBehaviour
         // Round start hooks
         foreach (var c in AllCreatures())
         {
+            bool thisCreatureDidStatus = false;
+
             // Status round-start ticks (e.g., Infected)
             if (c.TickStatusesAtRoundStart())
             {
                 hadStartStatusOrGlobalEffects = true;
+                thisCreatureDidStatus = true;
             }
             if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
             {
@@ -62,6 +69,22 @@ public class ResolutionManager : MonoBehaviour
                     t?.OnRoundStart(c);
                 }
             }
+
+            // Run any start-of-round animations enqueued by traits (e.g., swaps/moves)
+            while (startOfRoundAnimations.Count > 0)
+            {
+                var anim = startOfRoundAnimations.Dequeue();
+                if (anim != null)
+                    yield return StartCoroutine(anim);
+            }
+
+            // Small per-creature delay after visible start-of-round status procs so
+            // multiple Infected / similar effects don't all fire at once.
+            if (thisCreatureDidStatus && statusEffectDelay > 0f)
+            {
+                yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
+            }
+
             c.ResetRoundBookkeeping();
             c.RefreshStatsUI();
         }
@@ -86,7 +109,7 @@ public class ResolutionManager : MonoBehaviour
         InvokeGlobal(g => g.OnHerbivores(this));
         yield return StartCoroutine(ResolveHerbivores());
 
-        // Resolve Attacks (Carnivores and Avians)
+        // Resolve Attacks (Carnivores and Avians, sometimes herbivores when allowed by traits)
         yield return StartCoroutine(ResolveAttacks());
 
         // Avian foraging then starvation and scoring
@@ -97,6 +120,7 @@ public class ResolutionManager : MonoBehaviour
         // Round end hooks
         // First apply status round-end ticks (fatigue decay, regen, bleeding, etc.)
         bool hadEndStatusOrGlobalEffects = false;
+        float endPause = Mathf.Max(0f, roundEndEffectPause) * pacingMultiplier;
         foreach (var c in AllCreatures())
         {
             if (c == null)
@@ -117,8 +141,7 @@ public class ResolutionManager : MonoBehaviour
                 var snapshot = c.traits != null ? c.traits.ToArray() : System.Array.Empty<Trait>();
                 foreach (var t in snapshot)
                 {
-                    if (t != null)
-                        t.OnRoundEnd(c);
+                    t?.OnRoundEnd(c);
                 }
             }
         }
@@ -141,17 +164,20 @@ public class ResolutionManager : MonoBehaviour
                     activeGlobalEffects.RemoveAt(i);
             }
         }
-        // Weather end-of-round effects
+        // Weather end-of-round effects (paced via coroutine so alerts can appear
+        // slightly before damage, e.g., Wildfire burn).
         if (WeatherManager.Instance != null)
         {
-            if (WeatherManager.Instance.ApplyEndOfRoundEffects())
-            {
+            bool weatherDidAny = false;
+            yield return StartCoroutine(
+                WeatherManager.Instance.ApplyEndOfRoundEffects(endPause, did => weatherDidAny = did)
+            );
+            if (weatherDidAny)
                 hadEndStatusOrGlobalEffects = true;
-            }
         }
 
-        // Brief pause after end-of-round statuses/global effects so players can see what happened.
-        float endPause = Mathf.Max(0f, roundEndEffectPause) * pacingMultiplier;
+        // Brief pause after end-of-round statuses/global effects so players can see what happened,
+        // but only if something actually happened (no random waits on empty rounds).
         if (endPause > 0f && hadEndStatusOrGlobalEffects)
             yield return new WaitForSeconds(endPause);
     }
@@ -192,6 +218,18 @@ public class ResolutionManager : MonoBehaviour
         effect.OnPlay(this);
     }
 
+    /// <summary>
+    /// Traits that perform start-of-round movements/animations (e.g., swaps)
+    /// can enqueue their coroutines here so the RevealAndResolveRound flow
+    /// will wait for them to complete before moving on.
+    /// </summary>
+    public void EnqueueStartOfRoundAnimation(IEnumerator routine)
+    {
+        if (routine == null)
+            return;
+        startOfRoundAnimations.Enqueue(routine);
+    }
+
     IEnumerator ResolvePreHerbivoreSteals()
     {
         if (foodPile == null)
@@ -217,7 +255,7 @@ public class ResolutionManager : MonoBehaviour
                     FeedbackManager.Instance?.ShowFloatingText(
                         $"Steal +{taken}",
                         c.transform.position,
-                        new Color(0.8f, 0.9f, 0.3f)
+                        GameColorPalette.TextPositive
                     );
                 }
                 if (taken > 0)
@@ -258,6 +296,9 @@ public class ResolutionManager : MonoBehaviour
             if (desired <= 0 || foodPile.count <= 0)
                 continue;
 
+            // Any overt action (foraging) reveals Stealth.
+            c.RevealIfStealthed();
+
             // Play the eat animation first so that the visible lunge happens before
             // the pile count and "after eat" hooks fire.
             if (foodPile != null)
@@ -296,7 +337,7 @@ public class ResolutionManager : MonoBehaviour
                 FeedbackManager.Instance?.ShowFloatingText(
                     $"+{taken} food",
                     c.transform.position,
-                    new Color(0.3f, 1f, 0.3f)
+                    GameColorPalette.TextPositive
                 );
                 FeedbackManager.Instance?.Log(
                     $"{FeedbackManager.TagOwner(c.owner)} {c.name} ate {taken}."
@@ -466,7 +507,7 @@ public class ResolutionManager : MonoBehaviour
                 FeedbackManager.Instance?.ShowFloatingText(
                     "Blocked",
                     target.transform.position,
-                    new Color(1f, 0.8f, 0.2f)
+                    GameColorPalette.TextWarning
                 );
                 FeedbackManager.Instance?.Log(
                     $"{FeedbackManager.TagOwner(attacker.owner)} {attacker.name} attack negated by {target.name}"
@@ -485,16 +526,8 @@ public class ResolutionManager : MonoBehaviour
                 continue;
             }
 
-            // Stealth: consumed on first attack attempt
-            if (attacker.HasStatus(StatusTag.Stealth))
-            {
-                attacker.ClearStatus(StatusTag.Stealth);
-                FeedbackManager.Instance?.ShowFloatingText(
-                    "Revealed",
-                    attacker.transform.position,
-                    new Color(0.8f, 0.8f, 0.8f)
-                );
-            }
+            // Stealth: any attack attempt reveals the attacker.
+            attacker.RevealIfStealthed();
 
             // Brief red flash on target
             if (target != null)
@@ -576,7 +609,7 @@ public class ResolutionManager : MonoBehaviour
                     FeedbackManager.Instance?.ShowFloatingText(
                         $"-{applied} HP",
                         target.transform.position,
-                        new Color(1f, 0.3f, 0.3f)
+                        GameColorPalette.Damage
                     );
                 }
                 // Carnivores count a successful damaging hit as "eating" for starvation purposes
@@ -643,6 +676,9 @@ public class ResolutionManager : MonoBehaviour
             if (c.traits != null && c.traits.Any(t => t != null && !t.CanForage(c)))
                 continue;
 
+            // Any overt action (foraging) reveals Stealth.
+            c.RevealIfStealthed();
+
             // Play a quick "forage" lunge toward the food pile so avians feel
             // visually consistent with herbivores, then apply the actual food
             // removal and after-eat hooks.
@@ -674,9 +710,9 @@ public class ResolutionManager : MonoBehaviour
                     }
                 }
                 FeedbackManager.Instance?.ShowFloatingText(
-                    "+1 Food (Forage)",
+                    "+1 food",
                     c.transform.position,
-                    new Color(0.5f, 0.8f, 1f)
+                    GameColorPalette.TextPositive
                 );
                 FeedbackManager.Instance?.Log(
                     $"{FeedbackManager.TagOwner(c.owner)} {c.name} forages +1"
@@ -744,7 +780,7 @@ public class ResolutionManager : MonoBehaviour
                         FeedbackManager.Instance?.ShowFloatingText(
                             $"-{applied} HP (Starve)",
                             c.transform.position,
-                            Color.red
+                            GameColorPalette.Starvation
                         );
                     }
                     didAnyStarveChange = true;
@@ -773,7 +809,7 @@ public class ResolutionManager : MonoBehaviour
                 FeedbackManager.Instance?.ShowFloatingText(
                     $"Score +{gain}",
                     c.transform.position,
-                    Color.cyan
+                    GameColorPalette.ScoreGain
                 );
                 FeedbackManager.Instance?.Log(
                     $"{FeedbackManager.TagOwner(c.owner)} {c.name} scores {gain} from food"
@@ -801,7 +837,7 @@ public class ResolutionManager : MonoBehaviour
                 FeedbackManager.Instance?.ShowFloatingText(
                     $"Score +{net}",
                     c.transform.position,
-                    Color.cyan
+                    GameColorPalette.ScoreGain
                 );
                 FeedbackManager.Instance?.Log(
                     $"{FeedbackManager.TagOwner(c.owner)} {c.name} nets {net} from combat"
@@ -1121,7 +1157,7 @@ public class ResolutionManager : MonoBehaviour
                 FeedbackManager.Instance?.ShowFloatingText(
                     $"-{applied} HP",
                     target.transform.position,
-                    new Color(1f, 0.3f, 0.3f)
+                    GameColorPalette.Damage
                 );
             }
             if (

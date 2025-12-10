@@ -23,8 +23,7 @@ public class WildfireBornTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "DamageUp +1, Immune",
             self.transform.position,
-            new Color(1f, 0.5f, 0.2f)
+            GameColorPalette.Rage
         );
     }
 }
-

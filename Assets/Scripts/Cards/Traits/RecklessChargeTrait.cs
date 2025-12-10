@@ -54,7 +54,7 @@ public class RecklessChargeTrait : Trait
             FeedbackManager.Instance?.ShowFloatingText(
                 $"-{applied} HP [Recoil]",
                 self.transform.position,
-                new Color(1f, 0.5f, 0.2f)
+                GameColorPalette.Damage
             );
         }
     }

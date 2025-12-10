@@ -16,8 +16,7 @@ public class BoneBreakerTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Malnourished +2",
             target.transform.position,
-            Color.yellow
+            GameColorPalette.Starvation
         );
     }
 }
-

@@ -35,7 +35,7 @@ public class GaleforceTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Fatigue +1",
             target.transform.position,
-            Color.yellow
+            GameColorPalette.TextWarning
         );
     }
 }

@@ -22,7 +22,7 @@ public class ParasiticInfectionEffect : EffectTraitBase
             FeedbackManager.Instance?.ShowFloatingText(
                 $"-{applied} HP (Parasitic Infection)",
                 self.transform.position,
-                new Color(0.8f, 0.6f, 1f)
+                GameColorPalette.Poison
             );
         }
     }

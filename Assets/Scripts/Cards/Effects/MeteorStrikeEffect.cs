@@ -26,7 +26,7 @@ public class MeteorStrikeEffect : EffectTraitBase
                 FeedbackManager.Instance?.ShowFloatingText(
                     $"-{applied} HP",
                     target.transform.position,
-                    new Color(1f, 0.5f, 0.3f)
+                    GameColorPalette.Damage
                 );
             }
 
@@ -42,7 +42,7 @@ public class MeteorStrikeEffect : EffectTraitBase
                     FeedbackManager.Instance?.ShowFloatingText(
                         $"-{splash} HP",
                         neighbor.transform.position,
-                        new Color(1f, 0.5f, 0.3f)
+                        GameColorPalette.Damage
                     );
                 }
             }
@@ -54,4 +54,3 @@ public class MeteorStrikeEffect : EffectTraitBase
         remainingRounds = 0;
     }
 }
-

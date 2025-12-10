@@ -15,7 +15,7 @@ public class BleedMasterTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Bleeding +1",
             target.transform.position,
-            new Color(1f, 0.3f, 0.3f)
+            GameColorPalette.Bleed
         );
     }
 }

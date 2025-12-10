@@ -6,7 +6,17 @@ public class PrehistoricStormGlobalEffect : GlobalEffectBase
 {
     public override void OnPlay(ResolutionManager rm)
     {
-        GameManager.Instance.weatherVideoBackground.ForceTo(WeatherType.Storm);
+        if (WeatherManager.Instance != null)
+        {
+            WeatherManager.Instance.ForceWeather(WeatherType.Storm);
+        }
+        else if (
+            GameManager.Instance != null
+            && GameManager.Instance.weatherVideoBackground != null
+        )
+        {
+            GameManager.Instance.weatherVideoBackground.ForceTo(WeatherType.Storm);
+        }
 
         if (rm == null)
             return;
@@ -29,11 +39,10 @@ public class PrehistoricStormGlobalEffect : GlobalEffectBase
             FeedbackManager.Instance?.ShowFloatingText(
                 $"-{applied} HP",
                 target.transform.position,
-                new Color(1f, 0.5f, 0.4f)
+                GameColorPalette.DamageOverTime
             );
         }
 
         remainingRounds = 0;
     }
 }
-

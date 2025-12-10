@@ -32,7 +32,7 @@ public class ExtinctionEventGlobalEffect : GlobalEffectBase
                 FeedbackManager.Instance?.ShowFloatingText(
                     $"-{applied} HP",
                     c.transform.position,
-                    new Color(1f, 0.5f, 0.5f)
+                    GameColorPalette.Damage
                 );
             }
         }
@@ -50,7 +50,7 @@ public class ExtinctionEventGlobalEffect : GlobalEffectBase
             FeedbackManager.Instance?.ShowFloatingText(
                 "+3 Food (Extinction Event)",
                 rm.foodPile.transform.position,
-                new Color(1f, 0.8f, 0.5f)
+                GameColorPalette.TextPositive
             );
         }
 

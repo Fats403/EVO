@@ -10,6 +10,10 @@ public class CamouflageHunterTrait : Trait
         if (self.HasStatus(StatusTag.Suppressed))
             return;
         self.AddStatus(StatusTag.Stealth, 1);
-        FeedbackManager.Instance?.ShowFloatingText("Stealth", self.transform.position, Color.gray);
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Stealth",
+            self.transform.position,
+            GameColorPalette.TextMuted
+        );
     }
 }

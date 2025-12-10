@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -153,17 +154,40 @@ public class WeatherManager : MonoBehaviour
         {
             Color alertColor = currentWeather switch
             {
-                WeatherType.Clear => new Color(0.8f, 1f, 0.8f),
-                WeatherType.Drought => new Color(0.95f, 0.8f, 0.4f),
-                WeatherType.Storm => new Color(0.7f, 0.85f, 1f),
-                WeatherType.Wildfire => new Color(1f, 0.6f, 0.3f),
-                WeatherType.Extinction => new Color(1f, 0.4f, 0.4f),
-                _ => Color.white,
+                WeatherType.Clear => GameColorPalette.WeatherClear,
+                WeatherType.Drought => GameColorPalette.WeatherDrought,
+                WeatherType.Storm => GameColorPalette.WeatherStorm,
+                WeatherType.Wildfire => GameColorPalette.WeatherWildfire,
+                WeatherType.Extinction => GameColorPalette.WeatherExtinction,
+                _ => GameColorPalette.AlertInfo,
             };
             FeedbackManager.Instance.ShowGlobalAlert(msg, alertColor);
         }
         OnWeatherChanged?.Invoke(currentWeather);
         return currentWeather;
+    }
+
+    /// <summary>
+    /// Force the weather to a specific type immediately for rules purposes,
+    /// while requesting a smooth visual transition from the background controller.
+    /// Used by global effect cards like Drought Bringer / Prehistoric Storm.
+    /// </summary>
+    public void ForceWeather(WeatherType target)
+    {
+        if (currentWeather == target)
+            return;
+
+        lastWeather = currentWeather;
+        currentWeather = target;
+        FeedbackManager.Instance?.Log($"Weather (forced): {currentWeather}");
+        OnWeatherChanged?.Invoke(currentWeather);
+
+        if (GameManager.Instance != null && GameManager.Instance.weatherVideoBackground != null)
+        {
+            GameManager.Instance.StartCoroutine(
+                GameManager.Instance.weatherVideoBackground.CrossfadeTo(currentWeather)
+            );
+        }
     }
 
     public void ApplyRoundStartEffects(FoodPile pile)
@@ -231,10 +255,11 @@ public class WeatherManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Applies any end-of-round weather effects and returns true if anything
-    /// visible or state-changing occurred (used to decide whether to pause).
+    /// Applies any end-of-round weather effects as a coroutine so we can pace
+    /// alerts and damage (e.g., Wildfire: show alert, pause, then burn).
+    /// Invokes onDone(true) if anything visible or state-changing occurred.
     /// </summary>
-    public bool ApplyEndOfRoundEffects()
+    public IEnumerator ApplyEndOfRoundEffects(float alertDelay, System.Action<bool> onDone)
     {
         bool didAny = false;
         switch (currentWeather)
@@ -244,8 +269,11 @@ public class WeatherManager : MonoBehaviour
                 didAny = true;
                 FeedbackManager.Instance?.ShowGlobalAlert(
                     "The wildfire burns!",
-                    new Color(1f, 0.5f, 0.2f)
+                    GameColorPalette.TextWarning
                 );
+
+                if (alertDelay > 0f)
+                    yield return new WaitForSeconds(alertDelay);
 
                 var all = FindObjectsByType<Creature>(FindObjectsSortMode.None)
                     .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
@@ -274,7 +302,7 @@ public class WeatherManager : MonoBehaviour
                         FeedbackManager.Instance?.ShowFloatingText(
                             $"-{applied} HP",
                             pos,
-                            new Color(1f, 0.5f, 0.2f)
+                            GameColorPalette.TextWarning
                         );
                     }
                 }
@@ -288,6 +316,7 @@ public class WeatherManager : MonoBehaviour
             default:
                 break;
         }
-        return didAny;
+
+        onDone?.Invoke(didAny);
     }
 }

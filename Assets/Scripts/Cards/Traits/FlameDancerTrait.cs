@@ -24,9 +24,8 @@ public class FlameDancerTrait : Trait
             FeedbackManager.Instance?.ShowFloatingText(
                 "Regen +2",
                 self.transform.position,
-                new Color(1f, 0.5f, 0.2f)
+                GameColorPalette.Regen
             );
         }
     }
 }
-

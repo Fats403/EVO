@@ -22,9 +22,8 @@ public class LivingShieldTrait : Trait
             FeedbackManager.Instance?.ShowFloatingText(
                 "Absorb +1",
                 ally.transform.position,
-                Color.cyan
+                GameColorPalette.Absorb
             );
         }
     }
 }
-

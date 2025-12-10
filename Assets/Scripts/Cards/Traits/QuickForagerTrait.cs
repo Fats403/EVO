@@ -20,9 +20,8 @@ public class QuickForagerTrait : Trait
             FeedbackManager.Instance?.ShowFloatingText(
                 "Regen +1",
                 self.transform.position,
-                new Color(0.3f, 1f, 0.3f)
+                GameColorPalette.Regen
             );
         }
     }
 }
-

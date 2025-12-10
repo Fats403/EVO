@@ -28,7 +28,7 @@ public class UndyingSpiritTrait : Trait
             FeedbackManager.Instance?.ShowFloatingText(
                 "Undying Spirit",
                 self.transform.position,
-                new Color(1f, 0.6f, 0.2f)
+                GameColorPalette.TextPositive
             );
         }
     }

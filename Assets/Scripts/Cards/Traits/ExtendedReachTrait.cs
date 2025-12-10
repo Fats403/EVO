@@ -13,7 +13,7 @@ public class ExtendedReachTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Food +1 [Extended Reach]",
             self.transform.position,
-            new Color(0.3f, 1f, 0.3f)
+            GameColorPalette.TextPositive
         );
     }
 }

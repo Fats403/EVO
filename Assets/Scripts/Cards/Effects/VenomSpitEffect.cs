@@ -15,10 +15,9 @@ public class VenomSpitEffect : EffectTraitBase
             FeedbackManager.Instance?.ShowFloatingText(
                 $"-{applied} HP",
                 self.transform.position,
-                new Color(1f, 0.4f, 0.4f)
+                GameColorPalette.Damage
             );
         }
         remainingRounds = 0;
     }
 }
-

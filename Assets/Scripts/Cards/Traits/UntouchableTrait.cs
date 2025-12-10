@@ -25,11 +25,10 @@ public class UntouchableTrait : Trait
             FeedbackManager.Instance?.ShowFloatingText(
                 "Untouchable",
                 self.transform.position,
-                new Color(0.7f, 0.9f, 1f)
+                GameColorPalette.TextSpecial
             );
             return true;
         }
         return false;
     }
 }
-

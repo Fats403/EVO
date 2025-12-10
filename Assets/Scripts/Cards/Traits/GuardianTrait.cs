@@ -30,7 +30,7 @@ public class GuardianTrait : Trait
             FeedbackManager.Instance?.ShowFloatingText(
                 "Shield +1",
                 self.transform.position,
-                Color.cyan
+                GameColorPalette.Shield
             );
         }
     }

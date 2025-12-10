@@ -13,7 +13,7 @@ public class AdaptiveArmorTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Body +1",
             self.transform.position,
-            new Color(0.6f, 1f, 0.6f)
+            GameColorPalette.TextPositive
         );
     }
 }

@@ -29,7 +29,7 @@ public class SacrificeTrait : Trait
             FeedbackManager.Instance?.ShowFloatingText(
                 "Regen +2",
                 target.transform.position,
-                new Color(0.3f, 1f, 0.3f)
+                GameColorPalette.Regen
             );
         }
         // Self becomes malnourished from over-sacrificing its own food.
@@ -37,7 +37,7 @@ public class SacrificeTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Malnourished +1",
             self.transform.position,
-            Color.yellow
+            GameColorPalette.Starvation
         );
     }
 }

@@ -16,7 +16,7 @@ public class IntimidateTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "(Intimidate)",
             enemy.transform.position,
-            Color.yellow
+            GameColorPalette.TextWarning
         );
     }
 }

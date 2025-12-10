@@ -18,7 +18,7 @@ public class EnvironmentalToxinGlobalEffect : GlobalEffectBase
         {
             FeedbackManager.Instance.ShowGlobalAlert(
                 "Environmental Toxin: all creatures take 1 damage.",
-                new Color(0.7f, 0.9f, 1f)
+                GameColorPalette.TextSpecial
             );
             FeedbackManager.Instance.Log(
                 "Global Effect: Environmental Toxin deals 1 damage to all creatures."
@@ -35,7 +35,7 @@ public class EnvironmentalToxinGlobalEffect : GlobalEffectBase
                 FeedbackManager.Instance?.ShowFloatingText(
                     $"-{applied} HP (Toxin)",
                     c.transform.position,
-                    new Color(0.7f, 0.9f, 1f)
+                    GameColorPalette.TextSpecial
                 );
             }
         }

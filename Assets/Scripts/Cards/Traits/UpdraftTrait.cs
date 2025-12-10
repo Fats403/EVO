@@ -30,9 +30,13 @@ public class UpdraftTrait : Trait
         if (toSlot == null)
             return;
 
-        FeedbackManager.Instance?.ShowFloatingText("Updraft", enemy.transform.position, Color.cyan);
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Updraft",
+            enemy.transform.position,
+            GameColorPalette.TextSpecial
+        );
 
-        ResolutionManager.Instance.StartCoroutine(
+        ResolutionManager.Instance.EnqueueStartOfRoundAnimation(
             BoardMovement.MoveCreatureToSlot(enemy, fromSlot, toSlot, moveDuration)
         );
     }

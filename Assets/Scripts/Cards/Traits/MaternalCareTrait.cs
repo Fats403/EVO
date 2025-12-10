@@ -39,9 +39,8 @@ public class MaternalCareTrait : Trait
             FeedbackManager.Instance?.ShowFloatingText(
                 $"+{healed} HP",
                 target.transform.position,
-                new Color(0.3f, 1f, 0.3f)
+                GameColorPalette.Heal
             );
         }
     }
 }
-

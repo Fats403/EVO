@@ -32,8 +32,7 @@ public class ResonanceTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Suppressed",
             target.transform.position,
-            Color.yellow
+            GameColorPalette.TextWarning
         );
     }
 }
-

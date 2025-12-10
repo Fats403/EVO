@@ -15,7 +15,7 @@ public class RetaliateTrait : Trait
             FeedbackManager.Instance?.ShowFloatingText(
                 $"-{applied} HP [Retaliate]",
                 attacker.transform.position,
-                new Color(1f, 0.5f, 0.2f)
+                GameColorPalette.Damage
             );
         }
     }

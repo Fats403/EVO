@@ -16,7 +16,7 @@ public class JuggernautTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Suppressed",
             target.transform.position,
-            Color.yellow
+            GameColorPalette.TextWarning
         );
     }
 
@@ -33,8 +33,7 @@ public class JuggernautTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Absorb +1",
             self.transform.position,
-            Color.cyan
+            GameColorPalette.Absorb
         );
     }
 }
-

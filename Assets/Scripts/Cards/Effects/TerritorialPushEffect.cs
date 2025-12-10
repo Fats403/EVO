@@ -78,7 +78,7 @@ public class TerritorialPushEffect : EffectTraitBase
         FeedbackManager.Instance?.ShowFloatingText(
             "Fatigued +2",
             target.transform.position,
-            Color.yellow
+            GameColorPalette.TextWarning
         );
 
         remainingRounds = 0;

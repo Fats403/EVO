@@ -326,7 +326,7 @@ public class Creature : MonoBehaviour
         if (artworkImage != null)
         {
             Color original = artworkImage.color;
-            artworkImage.color = new Color(1f, 0.3f, 0.3f);
+            artworkImage.color = GameColorPalette.Damage;
             yield return new WaitForSeconds(duration);
             artworkImage.color = original;
         }
@@ -372,7 +372,11 @@ public class Creature : MonoBehaviour
             DecrementStatus(StatusTag.Shielded, 1);
             string label =
                 damageSourceLabel != null ? $"Shielded ({damageSourceLabel})" : "Shielded";
-            FeedbackManager.Instance?.ShowFloatingText(label, transform.position, Color.cyan);
+            FeedbackManager.Instance?.ShowFloatingText(
+                label,
+                transform.position,
+                GameColorPalette.Shield
+            );
             return 0;
         }
 
@@ -380,7 +384,11 @@ public class Creature : MonoBehaviour
         if (allowReflect && amount > 0 && GetStatus(StatusTag.Reflect) > 0)
         {
             DecrementStatus(StatusTag.Reflect, 1);
-            FeedbackManager.Instance?.ShowFloatingText("Reflect", transform.position, Color.cyan);
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Reflect",
+                transform.position,
+                GameColorPalette.Reflect
+            );
             int reflected = Mathf.Max(0, amount);
             if (source != null)
             {
@@ -398,7 +406,7 @@ public class Creature : MonoBehaviour
                     FeedbackManager.Instance?.ShowFloatingText(
                         $"-{reflectedApplied} HP [Reflect]",
                         source.transform.position,
-                        new Color(1f, 0.8f, 0.3f)
+                        GameColorPalette.Damage
                     );
                 }
             }
@@ -424,7 +432,7 @@ public class Creature : MonoBehaviour
                     FeedbackManager.Instance?.ShowFloatingText(
                         label,
                         transform.position,
-                        Color.cyan
+                        GameColorPalette.Absorb
                     );
                 }
                 if (amount <= 0)
@@ -533,7 +541,7 @@ public class Creature : MonoBehaviour
                 FeedbackManager.Instance?.ShowFloatingText(
                     "Scavenge +1",
                     other.transform.position,
-                    new Color(0.5f, 0.8f, 1f)
+                    GameColorPalette.ScavengeGain
                 );
                 FeedbackManager.Instance?.Log(
                     $"{FeedbackManager.TagOwner(other.owner)} {other.name} scavenges +1"
@@ -652,9 +660,9 @@ public class Creature : MonoBehaviour
         {
             healthText.text = $"{currentHealth}";
             if (IsWounded)
-                healthText.color = new Color(0.8f, 0.1f, 0.1f);
+                healthText.color = GameColorPalette.TextNegative;
             else
-                healthText.color = Color.white;
+                healthText.color = GameColorPalette.TextNeutral;
         }
 
         var sic = GetComponentInChildren<StatusIconController>(true);
@@ -682,7 +690,11 @@ public class Creature : MonoBehaviour
         if (IsNegativeStatus(tag) && GetStatus(StatusTag.Immune) > 0)
         {
             DecrementStatus(StatusTag.Immune, 1);
-            FeedbackManager.Instance?.ShowFloatingText("Immune", transform.position, Color.cyan);
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Immune",
+                transform.position,
+                GameColorPalette.Immune
+            );
             return;
         }
 
@@ -734,6 +746,23 @@ public class Creature : MonoBehaviour
             RefreshStatsUI();
     }
 
+    /// <summary>
+    /// If this creature is currently Stealthed, clear Stealth and show a small
+    /// "Revealed" popup. Use this when the creature takes an overt action
+    /// (attack, forage, active trait, etc.).
+    /// </summary>
+    public void RevealIfStealthed()
+    {
+        if (GetStatus(StatusTag.Stealth) <= 0)
+            return;
+        ClearStatus(StatusTag.Stealth);
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Revealed",
+            transform.position,
+            GameColorPalette.Reveal
+        );
+    }
+
     public System.Collections.Generic.IEnumerable<StatusTag> GetActiveStatusTags()
     {
         foreach (var kv in statuses)
@@ -774,7 +803,7 @@ public class Creature : MonoBehaviour
                 FeedbackManager.Instance?.ShowFloatingText(
                     $"-{applied} HP (Infected)",
                     transform.position,
-                    new Color(0.8f, 0.5f, 0.9f)
+                    GameColorPalette.Poison
                 );
             }
         }
@@ -824,7 +853,7 @@ public class Creature : MonoBehaviour
             FeedbackManager.Instance?.ShowFloatingText(
                 $"+{regen} HP",
                 transform.position,
-                new Color(0.4f, 1f, 0.4f)
+                GameColorPalette.Regen
             );
         }
 
@@ -839,7 +868,7 @@ public class Creature : MonoBehaviour
                 FeedbackManager.Instance?.ShowFloatingText(
                     $"-{applied} HP (Bleed)",
                     transform.position,
-                    new Color(1f, 0.4f, 0.4f)
+                    GameColorPalette.Bleed
                 );
             }
         }

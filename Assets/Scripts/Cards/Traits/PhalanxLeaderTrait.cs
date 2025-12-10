@@ -37,7 +37,7 @@ public class PhalanxLeaderTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Bleeding +1",
             attacker.transform.position,
-            new Color(1f, 0.4f, 0.4f)
+            GameColorPalette.Bleed
         );
     }
 }

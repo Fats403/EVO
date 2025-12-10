@@ -28,7 +28,7 @@ public class PrecisionStrikeTrait : Trait
         FeedbackManager.Instance?.ShowFloatingText(
             "Stunned",
             target.transform.position,
-            Color.yellow
+            GameColorPalette.TextWarning
         );
     }
 }

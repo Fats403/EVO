@@ -17,7 +17,7 @@ public class SolarRecoveryGlobalEffect : GlobalEffectBase
         {
             FeedbackManager.Instance.ShowGlobalAlert(
                 "Solar Recovery: all creatures gain +2 Regen.",
-                new Color(0.8f, 1f, 0.7f)
+                GameColorPalette.TextPositiveSoft
             );
             FeedbackManager.Instance.Log(
                 "Global Effect: Solar Recovery grants Regen 2 to all creatures."

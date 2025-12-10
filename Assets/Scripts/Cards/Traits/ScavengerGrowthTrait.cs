@@ -11,6 +11,10 @@ public class ScavengerGrowthTrait : Trait
             return;
         self.body += 1;
         self.RefreshStatsUI();
-        FeedbackManager.Instance?.ShowFloatingText("Body +1", self.transform.position, Color.green);
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Body +1",
+            self.transform.position,
+            GameColorPalette.TextPositive
+        );
     }
 }
