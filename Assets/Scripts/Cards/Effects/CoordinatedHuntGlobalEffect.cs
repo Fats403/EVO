@@ -31,3 +31,4 @@ public class CoordinatedHuntGlobalEffect : GlobalEffectBase
         remainingRounds = 0;
     }
 }
+

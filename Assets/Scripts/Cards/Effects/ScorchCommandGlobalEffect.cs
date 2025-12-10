@@ -8,3 +8,4 @@ public class ScorchCommandGlobalEffect : GlobalEffectBase
         GameManager.Instance.weatherVideoBackground.ForceTo(WeatherType.Wildfire);
     }
 }
+

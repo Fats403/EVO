@@ -886,7 +886,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 147666114}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
+  m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
   occupied: 0
@@ -1251,7 +1251,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 205482814}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
+  m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
   occupied: 0
@@ -1995,7 +1995,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 446720763}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
+  m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
   occupied: 0
@@ -2157,7 +2157,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 510107614}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
+  m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
   occupied: 0
@@ -5420,7 +5420,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 959478464}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
+  m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
   occupied: 0
@@ -5608,7 +5608,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1034536381}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
+  m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
   occupied: 0
@@ -6976,7 +6976,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1285900911}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
+  m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
   occupied: 0
@@ -7028,7 +7028,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1354909368}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
+  m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
   occupied: 0
@@ -8782,7 +8782,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1924192041}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
+  m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
   occupied: 0
@@ -9684,7 +9684,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2083565042}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16640e0515cbc4b30ac6b0500e061c93, type: 3}
+  m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
   occupied: 0

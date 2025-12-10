@@ -21,3 +21,4 @@ public class VenomSpitEffect : EffectTraitBase
         remainingRounds = 0;
     }
 }
+

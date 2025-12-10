@@ -2,6 +2,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 
+// TODO: This needs to change... sometimes does nothing on center, rolls wrong side
 [CreateAssetMenu(menuName = "Effects/Territorial Push")]
 public class TerritorialPushEffect : EffectTraitBase
 {
@@ -69,7 +70,7 @@ public class TerritorialPushEffect : EffectTraitBase
             return;
 
         ResolutionManager.Instance.StartCoroutine(
-            MoveToSlotRoutine(target, slot, dest, moveDuration)
+            BoardMovement.MoveCreatureToSlot(target, slot, dest, moveDuration)
         );
 
         // Apply Fatigued (2) to the pushed enemy.
@@ -81,37 +82,5 @@ public class TerritorialPushEffect : EffectTraitBase
         );
 
         remainingRounds = 0;
-    }
-
-    private static IEnumerator MoveToSlotRoutine(
-        Creature c,
-        BoardSlot from,
-        BoardSlot to,
-        float duration
-    )
-    {
-        if (c == null || from == null || to == null)
-            yield break;
-
-        Vector3 startPos = c.transform.position;
-        Vector3 endPos = to.transform.position;
-
-        float t = 0f;
-        duration = Mathf.Max(0.01f, duration);
-
-        while (t < duration)
-        {
-            t += Time.deltaTime;
-            float u = Mathf.Clamp01(t / duration);
-            float eased = 0.5f - 0.5f * Mathf.Cos(u * Mathf.PI);
-            c.transform.position = Vector3.Lerp(startPos, endPos, eased);
-            yield return null;
-        }
-
-        c.transform.position = endPos;
-
-        if (from.currentCreature == c)
-            from.Vacate();
-        to.Occupy(c);
     }
 }

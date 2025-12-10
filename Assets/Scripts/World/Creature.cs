@@ -118,42 +118,9 @@ public class Creature : MonoBehaviour
         // Lunge ~70% of the way toward the food pile in X/Y, not fully into it.
         Vector3 mid = Vector3.Lerp(start, targetPos, 0.5f);
 
-        // Temporarily bump this creature's render order above neighbors by increasing the
-        // sortingOrder on any child world-space Canvases and SpriteRenderers.
+        // Temporarily bump this creature's render order above neighbors.
         const int sortBoost = 100;
-        Canvas[] canvases = GetComponentsInChildren<Canvas>(false);
-        int[] canvasOrders = null;
-        bool[] canvasOverrides = null;
-        if (canvases != null && canvases.Length > 0)
-        {
-            canvasOrders = new int[canvases.Length];
-            canvasOverrides = new bool[canvases.Length];
-            for (int i = 0; i < canvases.Length; i++)
-            {
-                var c = canvases[i];
-                if (c == null || c.renderMode != RenderMode.WorldSpace)
-                    continue;
-                canvasOrders[i] = c.sortingOrder;
-                canvasOverrides[i] = c.overrideSorting;
-                c.overrideSorting = true;
-                c.sortingOrder = canvasOrders[i] + sortBoost;
-            }
-        }
-
-        var spriteRenderers = GetComponentsInChildren<SpriteRenderer>(false);
-        int[] spriteOrders = null;
-        if (spriteRenderers != null && spriteRenderers.Length > 0)
-        {
-            spriteOrders = new int[spriteRenderers.Length];
-            for (int i = 0; i < spriteRenderers.Length; i++)
-            {
-                var r = spriteRenderers[i];
-                if (r == null)
-                    continue;
-                spriteOrders[i] = r.sortingOrder;
-                r.sortingOrder = spriteOrders[i] + sortBoost;
-            }
-        }
+        SortingState sortingState = SortingUtils.PushToForeground(transform, sortBoost);
 
         // Snap into the foreground start position before animating so we don't fight
         // with any other movement that might have happened this frame.
@@ -223,32 +190,8 @@ public class Creature : MonoBehaviour
             yield return null;
         }
 
-        // Restore any modified SpriteRenderer orders
-        if (spriteRenderers != null && spriteOrders != null)
-        {
-            for (int i = 0; i < spriteRenderers.Length && i < spriteOrders.Length; i++)
-            {
-                if (spriteRenderers[i] != null)
-                    spriteRenderers[i].sortingOrder = spriteOrders[i];
-            }
-        }
-
-        // Restore any modified Canvas sorting
-        if (canvases != null && canvasOrders != null && canvasOverrides != null)
-        {
-            for (
-                int i = 0;
-                i < canvases.Length && i < canvasOrders.Length && i < canvasOverrides.Length;
-                i++
-            )
-            {
-                var c = canvases[i];
-                if (c == null || c.renderMode != RenderMode.WorldSpace)
-                    continue;
-                c.overrideSorting = canvasOverrides[i];
-                c.sortingOrder = canvasOrders[i];
-            }
-        }
+        // Restore any modified sorting once the animation is complete.
+        SortingUtils.RestoreSorting(sortingState);
 
         // Ensure we are exactly back at the original starting world position (including Z).
         transform.position = originalStart;

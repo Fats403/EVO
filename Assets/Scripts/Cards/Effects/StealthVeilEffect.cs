@@ -11,3 +11,4 @@ public class StealthVeilEffect : EffectTraitBase
         remainingRounds = 0;
     }
 }
+

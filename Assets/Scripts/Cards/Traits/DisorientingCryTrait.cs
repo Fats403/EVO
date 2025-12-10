@@ -31,3 +31,4 @@ public class DisorientingCryTrait : Trait
         );
     }
 }
+

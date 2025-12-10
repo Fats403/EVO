@@ -27,3 +27,4 @@ public class LayInWakeTrait : Trait
         self.AddStatus(StatusTag.BodyUp, 1 + currentBodyUp);
     }
 }
+

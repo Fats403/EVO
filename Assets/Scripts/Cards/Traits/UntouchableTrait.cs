@@ -32,3 +32,4 @@ public class UntouchableTrait : Trait
         return false;
     }
 }
+

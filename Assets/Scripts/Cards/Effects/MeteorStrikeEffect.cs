@@ -54,3 +54,4 @@ public class MeteorStrikeEffect : EffectTraitBase
         remainingRounds = 0;
     }
 }
+

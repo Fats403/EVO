@@ -18,3 +18,4 @@ public class NightHunterTrait : Trait
         return 0;
     }
 }
+

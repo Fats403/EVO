@@ -25,3 +25,4 @@ public class HeatAdaptationTrait : Trait
         self.AddStatus(StatusTag.Immune, 1);
     }
 }
+

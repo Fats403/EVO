@@ -21,7 +21,7 @@ public class ApexTerritoryGlobalEffect : GlobalEffectBase
             var centerSlot = BoardUtils.GetCenterSlot(owner, requireOccupied: true);
             if (centerSlot == null)
                 continue;
-            Creature center = centerSlot != null ? centerSlot.currentCreature : null;
+            Creature center = centerSlot?.currentCreature;
 
             foreach (var c in allies)
             {

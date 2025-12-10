@@ -35,3 +35,4 @@ public class StormRiderTrait : Trait
         }
     }
 }
+

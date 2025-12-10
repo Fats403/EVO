@@ -39,3 +39,4 @@ public class DesperateHunterTrait : Trait
         self.AddStatus(StatusTag.BodyUp, 1);
     }
 }
+

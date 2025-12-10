@@ -52,3 +52,4 @@ public class PrimordialAwakeningGlobalEffect : GlobalEffectBase
         remainingRounds = 0;
     }
 }
+

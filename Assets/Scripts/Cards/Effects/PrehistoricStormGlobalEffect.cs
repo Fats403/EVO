@@ -36,3 +36,4 @@ public class PrehistoricStormGlobalEffect : GlobalEffectBase
         remainingRounds = 0;
     }
 }
+

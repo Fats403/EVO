@@ -18,42 +18,45 @@ public static class BoardUtils
         return null;
     }
 
-    // Adjacent allies: same owner, immediately left/right by x-order among occupied slots
     public static IEnumerable<Creature> GetAdjacentAllies(Creature c)
     {
         var result = new List<Creature>();
         if (c == null)
             return result;
+
         var mySlot = GetSlotOf(c);
         if (mySlot == null)
             return result;
 
-        var sameOwnerSlots = Object
-            .FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
-            .Where(s =>
-                s != null && s.owner == mySlot.owner && s.occupied && s.currentCreature != null
-            )
-            .OrderBy(s => s.transform.position.x)
-            .ToList();
+        // Use ALL slots for that owner (including empty ones), ordered on X.
+        var allSlotsForOwner = GetSlotsForOwner(mySlot.owner, occupiedOnly: false);
+        if (allSlotsForOwner == null || allSlotsForOwner.Count == 0)
+            return result;
 
-        int idx = sameOwnerSlots.FindIndex(s => s.currentCreature == c);
+        int idx = allSlotsForOwner.FindIndex(s => s == mySlot);
         if (idx < 0)
             return result;
 
-        // left
-        if (idx - 1 >= 0)
+        void AddNeighborAtIndex(int i)
         {
-            var left = sameOwnerSlots[idx - 1].currentCreature;
-            if (left != null)
-                result.Add(left);
+            if (i < 0 || i >= allSlotsForOwner.Count)
+                return;
+
+            var neighborSlot = allSlotsForOwner[i];
+            if (
+                neighborSlot == null
+                || !neighborSlot.occupied
+                || neighborSlot.currentCreature == null
+            )
+                return;
+
+            result.Add(neighborSlot.currentCreature);
         }
-        // right
-        if (idx + 1 < sameOwnerSlots.Count)
-        {
-            var right = sameOwnerSlots[idx + 1].currentCreature;
-            if (right != null)
-                result.Add(right);
-        }
+
+        // Only directly adjacent slots; gaps will naturally break adjacency.
+        AddNeighborAtIndex(idx - 1); // left
+        AddNeighborAtIndex(idx + 1); // right
+
         return result;
     }
 

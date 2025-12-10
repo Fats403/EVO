@@ -27,7 +27,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 797b037cb6ed1406499949a1735780b6, type: 2}
   globalEffect: {fileID: 0}
   runtimeEffect: {fileID: 0}
-  suppressHitBounce: 0
+  suppressHitBounce: 1
   momentumCost: 3
   minEraAllowed: 0
   allowInClear: 0

@@ -50,3 +50,4 @@ public class TerritorialTrait : Trait
         HitSlot(idx + 1);
     }
 }
+

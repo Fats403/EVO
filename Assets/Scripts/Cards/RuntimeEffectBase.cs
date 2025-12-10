@@ -16,3 +16,4 @@ public abstract class RuntimeEffectBase : ScriptableObject
     /// <param name="rm">ResolutionManager in the current scene.</param>
     public abstract void Apply(List<Creature> targets, SlotOwner owner, ResolutionManager rm);
 }
+

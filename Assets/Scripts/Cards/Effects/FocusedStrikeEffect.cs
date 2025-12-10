@@ -31,3 +31,4 @@ public class FocusedStrikeEffect : EffectTraitBase
         remainingRounds = 0;
     }
 }
+

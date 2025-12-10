@@ -20,3 +20,4 @@ public class DroughtBringerGlobalEffect : GlobalEffectBase
         remainingRounds = 0;
     }
 }
+

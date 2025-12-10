@@ -34,3 +34,4 @@ public class StampedeFormationEffect : EffectTraitBase
         base.OnRoundEnd(self);
     }
 }
+

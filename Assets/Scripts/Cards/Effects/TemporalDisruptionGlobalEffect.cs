@@ -37,3 +37,4 @@ public class TemporalDisruptionGlobalEffect : GlobalEffectBase
         remainingRounds = 0;
     }
 }
+
