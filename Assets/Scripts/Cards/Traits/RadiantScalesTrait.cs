@@ -15,8 +15,8 @@ public class RadiantScalesTrait : Trait
         if (self.HasStatus(StatusTag.Suppressed))
             return;
 
-        // If this takes 3+ damage in a single attack, flag Reflect for next round.
-        if (finalDamage >= 3)
+        // If this takes 2+ damage in a single attack, flag Reflect for next round.
+        if (finalDamage >= 2)
         {
             grantNextRound.Add(self);
         }

@@ -14,16 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
   effectName: Feral Rage
   icon: {fileID: 21300000, guid: 81c98e8b1e2a24f45a7dd430effab5bf, type: 3}
-  description: Applies Rage on any ally target
+  description: Apply Rage to an ally
   targetSide: 0
   targetType: 0
   targetCount: 0
   maxTargets: 1
   isGlobal: 0
+  requiresManualSelection: 0
   multiSelect: 0
   traitsToAttachToTargets:
   - {fileID: 11400000, guid: 6ad373eaad9b4417c88466563aadd15f, type: 2}
   globalEffect: {fileID: 0}
+  runtimeEffect: {fileID: 0}
+  suppressHitBounce: 0
   momentumCost: 1
   minEraAllowed: 0
-  requiresClearWeather: 0
+  allowInClear: 0
+  allowInDrought: 0
+  allowInStorm: 0
+  allowInWildfire: 0
+  aiCleanseSynergy: 0
+  aiAttackSynergy: 5
+  aiBodyBuffMultiplier: 1
+  aiRemovalValue: 0

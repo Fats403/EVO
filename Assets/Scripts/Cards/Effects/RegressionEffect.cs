@@ -8,7 +8,7 @@ public class RegressionEffect : EffectTraitBase
     {
         if (self == null)
             return;
-        self.AddStatus(StatusTag.Suppressed, 2);
+        self.AddStatus(StatusTag.Suppressed, 3);
         remainingRounds = 0;
     }
 }

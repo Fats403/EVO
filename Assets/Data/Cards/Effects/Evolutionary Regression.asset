@@ -14,17 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
   effectName: Evolutionary Regression
   icon: {fileID: 21300000, guid: 66660789ae48149bc8eeaba18f48dbc5, type: 3}
-  description: Disable all of a creatures traits for one round
+  description: Disable target enemy's traits for 3 rounds.
   targetSide: 1
   targetType: 0
   targetCount: 0
   maxTargets: 1
   isGlobal: 0
+  requiresManualSelection: 0
+  multiSelect: 0
   traitsToAttachToTargets:
   - {fileID: 11400000, guid: b7b9cc7ba69c24b0f8e5fbb3965ce7dd, type: 2}
   globalEffect: {fileID: 0}
-  applyPermanentStatDelta: 0
-  bodyDelta: 0
-  speedDelta: 0
-  oncePerCreature: 0
-  costOneFood: 0
+  runtimeEffect: {fileID: 0}
+  suppressHitBounce: 0
+  momentumCost: 4
+  minEraAllowed: 0
+  allowInClear: 0
+  allowInDrought: 0
+  allowInStorm: 0
+  allowInWildfire: 0
+  aiCleanseSynergy: 0
+  aiAttackSynergy: 0
+  aiBodyBuffMultiplier: 1
+  aiRemovalValue: 0

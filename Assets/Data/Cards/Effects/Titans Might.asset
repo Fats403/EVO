@@ -14,16 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
   effectName: Titans Might
   icon: {fileID: 21300000, guid: 550b5b321aa394f808d5dff8dcdcab1b, type: 3}
-  description: "Double target ally\u2019s Body until end of round."
+  description: Double target ally's Body until round end
   targetSide: 0
   targetType: 0
   targetCount: 0
   maxTargets: 1
   isGlobal: 0
+  requiresManualSelection: 0
   multiSelect: 0
   traitsToAttachToTargets:
   - {fileID: 11400000, guid: 6ff74f4b872b3408fb80bfb2157d6e90, type: 2}
   globalEffect: {fileID: 0}
+  runtimeEffect: {fileID: 0}
+  suppressHitBounce: 0
   momentumCost: 2
   minEraAllowed: 0
-  requiresClearWeather: 0
+  allowInClear: 0
+  allowInDrought: 0
+  allowInStorm: 0
+  allowInWildfire: 0
+  aiCleanseSynergy: 0
+  aiAttackSynergy: 2
+  aiBodyBuffMultiplier: 2
+  aiRemovalValue: 0

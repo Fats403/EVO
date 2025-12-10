@@ -3,6 +3,12 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Effects/Global/Environmental Toxin")]
 public class EnvironmentalToxinGlobalEffect : GlobalEffectBase
 {
+    public override void OnPlay(ResolutionManager rm)
+    {
+        // Last for 2 rounds by default.
+        remainingRounds = 2;
+    }
+
     public override void OnRoundStart(ResolutionManager rm)
     {
         if (rm == null)

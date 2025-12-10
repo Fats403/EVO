@@ -73,4 +73,47 @@ public static class BoardUtils
             .OrderBy(e => Vector3.SqrMagnitude(e.transform.position - pos))
             .FirstOrDefault();
     }
+
+    // All board slots for a given owner, optionally only those currently occupied.
+    public static List<BoardSlot> GetSlotsForOwner(SlotOwner owner, bool occupiedOnly)
+    {
+        var slots = Object
+            .FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
+            .Where(s => s != null && s.owner == owner);
+        if (occupiedOnly)
+        {
+            slots = slots.Where(s => s.occupied && s.currentCreature != null);
+        }
+        return slots.OrderBy(s => s.transform.position.x).ToList();
+    }
+
+    // Returns the slot closest to the horizontal center among a side's slots.
+    // If requireOccupied is true, only considers occupied slots.
+    public static BoardSlot GetCenterSlot(SlotOwner owner, bool requireOccupied)
+    {
+        var slots = GetSlotsForOwner(owner, occupiedOnly: requireOccupied);
+        if (slots == null || slots.Count == 0)
+            return null;
+
+        float minX = slots.First().transform.position.x;
+        float maxX = slots.Last().transform.position.x;
+        float midX = (minX + maxX) * 0.5f;
+
+        return slots.OrderBy(s => Mathf.Abs(s.transform.position.x - midX)).FirstOrDefault();
+    }
+
+    // Returns a random empty slot on the given owner's side, or null if none.
+    public static BoardSlot GetRandomEmptySlot(SlotOwner owner)
+    {
+        var emptySlots = GetSlotsForOwner(owner, occupiedOnly: false)
+            .Where(s => s != null && !s.occupied)
+            .ToList();
+        if (emptySlots.Count == 0)
+            return null;
+        int idx =
+            GameManager.Instance != null
+                ? GameManager.Instance.NextRandomInt(0, emptySlots.Count)
+                : Random.Range(0, emptySlots.Count);
+        return emptySlots[idx];
+    }
 }

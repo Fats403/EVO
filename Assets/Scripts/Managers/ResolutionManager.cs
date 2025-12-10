@@ -160,7 +160,7 @@ public class ResolutionManager : MonoBehaviour
     {
         var q = FindObjectsByType<Creature>(FindObjectsSortMode.None)
             .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
-            .OrderByDescending(c => EffSpeed(c));
+            .OrderByDescending(c => GetEffectiveSpeed(c));
         // Deterministic tie-breaker: RNG-based shuffle for equals
         int Rand()
         {
@@ -238,7 +238,7 @@ public class ResolutionManager : MonoBehaviour
                 continue;
             if (c.HasStatus(StatusTag.Stunned) || c.HasStatus(StatusTag.NoForage))
                 continue;
-            int need = Mathf.Max(0, EffBody(c) - c.eaten);
+            int need = Mathf.Max(0, GetEffectiveBody(c) - c.eaten);
             if (need <= 0)
                 continue;
             int desired = need;
@@ -504,7 +504,7 @@ public class ResolutionManager : MonoBehaviour
             // least as fast as their target always deal fixed 1 damage regardless of
             // target type; they are harassers, not primary killers.
             bool isAvian = attacker.data != null && attacker.data.type == CardType.Avian;
-            bool faster = EffSpeed(attacker) >= EffSpeed(target);
+            bool faster = GetEffectiveSpeed(attacker) >= GetEffectiveSpeed(target);
             int bodyBonus = 0;
             if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
             {
@@ -515,13 +515,13 @@ public class ResolutionManager : MonoBehaviour
                         bodyBonus += tr.PredatorBodyBonusForTargeting(attacker);
                 }
             }
-            int effAtkBody = EffBody(attacker) + bodyBonus;
+            int effAtkBody = GetEffectiveBody(attacker) + bodyBonus;
 
             // Avian harass: faster-than-target, always 1 damage vs any type
             bool harass = isAvian && faster;
 
             // Damage calculation
-            int baseDmg = harass ? 1 : Mathf.Max(1, effAtkBody - EffBody(target) + 1);
+            int baseDmg = harass ? 1 : Mathf.Max(1, effAtkBody - GetEffectiveBody(target) + 1);
             bool overridden = false;
             if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
             {
@@ -633,7 +633,7 @@ public class ResolutionManager : MonoBehaviour
                 continue;
             if (c.data.type != CardType.Avian)
                 continue;
-            int need = Mathf.Max(0, EffBody(c) - c.eaten);
+            int need = Mathf.Max(0, GetEffectiveBody(c) - c.eaten);
             if (need <= 0)
                 continue;
             if (foodPile.count <= 0)
@@ -852,7 +852,7 @@ public class ResolutionManager : MonoBehaviour
                 !atk.HasStatus(StatusTag.Suppressed)
                 && atk.traits != null
                 && atk.traits.Any(tr => tr != null && tr.IgnoreAvianSpeedRequirement(atk, tgt));
-            if (!ignoreSpeed && EffSpeed(atk) < EffSpeed(tgt))
+            if (!ignoreSpeed && GetEffectiveSpeed(atk) < GetEffectiveSpeed(tgt))
                 return false;
             return true;
         }
@@ -867,7 +867,7 @@ public class ResolutionManager : MonoBehaviour
                     !atk.HasStatus(StatusTag.Suppressed)
                     && atk.traits != null
                     && atk.traits.Any(tr => tr != null && tr.IgnoreAvianSpeedRequirement(atk, tgt));
-                if (!ignoreSpeed && EffSpeed(atk) < EffSpeed(tgt))
+                if (!ignoreSpeed && GetEffectiveSpeed(atk) < GetEffectiveSpeed(tgt))
                     return false;
             }
             return true;
@@ -879,7 +879,7 @@ public class ResolutionManager : MonoBehaviour
                 !atk.HasStatus(StatusTag.Suppressed)
                 && atk.traits != null
                 && atk.traits.Any(tr => tr != null && tr.IgnoreAvianSpeedRequirement(atk, tgt));
-            if (!ignoreSpeed && EffSpeed(atk) < EffSpeed(tgt))
+            if (!ignoreSpeed && GetEffectiveSpeed(atk) < GetEffectiveSpeed(tgt))
                 return false;
         }
         // Body rule: by default, attacker can target same-body-or-smaller prey. Traits may
@@ -895,8 +895,8 @@ public class ResolutionManager : MonoBehaviour
                     bodyBonus += t.PredatorBodyBonusForTargeting(atk);
             }
         }
-        int effAtkBody = EffBody(atk) + bodyBonus;
-        int tgtBody = EffBody(tgt);
+        int effAtkBody = GetEffectiveBody(atk) + bodyBonus;
+        int tgtBody = GetEffectiveBody(tgt);
         if (!ignoreBodyRule)
         {
             // Simple rule: can attack same size or smaller by default.
@@ -925,7 +925,7 @@ public class ResolutionManager : MonoBehaviour
                 bool ignoreSpeed = atk.traits.Any(tr =>
                     tr != null && tr.IgnoreAvianSpeedRequirement(atk, tgt)
                 );
-                if (!ignoreSpeed && EffSpeed(atk) < EffSpeed(tgt))
+                if (!ignoreSpeed && GetEffectiveSpeed(atk) < GetEffectiveSpeed(tgt))
                     return false;
             }
             return true;
@@ -1058,7 +1058,7 @@ public class ResolutionManager : MonoBehaviour
             return;
 
         bool isAvian = attacker.data != null && attacker.data.type == CardType.Avian;
-        bool faster = EffSpeed(attacker) >= EffSpeed(target);
+        bool faster = GetEffectiveSpeed(attacker) >= GetEffectiveSpeed(target);
         int bodyBonus = 0;
         if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
         {
@@ -1068,9 +1068,9 @@ public class ResolutionManager : MonoBehaviour
                     bodyBonus += tr.PredatorBodyBonusForTargeting(attacker);
             }
         }
-        int effAtkBody = EffBody(attacker) + bodyBonus;
+        int effAtkBody = GetEffectiveBody(attacker) + bodyBonus;
         bool harass = isAvian && faster;
-        int baseDmg = harass ? 1 : Mathf.Max(1, effAtkBody - EffBody(target) + 1);
+        int baseDmg = harass ? 1 : Mathf.Max(1, effAtkBody - GetEffectiveBody(target) + 1);
         // Try fixed-damage override first
         bool overridden = false;
         if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
@@ -1136,7 +1136,7 @@ public class ResolutionManager : MonoBehaviour
     }
 
     // --- Effective stat helpers ---
-    int EffBody(Creature c)
+    public int GetEffectiveBody(Creature c)
     {
         if (c == null)
             return 0;
@@ -1144,7 +1144,7 @@ public class ResolutionManager : MonoBehaviour
         return c.body + temp;
     }
 
-    int EffSpeed(Creature c)
+    public int GetEffectiveSpeed(Creature c)
     {
         if (c == null)
             return 0;

@@ -14,15 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
   effectName: Extinction Event
   icon: {fileID: 21300000, guid: 1c92deb7522474cdaac9dd01a9cd8a83, type: 3}
-  description: Deal 3 damage to all creatures, then add +3 food.
+  description: Deal 2 damage to all creatures. Deal 1 additional damage to creatures
+    with 4+ Body. Add +3 food to pile
   targetSide: 2
   targetType: 0
   targetCount: 0
   maxTargets: 1
   isGlobal: 1
+  requiresManualSelection: 0
   multiSelect: 0
   traitsToAttachToTargets: []
   globalEffect: {fileID: 11400000, guid: 1e88d36aba5a34acf9eada66869a9544, type: 2}
-  momentumCost: 3
+  runtimeEffect: {fileID: 0}
+  suppressHitBounce: 0
+  momentumCost: 4
   minEraAllowed: 0
-  requiresClearWeather: 0
+  allowInClear: 0
+  allowInDrought: 0
+  allowInStorm: 0
+  allowInWildfire: 0
+  aiCleanseSynergy: 0
+  aiAttackSynergy: 0
+  aiBodyBuffMultiplier: 1
+  aiRemovalValue: 2.5

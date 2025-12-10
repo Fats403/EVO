@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
+  m_Name: Primordial Awakening
+  m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  effectName: Primordial Awakening
+  icon: {fileID: 21300000, guid: 6f17a48304fa74778a2be499def15839, type: 3}
+  description: 'All allies permanently gain +2 Body and +1 Speed. If you are behind
+    in fossils: Draw 1 card.'
+  targetSide: 0
+  targetType: 0
+  targetCount: 0
+  maxTargets: 1
+  isGlobal: 1
+  requiresManualSelection: 0
+  multiSelect: 0
+  traitsToAttachToTargets: []
+  globalEffect: {fileID: 11400000, guid: bd896d43aac4c4961a291e6ad4a27a6d, type: 2}
+  runtimeEffect: {fileID: 0}
+  suppressHitBounce: 0
+  momentumCost: 4
+  minEraAllowed: 0
+  allowInClear: 0
+  allowInDrought: 0
+  allowInStorm: 0
+  allowInWildfire: 0
+  aiCleanseSynergy: 0
+  aiAttackSynergy: 2
+  aiBodyBuffMultiplier: 2
+  aiRemovalValue: 0

@@ -2,10 +2,11 @@ using UnityEngine;
 
 public abstract class EffectTraitBase : Trait
 {
-    [SerializeField] public int remainingRounds = 1;
+    [SerializeField]
+    public int remainingRounds = 1;
 
     // Called immediately when this effect trait is attached to a creature
-    public virtual void OnApply(Creature self) {}
+    public virtual void OnApply(Creature self) { }
 
     public override void OnRoundEnd(Creature self)
     {
@@ -17,5 +18,3 @@ public abstract class EffectTraitBase : Trait
         }
     }
 }
-
-

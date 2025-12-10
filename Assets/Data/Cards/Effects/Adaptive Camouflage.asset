@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
+  m_Name: Adaptive Camouflage
+  m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  effectName: Adaptive Camouflage
+  icon: {fileID: 21300000, guid: 8782afbe7d6234b3a8ab57bb9dff5f8d, type: 3}
+  description: Apply Stealth to up to 2 allies
+  targetSide: 0
+  targetType: 0
+  targetCount: 1
+  maxTargets: 2
+  isGlobal: 0
+  requiresManualSelection: 1
+  multiSelect: 0
+  traitsToAttachToTargets: []
+  globalEffect: {fileID: 0}
+  runtimeEffect: {fileID: 11400000, guid: 32a8bea0a86f7494b8db8ec8904fb7df, type: 2}
+  suppressHitBounce: 0
+  momentumCost: 2
+  minEraAllowed: 0
+  allowInClear: 0
+  allowInDrought: 0
+  allowInStorm: 0
+  allowInWildfire: 0
+  aiCleanseSynergy: 0
+  aiAttackSynergy: 3
+  aiBodyBuffMultiplier: 1
+  aiRemovalValue: 0

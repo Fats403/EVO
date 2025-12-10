@@ -15,16 +15,26 @@ MonoBehaviour:
   effectName: Apex Ascension
   icon: {fileID: 21300000, guid: 841eba06ac64a419ea931fbbcacba996, type: 3}
   description: Target ally gains +2 max HP (heals +2), +2 Body, +2 Speed; remove
-    all negative effects.
+    all negative effects
   targetSide: 0
   targetType: 0
   targetCount: 0
   maxTargets: 1
   isGlobal: 0
+  requiresManualSelection: 0
   multiSelect: 0
   traitsToAttachToTargets:
   - {fileID: 11400000, guid: 728e4a274daff4a3aa958a1f0e443591, type: 2}
   globalEffect: {fileID: 0}
+  runtimeEffect: {fileID: 0}
+  suppressHitBounce: 0
   momentumCost: 4
   minEraAllowed: 0
-  requiresClearWeather: 0
+  allowInClear: 0
+  allowInDrought: 0
+  allowInStorm: 0
+  allowInWildfire: 0
+  aiCleanseSynergy: 3
+  aiAttackSynergy: 3
+  aiBodyBuffMultiplier: 2
+  aiRemovalValue: 0

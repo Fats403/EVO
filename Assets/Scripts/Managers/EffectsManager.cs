@@ -164,6 +164,7 @@ public class EffectsManager : MonoBehaviour
         if (card.globalEffect != null && resolutionManager != null)
         {
             var ge = ScriptableObject.Instantiate(card.globalEffect);
+            ge.owner = player;
             resolutionManager.RegisterGlobalEffect(ge);
         }
 

@@ -8,7 +8,22 @@ public class ParasiticInfectionEffect : EffectTraitBase
     {
         if (self == null)
             return;
-        self.AddStatus(StatusTag.Infected, 2);
-        remainingRounds = 0;
+        // Deal 1 damage at the start of each round for 2 rounds.
+        remainingRounds = 2;
+    }
+
+    public override void OnRoundStart(Creature self)
+    {
+        if (self == null)
+            return;
+        int applied = self.ApplyDamage(1, null, null, "Parasitic Infection");
+        if (applied > 0)
+        {
+            FeedbackManager.Instance?.ShowFloatingText(
+                $"-{applied} HP (Parasitic Infection)",
+                self.transform.position,
+                new Color(0.8f, 0.6f, 1f)
+            );
+        }
     }
 }

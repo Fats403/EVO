@@ -231,6 +231,18 @@ public class AIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Public helper to draw a single card into the AI hand,
+    /// respecting the current max hand size. Returns true if a
+    /// card was actually drawn.
+    /// </summary>
+    public bool TryDrawOneCard()
+    {
+        int before = hand.Count;
+        DrawCardToHand();
+        return hand.Count > before;
+    }
+
     // Public round-start entry used by GameManager.BeginDraw.
     public void DrawCardsForRoundStart()
     {

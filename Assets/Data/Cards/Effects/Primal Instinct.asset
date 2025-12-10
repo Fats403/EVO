@@ -14,14 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
   effectName: Primal Instinct
   icon: {fileID: 21300000, guid: 1ac25cb7c67604820b3c2b7a0a5160e7, type: 3}
-  description: Target creature gains +2 Speed and +1 DamageUp this round only
+  description: Target ally gains +2 Speed and +1 DamageUp this round only
   targetSide: 0
   targetType: 0
   targetCount: 0
   maxTargets: 1
   isGlobal: 0
+  requiresManualSelection: 0
   multiSelect: 0
-  multiSelectRadius: 2.5
   traitsToAttachToTargets:
   - {fileID: 11400000, guid: 9f095d508dbaa4f08a4b849d1fe92f34, type: 2}
   globalEffect: {fileID: 0}
+  runtimeEffect: {fileID: 0}
+  suppressHitBounce: 0
+  momentumCost: 1
+  minEraAllowed: 0
+  allowInClear: 0
+  allowInDrought: 0
+  allowInStorm: 0
+  allowInWildfire: 0
+  aiCleanseSynergy: 0
+  aiAttackSynergy: 3
+  aiBodyBuffMultiplier: 1
+  aiRemovalValue: 0

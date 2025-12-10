@@ -49,7 +49,6 @@ public class ShadowStepTrait : Trait
         if (slotSelf == null || slotTarget == null)
             return;
 
-        // Animate swap similar to Forced Migration.
         const float duration = 0.45f;
         ResolutionManager.Instance.StartCoroutine(
             SwapRoutine(self, target, slotSelf, slotTarget, duration)

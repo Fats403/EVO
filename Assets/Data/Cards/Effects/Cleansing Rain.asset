@@ -14,14 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
   effectName: Cleansing Rain
   icon: {fileID: 21300000, guid: 9de04207e70e54cc9a1ae39c2668e904, type: 3}
-  description: Remove all negative status effects from an ally creature
+  description: Remove all negative status effects from an ally
   targetSide: 0
   targetType: 0
   targetCount: 0
   maxTargets: 1
   isGlobal: 0
+  requiresManualSelection: 0
   multiSelect: 0
-  multiSelectRadius: 2.5
   traitsToAttachToTargets:
   - {fileID: 11400000, guid: 0f01ed0fe89da41458254f7769b69904, type: 2}
   globalEffect: {fileID: 0}
+  runtimeEffect: {fileID: 0}
+  suppressHitBounce: 0
+  momentumCost: 1
+  minEraAllowed: 0
+  allowInClear: 0
+  allowInDrought: 0
+  allowInStorm: 0
+  allowInWildfire: 0
+  aiCleanseSynergy: 4
+  aiAttackSynergy: 0
+  aiBodyBuffMultiplier: 1
+  aiRemovalValue: 0

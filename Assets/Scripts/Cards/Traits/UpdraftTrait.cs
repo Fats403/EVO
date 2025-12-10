@@ -26,22 +26,11 @@ public class UpdraftTrait : Trait
             return;
 
         // Find random empty slot on the enemy's side.
-        var emptySlots = Object
-            .FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
-            .Where(s => s != null && s.owner == fromSlot.owner && !s.occupied)
-            .ToList();
-        if (emptySlots.Count == 0)
-            return;
-
-        int idx = 0;
-        if (GameManager.Instance != null)
-            idx = GameManager.Instance.NextRandomInt(0, emptySlots.Count);
-        else
-            idx = Random.Range(0, emptySlots.Count);
-
-        var toSlot = emptySlots[idx];
+        var toSlot = BoardUtils.GetRandomEmptySlot(fromSlot.owner);
         if (toSlot == null)
             return;
+
+        FeedbackManager.Instance?.ShowFloatingText("Updraft", enemy.transform.position, Color.cyan);
 
         ResolutionManager.Instance.StartCoroutine(
             MoveToSlotRoutine(enemy, fromSlot, toSlot, moveDuration)

@@ -14,31 +14,33 @@ public class ExtinctionEventGlobalEffect : GlobalEffectBase
             .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
             .ToList();
 
-        // If we have a VFXManager + meteor prefab configured, drive the damage
-        // from meteor impacts; otherwise, fall back to immediate damage.
-        if (VFXManager.Instance != null && VFXManager.Instance.HasMeteorPrefab)
+        void ApplyExtinctionDamage(Creature c)
         {
-            foreach (var c in all)
+            if (c == null || c.isDying || c.currentHealth <= 0)
+                return;
+
+            int baseDmg = 2;
+            // Creatures with effective body 4+ take +1 additional damage.
+            int effBody = ResolutionManager.Instance.GetEffectiveBody(c);
+
+            if (effBody >= 4)
+                baseDmg += 1;
+
+            int applied = c.ApplyDamage(baseDmg, null, null, "Extinction Event");
+            if (applied > 0)
             {
-                var captured = c;
-                VFXManager.Instance.SpawnMeteor(
-                    captured,
-                    target =>
-                    {
-                        if (target == null || target.isDying || target.currentHealth <= 0)
-                            return;
-                        int applied = target.ApplyDamage(3, null, null, "Extinction Event");
-                        if (applied > 0)
-                        {
-                            FeedbackManager.Instance?.ShowFloatingText(
-                                $"-{applied} HP",
-                                c.transform.position,
-                                new Color(1f, 0.5f, 0.5f)
-                            );
-                        }
-                    }
+                FeedbackManager.Instance?.ShowFloatingText(
+                    $"-{applied} HP",
+                    c.transform.position,
+                    new Color(1f, 0.5f, 0.5f)
                 );
             }
+        }
+
+        foreach (var c in all)
+        {
+            var captured = c;
+            VFXManager.Instance.SpawnMeteor(captured, ApplyExtinctionDamage);
         }
 
         if (rm.foodPile != null)

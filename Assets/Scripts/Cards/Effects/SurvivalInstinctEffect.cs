@@ -8,7 +8,8 @@ public class SurvivalInstinctEffect : EffectTraitBase
         if (self == null)
             return;
         self.maxHealth += 1;
-        self.currentHealth = Mathf.Min(self.maxHealth, self.currentHealth + 2);
+        // Heal +1 now (after increasing max health)
+        self.currentHealth = Mathf.Min(self.maxHealth, self.currentHealth + 1);
         self.AddStatus(StatusTag.Immune, 1);
         self.RefreshStatsUI();
         remainingRounds = 0;

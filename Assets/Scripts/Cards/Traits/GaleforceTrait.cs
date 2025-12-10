@@ -3,17 +3,19 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Traits/Avians/Galeforce")]
 public class GaleforceTrait : Trait
 {
-    public override int SpeedBonus(Creature self)
+    public override void OnRoundStart(Creature self)
     {
-        if (self == null)
-            return 0;
-        if (self.HasStatus(StatusTag.Suppressed))
-            return 0;
+        if (self == null || self.HasStatus(StatusTag.Suppressed))
+            return;
 
         var wm = WeatherManager.Instance;
-        if (wm != null && wm.CurrentWeather == WeatherType.Storm)
-            return 2;
-        return 0;
+        if (wm == null || wm.CurrentWeather != WeatherType.Storm)
+            return;
+
+        int currentSpeedUp = self.GetStatus(StatusTag.SpeedUp);
+
+        self.ClearStatus(StatusTag.SpeedUp);
+        self.AddStatus(StatusTag.SpeedUp, 2 + currentSpeedUp);
     }
 
     public override void OnDamageDealt(Creature self, Creature target, int finalDamage)
@@ -29,9 +31,9 @@ public class GaleforceTrait : Trait
         if (wm == null || wm.CurrentWeather != WeatherType.Storm)
             return;
 
-        target.AddStatus(StatusTag.Fatigued, 2);
+        target.AddStatus(StatusTag.Fatigued, 1);
         FeedbackManager.Instance?.ShowFloatingText(
-            "Fatigued +1",
+            "Fatigue +1",
             target.transform.position,
             Color.yellow
         );

@@ -4,12 +4,6 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Traits/Avians/Aerial Superiority")]
 public class AerialSuperiorityTrait : Trait
 {
-    [SerializeField]
-    public int bonusDamage = 1;
-
-    [SerializeField]
-    public int bonusSpeed = 1;
-
     public override int ModifyOutgoingDamage(Creature self, Creature target, int baseDamage)
     {
         if (self == null || target == null)
@@ -18,7 +12,7 @@ public class AerialSuperiorityTrait : Trait
             return baseDamage;
         if (target.data != null && target.data.type == CardType.Avian)
         {
-            return Mathf.Max(0, baseDamage + bonusDamage);
+            return Mathf.Max(0, baseDamage + 1);
         }
         return baseDamage;
     }
@@ -38,7 +32,7 @@ public class AerialSuperiorityTrait : Trait
             if (ally.data.type != CardType.Avian)
                 continue;
 
-            ally.AddStatus(StatusTag.SpeedUp, bonusSpeed);
+            ally.AddStatus(StatusTag.SpeedUp, 1);
         }
     }
 }

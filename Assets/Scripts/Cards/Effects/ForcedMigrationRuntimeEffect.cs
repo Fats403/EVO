@@ -6,7 +6,7 @@ using UnityEngine;
 /// Runtime effect for "Forced Migration": swaps the board positions of two
 /// targeted creatures with a short, smooth animation.
 /// </summary>
-[CreateAssetMenu(menuName = "Effects/Forced Migration Runtime Effect")]
+[CreateAssetMenu(menuName = "Effects/Forced Migration")]
 public class ForcedMigrationRuntimeEffect : RuntimeEffectBase
 {
     [Tooltip("Duration of the swap animation in seconds.")]

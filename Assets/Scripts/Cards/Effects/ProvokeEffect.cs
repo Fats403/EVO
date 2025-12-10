@@ -7,7 +7,7 @@ public class ProvokeEffect : EffectTraitBase
     {
         if (self == null)
             return;
-        self.AddStatus(StatusTag.Taunt, 1);
+        self.AddStatus(StatusTag.Taunt, 2);
         remainingRounds = 0;
     }
 }

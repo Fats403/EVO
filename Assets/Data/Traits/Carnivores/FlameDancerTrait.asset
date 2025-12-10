@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bdea3c21d6b94ec39af7aa9f938a565, type: 3}
+  m_Name: FlameDancerTrait
+  m_EditorClassIdentifier: Assembly-CSharp::FlameDancerTrait
+  traitName: Flame Dancer
+  description: When weather changes to Wildfire, gain +2 Regen and deal 1 damage
+    to the nearet enemy
