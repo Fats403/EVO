@@ -13,5 +13,4 @@ MonoBehaviour:
   m_Name: FlameDancerTrait
   m_EditorClassIdentifier: Assembly-CSharp::FlameDancerTrait
   traitName: Flame Dancer
-  description: When weather changes to Wildfire, gain +2 Regen and deal 1 damage
-    to the nearet enemy
+  description: When weather changes to Wildfire, gain +2 Regen

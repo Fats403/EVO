@@ -16,9 +16,9 @@ MonoBehaviour:
   targetCreatureRatio: 0.65
   maxCopiesPerCard: 2
   lowCostMax: 2
-  midCostMax: 4
-  targetLowCount: 9
-  targetMidCount: 7
-  targetHighCount: 4
+  midCostMax: 3
+  targetLowCount: 12
+  targetMidCount: 5
+  targetHighCount: 3
   typeBiasStrength: 1
   costBiasStrength: 1

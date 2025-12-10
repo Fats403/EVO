@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
+  m_Name: Reeko
+  m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardName: Reeko
+  dinosaurName: Thalassodromeus
+  artwork: {fileID: 21300000, guid: cae2c2c46237e455d9284f48c9f9f542, type: 3}
+  type: 2
+  background: {fileID: 21300000, guid: 84dcd8b3944564ae3a92911db61bb280, type: 3}
+  size: 2
+  speed: 4
+  maxHealth: 3
+  isImmovable: 0
+  momentumCost: 3
+  baseTraits:
+  - {fileID: 11400000, guid: 306736acb3a83401bb153833e435971f, type: 2}

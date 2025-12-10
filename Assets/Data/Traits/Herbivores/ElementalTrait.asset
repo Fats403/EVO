@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 199b27416cf7a49ddb27bafc2697fc87, type: 3}
   m_Name: ElementalTrait
   m_EditorClassIdentifier: Assembly-CSharp::ElementalTrait
-  traitName: 
-  description: 
+  traitName: Elemental
+  description: +2 Speed in Storm. +2 Body in Drought. +2 HP in Wildfire

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: DesperateHunterTrait
   m_EditorClassIdentifier: Assembly-CSharp::DesperateHunterTrait
   traitName: Desperate Hunter
-  description: Gains +2 DamageUp when food pile is <= 1. During Drought, gain +1
-    Body
+  description: "Gains +2 DamageUp when food pile is \u2264 1. During Drought, gain
+    +1 Body"

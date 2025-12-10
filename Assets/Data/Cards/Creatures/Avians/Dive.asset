@@ -19,7 +19,8 @@ MonoBehaviour:
   background: {fileID: 21300000, guid: 84dcd8b3944564ae3a92911db61bb280, type: 3}
   size: 1
   speed: 4
-  tier: 1
-  maxHealth: 2
+  maxHealth: 3
+  isImmovable: 0
+  momentumCost: 1
   baseTraits:
   - {fileID: 11400000, guid: 7ebe94d5c7a3f4a26b74bbf5d9104a76, type: 2}

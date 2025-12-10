@@ -17,10 +17,10 @@ MonoBehaviour:
   artwork: {fileID: 21300000, guid: 779f32983256c47eea92f6474befaf40, type: 3}
   type: 0
   background: {fileID: 21300000, guid: d6db0ed7556cd4a628261ee5bb9c4805, type: 3}
-  size: 2
+  size: 3
   speed: 2
-  tier: 2
-  maxHealth: 4
-  momentumCost: 2
+  maxHealth: 5
+  isImmovable: 0
+  momentumCost: 3
   baseTraits:
   - {fileID: 11400000, guid: ab430d101bdc442e6abfec2947341ff3, type: 2}

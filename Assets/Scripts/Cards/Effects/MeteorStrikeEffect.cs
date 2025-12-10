@@ -17,6 +17,9 @@ public class MeteorStrikeEffect : EffectTraitBase
             if (target == null || target.isDying || target.currentHealth <= 0)
                 return;
 
+            var adjacentAllies = BoardUtils.GetAdjacentAllies(target);
+
+            // Primary hit
             int applied = target.ApplyDamage(primaryDamage, null, null, "Meteor Strike");
             if (applied > 0)
             {
@@ -27,45 +30,26 @@ public class MeteorStrikeEffect : EffectTraitBase
                 );
             }
 
-            var slot = BoardUtils.GetSlotOf(target);
-            if (slot == null)
-                return;
-
-            var allSlots = Object
-                .FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
-                .Where(s =>
-                    s != null && s.owner == slot.owner && s.occupied && s.currentCreature != null
-                )
-                .OrderBy(s => s.transform.position.x)
-                .ToList();
-            int idx = allSlots.FindIndex(s => s == slot);
-            if (idx < 0)
-                return;
-
-            void HitNeighbor(int i)
+            // Adjacent splash using BoardUtils
+            foreach (var neighbor in adjacentAllies)
             {
-                if (i < 0 || i >= allSlots.Count)
-                    return;
-                var c = allSlots[i].currentCreature;
-                if (c == null || c.currentHealth <= 0 || c.isDying)
-                    return;
-                int splash = c.ApplyDamage(splashDamage, null, null, "Meteor Strike");
+                if (neighbor == null || neighbor.currentHealth <= 0 || neighbor.isDying)
+                    continue;
+
+                int splash = neighbor.ApplyDamage(splashDamage, null, null, "Meteor Strike");
                 if (splash > 0)
                 {
                     FeedbackManager.Instance?.ShowFloatingText(
                         $"-{splash} HP",
-                        c.transform.position,
+                        neighbor.transform.position,
                         new Color(1f, 0.5f, 0.3f)
                     );
                 }
             }
-
-            HitNeighbor(idx - 1);
-            HitNeighbor(idx + 1);
         }
 
-        var target = self;
-        VFXManager.Instance.SpawnMeteor(target, ApplyDamageWithSplash);
+        // `self` here is the creature being hit (enemy)
+        VFXManager.Instance.SpawnMeteor(self, ApplyDamageWithSplash);
 
         remainingRounds = 0;
     }

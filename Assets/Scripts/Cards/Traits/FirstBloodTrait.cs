@@ -3,6 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Traits/Carnivores/First Blood")]
 public class FirstBloodTrait : Trait
 {
+    // TODO: This need to get modified into a different hook cause it does dmg + bleed!
     public override int ModifyOutgoingDamage(Creature self, Creature target, int baseDamage)
     {
         if (self == null || target == null)

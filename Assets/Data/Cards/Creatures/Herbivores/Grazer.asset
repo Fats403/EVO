@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
+  m_Name: Grazer
+  m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardName: Grazer
+  dinosaurName: Lambeosaurus
+  artwork: {fileID: 21300000, guid: 2befd2a0cdf0949c6885618dd9cece7e, type: 3}
+  type: 0
+  background: {fileID: 21300000, guid: d6db0ed7556cd4a628261ee5bb9c4805, type: 3}
+  size: 2
+  speed: 2
+  maxHealth: 4
+  isImmovable: 0
+  momentumCost: 2
+  baseTraits:
+  - {fileID: 11400000, guid: d3c83a6fb550540d8b9031a0ce513fa6, type: 2}
