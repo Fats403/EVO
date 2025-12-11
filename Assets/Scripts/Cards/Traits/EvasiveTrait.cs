@@ -27,7 +27,12 @@ public class EvasiveTrait : Trait
             self.AddStatus(StatusTag.Stealth, 1);
             grantNextRound.Remove(self);
             FeedbackManager.Instance?.ShowFloatingText(
-                "Stealth (Evasive)",
+                "Evasive",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Stealth",
                 self.transform.position,
                 GameColorPalette.TextMuted
             );

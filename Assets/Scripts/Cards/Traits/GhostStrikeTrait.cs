@@ -12,7 +12,12 @@ public class GhostStrikeTrait : Trait
         // Gain Stealth after attacking regardless of negation
         self.AddStatus(StatusTag.Stealth, 1);
         FeedbackManager.Instance?.ShowFloatingText(
-            "Stealth (Ghost Strike)",
+            "Ghost Strike",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Stealth",
             self.transform.position,
             GameColorPalette.TextMuted
         );

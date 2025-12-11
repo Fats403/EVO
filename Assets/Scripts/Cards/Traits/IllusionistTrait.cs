@@ -29,7 +29,12 @@ public class IllusionistTrait : Trait
         {
             self.AddStatus(StatusTag.Stealth, 1);
             FeedbackManager.Instance?.ShowFloatingText(
-                "Stealth (Illusionist)",
+                "Illusionist",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Stealth",
                 self.transform.position,
                 GameColorPalette.TextMuted
             );

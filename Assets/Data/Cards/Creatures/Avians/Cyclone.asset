@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Cyclone
   dinosaurName: Tapejara
   artwork: {fileID: 21300000, guid: ed909fb4a762b425a8b7a1d20293d91c, type: 3}
-  type: 0
+  type: 2
   background: {fileID: 21300000, guid: 84dcd8b3944564ae3a92911db61bb280, type: 3}
   size: 2
   speed: 4
