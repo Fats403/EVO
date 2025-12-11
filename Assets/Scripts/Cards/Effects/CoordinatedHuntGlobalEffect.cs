@@ -28,7 +28,12 @@ public class CoordinatedHuntGlobalEffect : GlobalEffectBase
             }
         }
 
+        // Visual feedback for all affected carnivores, unless the source card suppressed it.
+        if (!suppressHitBounceFromSource && EffectsManager.Instance != null)
+        {
+            EffectsManager.Instance.PlayHitBounceOnCreatures(all);
+        }
+
         remainingRounds = 0;
     }
 }
-

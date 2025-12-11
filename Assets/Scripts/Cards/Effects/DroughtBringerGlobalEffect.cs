@@ -29,6 +29,12 @@ public class DroughtBringerGlobalEffect : GlobalEffectBase
             c.AddStatus(StatusTag.Malnourished, 1);
         }
 
+        // Visual feedback for all affected creatures, unless the source card suppressed it.
+        if (!suppressHitBounceFromSource && EffectsManager.Instance != null)
+        {
+            EffectsManager.Instance.PlayHitBounceOnCreatures(all);
+        }
+
         remainingRounds = 0;
     }
 }

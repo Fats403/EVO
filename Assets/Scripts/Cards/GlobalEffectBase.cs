@@ -6,6 +6,9 @@ public abstract class GlobalEffectBase : ScriptableObject
     public string effectName;
     public int remainingRounds = 1;
 
+    [HideInInspector]
+    public bool suppressHitBounceFromSource = false;
+
     // Owner of the effect card that spawned this global effect.
     public SlotOwner owner;
 

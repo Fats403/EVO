@@ -41,6 +41,12 @@ public class PrehistoricStormGlobalEffect : GlobalEffectBase
                 target.transform.position,
                 GameColorPalette.DamageOverTime
             );
+
+            // Visual feedback on the damaged enemy, unless the source card suppressed it.
+            if (!suppressHitBounceFromSource && EffectsManager.Instance != null)
+            {
+                EffectsManager.Instance.PlayHitBounceOnCreatures(new[] { target });
+            }
         }
 
         remainingRounds = 0;

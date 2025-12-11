@@ -65,6 +65,20 @@ public class EffectsManager : MonoBehaviour
         return card != null && c != null && card.IsValidTarget(c, player);
     }
 
+    public void PlayHitBounceOnCreatures(IEnumerable<Creature> creatures)
+    {
+        if (creatures == null)
+            return;
+
+        foreach (var c in creatures)
+        {
+            if (c == null || !c.gameObject.activeInHierarchy)
+                continue;
+
+            c.StartCoroutine(c.PlayEffectHitBounce(1.08f, 0.2f, 0.45f));
+        }
+    }
+
     public void PlayOnTargets(EffectCard card, IEnumerable<Creature> targets, SlotOwner player)
     {
         if (card == null || targets == null)
@@ -165,6 +179,7 @@ public class EffectsManager : MonoBehaviour
         {
             var ge = ScriptableObject.Instantiate(card.globalEffect);
             ge.owner = player;
+            ge.suppressHitBounceFromSource = card.suppressHitBounce;
             resolutionManager.RegisterGlobalEffect(ge);
         }
 

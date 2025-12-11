@@ -9,8 +9,6 @@ public class ApexTerritoryGlobalEffect : GlobalEffectBase
         if (rm == null)
             return;
 
-        // TODO: This should trigger the scale bump animation for affected allies
-
         // All allies gain +1 body permanently; center-position ally gains +2 instead.
         // We approximate center by choosing the occupied slot whose x-position is
         // closest to the midpoint between the leftmost and rightmost ally slots.
@@ -34,6 +32,12 @@ public class ApexTerritoryGlobalEffect : GlobalEffectBase
                 else
                     c.body += 1;
                 c.RefreshStatsUI();
+            }
+
+            // Visual feedback for all affected allies, unless the source card suppressed it.
+            if (!suppressHitBounceFromSource && EffectsManager.Instance != null)
+            {
+                EffectsManager.Instance.PlayHitBounceOnCreatures(allies);
             }
         }
 

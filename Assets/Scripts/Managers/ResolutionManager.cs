@@ -376,7 +376,7 @@ public class ResolutionManager : MonoBehaviour
                 }
 
                 FeedbackManager.Instance?.ShowFloatingText(
-                    $"+{taken} food",
+                    $"+{taken} Food",
                     c.transform.position,
                     GameColorPalette.TextPositive
                 );

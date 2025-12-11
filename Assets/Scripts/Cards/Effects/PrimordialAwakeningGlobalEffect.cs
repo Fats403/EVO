@@ -24,6 +24,12 @@ public class PrimordialAwakeningGlobalEffect : GlobalEffectBase
             c.RefreshStatsUI();
         }
 
+        // Visual feedback for all buffed allies, unless the source card suppressed it.
+        if (!suppressHitBounceFromSource && EffectsManager.Instance != null)
+        {
+            EffectsManager.Instance.PlayHitBounceOnCreatures(allies);
+        }
+
         // If behind on score, draw 1 card (respect hand limit).
         int myScore = owner == SlotOwner.Player1 ? ScoreManager.player1 : ScoreManager.player2;
         int oppScore = owner == SlotOwner.Player1 ? ScoreManager.player2 : ScoreManager.player1;
@@ -52,4 +58,3 @@ public class PrimordialAwakeningGlobalEffect : GlobalEffectBase
         remainingRounds = 0;
     }
 }
-
