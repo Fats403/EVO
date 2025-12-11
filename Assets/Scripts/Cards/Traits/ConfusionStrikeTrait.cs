@@ -27,6 +27,16 @@ public class ConfusionStrikeTrait : Trait
         if (anyOtherAvian)
         {
             target.AddStatus(StatusTag.Suppressed, 2);
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Confusion Strike",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Suppressed +2",
+                target.transform.position,
+                GameColorPalette.TextWarning
+            );
         }
     }
 }

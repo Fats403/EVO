@@ -20,6 +20,11 @@ public class LivingShieldTrait : Trait
 
             ally.AddStatus(StatusTag.Absorb, 1);
             FeedbackManager.Instance?.ShowFloatingText(
+                "Living Shield",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+            FeedbackManager.Instance?.ShowFloatingText(
                 "Absorb +1",
                 ally.transform.position,
                 GameColorPalette.Absorb

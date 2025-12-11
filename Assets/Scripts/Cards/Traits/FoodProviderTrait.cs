@@ -15,7 +15,12 @@ public class FoodProviderTrait : Trait
         pile.count = Mathf.Max(0, pile.count + 1);
         pile.UpdateUI();
         FeedbackManager.Instance?.ShowFloatingText(
-            "Food +1",
+            "Food Provider",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
+            "+1 Food",
             pile.transform.position,
             GameColorPalette.TextPositive
         );

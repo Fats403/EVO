@@ -45,6 +45,12 @@ public class TerritorialTrait : Trait
             }
         }
 
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Territorial",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+
         // Left and right adjacent positions relative to the killed target.
         HitSlot(idx - 1);
         HitSlot(idx + 1);

@@ -12,5 +12,15 @@ public class DebilitatorTrait : Trait
         if (finalDamage <= 0)
             return;
         target.AddStatus(StatusTag.Fatigued, 2);
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Debilitator",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Fatigued +2",
+            target.transform.position,
+            GameColorPalette.TextWarning
+        );
     }
 }

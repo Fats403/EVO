@@ -25,14 +25,28 @@ public class AerialSuperiorityTrait : Trait
             return;
 
         var adj = BoardUtils.GetAdjacentAllies(self);
-        foreach (var ally in adj)
-        {
-            if (ally == null || ally.data == null)
-                continue;
-            if (ally.data.type != CardType.Avian)
-                continue;
+        var validAllies = adj.Where(c =>
+                c != null && c.data != null && c.data.type == CardType.Avian
+            )
+            .ToList();
 
+        if (validAllies != null && validAllies.Count > 0)
+        {
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Aerial Superiority",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+        }
+
+        foreach (var ally in validAllies)
+        {
             ally.AddStatus(StatusTag.SpeedUp, 1);
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Speed +1",
+                ally.transform.position,
+                GameColorPalette.TextPositive
+            );
         }
     }
 }

@@ -14,6 +14,11 @@ public class BoneBreakerTrait : Trait
 
         target.AddStatus(StatusTag.Malnourished, 2);
         FeedbackManager.Instance?.ShowFloatingText(
+            "Bone Breaker",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
             "Malnourished +2",
             target.transform.position,
             GameColorPalette.Starvation

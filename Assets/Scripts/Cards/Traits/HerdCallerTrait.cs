@@ -11,12 +11,20 @@ public class HerdCallerTrait : Trait
         if (self.HasStatus(StatusTag.Suppressed))
             return;
         var adj = BoardUtils.GetAdjacentAllies(self);
-        foreach (var ally in adj)
+        var validAllies = adj.Where(c =>
+                c != null && c.data != null && c.data.type == CardType.Herbivore
+            )
+            .ToList();
+        if (validAllies.Count > 0)
         {
-            if (ally == null || ally.data == null)
-                continue;
-            if (ally.data.type != CardType.Herbivore)
-                continue;
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Herd Caller",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+        }
+        foreach (var ally in validAllies)
+        {
             ally.AddStatus(StatusTag.Regen, 1);
             FeedbackManager.Instance?.ShowFloatingText(
                 "Regen +1",

@@ -28,7 +28,12 @@ public class GuardianTrait : Trait
         {
             self.AddStatus(StatusTag.Shielded, 1);
             FeedbackManager.Instance?.ShowFloatingText(
-                "Shield +1",
+                "Guardian",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Shield",
                 self.transform.position,
                 GameColorPalette.Shield
             );

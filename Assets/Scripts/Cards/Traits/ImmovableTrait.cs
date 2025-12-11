@@ -20,7 +20,12 @@ public class ImmovableTrait : Trait
         {
             self.AddStatus(StatusTag.Shielded, 1);
             FeedbackManager.Instance?.ShowFloatingText(
-                "Shield +1",
+                "Immovable",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Shield",
                 self.transform.position,
                 GameColorPalette.Shield
             );

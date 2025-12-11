@@ -30,7 +30,12 @@ public class ResonanceTrait : Trait
         // All attacks apply Suppressed (1).
         target.AddStatus(StatusTag.Suppressed, 1);
         FeedbackManager.Instance?.ShowFloatingText(
-            "Suppressed",
+            "Resonance",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Suppressed +1",
             target.transform.position,
             GameColorPalette.TextWarning
         );

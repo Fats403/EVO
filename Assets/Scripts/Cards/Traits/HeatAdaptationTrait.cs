@@ -3,6 +3,20 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Traits/Herbivores/Heat Adaptation")]
 public class HeatAdaptationTrait : Trait
 {
+    public override int BodyBonus(Creature self)
+    {
+        if (self == null)
+            return 0;
+        if (self.HasStatus(StatusTag.Suppressed))
+            return 0;
+
+        var wm = WeatherManager.Instance;
+        if (wm == null)
+            return 0;
+
+        return wm.CurrentWeather == WeatherType.Wildfire ? 2 : 0;
+    }
+
     public override void OnRoundStart(Creature self)
     {
         if (self == null)
@@ -14,15 +28,19 @@ public class HeatAdaptationTrait : Trait
         if (wm == null)
             return;
 
-        if (wm.CurrentWeather != WeatherType.Wildfire)
-            return;
-
-        // Refresh wildfire adaptation each round while Wildfire is active.
-        int currentBodyUp = self.GetStatus(StatusTag.BodyUp);
-
-        self.ClearStatus(StatusTag.BodyUp);
-        self.AddStatus(StatusTag.BodyUp, 2 + currentBodyUp);
-        self.AddStatus(StatusTag.Immune, 1);
+        if (wm.CurrentWeather == WeatherType.Wildfire)
+        {
+            self.AddStatus(StatusTag.Immune, 1);
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Heat Adaptation",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Immune",
+                self.transform.position,
+                GameColorPalette.Immune
+            );
+        }
     }
 }
-

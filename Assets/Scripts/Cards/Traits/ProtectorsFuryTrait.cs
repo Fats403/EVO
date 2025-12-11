@@ -29,13 +29,21 @@ public class ProtectorsFuryTrait : Trait
         if (victim.data == null || victim.data.type != CardType.Herbivore)
             return;
         // Immediate retaliatory strike ignoring body rules, with animation.
-        if (ResolutionManager.Instance != null)
-        {
-            ResolutionManager.Instance.PerformImmediateAttack(
-                self,
-                attacker,
-                ignoreBodyRules: true
-            );
-        }
+        ResolutionManager.Instance?.PerformImmediateAttack(
+            self,
+            attacker,
+            ignoreBodyRules: true,
+            onComplete: (success) =>
+            {
+                if (success)
+                {
+                    FeedbackManager.Instance?.ShowFloatingText(
+                        "Protector's Fury",
+                        self.transform.position,
+                        GameColorPalette.TextWarning
+                    );
+                }
+            }
+        );
     }
 }

@@ -28,6 +28,11 @@ public class StormRiderTrait : Trait
         {
             self.AddStatus(StatusTag.DamageUp, 1);
             FeedbackManager.Instance?.ShowFloatingText(
+                "Storm Rider",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+            FeedbackManager.Instance?.ShowFloatingText(
                 "DamageUp +1",
                 self.transform.position,
                 GameColorPalette.Rage

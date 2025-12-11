@@ -17,6 +17,8 @@ public class IllusionistTrait : Trait
             return;
         if (self.HasStatus(StatusTag.Suppressed))
             return;
+        if (self.HasStatus(StatusTag.Stealth))
+            return;
         if (self == victim)
             return;
         if (self.owner != victim.owner)
@@ -27,7 +29,7 @@ public class IllusionistTrait : Trait
         {
             self.AddStatus(StatusTag.Stealth, 1);
             FeedbackManager.Instance?.ShowFloatingText(
-                "Stealth",
+                "Stealth (Illusionist)",
                 self.transform.position,
                 GameColorPalette.TextMuted
             );

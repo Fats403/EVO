@@ -11,6 +11,11 @@ public class AdaptiveArmorTrait : Trait
         self.body += 1;
         self.RefreshStatsUI();
         FeedbackManager.Instance?.ShowFloatingText(
+            "Adaptive Armor",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
             "Body +1",
             self.transform.position,
             GameColorPalette.TextPositive

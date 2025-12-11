@@ -14,7 +14,12 @@ public class JuggernautTrait : Trait
 
         target.AddStatus(StatusTag.Suppressed, 1);
         FeedbackManager.Instance?.ShowFloatingText(
-            "Suppressed",
+            "Juggernaut",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Suppressed +1",
             target.transform.position,
             GameColorPalette.TextWarning
         );
@@ -30,6 +35,11 @@ public class JuggernautTrait : Trait
             return;
 
         self.AddStatus(StatusTag.Absorb, 1);
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Juggernaut",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
         FeedbackManager.Instance?.ShowFloatingText(
             "Absorb +1",
             self.transform.position,

@@ -32,7 +32,12 @@ public class ExtinctionFlyerTrait : Trait
 
         target.AddStatus(StatusTag.Suppressed, 1);
         FeedbackManager.Instance?.ShowFloatingText(
-            "Suppressed",
+            "Extinction Flyer",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Suppressed +1",
             target.transform.position,
             GameColorPalette.TextWarning
         );

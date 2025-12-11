@@ -3,19 +3,18 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Traits/Avians/Galeforce")]
 public class GaleforceTrait : Trait
 {
-    public override void OnRoundStart(Creature self)
+    // Storm: +2 Speed while storm is active. Implemented as a passive speed bonus
+    // so it updates instantly on weather change and shows in both UI and ordering.
+    public override int SpeedBonus(Creature self)
     {
         if (self == null || self.HasStatus(StatusTag.Suppressed))
-            return;
+            return 0;
 
         var wm = WeatherManager.Instance;
-        if (wm == null || wm.CurrentWeather != WeatherType.Storm)
-            return;
+        if (wm == null)
+            return 0;
 
-        int currentSpeedUp = self.GetStatus(StatusTag.SpeedUp);
-
-        self.ClearStatus(StatusTag.SpeedUp);
-        self.AddStatus(StatusTag.SpeedUp, 2 + currentSpeedUp);
+        return wm.CurrentWeather == WeatherType.Storm ? 2 : 0;
     }
 
     public override void OnDamageDealt(Creature self, Creature target, int finalDamage)
@@ -33,7 +32,12 @@ public class GaleforceTrait : Trait
 
         target.AddStatus(StatusTag.Fatigued, 1);
         FeedbackManager.Instance?.ShowFloatingText(
-            "Fatigue +1",
+            "Galeforce",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Fatigued +1",
             target.transform.position,
             GameColorPalette.TextWarning
         );

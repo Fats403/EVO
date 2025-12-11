@@ -22,7 +22,22 @@ public class WhirlwindTrait : Trait
             return;
 
         usedThisRound.Add(self);
-        ResolutionManager.Instance.PerformImmediateAttack(self, next, ignoreBodyRules: false);
+        ResolutionManager.Instance.PerformImmediateAttack(
+            self,
+            next,
+            ignoreBodyRules: false,
+            onComplete: (success) =>
+            {
+                if (success)
+                {
+                    FeedbackManager.Instance?.ShowFloatingText(
+                        "Whirlwind",
+                        self.transform.position,
+                        GameColorPalette.TextWarning
+                    );
+                }
+            }
+        );
     }
 
     public override void OnRoundStart(Creature self)

@@ -67,6 +67,17 @@ public class EffectCard : ScriptableObject
 
     [Header("AI Evaluation (Optional)")]
     [Tooltip(
+        "If true, this global effect is preferred when the AI is behind on board (fewer creatures)."
+    )]
+    public bool aiPreferWhenBehindOnBoard = false;
+
+    [Tooltip(
+        "Minimum number of allied creatures the AI wants before using this global buff (0 = no requirement)."
+    )]
+    [Min(0)]
+    public int aiMinAlliesForBuffGlobals = 0;
+
+    [Tooltip(
         "How much this effect gains value from cleansing/removing negative statuses (0 = ignore)."
     )]
     [Range(0f, 5f)]

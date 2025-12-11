@@ -9,13 +9,10 @@ public class GiantSlayerTrait : Trait
             return baseDamage;
         if (self.HasStatus(StatusTag.Suppressed))
             return baseDamage;
-        // Effective bodies: body + BodyUp - Malnourished
-        int selfEff =
-            self.body + self.GetStatus(StatusTag.BodyUp) - self.GetStatus(StatusTag.Malnourished);
-        int tgtEff =
-            target.body
-            + target.GetStatus(StatusTag.BodyUp)
-            - target.GetStatus(StatusTag.Malnourished);
+
+        int selfEff = ResolutionManager.Instance.GetEffectiveBody(self);
+        int tgtEff = ResolutionManager.Instance.GetEffectiveBody(target);
+
         if (tgtEff > selfEff)
         {
             return Mathf.Max(0, baseDamage + 1);

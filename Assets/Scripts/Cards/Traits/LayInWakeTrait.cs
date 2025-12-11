@@ -3,28 +3,35 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Traits/Carnivores/Lay In Wake")]
 public class LayInWakeTrait : Trait
 {
-    public override void OnRoundStart(Creature self)
+    public override int SpeedBonus(Creature self)
     {
         if (self == null)
-            return;
+            return 0;
         if (self.HasStatus(StatusTag.Suppressed))
-            return;
+            return 0;
         if (GameManager.Instance == null)
-            return;
+            return 0;
 
         var era = GameManager.Instance.currentEra;
         if (era != Era.Cretaceous && era != Era.Extinction)
-            return;
+            return 0;
 
-        int currentBodyUp = self.GetStatus(StatusTag.BodyUp);
-        int currentSpeedUp = self.GetStatus(StatusTag.SpeedUp);
+        return 2;
+    }
 
-        // Refresh era-based buff each round while in Cretaceous/Extinction.
-        self.ClearStatus(StatusTag.BodyUp);
-        self.ClearStatus(StatusTag.SpeedUp);
+    public override int BodyBonus(Creature self)
+    {
+        if (self == null)
+            return 0;
+        if (self.HasStatus(StatusTag.Suppressed))
+            return 0;
+        if (GameManager.Instance == null)
+            return 0;
 
-        self.AddStatus(StatusTag.SpeedUp, 2 + currentSpeedUp);
-        self.AddStatus(StatusTag.BodyUp, 1 + currentBodyUp);
+        var era = GameManager.Instance.currentEra;
+        if (era != Era.Cretaceous && era != Era.Extinction)
+            return 0;
+
+        return 1;
     }
 }
-

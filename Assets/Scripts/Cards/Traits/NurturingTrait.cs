@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Traits/Herbivores/Nurturing")]
@@ -11,23 +12,31 @@ public class NurturingTrait : Trait
             return;
 
         var adj = BoardUtils.GetAdjacentAllies(self);
-        foreach (var ally in adj)
-        {
-            if (ally == null)
-                continue;
-            if (ally.currentHealth <= 0 || ally.isDying)
-                continue;
+        var validAllies = adj.Where(c =>
+                c != null
+                && c.currentHealth > 0
+                && !c.isDying
+                && c.GetStatus(StatusTag.Fatigued) > 0
+            )
+            .ToList();
 
-            int fatigue = ally.GetStatus(StatusTag.Fatigued);
-            if (fatigue > 0)
-            {
-                ally.DecrementStatus(StatusTag.Fatigued, 1);
-                FeedbackManager.Instance?.ShowFloatingText(
-                    "Fatigue -1",
-                    ally.transform.position,
-                    GameColorPalette.TextPositive
-                );
-            }
+        if (validAllies.Count > 0)
+        {
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Nurturing",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+        }
+
+        foreach (var ally in validAllies)
+        {
+            ally.DecrementStatus(StatusTag.Fatigued, 1);
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Fatigue -1",
+                ally.transform.position,
+                GameColorPalette.TextPositive
+            );
         }
     }
 }

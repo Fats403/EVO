@@ -23,20 +23,17 @@ public class DesperateHunterTrait : Trait
         return Mathf.Max(0, baseDamage);
     }
 
-    public override void OnRoundStart(Creature self)
+    public override int BodyBonus(Creature self)
     {
         if (self == null)
-            return;
+            return 0;
         if (self.HasStatus(StatusTag.Suppressed))
-            return;
+            return 0;
 
         var wm = WeatherManager.Instance;
         if (wm == null)
-            return;
-        if (wm.CurrentWeather != WeatherType.Drought)
-            return;
+            return 0;
 
-        self.AddStatus(StatusTag.BodyUp, 1);
+        return wm.CurrentWeather == WeatherType.Drought ? 1 : 0;
     }
 }
-

@@ -13,7 +13,12 @@ public class BleedMasterTrait : Trait
             return;
         target.AddStatus(StatusTag.Bleeding, 1);
         FeedbackManager.Instance?.ShowFloatingText(
-            "Bleeding +1",
+            "Bleed Master",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Bleed +1",
             target.transform.position,
             GameColorPalette.Bleed
         );

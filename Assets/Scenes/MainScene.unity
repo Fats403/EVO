@@ -3615,14 +3615,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ResolutionManager
   foodPile: {fileID: 508416461}
   activeGlobalEffects: []
-  preStealDelay: 0.8
+  preStealDelay: 0.5
   eatDelay: 1
   attackWindup: 0.5
   attackResolvePause: 0.5
   afterCarnivoreDelay: 1
+  afterHerbivoreDelay: 0.3
+  afterAvianForageDelay: 0.3
   starveDelay: 1
-  statusEffectDelay: 1
-  roundStartEffectPause: 2
+  statusEffectDelay: 0.5
+  roundStartEffectPause: 1
   roundEndEffectPause: 1
   pacingMultiplier: 2
   attackVFX: {fileID: 0}
@@ -4267,15 +4269,21 @@ MonoBehaviour:
   cardBackPrefab: {fileID: 2101941085350782629, guid: 10ab4236f61d94e7180bf44cafa72201, type: 3}
   deckCountText: {fileID: 1606710267}
   handCountText: {fileID: 1442666412}
+  debugAI: 1
+  debugMaxActionsToLog: 5
   creatureSizeWeight: 1.5
   creatureBaseValue: 2
   carnivoreBonus: 2
   avianBonus: 1
-  momentumCostWeight: 1
-  lowMomentumPenalty: 1.5
+  momentumCostWeight: 0.8
+  lowMomentumPenalty: 1.2
   allyEffectPerTargetValue: 1.5
   enemyEffectPerTargetValue: 1.75
-  passThreshold: 0.25
+  passThreshold: 0.1
+  emptyBoardCreatureBonus: 4
+  boardDeficitCreatureBonusPerGap: 1.5
+  emptyBoardEffectMultiplier: 0.25
+  fewAlliesEffectMultiplier: 0.6
   symmetricEffectThreatThreshold: 12
   ownBoardValueMultiplier: 0.7
   draftConfig: {fileID: 11400000, guid: a9e78c42a4dd145d78f032cc83ddfa95, type: 2}
@@ -5093,10 +5101,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FeedbackManager
   floatingTextPrefab: {fileID: 7266676242158792735, guid: 0c3c4df6f3c1c4b26810b71022d7bda6, type: 3}
-  floatUpDistance: 1.2
-  floatDuration: 1.5
-  alphaHold: 0.75
-  stackOffset: 0.8
+  floatUpDistance: 1
+  floatDuration: 2
+  alphaHold: 1
+  stackOffset: 0.75
   logText: {fileID: 1439202204}
   logPanel: {fileID: 1986103158}
   maxLines: 28

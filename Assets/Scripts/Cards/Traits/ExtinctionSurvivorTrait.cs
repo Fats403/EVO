@@ -3,27 +3,31 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Traits/Herbivores/Extinction Survivor")]
 public class ExtinctionSurvivorTrait : Trait
 {
-    public override void OnRoundStart(Creature self)
+    public override int BodyBonus(Creature self)
     {
         if (self == null)
-            return;
+            return 0;
         if (self.HasStatus(StatusTag.Suppressed))
-            return;
+            return 0;
         if (GameManager.Instance == null)
-            return;
+            return 0;
         if (GameManager.Instance.currentEra != Era.Extinction)
-            return;
+            return 0;
 
-        // Get the current body and speed up stacks.
-        int currentBodyUp = self.GetStatus(StatusTag.BodyUp);
-        int currentSpeedUp = self.GetStatus(StatusTag.SpeedUp);
+        return 2;
+    }
 
-        // Refresh the Extinction-era buff each round so it stays stable.
-        self.ClearStatus(StatusTag.BodyUp);
-        self.ClearStatus(StatusTag.SpeedUp);
+    public override int SpeedBonus(Creature self)
+    {
+        if (self == null)
+            return 0;
+        if (self.HasStatus(StatusTag.Suppressed))
+            return 0;
+        if (GameManager.Instance == null)
+            return 0;
+        if (GameManager.Instance.currentEra != Era.Extinction)
+            return 0;
 
-        // Add the current stacks to the new stacks.
-        self.AddStatus(StatusTag.BodyUp, 2 + currentBodyUp);
-        self.AddStatus(StatusTag.SpeedUp, 1 + currentSpeedUp);
+        return 1;
     }
 }

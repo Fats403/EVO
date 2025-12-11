@@ -37,9 +37,14 @@ public class MaternalCareTrait : Trait
         if (healed > 0)
         {
             FeedbackManager.Instance?.ShowFloatingText(
+                "Maternal Care",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+            FeedbackManager.Instance?.ShowFloatingText(
                 $"+{healed} HP",
                 target.transform.position,
-                GameColorPalette.Heal
+                GameColorPalette.Regen
             );
         }
     }

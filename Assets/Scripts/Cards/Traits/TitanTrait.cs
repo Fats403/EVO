@@ -28,6 +28,16 @@ public class TitanTrait : Trait
             .FindObjectsByType<Creature>(FindObjectsSortMode.None)
             .Where(c => c != null && c.currentHealth > 0 && !c.isDying && c.owner == self.owner)
             .ToList();
+
+        if (allies.Count > 0)
+        {
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Titan",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+        }
+
         foreach (var ally in allies)
         {
             ally.AddStatus(StatusTag.Regen, 1);

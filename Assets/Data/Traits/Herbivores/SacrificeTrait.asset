@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: SacrificeTrait
   m_EditorClassIdentifier: Assembly-CSharp::SacrificeTrait
   traitName: Sacrifice
-  description: When eating, lowest HP ally (not self) gains +2 Regen, this gains
+  description: After eating, your lowest HP ally (not self) gains +1 HP, this gains
     +1 Malnourished

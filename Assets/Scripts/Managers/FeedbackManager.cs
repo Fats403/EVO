@@ -193,8 +193,7 @@ public class FeedbackManager : MonoBehaviour
     {
         if (go == null)
             yield break;
-
-        var startPos = go.transform.position; // Note: this is just the spawn point, but we will read current pos in loop
+        _ = go.transform.position; // Note: this is just the spawn point, but we will read current pos in loop
         // We want to drift UP relative to wherever we are, but since other logic might move us (the stack push),
         // we should perhaps just add a continuous drift velocity or simply fade out.
         // The stack push handles the "make room" part.

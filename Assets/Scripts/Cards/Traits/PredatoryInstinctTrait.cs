@@ -23,6 +23,6 @@ public class PredatoryInstinctTrait : Trait
             .OrderBy(c => c.currentHealth)
             .ThenBy(c => Vector3.SqrMagnitude(c.transform.position - self.transform.position))
             .FirstOrDefault();
-        return picked != null ? picked : defaultTarget;
+        return picked ?? defaultTarget;
     }
 }

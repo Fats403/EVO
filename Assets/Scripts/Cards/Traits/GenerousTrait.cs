@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Traits/Herbivores/Generous")]
@@ -10,15 +11,24 @@ public class GenerousTrait : Trait
         if (self.HasStatus(StatusTag.Suppressed))
             return;
         var adj = BoardUtils.GetAdjacentAllies(self);
-        foreach (var ally in adj)
+        var validAllies = adj
+            ?.Where(c => c != null && c.data != null && c.data.type == CardType.Herbivore)
+            .ToList();
+
+        if (validAllies != null && validAllies.Count > 0)
         {
-            if (ally == null || ally.data == null)
-                continue;
-            if (ally.data.type != CardType.Herbivore)
-                continue;
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Generous",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+        }
+
+        foreach (var ally in validAllies)
+        {
             ally.eaten += 1;
             FeedbackManager.Instance?.ShowFloatingText(
-                "+1 food",
+                "+1 Food",
                 ally.transform.position,
                 GameColorPalette.TextPositive
             );

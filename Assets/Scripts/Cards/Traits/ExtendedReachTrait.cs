@@ -11,7 +11,12 @@ public class ExtendedReachTrait : Trait
             return;
         self.eaten += 1;
         FeedbackManager.Instance?.ShowFloatingText(
-            "Food +1 [Extended Reach]",
+            "Extended Reach",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
+            "+1 Food",
             self.transform.position,
             GameColorPalette.TextPositive
         );

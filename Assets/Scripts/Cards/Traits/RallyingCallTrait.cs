@@ -22,6 +22,15 @@ public class RallyingCallTrait : Trait
                 && c.data.type == CardType.Avian
             )
             .ToList();
+        if (allies.Count > 0)
+        {
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Rallying Call",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+        }
+
         foreach (var ally in allies)
         {
             ally.AddStatus(StatusTag.Regen, 2);

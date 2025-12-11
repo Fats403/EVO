@@ -11,13 +11,7 @@ public class UntouchableTrait : Trait
         if (self.HasStatus(StatusTag.Suppressed))
             return false;
 
-        // Compute effective speed of the attacker similar to ResolutionManager.EffSpeed.
-        int traitSpeed =
-            (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
-                ? attacker.traits.Sum(t => t != null ? t.SpeedBonus(attacker) : 0)
-                : 0;
-        int temp = attacker.GetStatus(StatusTag.SpeedUp) - attacker.GetStatus(StatusTag.Fatigued);
-        int effSpeed = attacker.speed + temp + traitSpeed;
+        int effSpeed = ResolutionManager.Instance?.GetEffectiveSpeed(attacker) ?? 0;
 
         if (effSpeed <= 2)
         {

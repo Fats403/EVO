@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using TMPro;
 using UnityEngine;
 
@@ -22,6 +23,14 @@ public class AIManager : MonoBehaviour
     [Tooltip("Text label showing the AI's hand size.")]
     public TMP_Text handCountText;
 
+    [Header("Debugging")]
+    [Tooltip("If true, the AI will log its hand and top-scoring actions each time it acts.")]
+    public bool debugAI = false;
+
+    [Tooltip("Maximum number of candidate actions to include in debug logs.")]
+    [Range(1, 20)]
+    public int debugMaxActionsToLog = 8;
+
     [Header("Heuristic Weights (Normal AI)")]
     [Tooltip("Value per creature size/body when considering plays.")]
     [Range(0f, 10f)]
@@ -41,11 +50,11 @@ public class AIManager : MonoBehaviour
 
     [Tooltip("Penalty per point of momentum cost when evaluating any action.")]
     [Range(0f, 5f)]
-    public float momentumCostWeight = 1.0f;
+    public float momentumCostWeight = 0.8f;
 
     [Tooltip("Additional penalty factor when remaining momentum is low.")]
     [Range(0.5f, 4f)]
-    public float lowMomentumPenalty = 1.5f;
+    public float lowMomentumPenalty = 1.2f;
 
     [Tooltip("Base value per allied target affected by a positive effect.")]
     [Range(0f, 5f)]
@@ -57,7 +66,26 @@ public class AIManager : MonoBehaviour
 
     [Tooltip("Threshold below which the AI prefers to pass instead of playing.")]
     [Range(0f, 5f)]
-    public float passThreshold = 0.2f;
+    public float passThreshold = 0.1f;
+
+    [Header("Board Development Preferences")]
+    [Tooltip("Flat bonus to creature plays when the AI has no creatures on board.")]
+    [Range(0f, 10f)]
+    public float emptyBoardCreatureBonus = 4f;
+
+    [Tooltip("Bonus per creature the enemy leads by when evaluating creature plays.")]
+    [Range(0f, 5f)]
+    public float boardDeficitCreatureBonusPerGap = 1.5f;
+
+    [Tooltip("Multiplier applied to effect scores when the AI has no creatures on board.")]
+    [Range(0f, 1f)]
+    public float emptyBoardEffectMultiplier = 0.25f;
+
+    [Tooltip(
+        "Multiplier applied to effect scores when the AI has very few creatures (1 or fewer)."
+    )]
+    [Range(0f, 1f)]
+    public float fewAlliesEffectMultiplier = 0.6f;
 
     [Header("Board Control")]
     [Tooltip(
@@ -297,13 +325,26 @@ public class AIManager : MonoBehaviour
         if (hand.Count == 0)
             return false;
 
+        // Snapshot current board creature counts for board-aware heuristics and debug.
+        var allCreaturesSnapshot = FindObjectsByType<Creature>(FindObjectsSortMode.None)
+            .Where(c => c != null && c.data != null && c.currentHealth > 0 && !c.isDying)
+            .ToList();
+        int allyCreatureCount = allCreaturesSnapshot.Count(c => c.owner == SlotOwner.Player2);
+        int enemyCreatureCount = allCreaturesSnapshot.Count(c => c.owner == SlotOwner.Player1);
+
         var actions = new List<AIAction>();
 
         // Enumerate candidate creature plays.
-        BuildCreatureActions(gm, actions);
+        BuildCreatureActions(gm, actions, allyCreatureCount, enemyCreatureCount);
 
         // Enumerate candidate effect plays.
-        BuildEffectActions(gm, actions);
+        BuildEffectActions(
+            gm,
+            actions,
+            allyCreatureCount,
+            enemyCreatureCount,
+            allCreaturesSnapshot
+        );
 
         // Always include an explicit pass option.
         actions.Add(new AIAction { type = AIActionType.Pass, score = 0f });
@@ -312,6 +353,11 @@ public class AIManager : MonoBehaviour
             return false;
 
         var best = actions.OrderByDescending(a => a.score).First();
+
+        if (debugAI)
+        {
+            DebugLogAIChoice(gm, actions, best, allyCreatureCount, enemyCreatureCount);
+        }
 
         // If our best option is pass or the value is too low, signal pass to GameManager.
         if (best.type == AIActionType.Pass || best.score <= passThreshold)
@@ -328,7 +374,12 @@ public class AIManager : MonoBehaviour
         }
     }
 
-    void BuildCreatureActions(GameManager gm, List<AIAction> actions)
+    void BuildCreatureActions(
+        GameManager gm,
+        List<AIAction> actions,
+        int allyCreatureCount,
+        int enemyCreatureCount
+    )
     {
         var freeSlots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
             .Where(s => s != null && s.owner == SlotOwner.Player2 && !s.occupied)
@@ -378,6 +429,10 @@ public class AIManager : MonoBehaviour
 
                 float score = baseValue - momentumPenalty;
 
+                // Board development preferences: strongly favor getting bodies down,
+                // especially on an empty or losing board.
+                score = AdjustCreatureScoreForBoard(score, allyCreatureCount, enemyCreatureCount);
+
                 actions.Add(
                     new AIAction
                     {
@@ -391,7 +446,13 @@ public class AIManager : MonoBehaviour
         }
     }
 
-    void BuildEffectActions(GameManager gm, List<AIAction> actions)
+    void BuildEffectActions(
+        GameManager gm,
+        List<AIAction> actions,
+        int allyCreatureCount,
+        int enemyCreatureCount,
+        List<Creature> allCreaturesSnapshot
+    )
     {
         var effectCards = hand.OfType<EffectCard>().ToList();
         if (effectCards.Count == 0)
@@ -399,9 +460,8 @@ public class AIManager : MonoBehaviour
 
         int currentMomentum = gm.GetMomentum(SlotOwner.Player2);
 
-        var allCreatures = FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c => c != null && c.data != null && c.currentHealth > 0 && !c.isDying)
-            .ToList();
+        // Reuse the snapshot provided by TryPlaySingleAction to keep a consistent view.
+        var allCreatures = allCreaturesSnapshot;
 
         foreach (var card in effectCards)
         {
@@ -476,8 +536,18 @@ public class AIManager : MonoBehaviour
                     SlotOwner.Player2,
                     allCreatures
                 );
-
                 float score = baseValue - momentumPenalty;
+                if (score <= 0f)
+                    continue;
+
+                // Board-aware adjustments for global effects (e.g., don't cast ally buffs with no board).
+                score = AdjustEffectScoreForBoard(
+                    card,
+                    score,
+                    allyCreatureCount,
+                    enemyCreatureCount,
+                    isGlobal: true
+                );
                 if (score <= 0f)
                     continue;
 
@@ -520,6 +590,16 @@ public class AIManager : MonoBehaviour
                     if (baseValue <= 0f)
                         continue;
                     float score = baseValue - momentumPenalty;
+                    if (score <= 0f)
+                        continue;
+
+                    score = AdjustEffectScoreForBoard(
+                        card,
+                        score,
+                        allyCreatureCount,
+                        enemyCreatureCount,
+                        isGlobal: false
+                    );
                     if (score <= 0f)
                         continue;
 
@@ -570,6 +650,16 @@ public class AIManager : MonoBehaviour
                 if (score <= 0f)
                     continue;
 
+                score = AdjustEffectScoreForBoard(
+                    card,
+                    score,
+                    allyCreatureCount,
+                    enemyCreatureCount,
+                    isGlobal: false
+                );
+                if (score <= 0f)
+                    continue;
+
                 actions.Add(
                     new AIAction
                     {
@@ -592,6 +682,16 @@ public class AIManager : MonoBehaviour
                     continue;
 
                 float score = baseValue - momentumPenalty;
+                if (score <= 0f)
+                    continue;
+
+                score = AdjustEffectScoreForBoard(
+                    card,
+                    score,
+                    allyCreatureCount,
+                    enemyCreatureCount,
+                    isGlobal: false
+                );
                 if (score <= 0f)
                     continue;
 
@@ -822,6 +922,136 @@ public class AIManager : MonoBehaviour
         // Reuse the same targeting logic ResolutionManager uses for normal attacks.
         var best = ResolutionManager.Instance.FindBestTarget(attacker);
         return best != null;
+    }
+
+    float AdjustCreatureScoreForBoard(float score, int allyCreatureCount, int enemyCreatureCount)
+    {
+        // Strongly favor playing the first creature onto an empty board.
+        if (allyCreatureCount == 0)
+        {
+            score += emptyBoardCreatureBonus;
+        }
+
+        // If we're behind on board, increase the value of deploying more creatures.
+        int boardGap = enemyCreatureCount - allyCreatureCount;
+        if (boardGap > 0)
+        {
+            score += boardGap * boardDeficitCreatureBonusPerGap;
+        }
+
+        return score;
+    }
+
+    float AdjustEffectScoreForBoard(
+        EffectCard card,
+        float score,
+        int allyCreatureCount,
+        int enemyCreatureCount,
+        bool isGlobal
+    )
+    {
+        // Generic preference: when we have no or very few creatures, effects are usually worse than
+        // simply developing the board, unless they are extremely high value.
+        if (allyCreatureCount == 0)
+        {
+            score *= emptyBoardEffectMultiplier;
+        }
+        else if (allyCreatureCount <= 1)
+        {
+            score *= fewAlliesEffectMultiplier;
+        }
+
+        if (isGlobal)
+        {
+            // If this global is intended as a "catch-up" tool, de-prioritize it when we're not behind.
+            if (card.aiPreferWhenBehindOnBoard && allyCreatureCount >= enemyCreatureCount)
+            {
+                score *= 0.4f;
+            }
+
+            // For ally-buff globals, require a minimum board presence before we consider them good.
+            if (
+                card.aiMinAlliesForBuffGlobals > 0
+                && allyCreatureCount < card.aiMinAlliesForBuffGlobals
+            )
+            {
+                score *= 0.2f;
+            }
+        }
+
+        return score;
+    }
+
+    void DebugLogAIChoice(
+        GameManager gm,
+        List<AIAction> actions,
+        AIAction best,
+        int allyCreatureCount,
+        int enemyCreatureCount
+    )
+    {
+        if (!debugAI)
+            return;
+
+        var sb = new StringBuilder();
+        int momentum = gm.GetMomentum(SlotOwner.Player2);
+
+        sb.AppendLine("[AI] --- Decision ---");
+        sb.AppendLine(
+            $"Momentum: {momentum}, Hand: {hand.Count}, Deck: {RemainingDeckCount}, "
+                + $"Allies: {allyCreatureCount}, Enemies: {enemyCreatureCount}"
+        );
+
+        // Hand summary
+        sb.AppendLine("[AI] Hand:");
+        foreach (var card in hand)
+        {
+            if (card is CreatureCard cc)
+            {
+                sb.AppendLine($"  Creature - {cc.cardName} (Type={cc.type}, Size={cc.size})");
+            }
+            else if (card is EffectCard ec)
+            {
+                sb.AppendLine(
+                    $"  Effect   - {ec.effectName} (Cost={ec.momentumCost}, Global={ec.isGlobal}, "
+                        + $"Cleanse={ec.aiCleanseSynergy}, AtkSync={ec.aiAttackSynergy}, "
+                        + $"BodyBuff={ec.aiBodyBuffMultiplier}, Removal={ec.aiRemovalValue})"
+                );
+            }
+        }
+
+        // Action ranking
+        sb.AppendLine("[AI] Candidate actions (top scored first):");
+        var ordered = actions.OrderByDescending(a => a.score).ToList();
+        int limit = Mathf.Clamp(debugMaxActionsToLog, 1, 20);
+        for (int i = 0; i < ordered.Count && i < limit; i++)
+        {
+            var a = ordered[i];
+            string label;
+            switch (a.type)
+            {
+                case AIActionType.PlayCreature:
+                    label =
+                        $"PlayCreature - {a.creatureCard?.cardName ?? "null"} "
+                        + $"to slot {a.creatureSlot?.name ?? "null"}";
+                    break;
+                case AIActionType.PlayEffect:
+                    label =
+                        $"PlayEffect  - {a.effectCard?.effectName ?? "null"} "
+                        + $"(targets={a.effectTargets?.Count ?? 0})";
+                    break;
+                default:
+                    label = "Pass";
+                    break;
+            }
+            sb.AppendLine($"  [{i}] {label}, score={a.score:F2}");
+        }
+
+        // Highlight final choice.
+        sb.AppendLine("[AI] Chosen action:");
+        sb.AppendLine($"  Type={best.type}, Score={best.score:F2}");
+
+        Debug.Log(sb.ToString());
     }
 
     bool ExecuteCreatureAction(GameManager gm, AIAction action)

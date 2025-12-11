@@ -12,6 +12,11 @@ public class ToxicBiteTrait : Trait
             return;
         target.AddStatus(StatusTag.Infected, 2);
         FeedbackManager.Instance?.ShowFloatingText(
+            "Toxic Bite",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
             "Infected +2",
             target.transform.position,
             GameColorPalette.Poison

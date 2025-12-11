@@ -14,6 +14,11 @@ public class ResilientTrait : Trait
 
         self.AddStatus(StatusTag.Absorb, 1);
         FeedbackManager.Instance?.ShowFloatingText(
+            "Resilient",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
             "Absorb +1",
             self.transform.position,
             GameColorPalette.Absorb

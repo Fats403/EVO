@@ -11,6 +11,11 @@ public class CamouflageHunterTrait : Trait
             return;
         self.AddStatus(StatusTag.Stealth, 1);
         FeedbackManager.Instance?.ShowFloatingText(
+            "Camouflage Hunter",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
             "Stealth",
             self.transform.position,
             GameColorPalette.TextMuted

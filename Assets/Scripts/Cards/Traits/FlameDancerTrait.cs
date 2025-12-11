@@ -22,6 +22,11 @@ public class FlameDancerTrait : Trait
         {
             self.AddStatus(StatusTag.Regen, 2);
             FeedbackManager.Instance?.ShowFloatingText(
+                "Flame Dancer",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+            FeedbackManager.Instance?.ShowFloatingText(
                 "Regen +2",
                 self.transform.position,
                 GameColorPalette.Regen

@@ -64,6 +64,7 @@ public class WeatherManager : MonoBehaviour
 
     public WeatherType RollNextWeather()
     {
+        WeatherType previous = currentWeather;
         // First round stays Clear
         if (isFirstRound)
         {
@@ -163,6 +164,7 @@ public class WeatherManager : MonoBehaviour
             };
             FeedbackManager.Instance.ShowGlobalAlert(msg, alertColor);
         }
+        NotifyTraitsWeatherChanged(currentWeather, lastWeather);
         OnWeatherChanged?.Invoke(currentWeather);
         return currentWeather;
     }
@@ -180,6 +182,7 @@ public class WeatherManager : MonoBehaviour
         lastWeather = currentWeather;
         currentWeather = target;
         FeedbackManager.Instance?.Log($"Weather (forced): {currentWeather}");
+        NotifyTraitsWeatherChanged(currentWeather, lastWeather);
         OnWeatherChanged?.Invoke(currentWeather);
 
         if (GameManager.Instance != null && GameManager.Instance.weatherVideoBackground != null)
@@ -187,6 +190,24 @@ public class WeatherManager : MonoBehaviour
             GameManager.Instance.StartCoroutine(
                 GameManager.Instance.weatherVideoBackground.CrossfadeTo(currentWeather)
             );
+        }
+    }
+
+    void NotifyTraitsWeatherChanged(WeatherType newWeather, WeatherType? previousWeather)
+    {
+        var all = FindObjectsByType<Creature>(FindObjectsSortMode.None)
+            .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
+            .ToList();
+        foreach (var c in all)
+        {
+            if (c.traits == null)
+                continue;
+            var snapshot = c.traits.ToArray();
+            foreach (var tr in snapshot)
+            {
+                tr?.OnWeatherChanged(c, newWeather, previousWeather);
+            }
+            c.RefreshStatsUI();
         }
     }
 

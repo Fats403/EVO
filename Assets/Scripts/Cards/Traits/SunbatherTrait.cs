@@ -32,6 +32,11 @@ public class SunbatherTrait : Trait
         {
             self.AddStatus(StatusTag.Regen, 1);
             FeedbackManager.Instance?.ShowFloatingText(
+                "Sunbather",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+            FeedbackManager.Instance?.ShowFloatingText(
                 "Regen +1",
                 self.transform.position,
                 GameColorPalette.Regen

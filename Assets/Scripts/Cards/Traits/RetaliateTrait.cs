@@ -13,7 +13,12 @@ public class RetaliateTrait : Trait
         if (applied > 0)
         {
             FeedbackManager.Instance?.ShowFloatingText(
-                $"-{applied} HP [Retaliate]",
+                "Retaliate",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+            FeedbackManager.Instance?.ShowFloatingText(
+                $"-{applied} HP",
                 attacker.transform.position,
                 GameColorPalette.Damage
             );

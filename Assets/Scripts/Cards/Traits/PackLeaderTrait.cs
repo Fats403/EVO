@@ -26,7 +26,22 @@ public class PackLeaderTrait : Trait
                 break;
             if (!ResolutionManager.Instance.IsValidAttackTarget(ally, target))
                 continue;
-            ResolutionManager.Instance.PerformImmediateAttack(ally, target, ignoreBodyRules: false);
+            ResolutionManager.Instance.PerformImmediateAttack(
+                ally,
+                target,
+                ignoreBodyRules: false,
+                onComplete: (success) =>
+                {
+                    if (success)
+                    {
+                        FeedbackManager.Instance?.ShowFloatingText(
+                            "Pack Leader",
+                            ally.transform.position,
+                            GameColorPalette.TextWarning
+                        );
+                    }
+                }
+            );
         }
     }
 }

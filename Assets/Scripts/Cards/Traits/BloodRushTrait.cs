@@ -4,7 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Traits/Carnivores/Blood Rush")]
 public class BloodRushTrait : Trait
 {
-    private static readonly HashSet<Creature> grantNextRound = new HashSet<Creature>();
+    private static readonly HashSet<Creature> grantNextRound = new();
 
     public override void OnAfterKill(Creature self, Creature target)
     {
@@ -16,6 +16,11 @@ public class BloodRushTrait : Trait
         // Immediate benefit: heal now.
         self.AddStatus(StatusTag.Regen, 2);
         FeedbackManager.Instance?.ShowFloatingText(
+            "Blood Rush",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
             "Regen +2",
             self.transform.position,
             GameColorPalette.Regen
@@ -23,11 +28,6 @@ public class BloodRushTrait : Trait
 
         // Flag to gain DamageUp at the start of the next round.
         grantNextRound.Add(self);
-        FeedbackManager.Instance?.ShowFloatingText(
-            "DamageUp (next)",
-            self.transform.position,
-            GameColorPalette.Rage
-        );
     }
 
     public override void OnRoundStart(Creature self)
@@ -39,6 +39,11 @@ public class BloodRushTrait : Trait
 
         grantNextRound.Remove(self);
         self.AddStatus(StatusTag.DamageUp, 1);
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Blood Rush",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
         FeedbackManager.Instance?.ShowFloatingText(
             "DamageUp +1",
             self.transform.position,

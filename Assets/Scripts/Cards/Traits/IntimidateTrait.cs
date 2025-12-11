@@ -14,7 +14,12 @@ public class IntimidateTrait : Trait
             return;
         enemy.AddStatus(StatusTag.Fatigued, 2);
         FeedbackManager.Instance?.ShowFloatingText(
-            "(Intimidate)",
+            "Intimidate",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Fatigued +2",
             enemy.transform.position,
             GameColorPalette.TextWarning
         );

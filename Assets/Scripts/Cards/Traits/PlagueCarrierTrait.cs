@@ -14,5 +14,20 @@ public class PlagueCarrierTrait : Trait
             return;
         target.AddStatus(StatusTag.Infected, 1);
         target.AddStatus(StatusTag.NoForage, 1);
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Plague Carrier",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Infected +1",
+            target.transform.position,
+            GameColorPalette.TextDoTPoison
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
+            "No Forage",
+            target.transform.position,
+            GameColorPalette.TextWarning
+        );
     }
 }

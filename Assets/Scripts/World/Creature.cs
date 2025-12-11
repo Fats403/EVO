@@ -539,7 +539,7 @@ public class Creature : MonoBehaviour
             {
                 other.eaten += 1;
                 FeedbackManager.Instance?.ShowFloatingText(
-                    "Scavenge +1",
+                    "Scavenge",
                     other.transform.position,
                     GameColorPalette.ScavengeGain
                 );
@@ -646,8 +646,12 @@ public class Creature : MonoBehaviour
         // Body display relative to base body
         if (bodyText != null)
         {
+            int traitBody =
+                (!HasStatus(StatusTag.Suppressed) && traits != null)
+                    ? traits.Sum(t => t != null ? t.BodyBonus(this) : 0)
+                    : 0;
             int displayBody =
-                body + GetStatus(StatusTag.BodyUp) - GetStatus(StatusTag.Malnourished);
+                body + traitBody + GetStatus(StatusTag.BodyUp) - GetStatus(StatusTag.Malnourished);
             bodyText.text = displayBody.ToString();
             if (displayBody > baseBody)
                 bodyText.color = Color.green;

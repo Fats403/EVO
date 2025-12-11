@@ -11,6 +11,11 @@ public class ThickHideTrait : Trait
             return;
         self.AddStatus(StatusTag.Absorb, 2);
         FeedbackManager.Instance?.ShowFloatingText(
+            "Thick Hide",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
             "Absorb +2",
             self.transform.position,
             GameColorPalette.Absorb

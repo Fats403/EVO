@@ -31,6 +31,11 @@ public class RadiantScalesTrait : Trait
             self.AddStatus(StatusTag.Reflect, 1);
             grantNextRound.Remove(self);
             FeedbackManager.Instance?.ShowFloatingText(
+                "Radiant Scales",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+            FeedbackManager.Instance?.ShowFloatingText(
                 "Reflect",
                 self.transform.position,
                 GameColorPalette.Reflect

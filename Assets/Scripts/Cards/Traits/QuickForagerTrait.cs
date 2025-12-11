@@ -18,6 +18,11 @@ public class QuickForagerTrait : Trait
         {
             self.AddStatus(StatusTag.Regen, 1);
             FeedbackManager.Instance?.ShowFloatingText(
+                "Quick Forager",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+            FeedbackManager.Instance?.ShowFloatingText(
                 "Regen +1",
                 self.transform.position,
                 GameColorPalette.Regen

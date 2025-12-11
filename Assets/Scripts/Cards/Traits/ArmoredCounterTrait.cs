@@ -12,13 +12,21 @@ public class ArmoredCounterTrait : Trait
         if (self.HasStatus(StatusTag.Suppressed))
             return;
         // Immediate counter if still alive
-        if (ResolutionManager.Instance != null)
-        {
-            ResolutionManager.Instance.PerformImmediateAttack(
-                self,
-                attacker,
-                ignoreBodyRules: false
-            );
-        }
+        ResolutionManager.Instance?.PerformImmediateAttack(
+            self,
+            attacker,
+            ignoreBodyRules: false,
+            onComplete: (success) =>
+            {
+                if (success)
+                {
+                    FeedbackManager.Instance?.ShowFloatingText(
+                        "Armored Counter",
+                        self.transform.position,
+                        GameColorPalette.TextWarning
+                    );
+                }
+            }
+        );
     }
 }

@@ -24,6 +24,15 @@ public class ApexPredatorTrait : Trait
             .OrderBy(c => Vector3.SqrMagnitude(c.transform.position - self.transform.position))
             .Take(2)
             .ToList();
+        if (allies != null && allies.Count > 0)
+        {
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Apex Predator",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+        }
+
         foreach (var ally in allies)
         {
             ally.AddStatus(StatusTag.Rage, 1);
@@ -35,14 +44,11 @@ public class ApexPredatorTrait : Trait
         }
     }
 
-    // TODO: this seems like a hack to ignore body-size restrictions for this attacker while not suppressed.
-    // We should probably have a better way to handle this.
-
-    public override int PredatorBodyBonusForTargeting(Creature self)
+    // Apex Predator: ignore body-size restrictions when this creature attacks.
+    public override bool IgnoreBodySizeRequirement(Creature self, Creature target)
     {
-        // Effectively ignore body-size restrictions for this attacker while not suppressed.
         if (self == null || self.HasStatus(StatusTag.Suppressed))
-            return 0;
-        return 100;
+            return false;
+        return true;
     }
 }

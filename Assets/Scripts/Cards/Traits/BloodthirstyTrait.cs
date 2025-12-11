@@ -1,11 +1,11 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Traits/Carnivores/Bloodthirsty")]
 public class BloodthirstyTrait : Trait
 {
-    private static readonly System.Collections.Generic.HashSet<Creature> usedThisRound =
-        new System.Collections.Generic.HashSet<Creature>();
+    private static readonly HashSet<Creature> usedThisRound = new();
 
     public override void OnAfterKill(Creature self, Creature target)
     {
@@ -23,7 +23,23 @@ public class BloodthirstyTrait : Trait
         // If the killed target is already gone, we just attack the next best available
         if (next == target)
             return; // avoid pointless call if somehow still same reference
-        ResolutionManager.Instance.PerformImmediateAttack(self, next, ignoreBodyRules: false);
+
+        ResolutionManager.Instance.PerformImmediateAttack(
+            self,
+            next,
+            ignoreBodyRules: false,
+            onComplete: (success) =>
+            {
+                if (success)
+                {
+                    FeedbackManager.Instance?.ShowFloatingText(
+                        "Bloodthirsty",
+                        self.transform.position,
+                        GameColorPalette.TextWarning
+                    );
+                }
+            }
+        );
         usedThisRound.Add(self);
     }
 

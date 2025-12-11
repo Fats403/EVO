@@ -52,7 +52,7 @@ public class RecklessChargeTrait : Trait
         if (applied > 0)
         {
             FeedbackManager.Instance?.ShowFloatingText(
-                $"-{applied} HP [Recoil]",
+                $"-{applied} HP (Recoil)",
                 self.transform.position,
                 GameColorPalette.Damage
             );

@@ -13,6 +13,11 @@ public abstract class Trait : ScriptableObject
         return 0;
     }
 
+    public virtual int BodyBonus(Creature self)
+    {
+        return 0;
+    }
+
     public virtual int ModifyHerbivoreEatAmount(Creature self, int baseAmount, FoodPile pile)
     {
         return baseAmount;
@@ -39,11 +44,6 @@ public abstract class Trait : ScriptableObject
     public virtual bool TryNegateAttack(Creature self, Creature attacker)
     {
         return false;
-    }
-
-    public virtual int PredatorBodyBonusForTargeting(Creature self)
-    {
-        return 0;
     }
 
     public virtual void OnAnyDeath(Creature self, Creature dead) { }
@@ -91,6 +91,15 @@ public abstract class Trait : ScriptableObject
         return false;
     }
 
+    // Allow traits to ignore the normal body-size targeting rule (attacker may
+    // attack only same-body-or-smaller prey). If this returns true for an
+    // attacker/target pair, that attack ignores the body gate but still respects
+    // stealth, taunt, and avian speed rules.
+    public virtual bool IgnoreBodySizeRequirement(Creature self, Creature target)
+    {
+        return false;
+    }
+
     // Damage override (e.g., fixed damage). If returns true, use fixedDamage and skip other modifiers.
     public virtual bool TryOverrideFinalDamage(Creature self, Creature target, out int fixedDamage)
     {
@@ -134,4 +143,14 @@ public abstract class Trait : ScriptableObject
     {
         return false;
     }
+
+    // Weather change hook: fired whenever the global weather changes (including
+    // via cards that force weather). Use this for traits whose stat bonuses
+    // should appear/disappear immediately with weather, instead of relying only
+    // on round-start hooks.
+    public virtual void OnWeatherChanged(
+        Creature self,
+        WeatherType newWeather,
+        WeatherType? lastWeather
+    ) { }
 }

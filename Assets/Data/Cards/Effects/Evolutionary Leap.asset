@@ -33,6 +33,8 @@ MonoBehaviour:
   allowInDrought: 0
   allowInStorm: 0
   allowInWildfire: 0
+  aiPreferWhenBehindOnBoard: 0
+  aiMinAlliesForBuffGlobals: 2
   aiCleanseSynergy: 2
   aiAttackSynergy: 1
   aiBodyBuffMultiplier: 1

@@ -25,19 +25,23 @@ public class SacrificeTrait : Trait
             .FirstOrDefault();
         if (target != null)
         {
-            target.AddStatus(StatusTag.Regen, 2);
+            target.Heal(1);
+            self.AddStatus(StatusTag.Malnourished, 1);
             FeedbackManager.Instance?.ShowFloatingText(
-                "Regen +2",
+                "+1 HP",
                 target.transform.position,
                 GameColorPalette.Regen
             );
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Sacrifice",
+                self.transform.position,
+                GameColorPalette.TextWarning
+            );
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Malnourished +1",
+                self.transform.position,
+                GameColorPalette.Starvation
+            );
         }
-        // Self becomes malnourished from over-sacrificing its own food.
-        self.AddStatus(StatusTag.Malnourished, 1);
-        FeedbackManager.Instance?.ShowFloatingText(
-            "Malnourished +1",
-            self.transform.position,
-            GameColorPalette.Starvation
-        );
     }
 }

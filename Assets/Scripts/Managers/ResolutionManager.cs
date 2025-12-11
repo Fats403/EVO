@@ -20,8 +20,20 @@ public class ResolutionManager : MonoBehaviour
     public float eatDelay = 0.4f;
     public float attackWindup = 0.2f;
     public float attackResolvePause = 0.3f;
+
+    [Tooltip("Small pause after the attack phase completes before moving to the next phase.")]
     public float afterCarnivoreDelay = 0.3f;
+
+    [Tooltip("Small pause after the herbivore eating phase completes.")]
+    public float afterHerbivoreDelay = 0.3f;
+
+    [Tooltip("Small pause after avian foraging completes.")]
+    public float afterAvianForageDelay = 0.3f;
     public float starveDelay = 0.3f;
+
+    [Tooltip(
+        "Per-creature delay used between individual start/end-of-round status and trait procs so they don't all fire at once."
+    )]
     public float statusEffectDelay = 0.2f;
 
     [Tooltip(
@@ -54,6 +66,7 @@ public class ResolutionManager : MonoBehaviour
         foreach (var c in AllCreatures())
         {
             bool thisCreatureDidStatus = false;
+            bool thisCreatureDidTrait = false;
 
             // Status round-start ticks (e.g., Infected)
             if (c.TickStatusesAtRoundStart())
@@ -66,7 +79,11 @@ public class ResolutionManager : MonoBehaviour
                 var snapshot = c.traits != null ? c.traits.ToArray() : System.Array.Empty<Trait>();
                 foreach (var t in snapshot)
                 {
-                    t?.OnRoundStart(c);
+                    if (t != null)
+                    {
+                        t.OnRoundStart(c);
+                        thisCreatureDidTrait = true;
+                    }
                 }
             }
 
@@ -78,15 +95,21 @@ public class ResolutionManager : MonoBehaviour
                     yield return StartCoroutine(anim);
             }
 
-            // Small per-creature delay after visible start-of-round status procs so
-            // multiple Infected / similar effects don't all fire at once.
-            if (thisCreatureDidStatus && statusEffectDelay > 0f)
+            // Small per-creature delay after visible start-of-round status/trait procs so
+            // multiple effects don't all fire at once.
+            if ((thisCreatureDidStatus || thisCreatureDidTrait) && statusEffectDelay > 0f)
             {
                 yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
             }
 
-            c.ResetRoundBookkeeping();
-            c.RefreshStatsUI();
+            // A start-of-round status (e.g., Infected) or trait may have killed this creature
+            // and begun its fade/destroy sequence. Guard against calling methods on a now-
+            // destroyed or dying object to avoid MissingReferenceExceptions.
+            if (c != null && !c.isDying && c.currentHealth > 0)
+            {
+                c.ResetRoundBookkeeping();
+                c.RefreshStatsUI();
+            }
         }
 
         // Global effects: round start
@@ -118,31 +141,47 @@ public class ResolutionManager : MonoBehaviour
         yield return StartCoroutine(ResolveStarvationAndScoring());
 
         // Round end hooks
-        // First apply status round-end ticks (fatigue decay, regen, bleeding, etc.)
+        // Apply end-of-round status ticks and per-creature trait hooks with a unified
+        // pacing delay so they don't all fire at once.
         bool hadEndStatusOrGlobalEffects = false;
         float endPause = Mathf.Max(0f, roundEndEffectPause) * pacingMultiplier;
-        foreach (var c in AllCreatures())
+
+        var endRoundCreatures = AllCreatures().ToList();
+        foreach (var c in endRoundCreatures)
         {
             if (c == null)
                 continue;
-            if (c.TickStatusesAtRoundEnd())
-            {
-                hadEndStatusOrGlobalEffects = true;
-            }
-        }
 
-        // Round end traits
-        foreach (var c in AllCreatures())
-        {
-            if (c.traits == null)
-                continue;
-            if (!c.HasStatus(StatusTag.Suppressed))
+            bool thisCreatureDidStatus = c.TickStatusesAtRoundEnd();
+            bool thisCreatureDidTrait = false;
+
+            if (thisCreatureDidStatus)
+                hadEndStatusOrGlobalEffects = true;
+
+            // A status tick may have killed this creature; skip trait hooks if it's now gone.
+            if (c.currentHealth > 0 && !c.isDying && c.traits != null)
             {
-                var snapshot = c.traits != null ? c.traits.ToArray() : System.Array.Empty<Trait>();
-                foreach (var t in snapshot)
+                if (!c.HasStatus(StatusTag.Suppressed))
                 {
-                    t?.OnRoundEnd(c);
+                    var snapshot = c.traits.ToArray();
+                    foreach (var t in snapshot)
+                    {
+                        if (t != null)
+                        {
+                            t.OnRoundEnd(c);
+                            thisCreatureDidTrait = true;
+                        }
+                    }
                 }
+            }
+
+            if (thisCreatureDidTrait)
+                hadEndStatusOrGlobalEffects = true;
+
+            // Single per-creature delay after any end-of-round status/trait activity.
+            if ((thisCreatureDidStatus || thisCreatureDidTrait) && statusEffectDelay > 0f)
+            {
+                yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
             }
         }
 
@@ -268,6 +307,7 @@ public class ResolutionManager : MonoBehaviour
     {
         if (foodPile == null)
             yield break;
+        bool any = false;
         foreach (var c in AllCreatures())
         {
             if (c == null || c.data == null)
@@ -318,6 +358,7 @@ public class ResolutionManager : MonoBehaviour
             if (taken > 0)
             {
                 c.eaten += taken;
+                any = true;
 
                 if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
                 {
@@ -344,11 +385,18 @@ public class ResolutionManager : MonoBehaviour
                 );
             }
         }
+
+        // Small pause after the herbivore eating phase if anything actually happened.
+        if (any && afterHerbivoreDelay > 0f)
+        {
+            yield return new WaitForSeconds(afterHerbivoreDelay * pacingMultiplier);
+        }
     }
 
     IEnumerator ResolveAttacks()
     {
         var acted = new HashSet<Creature>();
+        bool anyAttack = false;
         while (true)
         {
             var attacker = AllCreatures().FirstOrDefault(c => c != null && !acted.Contains(c));
@@ -429,6 +477,7 @@ public class ResolutionManager : MonoBehaviour
                 acted.Add(attacker);
                 continue;
             }
+            anyAttack = true;
             var target = candidates[0];
             // Allow attacker traits to override target selection (e.g., lowest HP)
             if (
@@ -538,17 +587,7 @@ public class ResolutionManager : MonoBehaviour
             // target type; they are harassers, not primary killers.
             bool isAvian = attacker.data != null && attacker.data.type == CardType.Avian;
             bool faster = GetEffectiveSpeed(attacker) >= GetEffectiveSpeed(target);
-            int bodyBonus = 0;
-            if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
-            {
-                var atkSnapshot = attacker.traits.ToArray();
-                foreach (var tr in atkSnapshot)
-                {
-                    if (tr != null)
-                        bodyBonus += tr.PredatorBodyBonusForTargeting(attacker);
-                }
-            }
-            int effAtkBody = GetEffectiveBody(attacker) + bodyBonus;
+            int effAtkBody = GetEffectiveBody(attacker);
 
             // Avian harass: faster-than-target, always 1 damage vs any type
             bool harass = isAvian && faster;
@@ -653,6 +692,12 @@ public class ResolutionManager : MonoBehaviour
             yield return new WaitForSeconds(attackResolvePause * pacingMultiplier);
             acted.Add(attacker);
         }
+
+        // Small pause after the entire attack phase if any attacks were attempted.
+        if (anyAttack && afterCarnivoreDelay > 0f)
+        {
+            yield return new WaitForSeconds(afterCarnivoreDelay * pacingMultiplier);
+        }
     }
 
     IEnumerator ResolveAvianForaging()
@@ -710,7 +755,7 @@ public class ResolutionManager : MonoBehaviour
                     }
                 }
                 FeedbackManager.Instance?.ShowFloatingText(
-                    "+1 food",
+                    "+1 Food",
                     c.transform.position,
                     GameColorPalette.TextPositive
                 );
@@ -722,6 +767,12 @@ public class ResolutionManager : MonoBehaviour
         }
         if (!any)
             yield break;
+
+        // Small pause after avian foraging if any avians actually foraged.
+        if (afterAvianForageDelay > 0f)
+        {
+            yield return new WaitForSeconds(afterAvianForageDelay * pacingMultiplier);
+        }
     }
 
     IEnumerator ResolveStarvationAndScoring()
@@ -919,21 +970,18 @@ public class ResolutionManager : MonoBehaviour
                 return false;
         }
         // Body rule: by default, attacker can target same-body-or-smaller prey. Traits may
-        // still override this (CanTargetEqualBody / CanTargetAny). Some callers (e.g.
-        // Carnivore-vs-Carnivore fallback, reactive attacks) may request to ignore the
-        // body rule entirely.
-        int bodyBonus = 0;
-        if (!atk.HasStatus(StatusTag.Suppressed) && atk.traits != null)
-        {
-            foreach (var t in atk.traits.ToArray())
-            {
-                if (t != null)
-                    bodyBonus += t.PredatorBodyBonusForTargeting(atk);
-            }
-        }
-        int effAtkBody = GetEffectiveBody(atk) + bodyBonus;
+        // still override this (CanTargetAny / IgnoreBodySizeRequirement). Some callers
+        // (e.g. Carnivore-vs-Carnivore fallback, reactive attacks) may request to ignore
+        // the body rule entirely via ignoreBodyRule.
+        bool traitIgnoresBody =
+            !atk.HasStatus(StatusTag.Suppressed)
+            && atk.traits != null
+            && atk.traits.Any(tr => tr != null && tr.IgnoreBodySizeRequirement(atk, tgt));
+        bool effectiveIgnoreBody = ignoreBodyRule || traitIgnoresBody;
+
+        int effAtkBody = GetEffectiveBody(atk);
         int tgtBody = GetEffectiveBody(tgt);
-        if (!ignoreBodyRule)
+        if (!effectiveIgnoreBody)
         {
             // Simple rule: can attack same size or smaller by default.
             if (effAtkBody >= tgtBody)
@@ -1029,34 +1077,51 @@ public class ResolutionManager : MonoBehaviour
     public void PerformImmediateAttack(
         Creature attacker,
         Creature target,
-        bool ignoreBodyRules = false
+        bool ignoreBodyRules = false,
+        System.Action<bool> onComplete = null
     )
     {
         if (!isActiveAndEnabled)
         {
             // Fallback: if for some reason the ResolutionManager isn't active,
             // run the logic synchronously without animation.
-            PerformImmediateAttackInternal(attacker, target, ignoreBodyRules);
+            bool success = PerformImmediateAttackInternal(attacker, target, ignoreBodyRules);
+            onComplete?.Invoke(success);
             return;
         }
 
-        StartCoroutine(PerformImmediateAttackRoutine(attacker, target, ignoreBodyRules));
+        StartCoroutine(
+            PerformImmediateAttackRoutine(attacker, target, ignoreBodyRules, onComplete)
+        );
     }
 
     private IEnumerator PerformImmediateAttackRoutine(
         Creature attacker,
         Creature target,
-        bool ignoreBodyRules
+        bool ignoreBodyRules,
+        System.Action<bool> onComplete
     )
     {
         if (attacker == null || target == null)
+        {
+            onComplete?.Invoke(false);
             yield break;
+        }
         if (attacker.currentHealth <= 0 || target.currentHealth <= 0)
+        {
+            onComplete?.Invoke(false);
             yield break;
+        }
         if (target.HasStatus(StatusTag.Stealth))
+        {
+            onComplete?.Invoke(false);
             yield break;
+        }
         if (!ignoreBodyRules && !IsValidAttackTarget(attacker, target))
+        {
+            onComplete?.Invoke(false);
             yield break;
+        }
 
         // Simple bump on the attacker so reactive hits feel like real attacks.
         if (attacker != null)
@@ -1072,39 +1137,31 @@ public class ResolutionManager : MonoBehaviour
             yield return target.StartCoroutine(target.FlashDamage(0.18f));
         }
 
-        PerformImmediateAttackInternal(attacker, target, ignoreBodyRules);
+        bool success = PerformImmediateAttackInternal(attacker, target, ignoreBodyRules);
+        onComplete?.Invoke(success);
         yield return new WaitForSeconds(attackResolvePause * 0.6f * pacingMultiplier);
     }
 
     // Core damage logic for immediate attacks (no animations).
-    private void PerformImmediateAttackInternal(
+    private bool PerformImmediateAttackInternal(
         Creature attacker,
         Creature target,
         bool ignoreBodyRules
     )
     {
         if (attacker == null || target == null)
-            return;
+            return false;
         if (attacker.currentHealth <= 0 || target.currentHealth <= 0)
-            return;
+            return false;
         if (target.HasStatus(StatusTag.Stealth))
-            return;
+            return false;
 
         if (!ignoreBodyRules && !IsValidAttackTarget(attacker, target))
-            return;
+            return false;
 
         bool isAvian = attacker.data != null && attacker.data.type == CardType.Avian;
         bool faster = GetEffectiveSpeed(attacker) >= GetEffectiveSpeed(target);
-        int bodyBonus = 0;
-        if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
-        {
-            foreach (var tr in attacker.traits.ToArray())
-            {
-                if (tr != null)
-                    bodyBonus += tr.PredatorBodyBonusForTargeting(attacker);
-            }
-        }
-        int effAtkBody = GetEffectiveBody(attacker) + bodyBonus;
+        int effAtkBody = GetEffectiveBody(attacker);
         bool harass = isAvian && faster;
         int baseDmg = harass ? 1 : Mathf.Max(1, effAtkBody - GetEffectiveBody(target) + 1);
         // Try fixed-damage override first
@@ -1147,28 +1204,26 @@ public class ResolutionManager : MonoBehaviour
             }
         }
         baseDmg = Mathf.Max(0, baseDmg);
-        if (baseDmg > 0)
+        if (baseDmg <= 0)
+            return false;
+
+        // Pass attackVFX here too and use the actual applied damage value
+        // so feedback never exceeds the victim's remaining HP.
+        int applied = target.ApplyDamage(baseDmg, attacker, attackVFX);
+        if (applied > 0)
         {
-            // Pass attackVFX here too and use the actual applied damage value
-            // so feedback never exceeds the victim's remaining HP.
-            int applied = target.ApplyDamage(baseDmg, attacker, attackVFX);
-            if (applied > 0)
-            {
-                FeedbackManager.Instance?.ShowFloatingText(
-                    $"-{applied} HP",
-                    target.transform.position,
-                    GameColorPalette.Damage
-                );
-            }
-            if (
-                attacker != null
-                && attacker.data != null
-                && attacker.data.type == CardType.Carnivore
-            )
-            {
-                attacker.eaten = Mathf.Max(attacker.eaten, 1);
-            }
+            FeedbackManager.Instance?.ShowFloatingText(
+                $"-{applied} HP",
+                target.transform.position,
+                GameColorPalette.Damage
+            );
         }
+        if (attacker != null && attacker.data != null && attacker.data.type == CardType.Carnivore)
+        {
+            attacker.eaten = Mathf.Max(attacker.eaten, 1);
+        }
+
+        return applied > 0;
     }
 
     // --- Effective stat helpers ---
@@ -1176,8 +1231,12 @@ public class ResolutionManager : MonoBehaviour
     {
         if (c == null)
             return 0;
+        int traitBody =
+            (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+                ? c.traits.Sum(t => t != null ? t.BodyBonus(c) : 0)
+                : 0;
         int temp = c.GetStatus(StatusTag.BodyUp) - c.GetStatus(StatusTag.Malnourished);
-        return c.body + temp;
+        return c.body + temp + traitBody;
     }
 
     public int GetEffectiveSpeed(Creature c)

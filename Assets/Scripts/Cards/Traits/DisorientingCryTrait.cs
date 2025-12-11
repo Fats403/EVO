@@ -25,6 +25,11 @@ public class DisorientingCryTrait : Trait
 
         target.AddStatus(StatusTag.Stunned, 1);
         FeedbackManager.Instance?.ShowFloatingText(
+            "Disorienting Cry",
+            self.transform.position,
+            GameColorPalette.TextWarning
+        );
+        FeedbackManager.Instance?.ShowFloatingText(
             "Stunned",
             target.transform.position,
             GameColorPalette.TextWarning
