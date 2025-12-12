@@ -3,20 +3,23 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Traits/Herbivores/Immovable")]
 public class ImmovableTrait : Trait
 {
-    public override void OnRoundStart(Creature self)
+    public override void OnWeatherChanged(
+        Creature self,
+        WeatherType newWeather,
+        WeatherType? lastWeather
+    )
     {
         if (self == null)
             return;
         if (self.HasStatus(StatusTag.Suppressed))
             return;
+        if (self.HasStatus(StatusTag.Shielded))
+            return;
 
-        // Gain +1 Shield whenever the weather changes.
-        var wm = WeatherManager.Instance;
-        if (wm == null)
+        if (!lastWeather.HasValue)
             return;
-        if (!wm.LastWeather.HasValue)
-            return;
-        if (wm.LastWeather.Value != wm.CurrentWeather)
+
+        if (lastWeather.Value != newWeather)
         {
             self.AddStatus(StatusTag.Shielded, 1);
             FeedbackManager.Instance?.ShowFloatingText(

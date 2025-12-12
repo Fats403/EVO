@@ -131,6 +131,13 @@ public class GameManager : MonoBehaviour
             worldCanvasGroup.gameObject.SetActive(!usingDraft);
         SetCanvasGroupVisible(gameOverCanvasGroup, false);
 
+        // Manual effect selection UI starts hidden.
+        SetManualEffectSelectionUIVisible(false);
+        if (manualEffectConfirmButton != null)
+            manualEffectConfirmButton.onClick.AddListener(OnManualEffectConfirmClicked);
+        if (manualEffectCancelButton != null)
+            manualEffectCancelButton.onClick.AddListener(OnManualEffectCancelClicked);
+
         UpdatePhaseLabel();
         weatherVideoBackground?.ForceTo(WeatherType.Clear);
         // Initialize AI deck/hand before the first round begins so both players follow the same rules.
@@ -172,6 +179,10 @@ public class GameManager : MonoBehaviour
             endTurnButton.onClick.RemoveListener(OnEndTurnClicked);
         if (toggleLogButton != null)
             toggleLogButton.onClick.RemoveListener(OnToggleLogClicked);
+        if (manualEffectConfirmButton != null)
+            manualEffectConfirmButton.onClick.RemoveListener(OnManualEffectConfirmClicked);
+        if (manualEffectCancelButton != null)
+            manualEffectCancelButton.onClick.RemoveListener(OnManualEffectCancelClicked);
     }
 
     void OnEndTurnClicked()
@@ -581,13 +592,170 @@ public class GameManager : MonoBehaviour
         public SlotOwner owner;
         public List<Creature> candidates = new List<Creature>();
         public HashSet<Creature> selected = new HashSet<Creature>();
-        public int requiredCount;
+        public int minCount;
+        public int maxCount;
+        public bool allowFewerThanMax;
     }
 
     private ManualEffectSelectionState manualEffectSelection;
 
     public bool HasActiveManualEffectSelection =>
         manualEffectSelection != null && manualEffectSelection.card != null;
+
+    void SetManualEffectSelectionUIVisible(bool visible)
+    {
+        if (manualEffectSelectionGroup == null)
+            return;
+        manualEffectSelectionGroup.alpha = visible ? 1f : 0f;
+        manualEffectSelectionGroup.interactable = visible;
+        manualEffectSelectionGroup.blocksRaycasts = visible;
+    }
+
+    void UpdateManualEffectSelectionUIState()
+    {
+        if (!HasActiveManualEffectSelection)
+        {
+            SetManualEffectSelectionUIVisible(false);
+            return;
+        }
+
+        var state = manualEffectSelection;
+        if (state == null)
+        {
+            SetManualEffectSelectionUIVisible(false);
+            return;
+        }
+
+        SetManualEffectSelectionUIVisible(true);
+
+        int selectedCount = state.selected != null ? state.selected.Count : 0;
+        bool canConfirm;
+
+        if (state.allowFewerThanMax)
+        {
+            canConfirm =
+                selectedCount >= Mathf.Max(1, state.minCount)
+                && selectedCount <= Mathf.Max(1, state.maxCount);
+        }
+        else
+        {
+            canConfirm = selectedCount == Mathf.Max(1, state.maxCount);
+        }
+
+        if (manualEffectConfirmButton != null)
+            manualEffectConfirmButton.interactable = canConfirm;
+
+        if (manualEffectCancelButton != null)
+            manualEffectCancelButton.interactable = true;
+    }
+
+    void OnManualEffectConfirmClicked()
+    {
+        ConfirmManualEffectSelection();
+    }
+
+    void OnManualEffectCancelClicked()
+    {
+        CancelManualEffectSelection();
+    }
+
+    void ConfirmManualEffectSelection()
+    {
+        if (manualEffectSelection == null)
+            return;
+
+        var state = manualEffectSelection;
+        if (state.card == null)
+            return;
+
+        int selectedCount = state.selected != null ? state.selected.Count : 0;
+        if (selectedCount == 0)
+            return;
+
+        bool canConfirm;
+        if (state.allowFewerThanMax)
+        {
+            canConfirm =
+                selectedCount >= Mathf.Max(1, state.minCount)
+                && selectedCount <= Mathf.Max(1, state.maxCount);
+        }
+        else
+        {
+            canConfirm = selectedCount == Mathf.Max(1, state.maxCount);
+        }
+
+        if (!canConfirm)
+            return;
+
+        // Finalize: clear all highlights and resolve the effect.
+        var finalTargets = state.selected.Where(t => t != null).ToList();
+
+        foreach (var cand in state.candidates)
+        {
+            if (cand == null)
+                continue;
+            var h = cand.GetComponent<TargetHighlightController>();
+            if (h != null)
+                h.SetHighlighted(false);
+        }
+
+        var finalCard = state.card;
+        var finalOwner = state.owner;
+        manualEffectSelection = null;
+
+        SetManualEffectSelectionUIVisible(false);
+
+        StartCoroutine(PlayEffectCardRoutine(finalCard, finalOwner, finalTargets));
+    }
+
+    void CancelManualEffectSelection()
+    {
+        if (manualEffectSelection == null)
+            return;
+
+        var state = manualEffectSelection;
+        manualEffectSelection = null;
+
+        // Clear highlights on all candidates.
+        foreach (var cand in state.candidates)
+        {
+            if (cand == null)
+                continue;
+            var h = cand.GetComponent<TargetHighlightController>();
+            if (h != null)
+                h.SetHighlighted(false);
+        }
+
+        // Hide preview and selection UI.
+        CardPreviewManager.Instance?.HideAll();
+        SetManualEffectSelectionUIVisible(false);
+
+        // Refund momentum and return the card to hand for the local player.
+        if (state.owner == SlotOwner.Player1)
+        {
+            int refund = Mathf.Max(0, state.card != null ? state.card.momentumCost : 0);
+            if (refund > 0)
+            {
+                RefundMomentum(state.owner, refund);
+            }
+
+            if (DeckManager.Instance != null && state.card != null)
+            {
+                DeckManager.Instance.CreateCardUI(state.card, triggerLayoutAndUI: true);
+            }
+
+            // Unlock action so the player can act again.
+            p1ActionLocked = false;
+            UpdateEndTurnButtonState();
+            UpdatePhaseStatusText();
+        }
+    }
+
+    [Header("Manual Effect Selection UI")]
+    [Tooltip("Container for confirm/cancel buttons shown while choosing manual effect targets.")]
+    public CanvasGroup manualEffectSelectionGroup;
+    public UnityEngine.UI.Button manualEffectConfirmButton;
+    public UnityEngine.UI.Button manualEffectCancelButton;
 
     public bool TryPlayEffectCard(
         EffectCard card,
@@ -704,26 +872,46 @@ public class GameManager : MonoBehaviour
             )
             .ToList();
 
-        int requiredCount = 1;
+        // Determine manual selection min/max and availability requirements.
+        int maxCount = 1;
+        int minCount = 1;
+        bool allowFewerThanMax = card.allowFewerThanMax;
+
         switch (card.targetCount)
         {
             case EffectTargetCount.One:
-                requiredCount = 1;
+                maxCount = 1;
+                minCount = 1;
+                allowFewerThanMax = false;
                 break;
             case EffectTargetCount.ManySelectUpToN:
-                requiredCount = Mathf.Max(1, card.maxTargets);
+                maxCount = Mathf.Max(1, card.maxTargets);
+                if (card.minTargets > 0)
+                {
+                    minCount = Mathf.Clamp(card.minTargets, 1, maxCount);
+                }
+                else
+                {
+                    // If no explicit min is set, default to 1 when the effect
+                    // allows fewer than max, otherwise require the full max.
+                    minCount = allowFewerThanMax ? 1 : maxCount;
+                }
                 break;
             default:
-                requiredCount = 1;
+                maxCount = 1;
+                minCount = 1;
+                allowFewerThanMax = false;
                 break;
         }
 
-        if (candidates.Count < requiredCount)
+        int requiredAvailable = allowFewerThanMax ? minCount : maxCount;
+
+        if (candidates.Count < requiredAvailable)
         {
             failureReason =
-                requiredCount == 1
+                requiredAvailable == 1
                     ? "There are no valid targets for this effect."
-                    : $"You need at least {requiredCount} valid targets for this effect.";
+                    : $"You need at least {requiredAvailable} valid targets for this effect.";
             return false;
         }
 
@@ -740,16 +928,28 @@ public class GameManager : MonoBehaviour
             owner = owner,
             candidates = candidates,
             selected = new HashSet<Creature>(),
-            requiredCount = requiredCount,
+            minCount = minCount,
+            maxCount = maxCount,
+            allowFewerThanMax = allowFewerThanMax,
         };
 
         if (FeedbackManager.Instance != null)
         {
             string ownerTag = FeedbackManager.TagOwner(owner);
-            string msg =
-                requiredCount == 1
-                    ? $"{ownerTag}: Choose a target for {card.effectName}."
-                    : $"{ownerTag}: Choose {requiredCount} targets for {card.effectName}.";
+            string msg;
+            if (maxCount == 1)
+            {
+                msg = $"{ownerTag}: Choose a target for {card.effectName}.";
+            }
+            else if (allowFewerThanMax && minCount < maxCount)
+            {
+                msg =
+                    $"{ownerTag}: Choose {minCount}-{maxCount} targets for {card.effectName} (then Confirm).";
+            }
+            else
+            {
+                msg = $"{ownerTag}: Choose {maxCount} targets for {card.effectName}.";
+            }
             FeedbackManager.Instance.Log(msg);
         }
 
@@ -757,10 +957,24 @@ public class GameManager : MonoBehaviour
         // player has clear context while choosing targets.
         if (CardPreviewManager.Instance != null)
         {
-            string caption =
-                requiredCount == 1 ? "Select 1 Creature" : $"Select {requiredCount} Creatures";
+            string caption;
+            if (maxCount == 1)
+            {
+                caption = "Select 1 Creature";
+            }
+            else if (allowFewerThanMax && minCount < maxCount)
+            {
+                caption = $"Select {minCount}-{maxCount} Creatures";
+            }
+            else
+            {
+                caption = $"Select {maxCount} Creatures";
+            }
             CardPreviewManager.Instance.ShowEffectSelection(card, owner, caption);
         }
+
+        // Show and initialize confirm/cancel UI.
+        UpdateManualEffectSelectionUIState();
 
         return true;
     }
@@ -802,26 +1016,19 @@ public class GameManager : MonoBehaviour
         {
             th.SetHighlighted(nowSelected);
         }
+        // Update confirm button state after any change.
+        UpdateManualEffectSelectionUIState();
 
-        if (state.selected.Count >= state.requiredCount)
+        // For effects that must hit exactly maxCount targets (no flexibility),
+        // auto-confirm once the required number has been selected so behavior
+        // matches the original \"exact N\" flow.
+        int selectedCount = state.selected.Count;
+        bool shouldAutoConfirm =
+            !state.allowFewerThanMax && state.maxCount > 0 && selectedCount == state.maxCount;
+
+        if (shouldAutoConfirm)
         {
-            // Finalize: clear all highlights and resolve the effect.
-            var finalTargets = state.selected.Where(t => t != null).ToList();
-
-            foreach (var cand in state.candidates)
-            {
-                if (cand == null)
-                    continue;
-                var h = cand.GetComponent<TargetHighlightController>();
-                if (h != null)
-                    h.SetHighlighted(false);
-            }
-
-            var finalCard = state.card;
-            var finalOwner = state.owner;
-            manualEffectSelection = null;
-
-            StartCoroutine(PlayEffectCardRoutine(finalCard, finalOwner, finalTargets));
+            ConfirmManualEffectSelection();
         }
     }
 
@@ -1076,6 +1283,17 @@ public class GameManager : MonoBehaviour
         int perRound = GetMomentumForEra(currentEra);
         p1Momentum = perRound;
         p2Momentum = perRound;
+        UpdateMomentumUI();
+    }
+
+    public void RefundMomentum(SlotOwner owner, int amount)
+    {
+        if (amount <= 0)
+            return;
+        if (owner == SlotOwner.Player1)
+            p1Momentum += amount;
+        else
+            p2Momentum += amount;
         UpdateMomentumUI();
     }
 

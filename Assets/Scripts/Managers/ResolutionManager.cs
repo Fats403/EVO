@@ -16,19 +16,12 @@ public class ResolutionManager : MonoBehaviour
     private readonly Queue<IEnumerator> startOfRoundAnimations = new();
 
     [Header("Timing")]
-    public float preStealDelay = 0.3f;
     public float eatDelay = 0.4f;
     public float attackWindup = 0.2f;
     public float attackResolvePause = 0.3f;
 
     [Tooltip("Small pause after the attack phase completes before moving to the next phase.")]
     public float afterCarnivoreDelay = 0.3f;
-
-    [Tooltip("Small pause after the herbivore eating phase completes.")]
-    public float afterHerbivoreDelay = 0.3f;
-
-    [Tooltip("Small pause after avian foraging completes.")]
-    public float afterAvianForageDelay = 0.3f;
     public float starveDelay = 0.3f;
 
     [Tooltip(
@@ -124,20 +117,10 @@ public class ResolutionManager : MonoBehaviour
         if (startPause > 0f && hadStartStatusOrGlobalEffects)
             yield return new WaitForSeconds(startPause);
 
-        // Pre-herbivore traits
-        InvokeGlobal(g => g.OnPreHerbivore(this));
-        yield return StartCoroutine(ResolvePreHerbivoreSteals());
+        // Mixed action phase: feeding and attacking interleaved by action priority + speed.
+        yield return StartCoroutine(ResolveMixedActions());
 
-        // Resolve Herbivores eating
-        InvokeGlobal(g => g.OnHerbivores(this));
-        yield return StartCoroutine(ResolveHerbivores());
-
-        // Resolve Attacks (Carnivores and Avians, sometimes herbivores when allowed by traits)
-        yield return StartCoroutine(ResolveAttacks());
-
-        // Avian foraging then starvation and scoring
-        InvokeGlobal(g => g.OnForaging(this));
-        yield return StartCoroutine(ResolveAvianForaging());
+        // Post-action scavenging, starvation and scoring
         yield return StartCoroutine(ResolveStarvationAndScoring());
 
         // Round end hooks
@@ -269,520 +252,519 @@ public class ResolutionManager : MonoBehaviour
         startOfRoundAnimations.Enqueue(routine);
     }
 
-    IEnumerator ResolvePreHerbivoreSteals()
+    int GetActionPriority(Creature c)
     {
-        if (foodPile == null)
-            yield break;
-        foreach (var c in AllCreatures())
+        if (c == null)
+            return 0;
+        if (c.HasStatus(StatusTag.Suppressed) || c.traits == null)
+            return 0;
+        int best = 0;
+        var snap = c.traits.ToArray();
+        foreach (var t in snap)
         {
-            if (c.traits == null)
+            if (t == null)
                 continue;
-            int steal = 0;
-            foreach (var t in c.traits)
-            {
-                if (t == null)
-                    continue;
-                steal += Mathf.Max(0, t.PreHerbivorePileSteal(c, foodPile));
-            }
-            if (steal > 0)
-            {
-                int taken = foodPile.Take(steal);
-                c.eaten += taken;
-                if (taken > 0)
-                {
-                    Debug.Log($"[PreEat] {c.name} stole {taken}.");
-                    FeedbackManager.Instance?.ShowFloatingText(
-                        $"Steal +{taken}",
-                        c.transform.position,
-                        GameColorPalette.TextPositive
-                    );
-                }
-                if (taken > 0)
-                    yield return new WaitForSeconds(preStealDelay * pacingMultiplier);
-            }
+            best = Mathf.Max(best, t.ActionPriorityBonus(c));
         }
+        return best;
     }
 
-    IEnumerator ResolveHerbivores()
+    public IEnumerable<Creature> AllCreaturesInActionOrder()
     {
-        if (foodPile == null)
-            yield break;
-        bool any = false;
-        foreach (var c in AllCreatures())
+        var q = FindObjectsByType<Creature>(FindObjectsSortMode.None)
+            .Where(c => c != null && c.currentHealth > 0 && !c.isDying);
+
+        static int Rand()
         {
-            if (c == null || c.data == null)
+            return GameManager.Instance != null
+                ? GameManager.Instance.NextRandomInt(0, int.MaxValue)
+                : UnityEngine.Random.Range(0, int.MaxValue);
+        }
+
+        // Priority first, then speed.
+        return q.OrderByDescending(c => GetActionPriority(c))
+            .ThenByDescending(c => GetEffectiveSpeed(c))
+            .ThenBy(_ => Rand());
+    }
+
+    IEnumerator ResolveMixedActions()
+    {
+        // Snapshot order at start of action phase.
+        var order = AllCreaturesInActionOrder().ToList();
+        bool any = false;
+
+        foreach (var actor in order)
+        {
+            if (actor == null)
                 continue;
-            if (c.data.type != CardType.Herbivore)
+            if (actor.isDying || actor.currentHealth <= 0)
                 continue;
-            if (c.HasStatus(StatusTag.Stunned) || c.HasStatus(StatusTag.NoForage))
+            if (actor.HasStatus(StatusTag.Stunned))
                 continue;
-            int need = Mathf.Max(0, GetEffectiveBody(c) - c.eaten);
-            if (need <= 0)
+
+            if (actor.data == null)
                 continue;
-            int desired = need;
-            if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+
+            bool did = false;
+
+            switch (actor.data.type)
             {
-                var snap = c.traits.ToArray();
-                foreach (var t in snap)
-                {
-                    if (t == null)
-                        continue;
-                    desired = t.ModifyHerbivoreEatAmount(c, desired, foodPile);
-                }
-                desired = Mathf.Max(0, desired);
+                case CardType.Herbivore:
+                    yield return StartCoroutine(ResolveHerbivoreSingleAction(actor, r => did = r));
+                    break;
+                case CardType.Carnivore:
+                case CardType.Avian:
+                    yield return StartCoroutine(ResolveSingleAttackAction(actor, r => did = r));
+                    break;
             }
 
-            // If, after trait modifications, there's no desire or no food, skip.
-            if (desired <= 0 || foodPile.count <= 0)
-                continue;
-
-            // Any overt action (foraging) reveals Stealth.
-            c.RevealIfStealthed();
-
-            // Play the eat animation first so that the visible lunge happens before
-            // the pile count and "after eat" hooks fire.
-            if (foodPile != null)
-            {
-                yield return StartCoroutine(
-                    c.PlayEatAnimation(foodPile.transform.position, eatDelay * pacingMultiplier)
-                );
-            }
-            else
-            {
-                yield return new WaitForSeconds(eatDelay * pacingMultiplier);
-            }
-
-            // After the animation completes, actually remove food from the pile and
-            // apply "after eat" trait hooks so the visual and rules timing line up.
-            int taken = foodPile.Take(desired);
-            if (taken > 0)
-            {
-                c.eaten += taken;
+            if (did)
                 any = true;
 
-                if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
-                {
-                    var eatSnap = c.traits.ToArray();
-                    foreach (var t in eatSnap)
-                    {
-                        if (t != null)
-                            t.OnAfterEat(c, taken, foodPile);
-                    }
-                }
-
-                if (eatVFX != null)
-                {
-                    c.PlayVFX(eatVFX);
-                }
-
-                FeedbackManager.Instance?.ShowFloatingText(
-                    $"+{taken} Food",
-                    c.transform.position,
-                    GameColorPalette.TextPositive
-                );
-                FeedbackManager.Instance?.Log(
-                    $"{FeedbackManager.TagOwner(c.owner)} {c.name} ate {taken}."
-                );
-            }
+            if (did && statusEffectDelay > 0f)
+                yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
         }
 
-        // Small pause after the herbivore eating phase if anything actually happened.
-        if (any && afterHerbivoreDelay > 0f)
-        {
-            yield return new WaitForSeconds(afterHerbivoreDelay * pacingMultiplier);
-        }
+        if (any && afterCarnivoreDelay > 0f)
+            yield return new WaitForSeconds(afterCarnivoreDelay * pacingMultiplier);
     }
 
-    IEnumerator ResolveAttacks()
+    IEnumerator ResolveHerbivoreSingleAction(Creature c, System.Action<bool> onComplete)
     {
-        var acted = new HashSet<Creature>();
-        bool anyAttack = false;
-        while (true)
+        bool did = false;
+        bool didForage = false;
+        if (c == null || c.data == null)
         {
-            var attacker = AllCreatures().FirstOrDefault(c => c != null && !acted.Contains(c));
-            if (attacker == null)
-                break;
-            if (attacker == null || attacker.data == null)
-                continue;
-            // Stunned creatures cannot act this round
-            if (attacker.HasStatus(StatusTag.Stunned))
+            onComplete?.Invoke(false);
+            yield break;
+        }
+
+        // Default herbivore behavior: forage if hungry and able. If it cannot/doesn't forage,
+        // it may attack only if a trait explicitly allows attacking.
+        bool canForage = !c.HasStatus(StatusTag.Stunned) && !c.HasStatus(StatusTag.NoForage);
+
+        if (foodPile != null && canForage)
+        {
+            int need = Mathf.Max(0, GetEffectiveBody(c) - c.eaten);
+            if (need > 0 && foodPile.count > 0)
             {
-                acted.Add(attacker);
-                continue;
-            }
-            if (attacker.data.type == CardType.Herbivore)
-            {
-                bool traitAllows =
-                    attacker.traits != null
-                    && attacker.traits.Any(t => t != null && t.CanAttack(attacker));
-                if (!traitAllows)
+                int desired = need;
+                if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
                 {
-                    acted.Add(attacker);
-                    continue; // herbivores don't attack by default
+                    var snap = c.traits.ToArray();
+                    foreach (var t in snap)
+                    {
+                        if (t == null)
+                            continue;
+                        desired = t.ModifyHerbivoreEatAmount(c, desired, foodPile);
+                    }
+                    desired = Mathf.Max(0, desired);
+                }
+
+                if (desired > 0 && foodPile.count > 0)
+                {
+                    c.RevealIfStealthed();
+
+                    yield return StartCoroutine(
+                        c.PlayEatAnimation(foodPile.transform.position, eatDelay * pacingMultiplier)
+                    );
+
+                    int taken = foodPile.Take(desired);
+                    if (taken > 0)
+                    {
+                        c.eaten += taken;
+                        did = true;
+                        didForage = true;
+
+                        if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+                        {
+                            var eatSnap = c.traits.ToArray();
+                            foreach (var t in eatSnap)
+                            {
+                                if (t != null)
+                                    t.OnAfterEat(c, taken, foodPile);
+                            }
+                        }
+
+                        if (eatVFX != null)
+                            c.PlayVFX(eatVFX);
+
+                        FeedbackManager.Instance?.ShowFloatingText(
+                            $"+{taken} Food",
+                            c.transform.position,
+                            GameColorPalette.TextPositive
+                        );
+                    }
                 }
             }
-            // Candidates: opponent
-            var enemies = AllCreatures()
-                .Where(c => c != null && c.data != null && c.owner != attacker.owner);
-            // Taunt: if any enemy has Taunt, restrict to only taunt targets (closest wins)
-            var tauntTargets = enemies.Where(c => c.HasStatus(StatusTag.Taunt)).ToList();
-            bool canTargetAny =
-                !attacker.HasStatus(StatusTag.Suppressed)
-                && attacker.traits != null
-                && attacker.traits.Any(tr => tr != null && tr.CanTargetAny(attacker));
-            bool isAvianAttacker = attacker.data.type == CardType.Avian;
-            var basePool =
-                (tauntTargets.Count > 0)
-                    ? tauntTargets.AsEnumerable()
-                    : (
-                        // Avians are allowed to harass any enemy type; they don't
-                        // exclude carnivores at the candidate level. The actual
-                        // speed/body rules are enforced inside IsValidAttackTarget.
-                        (canTargetAny || isAvianAttacker)
-                            ? enemies
-                            : enemies.Where(c => c.data.type != CardType.Carnivore)
-                    );
-            var candidates = basePool
-                .Where(c => IsValidAttackTarget(attacker, c))
+        }
+
+        // Stampede-like effects: if this herbivore foraged and a trait allows it,
+        // it may make a bonus attack immediately after eating.
+        if (didForage && c.traits != null && !c.HasStatus(StatusTag.Suppressed))
+        {
+            bool allowBonus = c.traits.Any(t => t != null && t.AllowBonusAttackAfterForage(c));
+            if (allowBonus)
+            {
+                bool attacked = false;
+                yield return StartCoroutine(ResolveSingleAttackAction(c, r => attacked = r));
+                did = did || attacked;
+            }
+        }
+
+        if (!did)
+        {
+            // No forage happened; allow a trait-enabled herbivore attack.
+            bool attacked = false;
+            yield return StartCoroutine(ResolveSingleAttackAction(c, r => attacked = r));
+            did = attacked;
+        }
+
+        onComplete?.Invoke(did);
+    }
+
+    IEnumerator ResolveSingleAttackAction(Creature attacker, System.Action<bool> onComplete)
+    {
+        bool did = false;
+        if (attacker == null || attacker.data == null)
+        {
+            onComplete?.Invoke(false);
+            yield break;
+        }
+
+        // Stunned creatures cannot act.
+        if (attacker.HasStatus(StatusTag.Stunned))
+        {
+            onComplete?.Invoke(false);
+            yield break;
+        }
+
+        // Herbivores only attack if a trait explicitly allows it.
+        if (attacker.data.type == CardType.Herbivore)
+        {
+            bool traitAllows =
+                attacker.traits != null
+                && attacker.traits.Any(t => t != null && t.CanAttack(attacker));
+            if (!traitAllows)
+            {
+                onComplete?.Invoke(false);
+                yield break;
+            }
+        }
+
+        // Candidates: opponent
+        var enemies = FindObjectsByType<Creature>(FindObjectsSortMode.None)
+            .Where(c => c != null && c.data != null && c.currentHealth > 0 && !c.isDying)
+            .Where(c => c.owner != attacker.owner);
+
+        // Taunt: if any enemy has Taunt, restrict to only taunt targets (closest wins)
+        var tauntTargets = enemies.Where(c => c.HasStatus(StatusTag.Taunt)).ToList();
+
+        bool canTargetAny =
+            !attacker.HasStatus(StatusTag.Suppressed)
+            && attacker.traits != null
+            && attacker.traits.Any(tr => tr != null && tr.CanTargetAny(attacker));
+
+        bool isAvianAttacker = attacker.data.type == CardType.Avian;
+
+        var basePool =
+            (tauntTargets.Count > 0)
+                ? tauntTargets.AsEnumerable()
+                : (
+                    (canTargetAny || isAvianAttacker)
+                        ? enemies
+                        : enemies.Where(c => c.data.type != CardType.Carnivore)
+                );
+
+        var candidates = basePool
+            .Where(c => IsValidAttackTarget(attacker, c))
+            .OrderBy(c => Vector3.SqrMagnitude(c.transform.position - attacker.transform.position))
+            .ToList();
+
+        // Carnivore-vs-carnivore fallback as in the original loop.
+        if (candidates.Count == 0 && attacker.data.type == CardType.Carnivore)
+        {
+            var carnivoreEnemies = enemies.Where(c => c.data.type == CardType.Carnivore);
+            var tauntCarnivores = carnivoreEnemies
+                .Where(c => c.HasStatus(StatusTag.Taunt))
+                .ToList();
+            var carniPool =
+                (tauntCarnivores.Count > 0) ? tauntCarnivores.AsEnumerable() : carnivoreEnemies;
+            candidates = carniPool
+                .Where(c => IsValidAttackTarget(attacker, c, ignoreBodyRule: true))
                 .OrderBy(c =>
                     Vector3.SqrMagnitude(c.transform.position - attacker.transform.position)
                 )
                 .ToList();
+        }
 
-            // If no valid non-carnivore (or unrestricted) targets exist, Carnivores will still
-            // fight each other as a fallback, ignoring body size rules but respecting stealth,
-            // taunt, and any special trait gating.
-            if (
-                candidates.Count == 0
-                && attacker.data != null
-                && attacker.data.type == CardType.Carnivore
-            )
-            {
-                var carnivoreEnemies = enemies.Where(c => c.data.type == CardType.Carnivore);
-                var tauntCarnivores = carnivoreEnemies
-                    .Where(c => c.HasStatus(StatusTag.Taunt))
-                    .ToList();
-                var carniPool =
-                    (tauntCarnivores.Count > 0) ? tauntCarnivores.AsEnumerable() : carnivoreEnemies;
-                candidates = carniPool
-                    .Where(c => IsValidAttackTarget(attacker, c, ignoreBodyRule: true))
-                    .OrderBy(c =>
-                        Vector3.SqrMagnitude(c.transform.position - attacker.transform.position)
-                    )
-                    .ToList();
-            }
+        if (candidates.Count == 0)
+        {
+            onComplete?.Invoke(false);
+            yield break;
+        }
 
-            if (candidates.Count == 0)
+        var target = candidates[0];
+
+        // Allow attacker traits to override target selection (e.g., lowest HP)
+        if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
+        {
+            var snapChoose = attacker.traits.ToArray();
+            foreach (var tr in snapChoose)
             {
-                acted.Add(attacker);
-                continue;
-            }
-            anyAttack = true;
-            var target = candidates[0];
-            // Allow attacker traits to override target selection (e.g., lowest HP)
-            if (
-                attacker != null
-                && attacker.traits != null
-                && !attacker.HasStatus(StatusTag.Suppressed)
-            )
-            {
-                var snapChoose = attacker.traits.ToArray();
-                foreach (var tr in snapChoose)
+                if (tr == null)
+                    continue;
+                var picked = tr.ChooseAttackTarget(attacker, candidates, target);
+                if (picked != null && candidates.Contains(picked))
                 {
-                    if (tr == null)
-                        continue;
-                    var picked = tr.ChooseAttackTarget(attacker, candidates, target);
-                    if (picked != null && candidates.Contains(picked))
-                    {
-                        target = picked;
-                        break;
-                    }
+                    target = picked;
+                    break;
                 }
             }
-            // Attack bump tween on creature (always perform to show attempted attack)
-            var atkCreature = attacker;
-            if (atkCreature != null)
-                yield return atkCreature.StartCoroutine(
-                    atkCreature.PlayAttackBump(0.35f, attackWindup)
-                );
+        }
 
-            // Pre-hit reactions (trigger even if attack is later negated)
-            if (target != null && !target.HasStatus(StatusTag.Suppressed) && target.traits != null)
+        // Attack bump tween on creature (always perform to show attempted attack)
+        yield return attacker.StartCoroutine(attacker.PlayAttackBump(0.35f, attackWindup));
+
+        // Pre-hit reactions (trigger even if attack is later negated)
+        if (target != null && !target.HasStatus(StatusTag.Suppressed) && target.traits != null)
+        {
+            var tgtPre = target.traits.ToArray();
+            foreach (var tr in tgtPre)
             {
-                var tgtPre = target.traits.ToArray();
-                foreach (var tr in tgtPre)
+                tr?.OnTargetedByAttack(target, attacker);
+            }
+        }
+        foreach (
+            var ally in FindObjectsByType<Creature>(FindObjectsSortMode.None)
+                .Where(x =>
+                    x != null
+                    && x.currentHealth > 0
+                    && !x.isDying
+                    && x.owner == target.owner
+                    && x != target
+                )
+        )
+        {
+            if (!ally.HasStatus(StatusTag.Suppressed) && ally.traits != null)
+            {
+                var allySnap = ally.traits.ToArray();
+                foreach (var tr in allySnap)
                 {
-                    if (tr != null)
-                        tr.OnTargetedByAttack(target, attacker);
+                    tr?.OnAllyTargeted(ally, target, attacker);
                 }
             }
-            foreach (
-                var ally in AllCreatures()
-                    .Where(x => x != null && x.owner == target.owner && x != target)
-            )
+        }
+
+        if (attacker == null || attacker.currentHealth <= 0 || attacker.isDying)
+        {
+            onComplete?.Invoke(false);
+            yield break;
+        }
+
+        // Check target defense traits – may negate attack (after windup to still show attempt)
+        bool negated = false;
+        if (target != null && !target.HasStatus(StatusTag.Suppressed) && target.traits != null)
+        {
+            var tgtSnap2 = target.traits.ToArray();
+            foreach (var tr in tgtSnap2)
             {
-                if (!ally.HasStatus(StatusTag.Suppressed) && ally.traits != null)
+                if (tr != null && tr.TryNegateAttack(target, attacker))
                 {
-                    var allySnap = ally.traits.ToArray();
-                    foreach (var tr in allySnap)
-                    {
-                        if (tr != null)
-                            tr.OnAllyTargeted(ally, target, attacker);
-                    }
+                    negated = true;
+                    break;
                 }
             }
-            if (attacker == null || attacker.currentHealth == 0)
-            {
-                acted.Add(attacker);
-                continue;
-            }
+        }
 
-            // Check target defense traits – may negate attack (after windup to still show attempt)
-            bool negated = false;
-            if (!target.HasStatus(StatusTag.Suppressed) && target.traits != null)
+        if (negated)
+        {
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Blocked",
+                target.transform.position,
+                GameColorPalette.TextWarning
+            );
+            did = true;
+
+            // After-attack resolution callback for attacker traits (negated)
+            if (attacker != null && attacker.traits != null)
             {
-                var tgtSnap2 = target.traits.ToArray();
-                foreach (var tr in tgtSnap2)
+                var afterNeg = attacker.traits.ToArray();
+                foreach (var tr in afterNeg)
                 {
-                    if (tr != null && tr.TryNegateAttack(target, attacker))
-                    {
-                        negated = true;
-                        break;
-                    }
+                    tr?.OnAfterAttackResolved(attacker, target, wasNegated: true);
                 }
             }
-            if (negated)
+
+            yield return new WaitForSeconds(attackResolvePause * pacingMultiplier);
+            onComplete?.Invoke(did);
+            yield break;
+        }
+
+        // Stealth: any attack attempt reveals the attacker.
+        attacker.RevealIfStealthed();
+
+        if (target != null)
+            yield return target.StartCoroutine(target.FlashDamage(0.25f));
+
+        bool isAvian = attacker.data.type == CardType.Avian;
+        bool faster = GetEffectiveSpeed(attacker) >= GetEffectiveSpeed(target);
+        bool harass = isAvian && faster;
+
+        int baseDmg = harass
+            ? 1
+            : Mathf.Max(1, GetEffectiveBody(attacker) - GetEffectiveBody(target) + 1);
+        bool overridden = false;
+        if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
+        {
+            var atkSnapshot2 = attacker.traits.ToArray();
+            foreach (var tr in atkSnapshot2)
             {
-                FeedbackManager.Instance?.ShowFloatingText(
-                    "Blocked",
-                    target.transform.position,
-                    GameColorPalette.TextWarning
-                );
-                FeedbackManager.Instance?.Log(
-                    $"{FeedbackManager.TagOwner(attacker.owner)} {attacker.name} attack negated by {target.name}"
-                );
-                yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
-                // After-attack resolution callback for attacker traits (negated)
-                if (attacker != null && attacker.traits != null)
+                if (tr != null && tr.TryOverrideFinalDamage(attacker, target, out var fixedDmg))
                 {
-                    var afterNeg = attacker.traits.ToArray();
-                    foreach (var tr in afterNeg)
-                    {
-                        tr?.OnAfterAttackResolved(attacker, target, wasNegated: true);
-                    }
-                }
-                acted.Add(attacker);
-                continue;
-            }
-
-            // Stealth: any attack attempt reveals the attacker.
-            attacker.RevealIfStealthed();
-
-            // Brief red flash on target
-            if (target != null)
-                yield return target.StartCoroutine(target.FlashDamage(0.25f));
-
-            // Determine if this is an avian harass (baseline poke). Avians that are at
-            // least as fast as their target always deal fixed 1 damage regardless of
-            // target type; they are harassers, not primary killers.
-            bool isAvian = attacker.data != null && attacker.data.type == CardType.Avian;
-            bool faster = GetEffectiveSpeed(attacker) >= GetEffectiveSpeed(target);
-            int effAtkBody = GetEffectiveBody(attacker);
-
-            // Avian harass: faster-than-target, always 1 damage vs any type
-            bool harass = isAvian && faster;
-
-            // Damage calculation
-            int baseDmg = harass ? 1 : Mathf.Max(1, effAtkBody - GetEffectiveBody(target) + 1);
-            bool overridden = false;
-            if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
-            {
-                var atkSnapshot2 = attacker.traits.ToArray();
-                foreach (var tr in atkSnapshot2)
-                {
-                    if (tr != null && tr.TryOverrideFinalDamage(attacker, target, out var fixedDmg))
-                    {
-                        baseDmg = Mathf.Max(0, fixedDmg);
-                        overridden = true;
-                        break;
-                    }
-                }
-                if (!overridden)
-                {
-                    foreach (var tr in atkSnapshot2)
-                    {
-                        if (tr != null)
-                            baseDmg = tr.ModifyOutgoingDamage(attacker, target, baseDmg);
-                    }
-                }
-            }
-            if (!overridden && !target.HasStatus(StatusTag.Suppressed) && target.traits != null)
-            {
-                var tgtSnapshot = target.traits.ToArray();
-                foreach (var tr in tgtSnapshot)
-                {
-                    if (tr != null)
-                        baseDmg = tr.ModifyIncomingDamage(target, attacker, baseDmg);
+                    baseDmg = Mathf.Max(0, fixedDmg);
+                    overridden = true;
+                    break;
                 }
             }
             if (!overridden)
             {
-                // DamageUp adds flat damage
-                baseDmg += Mathf.Max(0, attacker.GetStatus(StatusTag.DamageUp));
-                // Rage doubles next damage, then clears
-                if (attacker.HasStatus(StatusTag.Rage) && baseDmg > 0)
+                foreach (var tr in atkSnapshot2)
                 {
-                    baseDmg *= 2;
-                    attacker.ClearStatus(StatusTag.Rage);
+                    if (tr != null)
+                        baseDmg = tr.ModifyOutgoingDamage(attacker, target, baseDmg);
                 }
             }
-            baseDmg = Mathf.Max(0, baseDmg);
-            if (baseDmg > 0)
-            {
-                // Pass attackVFX to ApplyDamage and use the actual applied damage
-                // for feedback/scoring so it never exceeds remaining HP.
-                int applied = target.ApplyDamage(baseDmg, attacker, attackVFX);
-                if (applied > 0)
-                {
-                    /// var dmgTag = harass ? "Harass" : "Hit";
-                    FeedbackManager.Instance?.ShowFloatingText(
-                        $"-{applied} HP",
-                        target.transform.position,
-                        GameColorPalette.Damage
-                    );
-                }
-                // Carnivores count a successful damaging hit as "eating" for starvation purposes
-                if (
-                    attacker != null
-                    && attacker.data != null
-                    && attacker.data.type == CardType.Carnivore
-                )
-                {
-                    attacker.eaten = Mathf.Max(attacker.eaten, 1);
-                }
-            }
-
-            // Remove target if dead
-            if (target == null)
-            {
-                // target destroyed by ApplyDamage -> Kill, send death notifications
-            }
-            else if (target.currentHealth == 0)
-            {
-                // Notify attacker traits
-                if (attacker.traits != null)
-                {
-                    var atkSnapshot3 = attacker.traits.ToArray();
-                    foreach (var tr in atkSnapshot3)
-                    {
-                        if (tr != null)
-                            tr.OnAfterKill(attacker, target);
-                    }
-                }
-            }
-            // After-attack resolution callback for attacker traits (successful or zero-damage hit)
-            if (attacker != null && attacker.traits != null)
-            {
-                var afterSnap = attacker.traits.ToArray();
-                foreach (var tr in afterSnap)
-                {
-                    tr?.OnAfterAttackResolved(attacker, target, wasNegated: false);
-                }
-            }
-            yield return new WaitForSeconds(attackResolvePause * pacingMultiplier);
-            acted.Add(attacker);
         }
-
-        // Small pause after the entire attack phase if any attacks were attempted.
-        if (anyAttack && afterCarnivoreDelay > 0f)
+        if (
+            !overridden
+            && target != null
+            && !target.HasStatus(StatusTag.Suppressed)
+            && target.traits != null
+        )
         {
-            yield return new WaitForSeconds(afterCarnivoreDelay * pacingMultiplier);
+            var tgtSnapshot = target.traits.ToArray();
+            foreach (var tr in tgtSnapshot)
+            {
+                if (tr != null)
+                    baseDmg = tr.ModifyIncomingDamage(target, attacker, baseDmg);
+            }
         }
-    }
-
-    IEnumerator ResolveAvianForaging()
-    {
-        if (foodPile == null)
-            yield break;
-        bool any = false;
-        foreach (var c in AllCreatures())
+        if (!overridden)
         {
-            if (c == null || c.data == null)
-                continue;
-            if (c.data.type != CardType.Avian)
-                continue;
-            int need = Mathf.Max(0, GetEffectiveBody(c) - c.eaten);
-            if (need <= 0)
-                continue;
-            if (foodPile.count <= 0)
-                continue;
-            if (c.HasStatus(StatusTag.Stunned) || c.HasStatus(StatusTag.NoForage))
-                continue;
-            if (c.traits != null && c.traits.Any(t => t != null && !t.CanForage(c)))
-                continue;
-
-            // Any overt action (foraging) reveals Stealth.
-            c.RevealIfStealthed();
-
-            // Play a quick "forage" lunge toward the food pile so avians feel
-            // visually consistent with herbivores, then apply the actual food
-            // removal and after-eat hooks.
-            if (foodPile != null)
+            baseDmg += Mathf.Max(0, attacker.GetStatus(StatusTag.DamageUp));
+            if (attacker.HasStatus(StatusTag.Rage) && baseDmg > 0)
             {
-                yield return StartCoroutine(
-                    c.PlayEatAnimation(foodPile.transform.position, eatDelay * pacingMultiplier)
-                );
+                baseDmg *= 2;
+                attacker.ClearStatus(StatusTag.Rage);
             }
-            else
-            {
-                yield return new WaitForSeconds(eatDelay * pacingMultiplier);
-            }
+        }
+        baseDmg = Mathf.Max(0, baseDmg);
 
-            if (foodPile.count <= 0)
-                continue;
-
-            int taken = foodPile.Take(1);
-            if (taken > 0)
+        if (baseDmg > 0 && target != null)
+        {
+            int applied = target.ApplyDamage(baseDmg, attacker, attackVFX);
+            if (applied > 0)
             {
-                c.eaten += taken;
-                // Notify eater traits
-                if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
-                {
-                    var eatSnap = c.traits.ToArray();
-                    foreach (var t in eatSnap)
-                    {
-                        t?.OnAfterEat(c, taken, foodPile);
-                    }
-                }
                 FeedbackManager.Instance?.ShowFloatingText(
-                    "+1 Food",
-                    c.transform.position,
-                    GameColorPalette.TextPositive
+                    $"-{applied} HP",
+                    target.transform.position,
+                    GameColorPalette.Damage
                 );
-                FeedbackManager.Instance?.Log(
-                    $"{FeedbackManager.TagOwner(c.owner)} {c.name} forages +1"
-                );
-                any = true;
+                did = true;
             }
         }
-        if (!any)
-            yield break;
 
-        // Small pause after avian foraging if any avians actually foraged.
-        if (afterAvianForageDelay > 0f)
+        // Notify attacker traits about kills (used by some traits for bonus effects).
+        // Kill credit for scoring is recorded in Creature.ApplyDamageInternal.
+        if (
+            target != null
+            && target.currentHealth == 0
+            && attacker != null
+            && attacker.traits != null
+        )
         {
-            yield return new WaitForSeconds(afterAvianForageDelay * pacingMultiplier);
+            var atkSnapshot3 = attacker.traits.ToArray();
+            foreach (var tr in atkSnapshot3)
+            {
+                tr?.OnAfterKill(attacker, target);
+            }
         }
+
+        // After-attack resolution callback for attacker traits (successful or zero-damage hit)
+        if (attacker != null && attacker.traits != null)
+        {
+            var afterSnap = attacker.traits.ToArray();
+            foreach (var tr in afterSnap)
+            {
+                tr?.OnAfterAttackResolved(attacker, target, wasNegated: false);
+            }
+        }
+
+        yield return new WaitForSeconds(attackResolvePause * pacingMultiplier);
+        onComplete?.Invoke(did);
     }
 
     IEnumerator ResolveStarvationAndScoring()
     {
         var creatures = FindObjectsByType<Creature>(FindObjectsSortMode.None);
 
+        static void ShowScoreBreakdown(Creature c, int gain, string label)
+        {
+            if (c == null || gain <= 0)
+                return;
+
+            string text = !string.IsNullOrEmpty(label)
+                ? $"Score +{gain} ({label})"
+                : $"Score +{gain}";
+
+            FeedbackManager.Instance?.ShowFloatingText(
+                text,
+                c.transform.position,
+                GameColorPalette.ScoreGain
+            );
+        }
+
+        // --- Pre-Pass: Avian fallback scavenging from leftover pile (survival only, no VP) ---
+        // After the mixed action phase, any avian that has not eaten may scavenge 1 remaining food
+        // from the pile (if any) so they don't constantly starve. This grants no score by default.
+        if (foodPile != null && foodPile.count > 0)
+        {
+            foreach (var c in creatures)
+            {
+                if (c == null || c.data == null)
+                    continue;
+                if (c.currentHealth <= 0 || c.isDying)
+                    continue;
+                if (c.data.type != CardType.Avian)
+                    continue;
+                if (c.HasStatus(StatusTag.NoForage))
+                    continue;
+                if (c.eaten > 0)
+                    continue;
+                if (foodPile.count <= 0)
+                    break;
+
+                int taken = foodPile.Take(1);
+                if (taken > 0)
+                {
+                    c.eaten = Mathf.Max(c.eaten, 1);
+                    FeedbackManager.Instance?.ShowFloatingText(
+                        "Scavenge +1 Food",
+                        c.transform.position,
+                        GameColorPalette.ScavengeGain
+                    );
+                    yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
+                }
+            }
+        }
+
         // --- Pass 1: Apply starvation warnings/stacks/damage with a small delay per creature ---
         foreach (var c in creatures)
         {
             if (c == null)
+                continue;
+            if (c.isDying || c.currentHealth <= 0)
                 continue;
             bool didEat = c.eaten > 0;
             bool isStarvable =
@@ -848,66 +830,67 @@ public class ResolutionManager : MonoBehaviour
                 yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
         }
 
-        // --- Pass 2: Food-based scoring for herbivores, with a small delay per creature ---
+        // --- Pass 2: Herbivore food scoring (alive-only, only if fully fed) ---
         foreach (var c in creatures)
         {
             if (c == null)
                 continue;
-            if (c.data != null && c.data.type == CardType.Herbivore && c.eaten > 0)
+            if (c.isDying || c.currentHealth <= 0)
+                continue;
+
+            if (c.data != null && c.data.type == CardType.Herbivore)
             {
-                int gain = c.eaten;
+                int need = Mathf.Max(1, GetEffectiveBody(c));
+                if (c.eaten >= need)
+                {
+                    int gain = need;
+                    ScoreManager.Instance?.Add(c.owner, gain);
+                    ShowScoreBreakdown(c, gain, "Food");
+                    yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
+                }
+            }
+        }
+
+        // --- Pass 3: Kill-based scoring (alive-only) + Carnivore survival bonus + Avian scavenge bonus ---
+        foreach (var c in creatures)
+        {
+            if (c == null || c.data == null)
+                continue;
+            if (c.isDying || c.currentHealth <= 0)
+                continue;
+
+            // Kills: award victim-body points (only if killer survived to scoring).
+            if (c.roundKillBody > 0)
+            {
+                int gain = Mathf.Max(0, c.roundKillBody);
                 ScoreManager.Instance?.Add(c.owner, gain);
-                FeedbackManager.Instance?.ShowFloatingText(
-                    $"Score +{gain}",
-                    c.transform.position,
-                    GameColorPalette.ScoreGain
-                );
-                FeedbackManager.Instance?.Log(
-                    $"{FeedbackManager.TagOwner(c.owner)} {c.name} scores {gain} from food"
-                );
+                ShowScoreBreakdown(c, gain, "Kills");
+                yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
+            }
+
+            // Carnivore survival: +1 if fed (eaten > 0) and alive.
+            if (c.data.type == CardType.Carnivore && c.eaten > 0)
+            {
+                ScoreManager.Instance?.Add(c.owner, 1);
+                ShowScoreBreakdown(c, 1, "Survival");
+                yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
+            }
+
+            // Avian scavenge point: +1 once per round if any enemy died while this avian was alive.
+            if (c.data.type == CardType.Avian && c.roundHasScavengePoint)
+            {
+                ScoreManager.Instance?.Add(c.owner, 1);
+                ShowScoreBreakdown(c, 1, "Scavenge");
                 yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
             }
         }
 
-        // After scoring from food, clear eaten counters for the next round.
+        // Cleanup: clear eaten counters for the next round.
         foreach (var c in creatures)
         {
             if (c != null)
                 c.eaten = 0;
         }
-
-        // --- Pass 3: Net damage scoring from combat, with a small delay per creature ---
-        foreach (var c in AllCreatures())
-        {
-            if (c == null)
-                continue;
-            int net = Mathf.Max(0, c.roundDamageDealt - c.roundHealingUndone);
-            if (net > 0)
-            {
-                ScoreManager.Instance?.Add(c.owner, net);
-                FeedbackManager.Instance?.ShowFloatingText(
-                    $"Score +{net}",
-                    c.transform.position,
-                    GameColorPalette.ScoreGain
-                );
-                FeedbackManager.Instance?.Log(
-                    $"{FeedbackManager.TagOwner(c.owner)} {c.name} nets {net} from combat"
-                );
-                yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
-            }
-        }
-        yield break;
-    }
-
-    BoardSlot FindSlotOf(Creature c)
-    {
-        var slots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None);
-        foreach (var s in slots)
-        {
-            if (s.currentCreature == c)
-                return s;
-        }
-        return null;
     }
 
     public bool IsValidAttackTarget(Creature atk, Creature tgt, bool ignoreBodyRule = false)
@@ -1033,7 +1016,7 @@ public class ResolutionManager : MonoBehaviour
             (tauntTargets.Count > 0)
                 ? tauntTargets.AsEnumerable()
                 : (
-                    // For AI/util targeting, match the same rule as ResolveAttacks:
+                    // For AI/util targeting, match the same rule as the mixed action phase:
                     // Avians may consider any enemy (including carnivores) as
                     // candidates; speed/other rules are enforced in IsValidAttackTarget.
                     (canTargetAny || isAvianAttacker)

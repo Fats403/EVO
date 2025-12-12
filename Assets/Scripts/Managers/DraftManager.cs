@@ -186,33 +186,55 @@ public class DraftManager : MonoBehaviour
             picksRemainingLabel.text = $"Pick {picksDone + 1} / {config.deckSize}";
         }
 
-        // Decide desired type and cost tier for this pick, using bias strengths.
-        bool preferCreature = DraftRules.ChoosePreferredIsCreature(
-            config,
-            picksDone,
-            creatureCount
-        );
-        int desiredTier = DraftRules.ChoosePreferredCostTier(config, lowCount, midCount, highCount);
+        // Build three independent offer slots. Each slot rolls creature/effect and cost tier
+        // separately, using the current deck composition + bias strengths. This avoids drafts
+        // that feel like "all three cards are creatures" too often.
+        var chosenThisOffer = new HashSet<ScriptableObject>();
+        var offers = new List<ScriptableObject>(3);
 
-        // Build candidate list with progressively relaxed constraints.
-        var candidates = DraftRules.BuildCandidates(
-            draftPool,
-            config,
-            preferCreature,
-            desiredTier,
-            copiesPerCard
-        );
-
-        if (candidates.Count == 0)
+        int offerSlots = Mathf.Min(3, optionSlots != null ? optionSlots.Length : 3);
+        for (int i = 0; i < offerSlots; i++)
         {
-            Debug.LogWarning("DraftManager: No candidates available; falling back to full pool.");
-            candidates.AddRange(draftPool.Where(e => GetCopies(e.data) < config.maxCopiesPerCard));
+            bool wantCreature = DraftRules.RollIsCreature(config, picksDone, creatureCount);
+            int wantTier = DraftRules.RollDesiredCostTier(config, lowCount, midCount, highCount);
+
+            // Build candidate list with progressively relaxed constraints.
+            var candidates = DraftRules.BuildCandidates(
+                draftPool,
+                config,
+                wantCreature,
+                wantTier,
+                copiesPerCard
+            );
+
+            // Do not offer duplicates within the same 3-card pack.
+            candidates.RemoveAll(e =>
+                e == null || e.data == null || chosenThisOffer.Contains(e.data)
+            );
+
+            if (candidates.Count == 0)
+            {
+                // Relax fully: anything under copy cap and not already in this offer.
+                candidates = draftPool
+                    .Where(e => e != null && e.data != null)
+                    .Where(e => GetCopies(e.data) < config.maxCopiesPerCard)
+                    .Where(e => !chosenThisOffer.Contains(e.data))
+                    .ToList();
+            }
+
+            if (candidates.Count == 0)
+                break;
+
+            ShuffleList(candidates);
+            var pickedEntry = candidates[0];
+            if (pickedEntry != null && pickedEntry.data != null)
+            {
+                offers.Add(pickedEntry.data);
+                chosenThisOffer.Add(pickedEntry.data);
+            }
         }
 
-        // Shuffle candidates lightly to avoid always picking the same few.
-        ShuffleList(candidates);
-
-        int offerCount = Mathf.Min(3, candidates.Count);
+        int offerCount = offers.Count;
         if (optionSlots == null || optionSlots.Length == 0)
         {
             Debug.LogError("DraftManager: No optionSlots configured.");
@@ -227,8 +249,8 @@ public class DraftManager : MonoBehaviour
 
             if (i < offerCount)
             {
-                var entry = candidates[i];
-                slot.SetCard(entry.data, OnOptionClicked);
+                var data = offers[i];
+                slot.SetCard(data, OnOptionClicked);
                 slot.SetSelected(false);
             }
             else

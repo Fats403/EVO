@@ -26,6 +26,8 @@ public class ProtectorsFuryTrait : Trait
             return;
         if (self.owner != victim.owner)
             return;
+        if (self == victim)
+            return;
         if (victim.data == null || victim.data.type != CardType.Herbivore)
             return;
         // Immediate retaliatory strike ignoring body rules, with animation.

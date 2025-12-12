@@ -93,6 +93,32 @@ public static class DraftRules
     }
 
     /// <summary>
+    /// Roll whether a single offered card should be a creature.
+    /// Unlike ChoosePreferredIsCreature (deterministic), this returns a probability-shaped
+    /// random result so each offer slot can independently be creature/effect.
+    /// </summary>
+    public static bool RollIsCreature(DraftConfig config, int picksDone, int creatureCount)
+    {
+        if (config == null)
+            return true;
+        if (picksDone == 0)
+            return true; // first pick creature to anchor a board.
+
+        float currentRatio =
+            picksDone > 0 ? (float)creatureCount / picksDone : config.targetCreatureRatio;
+        float desired = Mathf.Clamp01(config.targetCreatureRatio);
+
+        float bias = Mathf.Max(0f, config.typeBiasStrength);
+        // Convert bias into a 0..1 strength where 0 = very loose, 1 = very strong.
+        float strength = bias / (bias + 1f);
+
+        // If we're above the desired ratio, reduce creature probability; if below, increase it.
+        float p = Mathf.Clamp01(desired + (desired - currentRatio) * strength);
+
+        return NextRandomInt(0, 10000) < Mathf.RoundToInt(p * 10000f);
+    }
+
+    /// <summary>
     /// Decide which momentum cost tier (low/mid/high) we prefer for this pick,
     /// based on how far each tier is below its target and costBiasStrength.
     /// </summary>
@@ -121,6 +147,60 @@ public static class DraftRules
         if (lowScore >= midScore && lowScore >= highScore)
             return 0;
         if (midScore >= lowScore && midScore >= highScore)
+            return 1;
+        return 2;
+    }
+
+    /// <summary>
+    /// Roll a desired tier for a single offered card, based on deficits and costBiasStrength.
+    /// This is intended for per-slot offer generation so the three cards can vary naturally.
+    /// </summary>
+    public static int RollDesiredCostTier(
+        DraftConfig config,
+        int lowCount,
+        int midCount,
+        int highCount
+    )
+    {
+        if (config == null)
+            return 0;
+
+        int lowDeficit = config.targetLowCount - lowCount;
+        int midDeficit = config.targetMidCount - midCount;
+        int highDeficit = config.targetHighCount - highCount;
+
+        float bias = Mathf.Max(0f, config.costBiasStrength);
+        float exponent = 1f + bias;
+
+        // If we are at/above all targets, treat tiers evenly.
+        float baseLow = Mathf.Max(0, lowDeficit);
+        float baseMid = Mathf.Max(0, midDeficit);
+        float baseHigh = Mathf.Max(0, highDeficit);
+        if (baseLow <= 0 && baseMid <= 0 && baseHigh <= 0)
+        {
+            baseLow = baseMid = baseHigh = 1f;
+        }
+        else
+        {
+            // Add a small baseline so we still occasionally see other tiers.
+            baseLow += 0.35f;
+            baseMid += 0.35f;
+            baseHigh += 0.35f;
+        }
+
+        float wLow = Mathf.Pow(baseLow, exponent);
+        float wMid = Mathf.Pow(baseMid, exponent);
+        float wHigh = Mathf.Pow(baseHigh, exponent);
+
+        float sum = wLow + wMid + wHigh;
+        if (sum <= 0f)
+            return 0;
+
+        float roll = NextRandomInt(0, 10000) / 10000f * sum;
+        if (roll < wLow)
+            return 0;
+        roll -= wLow;
+        if (roll < wMid)
             return 1;
         return 2;
     }

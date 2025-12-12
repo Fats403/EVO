@@ -21,6 +21,8 @@ MonoBehaviour:
   maxTargets: 3
   isGlobal: 0
   requiresManualSelection: 1
+  minTargets: 1
+  allowFewerThanMax: 1
   multiSelect: 0
   traitsToAttachToTargets: []
   globalEffect: {fileID: 0}
@@ -32,6 +34,8 @@ MonoBehaviour:
   allowInDrought: 0
   allowInStorm: 0
   allowInWildfire: 0
+  aiPreferWhenBehindOnBoard: 0
+  aiMinAlliesForBuffGlobals: 0
   aiCleanseSynergy: 1
   aiAttackSynergy: 0
   aiBodyBuffMultiplier: 1

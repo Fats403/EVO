@@ -25,13 +25,21 @@ public class StampedeFormationEffect : EffectTraitBase
         return true;
     }
 
+    public override bool AllowBonusAttackAfterForage(Creature self)
+    {
+        // Stampede: herbivores trample after feeding.
+        if (self == null || self.data == null)
+            return false;
+        if (self.data.type != CardType.Herbivore)
+            return false;
+        if (self.HasStatus(StatusTag.Suppressed))
+            return false;
+        return true;
+    }
+
     public override void OnRoundEnd(Creature self)
     {
-        if (self != null)
-        {
-            self.ClearStatus(StatusTag.BodyUp);
-        }
+        self?.ClearStatus(StatusTag.BodyUp);
         base.OnRoundEnd(self);
     }
 }
-

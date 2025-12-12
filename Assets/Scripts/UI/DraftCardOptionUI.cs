@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -24,18 +25,22 @@ public class DraftCardOptionUI : MonoBehaviour, IPointerClickHandler
     public float normalScale = 1.0f;
 
     [Tooltip("Scale applied when selected.")]
-    public float selectedScale = 1.08f;
+    public float selectedScale = 1.5f;
 
+    [Tooltip("Seconds to animate between normal/selected scale.")]
+    public float scaleAnimDuration = 0.12f;
+
+    [Header("Outline (Selected)")]
     [Tooltip(
-        "Graphics whose color will be tinted when selected (e.g., card frame, background). If empty, all child Graphics will be used."
+        "If set, this Graphic gets an Outline when selected. If null, we auto-pick the first Graphic under previewRoot."
     )]
-    public Graphic[] tintTargets;
+    public Graphic outlineTarget;
 
-    [Tooltip("Tint color when not selected.")]
-    public Color normalTint = Color.white;
+    [Tooltip("Outline color when selected.")]
+    public Color outlineColor = new Color(0.2f, 0.85f, 1f, 1f);
 
-    [Tooltip("Tint color when selected (acts like a subtle outline/emphasis).")]
-    public Color selectedTint = new Color(0.9f, 0.95f, 1.1f, 1f);
+    [Tooltip("Outline thickness (UI Outline uses pixel offset).")]
+    public Vector2 outlineDistance = new Vector2(6f, -6f);
 
     [Header("Prefabs")]
     [Tooltip("Prefab for creature card previews.")]
@@ -47,6 +52,8 @@ public class DraftCardOptionUI : MonoBehaviour, IPointerClickHandler
     private ScriptableObject cardData;
     private System.Action<DraftCardOptionUI> onClicked;
     private Graphic rootRaycastGraphic;
+    private Coroutine scaleRoutine;
+    private Outline outline;
 
     private void Awake()
     {
@@ -64,14 +71,8 @@ public class DraftCardOptionUI : MonoBehaviour, IPointerClickHandler
         }
         rootRaycastGraphic.raycastTarget = true;
 
-        // If no explicit tint targets were assigned, default to all child Graphics.
-        if (tintTargets == null || tintTargets.Length == 0)
-        {
-            tintTargets = GetComponentsInChildren<Graphic>(includeInactive: true);
-        }
-
         // Initialize visuals to unselected.
-        ApplySelectionVisuals(false);
+        ApplySelectionVisuals(false, instant: true);
     }
 
     public void SetCard(ScriptableObject data, System.Action<DraftCardOptionUI> clickedCallback)
@@ -95,7 +96,7 @@ public class DraftCardOptionUI : MonoBehaviour, IPointerClickHandler
         if (data == null || previewRoot == null)
         {
             // Also reset visuals to unselected when slot is cleared.
-            ApplySelectionVisuals(false);
+            ApplySelectionVisuals(false, instant: true);
             return;
         }
 
@@ -157,7 +158,7 @@ public class DraftCardOptionUI : MonoBehaviour, IPointerClickHandler
         }
 
         // Reset selection visuals when a new card is assigned.
-        ApplySelectionVisuals(false);
+        ApplySelectionVisuals(false, instant: true);
     }
 
     public ScriptableObject GetCardData()
@@ -167,31 +168,84 @@ public class DraftCardOptionUI : MonoBehaviour, IPointerClickHandler
 
     public void SetSelected(bool selected)
     {
-        ApplySelectionVisuals(selected);
+        ApplySelectionVisuals(selected, instant: false);
     }
 
-    private void ApplySelectionVisuals(bool selected)
+    private void ApplySelectionVisuals(bool selected, bool instant)
     {
+        ApplyOutline(selected);
+
         if (selectionScaleTarget != null)
         {
             float targetScale = selected ? selectedScale : normalScale;
-            selectionScaleTarget.localScale = Vector3.one * targetScale;
-        }
-
-        if (tintTargets != null)
-        {
-            var color = selected ? selectedTint : normalTint;
-            foreach (var g in tintTargets)
+            if (instant || scaleAnimDuration <= 0f)
             {
-                if (g != null)
-                    g.color = color;
+                selectionScaleTarget.localScale = Vector3.one * targetScale;
+            }
+            else
+            {
+                if (scaleRoutine != null)
+                    StopCoroutine(scaleRoutine);
+                scaleRoutine = StartCoroutine(AnimateScale(targetScale));
             }
         }
     }
 
+    private void ApplyOutline(bool selected)
+    {
+        if (outline == null)
+        {
+            // Pick a target graphic for the outline.
+            Graphic g = outlineTarget;
+            if (g == null && previewRoot != null)
+            {
+                // Prefer a visible graphic under the preview rather than the invisible raycast Image.
+                var graphics = previewRoot.GetComponentsInChildren<Graphic>(includeInactive: true);
+                g = graphics != null && graphics.Length > 0 ? graphics[0] : null;
+            }
+
+            if (g != null)
+            {
+                outline = g.GetComponent<Outline>();
+                if (outline == null)
+                    outline = g.gameObject.AddComponent<Outline>();
+
+                outline.effectColor = outlineColor;
+                outline.effectDistance = outlineDistance;
+                outline.useGraphicAlpha = true;
+            }
+        }
+
+        if (outline != null)
+            outline.enabled = selected;
+    }
+
+    private IEnumerator AnimateScale(float targetScale)
+    {
+        if (selectionScaleTarget == null)
+            yield break;
+
+        float start = selectionScaleTarget.localScale.x;
+        float end = targetScale;
+        float dur = Mathf.Max(0.01f, scaleAnimDuration);
+
+        float t = 0f;
+        while (t < dur)
+        {
+            t += Time.unscaledDeltaTime;
+            float u = Mathf.Clamp01(t / dur);
+            // Smooth ease-in-out.
+            u = u * u * (3f - 2f * u);
+            float s = Mathf.Lerp(start, end, u);
+            selectionScaleTarget.localScale = Vector3.one * s;
+            yield return null;
+        }
+        selectionScaleTarget.localScale = Vector3.one * end;
+        scaleRoutine = null;
+    }
+
     private void HandleClicked()
     {
-        Debug.Log("DraftCardOptionUI: HandleClicked");
         onClicked?.Invoke(this);
     }
 

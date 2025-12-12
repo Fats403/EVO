@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: AridHunterTrait
   m_EditorClassIdentifier: Assembly-CSharp::AridHunterTrait
   traitName: Arid Hunter
-  description: During Drought, gain +2 Speed and +1 DamageUp
+  description: Always act first during draughts and gain +2 Speed

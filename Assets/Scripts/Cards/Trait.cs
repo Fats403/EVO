@@ -25,8 +25,6 @@ public abstract class Trait : ScriptableObject
 
     public virtual void OnAfterKill(Creature self, Creature target) { }
 
-    public virtual void OnAfterCarnivorePhase(Creature self, FoodPile pile) { }
-
     public virtual void OnRoundEnd(Creature self) { }
 
     public virtual void OnRoundStart(Creature self) { }
@@ -36,7 +34,12 @@ public abstract class Trait : ScriptableObject
         return 0;
     }
 
-    public virtual int PreHerbivorePileSteal(Creature self, FoodPile pile)
+    /// <summary>
+    /// Optional bonus applied to a creature's position in the mixed action-phase order.
+    /// Higher values act earlier (before speed tie-breaks). Use this for "always acts first"
+    /// style traits without requiring special resolve sub-phases.
+    /// </summary>
+    public virtual int ActionPriorityBonus(Creature self)
     {
         return 0;
     }
@@ -78,6 +81,16 @@ public abstract class Trait : ScriptableObject
     public virtual bool CanForage(Creature self)
     {
         return true;
+    }
+
+    /// <summary>
+    /// Allows a herbivore to make a bonus attack immediately after successfully foraging
+    /// during its action. Intended for special effects like "Stampede Formation" and
+    /// should default to false to avoid making all attack-enabled herbivores act twice.
+    /// </summary>
+    public virtual bool AllowBonusAttackAfterForage(Creature self)
+    {
+        return false;
     }
 
     // Targeting overrides

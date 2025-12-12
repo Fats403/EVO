@@ -26,6 +26,15 @@ public class Creature : MonoBehaviour
     public int roundHealingUndone;
     private readonly HashSet<Creature> damagedTargetsThisRound = new();
 
+    // New per-round bookkeeping for the revamped scoring system.
+    // Only living creatures score at the end of the round, so these are
+    // accumulated during the round and converted into points during the
+    // scoring phase (if still alive).
+    [Header("Round Scoring (Runtime)")]
+    public int roundKillBody; // Sum of victim body values killed this round.
+    public int roundKillCount;
+    public bool roundHasScavengePoint; // Avians: true if an enemy died while this avian was alive (cap 1).
+
     public static event Action<Creature, int> OnAnyCreatureHealed;
 
     public bool IsWounded => currentHealth < maxHealth;
@@ -58,6 +67,9 @@ public class Creature : MonoBehaviour
         roundDamageDealt = 0;
         roundHealingUndone = 0;
         damagedTargetsThisRound.Clear();
+        roundKillBody = 0;
+        roundKillCount = 0;
+        roundHasScavengePoint = false;
 
         traits.Clear();
         if (data.baseTraits != null && data.baseTraits.Length > 0)
@@ -464,6 +476,12 @@ public class Creature : MonoBehaviour
             source.roundDamageDealt += applied;
             if (!source.damagedTargetsThisRound.Contains(this))
                 source.damagedTargetsThisRound.Add(this);
+
+            // Feeding rule: any successful damaging hit counts as "fed" for carnivores.
+            if (source.data != null && source.data.type == CardType.Carnivore)
+            {
+                source.eaten = Mathf.Max(source.eaten, 1);
+            }
         }
         StartCoroutine(FlashDamage(0.2f));
         // Trait hooks
@@ -498,6 +516,11 @@ public class Creature : MonoBehaviour
         RefreshStatsUI();
         if (currentHealth == 0)
         {
+            // Record kill credit for the damage source (scored later only if the killer survives).
+            if (source != null)
+            {
+                source.RecordKill(this);
+            }
             Kill("Damage");
         }
 
@@ -527,7 +550,9 @@ public class Creature : MonoBehaviour
 
         PlayVFX(vfxPrefab);
 
-        // Default avian scavenging: when any creature dies, all living avians gain +1 food
+        // Avian scavenging: when an ENEMY creature dies, living avians may scavenge:
+        // - They become "fed" for starvation purposes (eaten set to at least 1)
+        // - They may earn +1 scavenge point at end of round (cap 1 per avian per round)
         var all = FindObjectsByType<Creature>(FindObjectsSortMode.None);
         foreach (var other in all)
         {
@@ -537,15 +562,26 @@ public class Creature : MonoBehaviour
                 continue;
             if (other.data != null && other.data.type == CardType.Avian)
             {
-                other.eaten += 1;
-                FeedbackManager.Instance?.ShowFloatingText(
-                    "Scavenge",
-                    other.transform.position,
-                    GameColorPalette.ScavengeGain
-                );
-                FeedbackManager.Instance?.Log(
-                    $"{FeedbackManager.TagOwner(other.owner)} {other.name} scavenges +1"
-                );
+                // Only scavenge from enemy deaths.
+                if (other.owner == owner)
+                    continue;
+
+                // Grant the scavenge point (capped at 1 per round).
+                other.roundHasScavengePoint = true;
+
+                // Feeding from deaths is survival-focused: one food is enough to avoid starvation.
+                if (other.eaten <= 0)
+                {
+                    other.eaten = 1;
+                    FeedbackManager.Instance?.ShowFloatingText(
+                        "Scavenge +1 Food",
+                        other.transform.position,
+                        GameColorPalette.ScavengeGain
+                    );
+                    FeedbackManager.Instance?.Log(
+                        $"{FeedbackManager.TagOwner(other.owner)} {other.name} scavenges +1"
+                    );
+                }
             }
         }
         // Notify all traits about this death
@@ -621,6 +657,32 @@ public class Creature : MonoBehaviour
         roundHealingUndone = 0;
         if (damagedTargetsThisRound != null)
             damagedTargetsThisRound.Clear();
+        roundKillBody = 0;
+        roundKillCount = 0;
+        roundHasScavengePoint = false;
+    }
+
+    public void RecordKill(Creature victim)
+    {
+        if (victim == null)
+            return;
+        if (data == null)
+            return;
+        // Only creatures that can meaningfully "get kills" care about this,
+        // but we keep it generic so trait-granted attacks on herbivores still work.
+        int bodyForScore = victim.GetEffectiveBodyForScoring();
+        roundKillBody += Mathf.Max(0, bodyForScore);
+        roundKillCount += 1;
+    }
+
+    public int GetEffectiveBodyForScoring()
+    {
+        int traitBody =
+            (!HasStatus(StatusTag.Suppressed) && traits != null)
+                ? traits.Sum(t => t != null ? t.BodyBonus(this) : 0)
+                : 0;
+        int temp = GetStatus(StatusTag.BodyUp) - GetStatus(StatusTag.Malnourished);
+        return body + traitBody + temp;
     }
 
     public void RefreshStatsUI()

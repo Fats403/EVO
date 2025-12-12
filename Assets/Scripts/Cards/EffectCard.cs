@@ -21,13 +21,24 @@ public class EffectCard : ScriptableObject
     [Tooltip("Marks this card as a global effect (no creature targets)")]
     public bool isGlobal;
 
-    [Header("Manual Selection")]
+    [Header("Runtime Effect Manual Selection")]
     [Tooltip(
         "If true, this card is played and then the player must click targets manually using targetCount/maxTargets instead of auto-selecting on drag release."
     )]
     public bool requiresManualSelection = false;
 
-    [Header("Multi-Select (UI)")]
+    [Tooltip(
+        "For manual ManySelectUpToN effects: minimum number of targets required before the player can confirm. If 0, a sensible default is chosen (1 when allowFewerThanMax is true, otherwise maxTargets)."
+    )]
+    [Min(0)]
+    public int minTargets = 0;
+
+    [Tooltip(
+        "For manual ManySelectUpToN effects: if true, the player may confirm once they have selected at least minTargets (up to maxTargets). If false, they must select exactly maxTargets."
+    )]
+    public bool allowFewerThanMax = false;
+
+    [Header("For multi hover select behaviour (UI)")]
     [Tooltip("If true, the UI treats this as a multi-select and uses maxTargets.")]
     public bool multiSelect = false;
 

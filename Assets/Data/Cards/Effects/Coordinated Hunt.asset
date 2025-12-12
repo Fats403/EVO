@@ -36,6 +36,6 @@ MonoBehaviour:
   aiPreferWhenBehindOnBoard: 0
   aiMinAlliesForBuffGlobals: 2
   aiCleanseSynergy: 0
-  aiAttackSynergy: 3
+  aiAttackSynergy: 2
   aiBodyBuffMultiplier: 1
   aiRemovalValue: 0
