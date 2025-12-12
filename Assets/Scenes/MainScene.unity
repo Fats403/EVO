@@ -222,7 +222,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DebugManager
   logCardsOnStart: 1
   logPrefix: '[CardAudit]'
-  copyToClipboard: 1
+  copyToClipboard: 0
   writeToFile: 0
   outputFileName: CardAudit.txt
   deckManager: {fileID: 0}
