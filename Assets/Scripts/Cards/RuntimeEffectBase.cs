@@ -17,3 +17,5 @@ public abstract class RuntimeEffectBase : ScriptableObject
     public abstract void Apply(List<Creature> targets, SlotOwner owner, ResolutionManager rm);
 }
 
+
+

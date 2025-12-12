@@ -75,3 +75,5 @@ public static class GameColorPalette
     public static readonly Color WeatherWildfire = new Color(1f, 0.6f, 0.3f);
     public static readonly Color WeatherExtinction = new Color(1f, 0.4f, 0.4f);
 }
+
+

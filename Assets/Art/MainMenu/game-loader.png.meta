@@ -1,0 +1,572 @@
+fileFormatVersion: 2
+guid: 79ec951e8ceba4d7895ee6e6355fa40d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3320653754752123030
+    second: game-loader_0
+  - first:
+      213: 5306534019889818475
+    second: game-loader_1
+  - first:
+      213: 4899509065419422419
+    second: game-loader_2
+  - first:
+      213: -7137754623969073955
+    second: game-loader_3
+  - first:
+      213: 2034559107983402416
+    second: game-loader_4
+  - first:
+      213: 4292523999177650459
+    second: game-loader_5
+  - first:
+      213: -3742920229680727662
+    second: game-loader_6
+  - first:
+      213: 4082092880004096620
+    second: game-loader_7
+  - first:
+      213: 1882713171249948256
+    second: game-loader_8
+  - first:
+      213: 3894438521017699172
+    second: game-loader_9
+  - first:
+      213: 6606923520974369558
+    second: game-loader_10
+  - first:
+      213: -915963430637189229
+    second: game-loader_11
+  - first:
+      213: 5606179224273771439
+    second: game-loader_12
+  - first:
+      213: 2637275856469988559
+    second: game-loader_13
+  - first:
+      213: -2441853709093926366
+    second: game-loader_14
+  - first:
+      213: 1524269734528764251
+    second: game-loader_15
+  - first:
+      213: 1745065674779031954
+    second: game-loader_16
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: game-loader_0
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 392
+        width: 555
+        height: 627
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6fbeede00baae1d0800000000000000
+      internalID: -3320653754752123030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_1
+      rect:
+        serializedVersion: 2
+        x: 519
+        y: 791
+        width: 58
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6bee0c639894a940800000000000000
+      internalID: 5306534019889818475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_2
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 672
+        width: 451
+        height: 339
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3da712a498d8ef340800000000000000
+      internalID: 4899509065419422419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_3
+      rect:
+        serializedVersion: 2
+        x: 649
+        y: 757
+        width: 81
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd4eb68acf991fc90800000000000000
+      internalID: -7137754623969073955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_4
+      rect:
+        serializedVersion: 2
+        x: 635
+        y: 725
+        width: 38
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b5e2e9aab43c3c10800000000000000
+      internalID: 2034559107983402416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_5
+      rect:
+        serializedVersion: 2
+        x: 709
+        y: 703
+        width: 93
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b11b2d0a5db129b30800000000000000
+      internalID: 4292523999177650459
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_6
+      rect:
+        serializedVersion: 2
+        x: 687
+        y: 687
+        width: 35
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 299b147c1e97e0cc0800000000000000
+      internalID: -3742920229680727662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_7
+      rect:
+        serializedVersion: 2
+        x: 743
+        y: 631
+        width: 118
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c62abc4b8d186a830800000000000000
+      internalID: 4082092880004096620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_8
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 408
+        width: 105
+        height: 170
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0666d4a77adb02a10800000000000000
+      internalID: 1882713171249948256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_9
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 271
+        width: 131
+        height: 132
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46b8bd48333db0630800000000000000
+      internalID: 3894438521017699172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_10
+      rect:
+        serializedVersion: 2
+        x: 507
+        y: 32
+        width: 395
+        height: 371
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 613b9d5ffe180bb50800000000000000
+      internalID: 6606923520974369558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_11
+      rect:
+        serializedVersion: 2
+        x: 759
+        y: 400
+        width: 263
+        height: 246
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3974f91ec18d943f0800000000000000
+      internalID: -915963430637189229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_12
+      rect:
+        serializedVersion: 2
+        x: 759
+        y: 327
+        width: 102
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fab530a3d462dcd40800000000000000
+      internalID: 5606179224273771439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_13
+      rect:
+        serializedVersion: 2
+        x: 778
+        y: 391
+        width: 102
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc49b972b6c799420800000000000000
+      internalID: 2637275856469988559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_14
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 88
+        width: 208
+        height: 217
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22a8cf33dfacc1ed0800000000000000
+      internalID: -2441853709093926366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_15
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 127
+        width: 61
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5947746f3b472510800000000000000
+      internalID: 1524269734528764251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: game-loader_16
+      rect:
+        serializedVersion: 2
+        x: 535
+        y: 127
+        width: 74
+        height: 122
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2997ee64cf7b73810800000000000000
+      internalID: 1745065674779031954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      game-loader_0: -3320653754752123030
+      game-loader_1: 5306534019889818475
+      game-loader_10: 6606923520974369558
+      game-loader_11: -915963430637189229
+      game-loader_12: 5606179224273771439
+      game-loader_13: 2637275856469988559
+      game-loader_14: -2441853709093926366
+      game-loader_15: 1524269734528764251
+      game-loader_16: 1745065674779031954
+      game-loader_2: 4899509065419422419
+      game-loader_3: -7137754623969073955
+      game-loader_4: 2034559107983402416
+      game-loader_5: 4292523999177650459
+      game-loader_6: -3742920229680727662
+      game-loader_7: 4082092880004096620
+      game-loader_8: 1882713171249948256
+      game-loader_9: 3894438521017699172
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
