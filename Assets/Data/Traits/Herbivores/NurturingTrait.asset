@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: NurturingTrait
   m_EditorClassIdentifier: Assembly-CSharp::NurturingTrait
   traitName: Nurturing
-  description: At round end, adjacent allies remove 1 Fatigued
+  description: On round start, remove 1 Fatigued from adjacent allies

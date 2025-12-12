@@ -643,6 +643,9 @@ MonoBehaviour:
   normalScale: 1
   selectedScale: 1.25
   scaleAnimDuration: 0.15
+  outlineTarget: {fileID: 0}
+  outlineColor: {r: 0.2, g: 0.85, b: 1, a: 1}
+  outlineDistance: {x: 6, y: -6}
   creatureCardPrefab: {fileID: 6378225315708850401, guid: 91ac1c24a6a3b45edba80f553a10afe5, type: 3}
   effectCardPrefab: {fileID: 3112541818185922300, guid: a6ab56675875b4ef798b95a49967d118, type: 3}
 --- !u!114 &128887960
@@ -945,6 +948,9 @@ MonoBehaviour:
   normalScale: 1
   selectedScale: 1.25
   scaleAnimDuration: 0.15
+  outlineTarget: {fileID: 0}
+  outlineColor: {r: 0.2, g: 0.85, b: 1, a: 1}
+  outlineDistance: {x: 6, y: -6}
   creatureCardPrefab: {fileID: 6378225315708850401, guid: 91ac1c24a6a3b45edba80f553a10afe5, type: 3}
   effectCardPrefab: {fileID: 3112541818185922300, guid: a6ab56675875b4ef798b95a49967d118, type: 3}
 --- !u!114 &164050469
@@ -3616,7 +3622,7 @@ MonoBehaviour:
   attackResolvePause: 0.5
   afterCarnivoreDelay: 1
   starveDelay: 1
-  statusEffectDelay: 0.5
+  statusEffectDelay: 0.6
   roundStartEffectPause: 1
   roundEndEffectPause: 1
   pacingMultiplier: 2
@@ -4182,6 +4188,9 @@ MonoBehaviour:
   normalScale: 1
   selectedScale: 1.25
   scaleAnimDuration: 0.15
+  outlineTarget: {fileID: 0}
+  outlineColor: {r: 0.2, g: 0.85, b: 1, a: 1}
+  outlineDistance: {x: 6, y: -6}
   creatureCardPrefab: {fileID: 6378225315708850401, guid: 91ac1c24a6a3b45edba80f553a10afe5, type: 3}
   effectCardPrefab: {fileID: 3112541818185922300, guid: a6ab56675875b4ef798b95a49967d118, type: 3}
 --- !u!114 &714024247

@@ -4,7 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Traits/Herbivores/Nurturing")]
 public class NurturingTrait : Trait
 {
-    public override void OnRoundEnd(Creature self)
+    public override void OnRoundStart(Creature self)
     {
         if (self == null)
             return;

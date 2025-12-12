@@ -750,7 +750,7 @@ public class ResolutionManager : MonoBehaviour
                 {
                     c.eaten = Mathf.Max(c.eaten, 1);
                     FeedbackManager.Instance?.ShowFloatingText(
-                        "Scavenge +1 Food",
+                        "+1 Food (Forage)",
                         c.transform.position,
                         GameColorPalette.ScavengeGain
                     );

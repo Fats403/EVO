@@ -574,7 +574,7 @@ public class Creature : MonoBehaviour
                 {
                     other.eaten = 1;
                     FeedbackManager.Instance?.ShowFloatingText(
-                        "Scavenge +1 Food",
+                        "Scavenge",
                         other.transform.position,
                         GameColorPalette.ScavengeGain
                     );

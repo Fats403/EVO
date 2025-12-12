@@ -14,16 +14,16 @@ public class BloodRushTrait : Trait
             return;
 
         // Immediate benefit: heal now.
-        self.AddStatus(StatusTag.Regen, 2);
+        self.Heal(2);
         FeedbackManager.Instance?.ShowFloatingText(
             "Blood Rush",
             self.transform.position,
             GameColorPalette.TextWarning
         );
         FeedbackManager.Instance?.ShowFloatingText(
-            "Regen +2",
+            "+2 HP",
             self.transform.position,
-            GameColorPalette.Regen
+            GameColorPalette.Heal
         );
 
         // Flag to gain DamageUp at the start of the next round.

@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: LayInWakeTrait
   m_EditorClassIdentifier: Assembly-CSharp::LayInWakeTrait
   traitName: Lay In Wake
-  description: During Cretaceous or Extinction era, gain +2 Speed and +1 Body
+  description: During Cretaceous or Extinction era, gain +3 Speed and +3 Body

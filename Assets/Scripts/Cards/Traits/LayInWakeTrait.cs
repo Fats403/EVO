@@ -16,7 +16,7 @@ public class LayInWakeTrait : Trait
         if (era != Era.Cretaceous && era != Era.Extinction)
             return 0;
 
-        return 2;
+        return 3;
     }
 
     public override int BodyBonus(Creature self)
@@ -32,6 +32,6 @@ public class LayInWakeTrait : Trait
         if (era != Era.Cretaceous && era != Era.Extinction)
             return 0;
 
-        return 1;
+        return 3;
     }
 }
