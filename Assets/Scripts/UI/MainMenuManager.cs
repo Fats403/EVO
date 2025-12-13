@@ -53,6 +53,8 @@ public class MainMenuManager : MonoBehaviour
     {
         ApplyInitialBootState();
         UpdateSoundIcons();
+
+        musicOffIcon.transform.localScale = new Vector3(-1, 1, 1);
     }
 
     private void Update()
@@ -68,7 +70,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void ApplyInitialBootState()
     {
-        // For now, our "boot" process is just Steam. Later we can OR in other systems.
+        // Our "boot" process is Steam + (optionally) Firebase.
         var steam = SteamManager.Instance;
         if (steam == null)
         {
@@ -90,7 +92,36 @@ public class MainMenuManager : MonoBehaviour
         }
         else if (steam.IsInitialized)
         {
-            // Steam ready – hide loading & error, show main buttons.
+            // Steam ready – if Firebase is present, also wait for its login
+            // before enabling the main menu. If there's no FirebaseManager,
+            // we just proceed with Steam-only boot.
+            var firebase = FirebaseManager.Instance;
+
+            if (firebase != null)
+            {
+                // Case 1: Firebase still booting or hasn't attempted login yet → keep loading.
+                if (!firebase.IsFirebaseReady || !firebase.HasTriedLogin)
+                {
+                    SetActiveSafe(loadingRoot, true);
+                    SetActiveSafe(mainMenuItemsRoot, false);
+                    SetActiveSafe(loadingErrorRoot, false);
+                    UpdateErrorText(null);
+                    return;
+                }
+
+                // Case 2: Firebase login failed → show error panel.
+                if (!firebase.IsLoggedIn && !string.IsNullOrEmpty(firebase.LastLoginError))
+                {
+                    SetActiveSafe(loadingRoot, false);
+                    SetActiveSafe(mainMenuItemsRoot, false);
+                    SetActiveSafe(loadingErrorRoot, true);
+                    UpdateErrorText(firebase.LastLoginError);
+                    _hasAppliedInitialState = true;
+                    return;
+                }
+            }
+
+            // Steam (and Firebase if present) are ready – hide loading & error, show main buttons.
             SetActiveSafe(loadingRoot, false);
             SetActiveSafe(loadingErrorRoot, false);
             SetActiveSafe(mainMenuItemsRoot, true);

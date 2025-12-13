@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1006538841800",
+    "project_id": "evolution-c320b",
+    "storage_bucket": "evolution-c320b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1006538841800:android:d9896e21fc6b1df3604ffd",
+        "android_client_info": {
+          "package_name": "com.fossilbytestudios.evo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAILoGsEOWkZVh6CZvPJf6lbNYci5mB77g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
