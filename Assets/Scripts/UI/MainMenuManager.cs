@@ -7,6 +7,7 @@ public class MainMenuManager : MonoBehaviour
     // Hard‑coded here since your project isn't using namespaces or
     // folder‑based namespaces elsewhere. This keeps things simple.
     private const string gameSceneName = "MainScene";
+    private const string deckHubSceneName = "DeckHubScene";
 
     [Header("UI References")]
     [Tooltip("Container with interactive main‑menu buttons (Play, Options, Quit).")]
@@ -176,14 +177,24 @@ public class MainMenuManager : MonoBehaviour
             return;
         }
 
-        if (string.IsNullOrEmpty(gameSceneName))
+        // Make sure the scene is added to Build Settings.
+        SceneManager.LoadScene(gameSceneName, LoadSceneMode.Single);
+    }
+
+    /// <summary>
+    /// Called by UI button to start the game.
+    /// </summary>
+    public void GoToDeckHub()
+    {
+        // Optional gate: prevent starting game if Steam isn't ready.
+        if (SteamManager.Instance != null && !SteamManager.Instance.IsInitialized)
         {
-            Debug.LogError("MainMenuManager: gameSceneName is not set.");
+            Debug.LogWarning("MainMenuManager: Tried to start game before Steam was ready.");
             return;
         }
 
         // Make sure the scene is added to Build Settings.
-        SceneManager.LoadScene(gameSceneName, LoadSceneMode.Single);
+        SceneManager.LoadScene(deckHubSceneName, LoadSceneMode.Single);
     }
 
     /// <summary>
