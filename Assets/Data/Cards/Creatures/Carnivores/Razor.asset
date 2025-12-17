@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Razor
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_RAZOR
   cardName: Razor
   dinosaurName: Deinonychus
   artwork: {fileID: 21300000, guid: 6251750e68d5e436194cb46338496296, type: 3}
@@ -19,8 +20,8 @@ MonoBehaviour:
   background: {fileID: 21300000, guid: 8c31de67644694e8d83f417669f04623, type: 3}
   size: 2
   speed: 3
-  tier: 2
   maxHealth: 3
+  isImmovable: 0
   momentumCost: 2
   baseTraits:
   - {fileID: 11400000, guid: 39b80e6b2ba2e48218665c4dd3000439, type: 2}

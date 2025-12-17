@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
   m_Name: Meteor Strike
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_METEOR_STRIKE
   effectName: Meteor Strike
   icon: {fileID: 21300000, guid: 439cdffa7e76646f2b6c61ff5231c900, type: 3}
   description: Deal 3 damage to target enemy. Deal 2 damage to creatures adjacent
@@ -22,6 +23,8 @@ MonoBehaviour:
   maxTargets: 1
   isGlobal: 0
   requiresManualSelection: 0
+  minTargets: 0
+  allowFewerThanMax: 0
   multiSelect: 0
   traitsToAttachToTargets:
   - {fileID: 11400000, guid: 797b037cb6ed1406499949a1735780b6, type: 2}
@@ -34,6 +37,8 @@ MonoBehaviour:
   allowInDrought: 0
   allowInStorm: 0
   allowInWildfire: 0
+  aiPreferWhenBehindOnBoard: 0
+  aiMinAlliesForBuffGlobals: 0
   aiCleanseSynergy: 0
   aiAttackSynergy: 0
   aiBodyBuffMultiplier: 1

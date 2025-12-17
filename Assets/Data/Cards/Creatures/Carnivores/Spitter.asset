@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Spitter
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_SPITTER
   cardName: Spitter
   dinosaurName: Dilophosaurus
   artwork: {fileID: 21300000, guid: 49d3ed169418240b2b1fb7a70797827d, type: 3}

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Dustwing
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_DUSTWING
   cardName: Dustwing
   dinosaurName: Harpactognathus
   artwork: {fileID: 21300000, guid: 1cb0e62f5182d4efe9b6b914fc2b48b2, type: 3}

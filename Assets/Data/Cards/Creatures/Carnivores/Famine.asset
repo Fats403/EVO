@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Famine
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_FAMINE
   cardName: Famine
   dinosaurName: Drought Predator
   artwork: {fileID: 21300000, guid: c28ef0e2a33c34c8d97e060008ce1bf4, type: 3}

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Disruptor
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_DISRUPTOR
   cardName: Disruptor
   dinosaurName: Tupuxuara
   artwork: {fileID: 21300000, guid: 1279153f83b8e462f97cd6e2a6eb640d, type: 3}

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Morgy
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_MORGY
   cardName: Morgy
   dinosaurName: Thalkasaurus
   artwork: {fileID: 21300000, guid: 33bf671b2badf48b6a4c8af84e381da3, type: 3}

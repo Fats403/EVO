@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
   m_Name: Venom Spit
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_VENOM_SPIT
   effectName: Venom Spit
   icon: {fileID: 21300000, guid: 5f76767c4a1a347c0a2272a8572476c0, type: 3}
   description: Deal 2 damage to an enemy
@@ -21,6 +22,8 @@ MonoBehaviour:
   maxTargets: 1
   isGlobal: 0
   requiresManualSelection: 0
+  minTargets: 0
+  allowFewerThanMax: 0
   multiSelect: 0
   traitsToAttachToTargets:
   - {fileID: 11400000, guid: e85fe95ee3161407c972bb9216ab9211, type: 2}
@@ -33,6 +36,8 @@ MonoBehaviour:
   allowInDrought: 0
   allowInStorm: 0
   allowInWildfire: 0
+  aiPreferWhenBehindOnBoard: 0
+  aiMinAlliesForBuffGlobals: 0
   aiCleanseSynergy: 0
   aiAttackSynergy: 0
   aiBodyBuffMultiplier: 1

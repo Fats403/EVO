@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
   m_Name: Prehistoric Storm
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_PREHISTORIC_STORM
   effectName: Prehistoric Storm
   icon: {fileID: 21300000, guid: 99a4eb7fa629142bd9d3b5e74c5f2d3d, type: 3}
   description: Change weather to Storm. One random enemy takes 1 damage
@@ -21,6 +22,8 @@ MonoBehaviour:
   maxTargets: 1
   isGlobal: 1
   requiresManualSelection: 0
+  minTargets: 0
+  allowFewerThanMax: 0
   multiSelect: 0
   traitsToAttachToTargets: []
   globalEffect: {fileID: 11400000, guid: 343ef23beea2b45ee8206c3821661f6a, type: 2}
@@ -32,6 +35,8 @@ MonoBehaviour:
   allowInDrought: 0
   allowInStorm: 0
   allowInWildfire: 0
+  aiPreferWhenBehindOnBoard: 0
+  aiMinAlliesForBuffGlobals: 0
   aiCleanseSynergy: 0
   aiAttackSynergy: 1
   aiBodyBuffMultiplier: 1

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Ripper
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_RIPPER
   cardName: Ripper
   dinosaurName: Austroraptor
   artwork: {fileID: 21300000, guid: 577ff132e5d244b6a8b2b0ea4fb5136f, type: 3}

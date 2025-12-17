@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Cards/Effect Card")]
-public class EffectCard : ScriptableObject
+public class EffectCard : CardDefinition
 {
     [Header("Identity")]
     public string effectName;
@@ -148,6 +148,11 @@ public class EffectCard : ScriptableObject
         }
         return true;
     }
+
+    // CardDefinition implementation
+    public override string DisplayName => effectName;
+    public override Sprite Artwork => icon;
+    public override int MomentumCost => momentumCost;
 }
 
 public enum EffectTargetSide

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Shimmer
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_SHIMMER
   cardName: Shimmer
   dinosaurName: Ouranosaurus
   artwork: {fileID: 21300000, guid: 34342651c45be4e17840d6c2ed64fe15, type: 3}

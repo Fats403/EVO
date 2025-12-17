@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Screech
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_SCREECH
   cardName: Screech
   dinosaurName: Pterodaustro
   artwork: {fileID: 21300000, guid: 8c7db3693a71242c2ba6f371ca4c9b10, type: 3}

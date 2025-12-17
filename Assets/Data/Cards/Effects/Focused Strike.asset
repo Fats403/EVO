@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
   m_Name: Focused Strike
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_FOCUSED_STRIKE
   effectName: Focused Strike
   icon: {fileID: 21300000, guid: afabaf6422a614b1c83084bb0c9ea051, type: 3}
   description: Deal 3 damage to an enemy. Deal 5 damage instead during Cretaceous
@@ -22,6 +23,8 @@ MonoBehaviour:
   maxTargets: 1
   isGlobal: 0
   requiresManualSelection: 0
+  minTargets: 0
+  allowFewerThanMax: 0
   multiSelect: 0
   traitsToAttachToTargets:
   - {fileID: 11400000, guid: df700a6478d094882869a05b0e749e4b, type: 2}
@@ -34,6 +37,8 @@ MonoBehaviour:
   allowInDrought: 0
   allowInStorm: 0
   allowInWildfire: 0
+  aiPreferWhenBehindOnBoard: 0
+  aiMinAlliesForBuffGlobals: 0
   aiCleanseSynergy: 0
   aiAttackSynergy: 0
   aiBodyBuffMultiplier: 1

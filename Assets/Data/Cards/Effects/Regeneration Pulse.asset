@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
   m_Name: Regeneration Pulse
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_REGENERATION_PULSE
   effectName: Regeneration Pulse
   icon: {fileID: 21300000, guid: 03f2397e6da964d13aa9d653e4f3e81f, type: 3}
   description: Heal up to 3 target allies for 2 HP each

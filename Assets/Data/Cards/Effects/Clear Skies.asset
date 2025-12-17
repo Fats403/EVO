@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
   m_Name: Clear Skies
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_CLEAR_SKIES
   effectName: Clear Skies
   icon: {fileID: 21300000, guid: 7cbe6bb53826645edb00eb0c23e399ff, type: 3}
   description: Change weather to Clear. Add +2 food to pile
@@ -21,6 +22,8 @@ MonoBehaviour:
   maxTargets: 1
   isGlobal: 1
   requiresManualSelection: 0
+  minTargets: 0
+  allowFewerThanMax: 0
   multiSelect: 0
   traitsToAttachToTargets: []
   globalEffect: {fileID: 11400000, guid: 56a03cfc545c0498b947d2e952756472, type: 2}
@@ -32,6 +35,8 @@ MonoBehaviour:
   allowInDrought: 0
   allowInStorm: 0
   allowInWildfire: 0
+  aiPreferWhenBehindOnBoard: 0
+  aiMinAlliesForBuffGlobals: 0
   aiCleanseSynergy: 0
   aiAttackSynergy: 0
   aiBodyBuffMultiplier: 1

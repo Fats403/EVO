@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Shell
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_SHELL
   cardName: Shell
   dinosaurName: Glyptodon
   artwork: {fileID: 21300000, guid: b33ea1af55c6c42b6be281c615afa2b3, type: 3}

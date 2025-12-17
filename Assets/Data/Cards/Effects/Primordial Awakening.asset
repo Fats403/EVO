@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
   m_Name: Primordial Awakening
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_PRIMORDIAL_AWAKENING
   effectName: Primordial Awakening
   icon: {fileID: 21300000, guid: 6f17a48304fa74778a2be499def15839, type: 3}
   description: 'All allies permanently gain +2 Body and +1 Speed. If you are behind
@@ -22,6 +23,8 @@ MonoBehaviour:
   maxTargets: 1
   isGlobal: 1
   requiresManualSelection: 0
+  minTargets: 0
+  allowFewerThanMax: 0
   multiSelect: 0
   traitsToAttachToTargets: []
   globalEffect: {fileID: 11400000, guid: bd896d43aac4c4961a291e6ad4a27a6d, type: 2}

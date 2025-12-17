@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
   m_Name: Extinction Event
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_EXTINCTION_EVENT
   effectName: Extinction Event
   icon: {fileID: 21300000, guid: 1c92deb7522474cdaac9dd01a9cd8a83, type: 3}
   description: Deal 2 damage to all creatures. Deal 1 additional damage to creatures
@@ -22,6 +23,8 @@ MonoBehaviour:
   maxTargets: 1
   isGlobal: 1
   requiresManualSelection: 0
+  minTargets: 0
+  allowFewerThanMax: 0
   multiSelect: 0
   traitsToAttachToTargets: []
   globalEffect: {fileID: 11400000, guid: 1e88d36aba5a34acf9eada66869a9544, type: 2}

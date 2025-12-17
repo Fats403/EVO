@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Freddy
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_FREDDY
   cardName: Freddy
   dinosaurName: Therizinosaurus
   artwork: {fileID: 21300000, guid: f499ec59590614d6592bd05353ab1da5, type: 3}

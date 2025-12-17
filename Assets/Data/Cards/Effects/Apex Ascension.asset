@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
   m_Name: Apex Ascension
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_APEX_ASCENSION
   effectName: Apex Ascension
   icon: {fileID: 21300000, guid: 841eba06ac64a419ea931fbbcacba996, type: 3}
   description: Target ally gains +2 max HP (heals +2), +2 Body, +2 Speed; remove
@@ -22,6 +23,8 @@ MonoBehaviour:
   maxTargets: 1
   isGlobal: 0
   requiresManualSelection: 0
+  minTargets: 0
+  allowFewerThanMax: 0
   multiSelect: 0
   traitsToAttachToTargets:
   - {fileID: 11400000, guid: 728e4a274daff4a3aa958a1f0e443591, type: 2}

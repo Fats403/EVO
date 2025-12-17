@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Kent
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_KENT
   cardName: Kent
   dinosaurName: Kentrosaurus
   artwork: {fileID: 21300000, guid: b9dba727a43aa4aada488252b4f93143, type: 3}

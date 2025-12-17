@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
   m_Name: Pack Bond
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_PACK_BOND
   effectName: Pack Bond
   icon: {fileID: 21300000, guid: 989b6c7621f994bac8a4085ed9cbfb69, type: 3}
   description: Two target allies each gain +1 Body and +1 Speed this round only
@@ -21,6 +22,8 @@ MonoBehaviour:
   maxTargets: 2
   isGlobal: 0
   requiresManualSelection: 0
+  minTargets: 0
+  allowFewerThanMax: 0
   multiSelect: 1
   traitsToAttachToTargets:
   - {fileID: 11400000, guid: 2846e1ffe216b409dbe6101e97e54c6f, type: 2}
@@ -33,6 +36,8 @@ MonoBehaviour:
   allowInDrought: 0
   allowInStorm: 0
   allowInWildfire: 0
+  aiPreferWhenBehindOnBoard: 0
+  aiMinAlliesForBuffGlobals: 0
   aiCleanseSynergy: 0
   aiAttackSynergy: 2
   aiBodyBuffMultiplier: 1

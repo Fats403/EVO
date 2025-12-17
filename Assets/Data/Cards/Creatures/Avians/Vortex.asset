@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Vortex
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_VORTEX
   cardName: Vortex
   dinosaurName: Coloborhynchus
   artwork: {fileID: 21300000, guid: 9aa58293d6ca844ea8349c5e23460154, type: 3}

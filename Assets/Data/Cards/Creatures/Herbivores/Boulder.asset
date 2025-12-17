@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Boulder
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_BOULDER
   cardName: Boulder
   dinosaurName: Nodosaurus
   artwork: {fileID: 21300000, guid: 2d6b71abfb1ba477a997edb1ad9d38cf, type: 3}

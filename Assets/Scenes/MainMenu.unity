@@ -996,7 +996,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0.137}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 30, y: 369}
+  m_AnchoredPosition: {x: 4, y: 336}
   m_SizeDelta: {x: 1193.5514, y: 134.6589}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1284890944
@@ -1019,7 +1019,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: SLAY A SAURUS
+  m_text: SLAY THE SAURUS
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 59eeb9537589e4f109f4617a25297199, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 0a99fc09ab38e4691b60768844894adb, type: 2}

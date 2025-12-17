@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Echo
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_ECHO
   cardName: Echo
   dinosaurName: Parasaurolophus
   artwork: {fileID: 21300000, guid: fdc622310e00f48e98979b6d150b0b98, type: 3}

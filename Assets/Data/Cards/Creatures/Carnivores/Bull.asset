@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Bull
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_BULL
   cardName: Bull
   dinosaurName: Carnotaurus
   artwork: {fileID: 21300000, guid: 879383835cd6d419e9ce57d57a4723cd, type: 3}

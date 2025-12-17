@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Shade
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_SHADE
   cardName: Shade
   dinosaurName: Megalosaurus
   artwork: {fileID: 21300000, guid: d4b519bb26bd64ffda0954afcee481d0, type: 3}

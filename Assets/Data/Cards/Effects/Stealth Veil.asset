@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
   m_Name: Stealth Veil
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_STEALTH_VEIL
   effectName: Stealth Veil
   icon: {fileID: 21300000, guid: efe022b6558114b27ab95a90707276e8, type: 3}
   description: Apply Stealth to an ally
@@ -21,6 +22,8 @@ MonoBehaviour:
   maxTargets: 1
   isGlobal: 0
   requiresManualSelection: 0
+  minTargets: 0
+  allowFewerThanMax: 0
   multiSelect: 0
   traitsToAttachToTargets:
   - {fileID: 11400000, guid: f83a8b3c2859d457abbb32b327f32ade, type: 2}
@@ -33,6 +36,8 @@ MonoBehaviour:
   allowInDrought: 0
   allowInStorm: 0
   allowInWildfire: 0
+  aiPreferWhenBehindOnBoard: 0
+  aiMinAlliesForBuffGlobals: 0
   aiCleanseSynergy: 0
   aiAttackSynergy: 2
   aiBodyBuffMultiplier: 1

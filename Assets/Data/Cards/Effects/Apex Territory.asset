@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
   m_Name: Apex Territory
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_APEX_TERRITORY
   effectName: Apex Territory
   icon: {fileID: 21300000, guid: 566f7846f11584d41b1ce2622fce32fa, type: 3}
   description: All allies permanently gain +1 Body. Center-positioned ally gain +2
@@ -22,6 +23,8 @@ MonoBehaviour:
   maxTargets: 1
   isGlobal: 1
   requiresManualSelection: 0
+  minTargets: 0
+  allowFewerThanMax: 0
   multiSelect: 0
   traitsToAttachToTargets: []
   globalEffect: {fileID: 11400000, guid: da7b1994ca33d49aa93399017d77888a, type: 2}

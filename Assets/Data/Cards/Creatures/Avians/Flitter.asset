@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Flitter
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_FLITTER
   cardName: Flitter
   dinosaurName: Archaeopteryx
   artwork: {fileID: 21300000, guid: 6bddb643d33224c6d86becc1824862af, type: 3}
@@ -19,7 +20,8 @@ MonoBehaviour:
   background: {fileID: 21300000, guid: 84dcd8b3944564ae3a92911db61bb280, type: 3}
   size: 1
   speed: 5
-  tier: 1
   maxHealth: 1
+  isImmovable: 0
+  momentumCost: 1
   baseTraits:
   - {fileID: 11400000, guid: 19439bb6546784d8b97716364e998f43, type: 2}

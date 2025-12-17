@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
   m_Name: Titans Might
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_TITANS_MIGHT
   effectName: Titans Might
   icon: {fileID: 21300000, guid: 550b5b321aa394f808d5dff8dcdcab1b, type: 3}
   description: Double target ally's Body until round end
@@ -21,6 +22,8 @@ MonoBehaviour:
   maxTargets: 1
   isGlobal: 0
   requiresManualSelection: 0
+  minTargets: 0
+  allowFewerThanMax: 0
   multiSelect: 0
   traitsToAttachToTargets:
   - {fileID: 11400000, guid: 6ff74f4b872b3408fb80bfb2157d6e90, type: 2}
@@ -33,6 +36,8 @@ MonoBehaviour:
   allowInDrought: 0
   allowInStorm: 0
   allowInWildfire: 0
+  aiPreferWhenBehindOnBoard: 0
+  aiMinAlliesForBuffGlobals: 0
   aiCleanseSynergy: 0
   aiAttackSynergy: 2
   aiBodyBuffMultiplier: 2

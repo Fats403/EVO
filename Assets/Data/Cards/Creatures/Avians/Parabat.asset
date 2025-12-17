@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Parabat
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_PARABAT
   cardName: Parabat
   dinosaurName: 'Jeholopterus '
   artwork: {fileID: 21300000, guid: 2469eba794cdf44b2b4efa9c3a932f7a, type: 3}

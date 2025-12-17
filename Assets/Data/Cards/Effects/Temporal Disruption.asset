@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
   m_Name: Temporal Disruption
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_TEMPORAL_DISRUPTION
   effectName: Temporal Disruption
   icon: {fileID: 21300000, guid: 69d08c2f03a5247009fbbb742da7ef76, type: 3}
   description: 'Reduce opponent''s momentum by 3 this round (minimum 0). If your
@@ -22,6 +23,8 @@ MonoBehaviour:
   maxTargets: 1
   isGlobal: 1
   requiresManualSelection: 0
+  minTargets: 0
+  allowFewerThanMax: 0
   multiSelect: 0
   traitsToAttachToTargets: []
   globalEffect: {fileID: 11400000, guid: 715007ed361bb447c8e8cd730570f64b, type: 2}

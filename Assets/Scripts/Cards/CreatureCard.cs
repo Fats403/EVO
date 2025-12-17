@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewCreatureCard", menuName = "Cards/Creature Card")]
-public class CreatureCard : ScriptableObject
+public class CreatureCard : CardDefinition
 {
     [Header("Identity")]
     public string cardName;
@@ -32,6 +32,11 @@ public class CreatureCard : ScriptableObject
 
     [Header("Base Traits")]
     public Trait[] baseTraits;
+
+    // CardDefinition implementation
+    public override string DisplayName => cardName;
+    public override Sprite Artwork => artwork;
+    public override int MomentumCost => momentumCost;
 }
 
 public enum CardType

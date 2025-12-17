@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ea386ca6e4554008a12f4df9dbfe0ac, type: 3}
   m_Name: Ashen
   m_EditorClassIdentifier: Assembly-CSharp::CreatureCard
+  cardId: CRE_ASHEN
   cardName: Ashen
   dinosaurName: Volcanic Herbivore
   artwork: {fileID: 21300000, guid: 7686895ed522e46bb9cb8e8569fb7909, type: 3}

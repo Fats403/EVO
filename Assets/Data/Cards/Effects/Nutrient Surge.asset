@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
   m_Name: Nutrient Surge
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_NUTRIENT_SURGE
   effectName: Nutrient Surge
   icon: {fileID: 21300000, guid: 4c4175abc1afa4706a3907c352dfddc7, type: 3}
   description: Add +3 food to pile. Your herbivores eat +1 bonus food this round
@@ -21,6 +22,8 @@ MonoBehaviour:
   maxTargets: 1
   isGlobal: 1
   requiresManualSelection: 0
+  minTargets: 0
+  allowFewerThanMax: 0
   multiSelect: 0
   traitsToAttachToTargets:
   - {fileID: 11400000, guid: 0ededb27ee61e48cdb910912a2597b50, type: 2}
@@ -33,6 +36,8 @@ MonoBehaviour:
   allowInDrought: 0
   allowInStorm: 0
   allowInWildfire: 0
+  aiPreferWhenBehindOnBoard: 0
+  aiMinAlliesForBuffGlobals: 0
   aiCleanseSynergy: 0
   aiAttackSynergy: 0
   aiBodyBuffMultiplier: 1
