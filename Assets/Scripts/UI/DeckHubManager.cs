@@ -23,6 +23,10 @@ public class DeckHubManager : MonoBehaviour
     [SerializeField]
     private GameObject deckHubRoot;
 
+    [Tooltip("Root object for the deck builder view (card list, deck summary, save button).")]
+    [SerializeField]
+    private GameObject deckBuilderRoot;
+
     // Resolved at runtime from children of loadingRoot so we only need to wire up one object.
     private TextMeshProUGUI loadingErrorText;
 
@@ -30,12 +34,20 @@ public class DeckHubManager : MonoBehaviour
     [SerializeField]
     private DeckSlotUI[] deckSlots;
 
-    [Header("Card Data")]
+    [Header("Card Data / Builder")]
     [Tooltip("Global card database used to resolve cardIds when building decks.")]
     [SerializeField]
     private CardDatabase cardDatabase;
 
+    [Tooltip("Manager for the deck builder view.")]
+    [SerializeField]
+    private DeckBuilderManager deckBuilderManager;
+
     private FirebaseManager Firebase => FirebaseManager.Instance;
+
+    // Tracks which slot/deck is currently being edited/created.
+    private int _activeSlotIndex = -1;
+    private string _activeDeckId;
 
     private void Awake()
     {
@@ -43,6 +55,19 @@ public class DeckHubManager : MonoBehaviour
         {
             loadingErrorText = loadingRoot.GetComponentInChildren<TextMeshProUGUI>(true);
         }
+
+        // Hub is the default view; hide the builder at startup.
+        if (deckBuilderRoot != null)
+            deckBuilderRoot.SetActive(false);
+
+        if (deckBuilderManager != null)
+            deckBuilderManager.DeckSaved += HandleDeckSaved;
+    }
+
+    private void OnDestroy()
+    {
+        if (deckBuilderManager != null)
+            deckBuilderManager.DeckSaved -= HandleDeckSaved;
     }
 
     private void Start()
@@ -194,7 +219,23 @@ public class DeckHubManager : MonoBehaviour
             return;
 
         Debug.Log($"DeckHubManager: Create requested for slot {slot.slotIndex}");
-        // TODO: Navigate to deck creation view and pass slot.slotIndex.
+
+        _activeSlotIndex = slot.slotIndex;
+        _activeDeckId = null;
+
+        // Switch to deck builder view and reset to a new deck.
+        if (deckBuilderRoot != null)
+            deckBuilderRoot.SetActive(true);
+        if (deckHubRoot != null)
+            deckHubRoot.SetActive(false);
+        if (loadingRoot != null)
+            loadingRoot.SetActive(false);
+
+        if (deckBuilderManager != null)
+        {
+            var defaultName = $"Deck {slot.slotIndex + 1}";
+            deckBuilderManager.StartNewDeck(defaultName);
+        }
     }
 
     private void OnEditRequested(DeckSlotUI slot)
@@ -205,7 +246,19 @@ public class DeckHubManager : MonoBehaviour
         Debug.Log(
             $"DeckHubManager: Edit requested for deck '{slot.DeckName}' (id={slot.DeckId}) in slot {slot.slotIndex}"
         );
-        // TODO: Navigate to deck editor view with slot.DeckId.
+
+        _activeSlotIndex = slot.slotIndex;
+        _activeDeckId = slot.DeckId;
+
+        if (deckBuilderRoot != null)
+            deckBuilderRoot.SetActive(true);
+        if (deckHubRoot != null)
+            deckHubRoot.SetActive(false);
+        if (loadingRoot != null)
+            loadingRoot.SetActive(false);
+
+        // Load existing deck contents from Firestore into the builder.
+        OpenExistingDeckForEdit(slot);
     }
 
     private async void OnDeleteRequested(DeckSlotUI slot)
@@ -242,5 +295,153 @@ public class DeckHubManager : MonoBehaviour
         public string deckId;
         public string name;
         public int slotIndex;
+    }
+
+    private async void HandleDeckSaved(
+        string deckName,
+        List<DeckBuilderManager.DeckCardEntry> cards
+    )
+    {
+        if (Firebase == null || Firebase.CurrentUser == null)
+        {
+            Debug.LogError("DeckHubManager: Cannot save deck – no Firebase user.");
+            return;
+        }
+
+        if (_activeSlotIndex < 0)
+        {
+            Debug.LogWarning("DeckHubManager: DeckSaved received with no active slot.");
+            return;
+        }
+
+        var db = Firebase.Db;
+        var uid = Firebase.CurrentUser.UserId;
+
+        try
+        {
+            var decksCol = db.Collection("players").Document(uid).Collection("decks");
+            DocumentReference docRef = !string.IsNullOrEmpty(_activeDeckId)
+                ? decksCol.Document(_activeDeckId)
+                : decksCol.Document(); // auto-id for new deck
+
+            var cardList = new List<Dictionary<string, object>>();
+            if (cards != null)
+            {
+                foreach (var c in cards)
+                {
+                    if (string.IsNullOrEmpty(c.cardId) || c.count <= 0)
+                        continue;
+
+                    cardList.Add(
+                        new Dictionary<string, object>
+                        {
+                            { "cardId", c.cardId },
+                            { "count", c.count },
+                        }
+                    );
+                }
+            }
+
+            var data = new Dictionary<string, object>
+            {
+                { "name", deckName },
+                { "slotIndex", _activeSlotIndex },
+                { "cards", cardList },
+                { "updatedAt", FieldValue.ServerTimestamp },
+            };
+
+            if (string.IsNullOrEmpty(_activeDeckId))
+                data["createdAt"] = FieldValue.ServerTimestamp;
+
+            await docRef.SetAsync(data, SetOptions.MergeAll);
+
+            _activeDeckId = docRef.Id;
+
+            // After saving, return to the hub view and refresh decks.
+            if (deckBuilderRoot != null)
+                deckBuilderRoot.SetActive(false);
+            if (deckHubRoot != null)
+                deckHubRoot.SetActive(true);
+
+            await LoadDecksAsync();
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"DeckHubManager: Failed to save deck: {e.Message}");
+        }
+    }
+
+    private async void OpenExistingDeckForEdit(DeckSlotUI slot)
+    {
+        if (slot == null || string.IsNullOrEmpty(slot.DeckId))
+        {
+            // Fallback: start a fresh deck if we don't have an id.
+            deckBuilderManager?.StartNewDeck(slot != null ? slot.DeckName : "Deck");
+            return;
+        }
+
+        if (Firebase == null || Firebase.CurrentUser == null || deckBuilderManager == null)
+            return;
+
+        var db = Firebase.Db;
+        var uid = Firebase.CurrentUser.UserId;
+
+        try
+        {
+            var docRef = db.Collection("players")
+                .Document(uid)
+                .Collection("decks")
+                .Document(slot.DeckId);
+            var snap = await docRef.GetSnapshotAsync();
+            if (!snap.Exists)
+            {
+                deckBuilderManager.StartNewDeck(slot.DeckName);
+                return;
+            }
+
+            var dict = snap.ToDictionary();
+            string name =
+                dict.TryGetValue("name", out var nameObj)
+                && nameObj is string sName
+                && !string.IsNullOrEmpty(sName)
+                    ? sName
+                    : slot.DeckName;
+
+            var entries = new List<DeckBuilderManager.DeckCardEntry>();
+            if (
+                dict.TryGetValue("cards", out var cardsObj)
+                && cardsObj is IEnumerable<object> rawCards
+            )
+            {
+                foreach (var raw in rawCards)
+                {
+                    if (raw is Dictionary<string, object> cardMap)
+                    {
+                        if (
+                            cardMap.TryGetValue("cardId", out var idObj)
+                            && idObj is string id
+                            && cardMap.TryGetValue("count", out var countObj)
+                            && countObj is long lCount
+                        )
+                        {
+                            entries.Add(
+                                new DeckBuilderManager.DeckCardEntry
+                                {
+                                    cardId = id,
+                                    count = (int)lCount,
+                                }
+                            );
+                        }
+                    }
+                }
+            }
+
+            deckBuilderManager.LoadFromExistingDeck(name, entries);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"DeckHubManager: Failed to load deck for edit: {e.Message}");
+            deckBuilderManager.StartNewDeck(slot.DeckName);
+        }
     }
 }

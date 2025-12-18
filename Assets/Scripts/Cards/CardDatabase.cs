@@ -63,5 +63,3 @@ public class CardDatabase : ScriptableObject
         return TryGetById(cardId, out var card) ? card : null;
     }
 }
-
-

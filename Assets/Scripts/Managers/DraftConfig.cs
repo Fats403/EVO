@@ -27,7 +27,7 @@ public class DraftConfig : ScriptableObject
 
     [Tooltip("Maximum momentum cost for a card to be considered 'mid cost' (inclusive).")]
     [Min(0)]
-    public int midCostMax = 4; // 3–4 → mid; > midCostMax → high
+    public int midCostMax = 3; // 3 → mid; > midCostMax → high
 
     [Tooltip("Target number of low-cost cards in the final 20-card deck.")]
     [Min(0)]
@@ -67,10 +67,3 @@ public class DraftConfig : ScriptableObject
         return 2;
     }
 }
-
-
-
-
-
-
-

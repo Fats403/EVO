@@ -230,10 +230,6 @@ public class FirebaseManager : MonoBehaviour
         return response.firebaseCustomToken;
     }
 
-    // ------------------------------------------------------------------
-    // Simple Firestore helpers you can expand for your game data model.
-    // ------------------------------------------------------------------
-
     /// <summary>Convenience accessor for the player's root document: players/{uid}</summary>
     public DocumentReference GetPlayerDoc()
     {
