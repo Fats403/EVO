@@ -87,6 +87,10 @@ public class GameManager : MonoBehaviour
     [Tooltip("Delay after announcing that the round is resolving before combat begins.")]
     public float resolveStartDelaySeconds = 1f;
 
+    [Header("Deck Sources")]
+    [Tooltip("Global card database used to resolve cardIds when starting a constructed game.")]
+    public CardDatabase cardDatabase;
+
     private Coroutine placePhaseRoutine;
     private SlotOwner currentPlaceTurnOwner = SlotOwner.Player1;
     private SlotOwner? awaitingTurnOwner;
@@ -122,14 +126,39 @@ public class GameManager : MonoBehaviour
         if (endTurnLabel == null && endTurnButton != null)
             endTurnLabel = endTurnButton.GetComponentInChildren<TextMeshProUGUI>();
 
-        // Ensure initial canvas visibility states
-        bool usingDraft = draftManager != null;
-        // Hide the main gameplay UI and world canvas while we are in the draft, show them otherwise.
-        SetCanvasGroupVisible(mainCanvasGroup, !usingDraft);
-        SetCanvasGroupVisible(worldCanvasGroup, !usingDraft);
-        if (worldCanvasGroup != null)
-            worldCanvasGroup.gameObject.SetActive(!usingDraft);
-        SetCanvasGroupVisible(gameOverCanvasGroup, false);
+        // Decide startup mode: constructed deck vs draft.
+        bool useConstructed =
+            SelectedDeckStore.Mode == GameStartMode.Constructed
+            && SelectedDeckStore.HasConstructedDeck;
+
+        if (useConstructed)
+        {
+            // Show gameplay UI immediately; no draft phase.
+            SetCanvasGroupVisible(mainCanvasGroup, true);
+            SetCanvasGroupVisible(worldCanvasGroup, true);
+            if (worldCanvasGroup != null)
+                worldCanvasGroup.gameObject.SetActive(true);
+            SetCanvasGroupVisible(gameOverCanvasGroup, false);
+
+            // Explicitly hide any draft overlay if the scene still has one.
+            if (draftManager != null && draftManager.draftCanvasGroup != null)
+            {
+                draftManager.draftCanvasGroup.alpha = 0f;
+                draftManager.draftCanvasGroup.interactable = false;
+                draftManager.draftCanvasGroup.blocksRaycasts = false;
+            }
+        }
+        else
+        {
+            // Ensure initial canvas visibility states for draft mode.
+            bool usingDraft = draftManager != null;
+            // Hide the main gameplay UI and world canvas while we are in the draft, show them otherwise.
+            SetCanvasGroupVisible(mainCanvasGroup, !usingDraft);
+            SetCanvasGroupVisible(worldCanvasGroup, !usingDraft);
+            if (worldCanvasGroup != null)
+                worldCanvasGroup.gameObject.SetActive(!usingDraft);
+            SetCanvasGroupVisible(gameOverCanvasGroup, false);
+        }
 
         // Manual effect selection UI starts hidden.
         SetManualEffectSelectionUIVisible(false);
@@ -140,21 +169,83 @@ public class GameManager : MonoBehaviour
 
         UpdatePhaseLabel();
         weatherVideoBackground?.ForceTo(WeatherType.Clear);
+
         // Initialize AI deck/hand before the first round begins so both players follow the same rules.
         AIManager.Instance?.BuildDeckAndDrawStartingHand();
 
-        // Always start with draft phase for the local player in this prototype.
-        if (draftManager != null)
+        if (useConstructed)
         {
-            draftManager.BeginDraft();
+            // Build the player's deck from the SelectedDeckStore and jump straight into the game.
+            InitializeConstructedPlayerDeck();
+            SelectedDeckStore.Clear();
+            BeginSetup();
         }
         else
         {
-            Debug.LogWarning(
-                "GameManager: DraftManager not assigned; starting game without draft."
-            );
-            BeginSetup();
+            // Draft-based start (existing behaviour).
+            if (draftManager != null)
+            {
+                draftManager.BeginDraft();
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "GameManager: DraftManager not assigned; starting game without draft."
+                );
+                BeginSetup();
+            }
         }
+    }
+
+    /// <summary>
+    /// Builds the local player's deck from SelectedDeckStore using the CardDatabase
+    /// and initializes the DeckManager.
+    /// </summary>
+    private void InitializeConstructedPlayerDeck()
+    {
+        if (!SelectedDeckStore.HasConstructedDeck)
+        {
+            Debug.LogError("GameManager: InitializeConstructedPlayerDeck called with no deck.");
+            return;
+        }
+
+        if (DeckManager.Instance == null || cardDatabase == null)
+        {
+            Debug.LogError(
+                "GameManager: Cannot initialize constructed deck – missing DeckManager or CardDatabase."
+            );
+            return;
+        }
+
+        var cards = new List<ScriptableObject>();
+        foreach (var entry in SelectedDeckStore.Cards)
+        {
+            if (string.IsNullOrEmpty(entry.cardId) || entry.count <= 0)
+                continue;
+
+            var def = cardDatabase.GetById(entry.cardId);
+            if (def == null)
+            {
+                Debug.LogWarning(
+                    $"GameManager: Card with id '{entry.cardId}' not found in CardDatabase."
+                );
+                continue;
+            }
+
+            for (int i = 0; i < entry.count; i++)
+            {
+                cards.Add(def);
+            }
+        }
+
+        if (cards.Count == 0)
+        {
+            Debug.LogError("GameManager: Constructed deck contained no valid cards.");
+            return;
+        }
+
+        DeckManager.Instance.InitializeFromDraft(cards);
+        DeckManager.Instance.InitializeAndDraw();
     }
 
     void SetCanvasGroupVisible(CanvasGroup cg, bool visible)

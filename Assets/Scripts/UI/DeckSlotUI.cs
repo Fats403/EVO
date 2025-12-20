@@ -28,6 +28,9 @@ public class DeckSlotUI : MonoBehaviour
     private GameObject deleteIconRoot;
 
     [SerializeField]
+    private GameObject playIconRoot;
+
+    [SerializeField]
     private Button addButton;
 
     [SerializeField]
@@ -35,6 +38,9 @@ public class DeckSlotUI : MonoBehaviour
 
     [SerializeField]
     private Button deleteButton;
+
+    [SerializeField]
+    private Button playButton;
 
     /// <summary>True if this slot currently has a deck assigned.</summary>
     public bool HasDeck => _hasDeck;
@@ -45,7 +51,12 @@ public class DeckSlotUI : MonoBehaviour
     /// <summary>Firestore deck document ID, if any.</summary>
     public string DeckId => _deckId;
 
+    /// <summary>Requested to create a new deck in this slot.</summary>
     public event Action<DeckSlotUI> CreateRequested;
+
+    /// <summary>Requested to play this deck (only valid when HasDeck is true).</summary>
+    public event Action<DeckSlotUI> PlayRequested;
+
     public event Action<DeckSlotUI> EditRequested;
     public event Action<DeckSlotUI> DeleteRequested;
 
@@ -61,6 +72,8 @@ public class DeckSlotUI : MonoBehaviour
             editButton.onClick.AddListener(OnEditClicked);
         if (deleteButton != null)
             deleteButton.onClick.AddListener(OnDeleteClicked);
+        if (playButton != null)
+            playButton.onClick.AddListener(OnPlayClicked);
     }
 
     private void OnDestroy()
@@ -71,6 +84,8 @@ public class DeckSlotUI : MonoBehaviour
             editButton.onClick.RemoveListener(OnEditClicked);
         if (deleteButton != null)
             deleteButton.onClick.RemoveListener(OnDeleteClicked);
+        if (playButton != null)
+            playButton.onClick.RemoveListener(OnPlayClicked);
     }
 
     public void SetEmptyState()
@@ -82,9 +97,20 @@ public class DeckSlotUI : MonoBehaviour
         if (deckTitleText != null)
             deckTitleText.text = "NEW DECK";
 
+        // Show "Add" (create) but not "Play". Edit/Delete are visible but disabled.
         SetActiveSafe(addIconRoot, true);
-        SetActiveSafe(editIconRoot, false);
-        SetActiveSafe(deleteIconRoot, false);
+        SetActiveSafe(playIconRoot, false);
+        SetActiveSafe(editIconRoot, true);
+        SetActiveSafe(deleteIconRoot, true);
+
+        if (addButton != null)
+            addButton.interactable = true; // create new deck
+        if (playButton != null)
+            playButton.interactable = false;
+        if (editButton != null)
+            editButton.interactable = false;  // cannot edit a non-existent deck
+        if (deleteButton != null)
+            deleteButton.interactable = false; // nothing to delete yet
     }
 
     public void SetDeck(string deckId, string deckName)
@@ -96,9 +122,20 @@ public class DeckSlotUI : MonoBehaviour
         if (deckTitleText != null)
             deckTitleText.text = _deckName;
 
+        // Show "Play" instead of "Add" for a valid deck.
         SetActiveSafe(addIconRoot, false);
+        SetActiveSafe(playIconRoot, true);
         SetActiveSafe(editIconRoot, true);
         SetActiveSafe(deleteIconRoot, true);
+
+        if (addButton != null)
+            addButton.interactable = false; // keep create separate from edit
+        if (playButton != null)
+            playButton.interactable = true;
+        if (editButton != null)
+            editButton.interactable = true;
+        if (deleteButton != null)
+            deleteButton.interactable = true;
     }
 
     private void OnAddClicked()
@@ -106,12 +143,17 @@ public class DeckSlotUI : MonoBehaviour
         CreateRequested?.Invoke(this);
     }
 
-    private void OnEditClicked()
+    private void OnPlayClicked()
     {
         if (_hasDeck)
-            EditRequested?.Invoke(this);
-        else
-            CreateRequested?.Invoke(this);
+            PlayRequested?.Invoke(this);
+    }
+
+    private void OnEditClicked()
+    {
+        // Edit always opens the deck builder. When there's no deck yet,
+        // this acts as "create deck".
+        EditRequested?.Invoke(this);
     }
 
     private void OnDeleteClicked()
@@ -126,3 +168,5 @@ public class DeckSlotUI : MonoBehaviour
             go.SetActive(active);
     }
 }
+
+

@@ -9,6 +9,15 @@ public class DeckManager : MonoBehaviour
     public static DeckManager Instance;
 
     [Header("Deck Setup")]
+    [Tooltip(
+        "Global card database. If assigned, allCards will be auto-populated from this at runtime."
+    )]
+    public CardDatabase cardDatabase;
+
+    [Tooltip(
+        "Legacy card pool. At runtime this is auto-populated from cardDatabase when available, "
+            + "and used as the source for random decks / draft pools."
+    )]
     public List<ScriptableObject> allCards;
     public Transform handPanel;
     public GameObject creaturePrefab;
@@ -61,6 +70,22 @@ public class DeckManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+
+        // Single source of truth for cards: CardDatabase. If it's assigned and allCards
+        // is empty, mirror its contents into allCards so existing systems that depend
+        // on DeckManager.allCards (draft, debug tools, etc.) continue to work.
+        if (cardDatabase != null && (allCards == null || allCards.Count == 0))
+        {
+            allCards = new List<ScriptableObject>();
+            if (cardDatabase.allCards != null)
+            {
+                foreach (var def in cardDatabase.allCards)
+                {
+                    if (def != null)
+                        allCards.Add(def);
+                }
+            }
+        }
     }
 
     // DeckManager no longer auto-builds or draws a starting hand on Start().

@@ -10,13 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
-  m_Name: Temporal Disruption
+  m_Name: Resource Collapse
   m_EditorClassIdentifier: Assembly-CSharp::EffectCard
-  cardId: EFF_TEMPORAL_DISRUPTION
-  effectName: Temporal Disruption
-  icon: {fileID: 21300000, guid: 69d08c2f03a5247009fbbb742da7ef76, type: 3}
-  description: 'Reduce opponent''s momentum by 3 this round (minimum 0). If your
-    score is behind: Set opponent''s momentum to 0 this round instead'
+  cardId: EFF_RESOURCE_COLLAPSE
+  effectName: Resource Collapse
+  icon: {fileID: 21300000, guid: fb7ac24a3f4bb4ddb8fbde8a80cae905, type: 3}
+  description: Remove all food from the food pile
   targetSide: 2
   targetType: 0
   targetCount: 0
@@ -41,4 +40,4 @@ MonoBehaviour:
   aiCleanseSynergy: 0
   aiAttackSynergy: 0
   aiBodyBuffMultiplier: 1
-  aiRemovalValue: 3.5
+  aiRemovalValue: 0.5

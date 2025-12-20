@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Firebase.Firestore;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Top-level controller for the DeckHubScene.
@@ -162,10 +163,12 @@ public class DeckHubManager : MonoBehaviour
             if (slot != null)
             {
                 slot.CreateRequested -= OnCreateRequested;
+                slot.PlayRequested -= OnPlayRequested;
                 slot.EditRequested -= OnEditRequested;
                 slot.DeleteRequested -= OnDeleteRequested;
 
                 slot.CreateRequested += OnCreateRequested;
+                slot.PlayRequested += OnPlayRequested;
                 slot.EditRequested += OnEditRequested;
                 slot.DeleteRequested += OnDeleteRequested;
             }
@@ -223,42 +226,53 @@ public class DeckHubManager : MonoBehaviour
         _activeSlotIndex = slot.slotIndex;
         _activeDeckId = null;
 
-        // Switch to deck builder view and reset to a new deck.
-        if (deckBuilderRoot != null)
-            deckBuilderRoot.SetActive(true);
-        if (deckHubRoot != null)
-            deckHubRoot.SetActive(false);
-        if (loadingRoot != null)
-            loadingRoot.SetActive(false);
+        deckBuilderRoot?.SetActive(true);
+        deckHubRoot?.SetActive(false);
+        loadingRoot?.SetActive(false);
 
-        if (deckBuilderManager != null)
-        {
-            var defaultName = $"Deck {slot.slotIndex + 1}";
-            deckBuilderManager.StartNewDeck(defaultName);
-        }
+        deckBuilderManager?.StartNewDeck($"Deck {slot.slotIndex + 1}");
     }
 
-    private void OnEditRequested(DeckSlotUI slot)
+    private void OnPlayRequested(DeckSlotUI slot)
     {
         if (slot == null || !slot.HasDeck)
             return;
 
         Debug.Log(
-            $"DeckHubManager: Edit requested for deck '{slot.DeckName}' (id={slot.DeckId}) in slot {slot.slotIndex}"
+            $"DeckHubManager: Play requested for deck '{slot.DeckName}' (id={slot.DeckId}) in slot {slot.slotIndex}"
         );
 
+        // Start the game in constructed mode using this deck.
+        _ = StartGameWithDeckAsync(slot);
+    }
+
+    private void OnEditRequested(DeckSlotUI slot)
+    {
+        if (slot == null)
+            return;
+
+        Debug.Log($"DeckHubManager: Edit requested for slot {slot.slotIndex}");
+
         _activeSlotIndex = slot.slotIndex;
-        _activeDeckId = slot.DeckId;
+        _activeDeckId = slot.HasDeck ? slot.DeckId : null;
 
-        if (deckBuilderRoot != null)
-            deckBuilderRoot.SetActive(true);
-        if (deckHubRoot != null)
-            deckHubRoot.SetActive(false);
-        if (loadingRoot != null)
-            loadingRoot.SetActive(false);
+        deckBuilderRoot?.SetActive(true);
+        deckHubRoot?.SetActive(false);
+        loadingRoot?.SetActive(false);
 
-        // Load existing deck contents from Firestore into the builder.
-        OpenExistingDeckForEdit(slot);
+        if (deckBuilderManager != null)
+        {
+            if (slot.HasDeck)
+            {
+                // Load existing deck contents from Firestore into the builder.
+                OpenExistingDeckForEdit(slot);
+            }
+            else
+            {
+                var defaultName = $"Deck {slot.slotIndex + 1}";
+                deckBuilderManager.StartNewDeck(defaultName);
+            }
+        }
     }
 
     private async void OnDeleteRequested(DeckSlotUI slot)
@@ -295,6 +309,15 @@ public class DeckHubManager : MonoBehaviour
         public string deckId;
         public string name;
         public int slotIndex;
+    }
+
+    /// <summary>
+    /// Called by a UI button in the DeckHubScene to start a game in draft mode.
+    /// </summary>
+    public void OnClick_PlayDraft()
+    {
+        SelectedDeckStore.SetDraftMode();
+        SceneManager.LoadScene("MainScene");
     }
 
     private async void HandleDeckSaved(
@@ -442,6 +465,83 @@ public class DeckHubManager : MonoBehaviour
         {
             Debug.LogError($"DeckHubManager: Failed to load deck for edit: {e.Message}");
             deckBuilderManager.StartNewDeck(slot.DeckName);
+        }
+    }
+
+    /// <summary>
+    /// Loads the selected deck from Firestore into the SelectedDeckStore and
+    /// transitions to the main gameplay scene in constructed mode.
+    /// </summary>
+    private async Task StartGameWithDeckAsync(DeckSlotUI slot)
+    {
+        if (slot == null || string.IsNullOrEmpty(slot.DeckId))
+            return;
+
+        if (Firebase == null || Firebase.CurrentUser == null)
+        {
+            Debug.LogError("DeckHubManager: Cannot start game – no Firebase user.");
+            return;
+        }
+
+        var db = Firebase.Db;
+        var uid = Firebase.CurrentUser.UserId;
+
+        try
+        {
+            var docRef = db.Collection("players")
+                .Document(uid)
+                .Collection("decks")
+                .Document(slot.DeckId);
+            var snap = await docRef.GetSnapshotAsync();
+            if (!snap.Exists)
+            {
+                Debug.LogError("DeckHubManager: Selected deck does not exist.");
+                return;
+            }
+
+            var dict = snap.ToDictionary();
+            string name =
+                dict.TryGetValue("name", out var nameObj)
+                && nameObj is string sName
+                && !string.IsNullOrEmpty(sName)
+                    ? sName
+                    : slot.DeckName;
+
+            var entries = new List<DeckBuilderManager.DeckCardEntry>();
+            if (
+                dict.TryGetValue("cards", out var cardsObj)
+                && cardsObj is IEnumerable<object> rawCards
+            )
+            {
+                foreach (var raw in rawCards)
+                {
+                    if (raw is Dictionary<string, object> cardMap)
+                    {
+                        if (
+                            cardMap.TryGetValue("cardId", out var idObj)
+                            && idObj is string id
+                            && cardMap.TryGetValue("count", out var countObj)
+                            && countObj is long lCount
+                        )
+                        {
+                            entries.Add(
+                                new DeckBuilderManager.DeckCardEntry
+                                {
+                                    cardId = id,
+                                    count = (int)lCount,
+                                }
+                            );
+                        }
+                    }
+                }
+            }
+
+            SelectedDeckStore.SetConstructedDeck(slot.DeckId, name, slot.slotIndex, entries);
+            SceneManager.LoadScene("MainScene");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"DeckHubManager: Failed to start game with deck: {e.Message}");
         }
     }
 }
