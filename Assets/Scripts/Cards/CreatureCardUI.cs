@@ -29,9 +29,9 @@ public class CreatureCardUI : BaseCardUI
         if (momentumCostText != null)
             momentumCostText.text = data != null ? data.momentumCost.ToString() : "";
         if (speedText != null)
-            speedText.text = $"Speed: {data.speed}";
+            speedText.text = $"{data.speed}";
         if (bodyText != null)
-            bodyText.text = $"Size: {data.size}";
+            bodyText.text = $"{data.size}";
         if (healthText != null)
             healthText.text = $"{data.maxHealth}";
         if (artworkImage != null)
