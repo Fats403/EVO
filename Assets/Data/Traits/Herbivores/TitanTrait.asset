@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: TitanTrait
   m_EditorClassIdentifier: Assembly-CSharp::TitanTrait
   traitName: Titan
-  description: Gains Taunt when played. When eating, all allies gain +1 Regen
+  description: Gains <link="Taunt"><color=#FFD35B><b>Taunt</b></color></link> when
+    played. When eating, all allies gain <link="Regen"><color=#FFD35B><b>+1 Regen</b></color></link>

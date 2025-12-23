@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: GaleforceTrait
   m_EditorClassIdentifier: Assembly-CSharp::GaleforceTrait
   traitName: Galeforce
-  description: ' During Storm, gain +2 Speed and attacks apply Fatigued (1)'
+  description: ' During Storm, gain +2 Speed and attacks apply <link="Fatigue"><color=#FFD35B><b>+1
+    Fatigue</b></color></link>'

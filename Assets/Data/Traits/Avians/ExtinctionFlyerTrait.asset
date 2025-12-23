@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: ExtinctionFlyerTrait
   m_EditorClassIdentifier: Assembly-CSharp::ExtinctionFlyerTrait
   traitName: Extinction Flyer
-  description: During Extinction era, attacks apply Suppressed (1) and all attacks
-    do +1 damage
+  description: During Extinction era, attacks apply <link="Suppress"><color=#FFD35B><b>+1
+    Suppress</b></color></link> and all attacks do +1 damage

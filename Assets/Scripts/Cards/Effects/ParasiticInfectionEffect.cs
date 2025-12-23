@@ -8,6 +8,6 @@ public class ParasiticInfectionEffect : EffectTraitBase
     {
         if (target == null)
             return;
-        target.AddStatus(StatusTag.Infected, 2);
+        target.AddStatus(StatusTag.Infection, 2);
     }
 }

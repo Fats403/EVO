@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: ResonanceTrait
   m_EditorClassIdentifier: Assembly-CSharp::ResonanceTrait
   traitName: Resonance
-  description: Attacks apply Suppressed (1). If target already has Suppressed, deal
-    +1 damage instead
+  description: Attacks apply <link="Suppress"><color=#FFD35B><b>+1 Suppress</b></color></link>.
+    If target already has <link="Suppress"><color=#FFD35B><b>Suppress</b></color></link>,
+    deal +1 damage instead

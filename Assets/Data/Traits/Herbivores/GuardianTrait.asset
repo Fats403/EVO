@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: GuardianTrait
   m_EditorClassIdentifier: Assembly-CSharp::GuardianTrait
   traitName: Guardian
-  description: When adjacent ally takes damage, gain +1 Shield after damage resolves
+  description: When adjacent ally takes damage, gain <link="Shield"><color=#FFD35B><b>+1
+    Shield</b></color></link> after damage resolves

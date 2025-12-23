@@ -8,7 +8,7 @@ public class AmbushTrait : Trait
     {
         if (self == null || target == null)
             return baseDamage;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return baseDamage;
 
         bool hasNegative = StatusTagGroups.Negative.Any(tag => target.GetStatus(tag) > 0);

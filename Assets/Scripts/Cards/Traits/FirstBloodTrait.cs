@@ -12,7 +12,7 @@ public class FirstBloodTrait : Trait
             fixedDamage = 0;
             return false;
         }
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
         {
             fixedDamage = 0;
             return false;
@@ -27,12 +27,12 @@ public class FirstBloodTrait : Trait
     {
         if (self == null || target == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         if (wasNegated)
             return;
 
-        target.AddStatus(StatusTag.Bleeding, 1);
+        target.AddStatus(StatusTag.Bleed, 1);
         FeedbackManager.Instance?.ShowFloatingText(
             "First Blood",
             self.transform.position,

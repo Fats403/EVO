@@ -9,7 +9,7 @@ public class ArmoredCounterTrait : Trait
             return;
         if (self.currentHealth <= 0 || self.isDying)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         // Immediate counter if still alive
         ResolutionManager.Instance?.PerformImmediateAttack(

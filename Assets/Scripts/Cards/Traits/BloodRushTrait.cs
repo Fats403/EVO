@@ -10,7 +10,7 @@ public class BloodRushTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
 
         // Immediate benefit: heal now.

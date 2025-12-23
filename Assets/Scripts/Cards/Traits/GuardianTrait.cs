@@ -19,14 +19,14 @@ public class GuardianTrait : Trait
             return;
         if (self.owner != victim.owner)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
 
         // Adjacent ally took damage
         var adj = BoardUtils.GetAdjacentAllies(self);
         if (adj != null && adj.Contains(victim))
         {
-            self.AddStatus(StatusTag.Shielded, 1);
+            self.AddStatus(StatusTag.Shield, 1);
             FeedbackManager.Instance?.ShowFloatingText(
                 "Guardian",
                 self.transform.position,

@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: PlagueCarrierTrait
   m_EditorClassIdentifier: Assembly-CSharp::PlagueCarrierTrait
   traitName: Plague Carrier
-  description: Attacks apply Infected (1) and NoForage (1)
+  description: Attacks apply <link="Infection"><color=#FFD35B><b>+1 Infection</b></color></link>
+    and <link="NoForage"><color=#FFD35B><b>+1 No Forage</b></color></link>

@@ -57,8 +57,9 @@ public class TooltipManager : MonoBehaviour
 
         Instance = this;
 
-        if (canvas == null)
-            canvas = GetComponentInParent<Canvas>();
+        // Persist across scene loads so tooltips are available in all game scenes.
+        DontDestroyOnLoad(gameObject);
+        // Expect explicit wiring via inspector; keep this class simple.
 
         if (root != null)
         {

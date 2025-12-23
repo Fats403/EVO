@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StatusDefinitionLibrary
   entries:
   - tag: 0
-    displayName: Infected
+    displayName: Infection
     description: At the start of each round, this creature takes 1 damage and Infected
       is reduced by 1 stack.
     icon: {fileID: 21300000, guid: 0c4355858300345e4adb62001160abbb, type: 3}
   - tag: 1
-    displayName: Sheilded
+    displayName: Shield
     description: Each stack blocks the next instance of damage entirely, then that
       Shielded stack is removed.
     icon: {fileID: 21300000, guid: 639fb9d8f582741f7820906472a3c7f3, type: 3}
@@ -29,7 +29,7 @@ MonoBehaviour:
       and dealt to the attacker instead, then Reflect is removed.
     icon: {fileID: 21300000, guid: 36d027bd2bf6845878199df5cbdf8ab7, type: 3}
   - tag: 3
-    displayName: Fatigued
+    displayName: Fatigue
     description: "Each stack reduces this creature\u2019s speed by 1. One Fatigued
       stack is removed at the end of each round."
     icon: {fileID: 21300000, guid: ea577325c1fcd4003b6b5da087832d04, type: 3}
@@ -49,11 +49,11 @@ MonoBehaviour:
       is removed."
     icon: {fileID: 21300000, guid: c0e7c22e60879472fbb127fe99121c23, type: 3}
   - tag: 7
-    displayName: Stunned
+    displayName: Stun
     description: This creature cannot attack or act while Stunned. This cannot stack.
     icon: {fileID: 21300000, guid: 1046e0a0ea9804dad9ff2236f397a0e8, type: 3}
   - tag: 8
-    displayName: Suppressed
+    displayName: Suppress
     description: "This creature\u2019s traits are suppressed and provide no bonuses
       while Suppressed. One Suppressed stack is removed at the end of each round."
     icon: {fileID: 21300000, guid: 97cfe5af5ae36429d8f4dbf56dc41733, type: 3}
@@ -78,7 +78,7 @@ MonoBehaviour:
       stack, then Regen is reduced by 1 stack.
     icon: {fileID: 21300000, guid: 32c22c825e5bc4a0882efecf10ac9d4e, type: 3}
   - tag: 13
-    displayName: Bleeding
+    displayName: Bleed
     description: At the end of each round, this creature takes damage equal to its
       Bleeding stacks. Any healing removes all Bleeding.
     icon: {fileID: 21300000, guid: cdc8cc74d1d934c31bd1991f4d5a8e8c, type: 3}
@@ -98,7 +98,7 @@ MonoBehaviour:
       1 until the end of the round, then BodyUp is reduced by 1 stack."
     icon: {fileID: 21300000, guid: 82817b82cd8a54b6081b9ede973eebb7, type: 3}
   - tag: 18
-    displayName: Malnourished
+    displayName: Malnourish
     description: "Each stack reduces this creature\u2019s effective body size. One
       Malnourished stack is removed at the end of each round."
     icon: {fileID: 21300000, guid: ef5d6db46ee23429a8f68024577911a8, type: 3}

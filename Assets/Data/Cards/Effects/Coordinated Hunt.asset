@@ -16,7 +16,7 @@ MonoBehaviour:
   effectName: Coordinated Hunt
   icon: {fileID: 21300000, guid: 13f1944ed65e84bf3a32160a40c42a3a, type: 3}
   description: All allied carnivores gain +1 Speed this round only. If you control
-    3+ carnivores, they also gain Rage
+    3+ carnivores, they also gain <link="Rage"><color=#FFD35B><b>Rage</b></color></link>
   targetSide: 2
   targetType: 0
   targetCount: 0

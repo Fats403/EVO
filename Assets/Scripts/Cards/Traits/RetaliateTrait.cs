@@ -7,7 +7,7 @@ public class RetaliateTrait : Trait
     {
         if (self == null || attacker == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         int applied = attacker.ApplyDamage(1, self);
         if (applied > 0)

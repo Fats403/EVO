@@ -7,7 +7,7 @@ public class OpportunistTrait : Trait
     {
         if (self == null || target == null)
             return baseDamage;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return baseDamage;
         if (target.maxHealth <= 0)
             return baseDamage;

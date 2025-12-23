@@ -7,11 +7,11 @@ public class BleedMasterTrait : Trait
     {
         if (self == null || target == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         if (finalDamage <= 0)
             return;
-        target.AddStatus(StatusTag.Bleeding, 1);
+        target.AddStatus(StatusTag.Bleed, 1);
         FeedbackManager.Instance?.ShowFloatingText(
             "Bleed Master",
             self.transform.position,

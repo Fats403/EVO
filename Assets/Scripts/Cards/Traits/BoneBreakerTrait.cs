@@ -7,12 +7,12 @@ public class BoneBreakerTrait : Trait
     {
         if (self == null || target == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         if (finalDamage <= 0)
             return;
 
-        target.AddStatus(StatusTag.Malnourished, 2);
+        target.AddStatus(StatusTag.Malnourish, 2);
         FeedbackManager.Instance?.ShowFloatingText(
             "Bone Breaker",
             self.transform.position,

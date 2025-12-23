@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: AerialSuperiorityTrait
   m_EditorClassIdentifier: Assembly-CSharp::AerialSuperiorityTrait
   traitName: Ariel Superiority
-  description: +1 damage when attacking other Avians. Adjacent allied Avians gain
+  description: +1 Damage when attacking other Avians. Adjacent allied Avians gain
     +1 Speed

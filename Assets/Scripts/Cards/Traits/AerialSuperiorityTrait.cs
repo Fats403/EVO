@@ -8,7 +8,7 @@ public class AerialSuperiorityTrait : Trait
     {
         if (self == null || target == null)
             return baseDamage;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return baseDamage;
         if (target.data != null && target.data.type == CardType.Avian)
         {
@@ -21,7 +21,7 @@ public class AerialSuperiorityTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
 
         var adj = BoardUtils.GetAdjacentAllies(self);

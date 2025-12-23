@@ -9,7 +9,7 @@ public class QuickForagerTrait : Trait
             return;
         if (amountTaken <= 0)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
 
         // Reconstruct the pile size before this creature ate.

@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: EvasiveTrait
   m_EditorClassIdentifier: Assembly-CSharp::EvasiveTrait
   traitName: Evasive
-  description: When this takes damage, gain Stealth next round
+  description: When this takes damage, gain <link="Stealth"><color=#FFD35B><b>Stealth</b></color></link>
+    next round

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4023876846203786279}
   - component: {fileID: 3287641421844873270}
   - component: {fileID: 6000175043538044234}
+  - component: {fileID: 797252060184411508}
   m_Layer: 5
   m_Name: TraitText
   m_TagString: Untagged
@@ -65,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: He a real good boy
+  m_text: When attacked, the attacer gains <link="Bleed"><color=#FF0000><b>Bleed</b></color></link>
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
@@ -136,6 +137,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &797252060184411508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 560670976136092119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 021838826c02240988d8c631022e3a5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KeywordTooltipLinkHandler
+  statusDefinitionLibrary: {fileID: 11400000, guid: cef3bfd340c584789949964a33a2650c, type: 2}
 --- !u!1 &799214502987595326
 GameObject:
   m_ObjectHideFlags: 0

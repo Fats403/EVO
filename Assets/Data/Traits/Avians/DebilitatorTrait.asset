@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: DebilitatorTrait
   m_EditorClassIdentifier: Assembly-CSharp::DebilitatorTrait
   traitName: Debilitator
-  description: Successful attacks apply Fatigued (2)
+  description: Successful attacks apply <link="Fatigue"><color=#FFD35B><b>+2 Fatigue</b></color></link>

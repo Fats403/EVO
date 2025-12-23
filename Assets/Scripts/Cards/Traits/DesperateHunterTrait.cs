@@ -7,7 +7,7 @@ public class DesperateHunterTrait : Trait
     {
         if (self == null || target == null)
             return baseDamage;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return baseDamage;
 
         FoodPile pile = null;
@@ -27,7 +27,7 @@ public class DesperateHunterTrait : Trait
     {
         if (self == null)
             return 0;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return 0;
 
         var wm = WeatherManager.Instance;

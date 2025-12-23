@@ -15,7 +15,8 @@ MonoBehaviour:
   cardId: EFF_PRIMAL_INSTINCT
   effectName: Primal Instinct
   icon: {fileID: 21300000, guid: 1ac25cb7c67604820b3c2b7a0a5160e7, type: 3}
-  description: Target ally gains +2 Speed and +1 DamageUp this round only
+  description: Target ally gains +2 Speed and <link="DamageUp"><color=#FFD35B><b>+1
+    Damage Up</b></color></link> this round only
   targetSide: 0
   targetType: 0
   targetCount: 0

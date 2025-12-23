@@ -8,7 +8,7 @@ public class ApexPredatorTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         var allies = Object
             .FindObjectsByType<Creature>(FindObjectsSortMode.None)
@@ -47,7 +47,7 @@ public class ApexPredatorTrait : Trait
     // Apex Predator: ignore body-size restrictions when this creature attacks.
     public override bool IgnoreBodySizeRequirement(Creature self, Creature target)
     {
-        if (self == null || self.HasStatus(StatusTag.Suppressed))
+        if (self == null || self.HasStatus(StatusTag.Suppress))
             return false;
         return true;
     }

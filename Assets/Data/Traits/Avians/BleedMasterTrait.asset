@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: BleedMasterTrait
   m_EditorClassIdentifier: Assembly-CSharp::BleedMasterTrait
   traitName: Bleed Master
-  description: Successful attacks apply Bleeding (1)
+  description: Successful attacks apply <link="Bleed"><color=#FFD35B><b>+1 Bleed</b></color></link>

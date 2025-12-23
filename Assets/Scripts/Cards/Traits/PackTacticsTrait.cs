@@ -8,7 +8,7 @@ public class PackTacticsTrait : Trait
     {
         if (self == null || self.data == null)
             return 0;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return 0;
         var adj = BoardUtils.GetAdjacentAllies(self);
         if (adj == null)

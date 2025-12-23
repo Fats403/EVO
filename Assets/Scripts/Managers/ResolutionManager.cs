@@ -67,7 +67,7 @@ public class ResolutionManager : MonoBehaviour
                 hadStartStatusOrGlobalEffects = true;
                 thisCreatureDidStatus = true;
             }
-            if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+            if (!c.HasStatus(StatusTag.Suppress) && c.traits != null)
             {
                 var snapshot = c.traits != null ? c.traits.ToArray() : System.Array.Empty<Trait>();
                 foreach (var t in snapshot)
@@ -144,7 +144,7 @@ public class ResolutionManager : MonoBehaviour
             // A status tick may have killed this creature; skip trait hooks if it's now gone.
             if (c.currentHealth > 0 && !c.isDying && c.traits != null)
             {
-                if (!c.HasStatus(StatusTag.Suppressed))
+                if (!c.HasStatus(StatusTag.Suppress))
                 {
                     var snapshot = c.traits.ToArray();
                     foreach (var t in snapshot)
@@ -256,7 +256,7 @@ public class ResolutionManager : MonoBehaviour
     {
         if (c == null)
             return 0;
-        if (c.HasStatus(StatusTag.Suppressed) || c.traits == null)
+        if (c.HasStatus(StatusTag.Suppress) || c.traits == null)
             return 0;
         int best = 0;
         var snap = c.traits.ToArray();
@@ -299,7 +299,7 @@ public class ResolutionManager : MonoBehaviour
                 continue;
             if (actor.isDying || actor.currentHealth <= 0)
                 continue;
-            if (actor.HasStatus(StatusTag.Stunned))
+            if (actor.HasStatus(StatusTag.Stun))
                 continue;
 
             if (actor.data == null)
@@ -341,7 +341,7 @@ public class ResolutionManager : MonoBehaviour
 
         // Default herbivore behavior: forage if hungry and able. If it cannot/doesn't forage,
         // it may attack only if a trait explicitly allows attacking.
-        bool canForage = !c.HasStatus(StatusTag.Stunned) && !c.HasStatus(StatusTag.NoForage);
+        bool canForage = !c.HasStatus(StatusTag.Stun) && !c.HasStatus(StatusTag.NoForage);
 
         if (foodPile != null && canForage)
         {
@@ -349,7 +349,7 @@ public class ResolutionManager : MonoBehaviour
             if (need > 0 && foodPile.count > 0)
             {
                 int desired = need;
-                if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+                if (!c.HasStatus(StatusTag.Suppress) && c.traits != null)
                 {
                     var snap = c.traits.ToArray();
                     foreach (var t in snap)
@@ -376,7 +376,7 @@ public class ResolutionManager : MonoBehaviour
                         did = true;
                         didForage = true;
 
-                        if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+                        if (!c.HasStatus(StatusTag.Suppress) && c.traits != null)
                         {
                             var eatSnap = c.traits.ToArray();
                             foreach (var t in eatSnap)
@@ -401,7 +401,7 @@ public class ResolutionManager : MonoBehaviour
 
         // Stampede-like effects: if this herbivore foraged and a trait allows it,
         // it may make a bonus attack immediately after eating.
-        if (didForage && c.traits != null && !c.HasStatus(StatusTag.Suppressed))
+        if (didForage && c.traits != null && !c.HasStatus(StatusTag.Suppress))
         {
             bool allowBonus = c.traits.Any(t => t != null && t.AllowBonusAttackAfterForage(c));
             if (allowBonus)
@@ -433,7 +433,7 @@ public class ResolutionManager : MonoBehaviour
         }
 
         // Stunned creatures cannot act.
-        if (attacker.HasStatus(StatusTag.Stunned))
+        if (attacker.HasStatus(StatusTag.Stun))
         {
             onComplete?.Invoke(false);
             yield break;
@@ -461,7 +461,7 @@ public class ResolutionManager : MonoBehaviour
         var tauntTargets = enemies.Where(c => c.HasStatus(StatusTag.Taunt)).ToList();
 
         bool canTargetAny =
-            !attacker.HasStatus(StatusTag.Suppressed)
+            !attacker.HasStatus(StatusTag.Suppress)
             && attacker.traits != null
             && attacker.traits.Any(tr => tr != null && tr.CanTargetAny(attacker));
 
@@ -507,7 +507,7 @@ public class ResolutionManager : MonoBehaviour
         var target = candidates[0];
 
         // Allow attacker traits to override target selection (e.g., lowest HP)
-        if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
+        if (!attacker.HasStatus(StatusTag.Suppress) && attacker.traits != null)
         {
             var snapChoose = attacker.traits.ToArray();
             foreach (var tr in snapChoose)
@@ -527,7 +527,7 @@ public class ResolutionManager : MonoBehaviour
         yield return attacker.StartCoroutine(attacker.PlayAttackBump(0.35f, attackWindup));
 
         // Pre-hit reactions (trigger even if attack is later negated)
-        if (target != null && !target.HasStatus(StatusTag.Suppressed) && target.traits != null)
+        if (target != null && !target.HasStatus(StatusTag.Suppress) && target.traits != null)
         {
             var tgtPre = target.traits.ToArray();
             foreach (var tr in tgtPre)
@@ -546,7 +546,7 @@ public class ResolutionManager : MonoBehaviour
                 )
         )
         {
-            if (!ally.HasStatus(StatusTag.Suppressed) && ally.traits != null)
+            if (!ally.HasStatus(StatusTag.Suppress) && ally.traits != null)
             {
                 var allySnap = ally.traits.ToArray();
                 foreach (var tr in allySnap)
@@ -564,7 +564,7 @@ public class ResolutionManager : MonoBehaviour
 
         // Check target defense traits – may negate attack (after windup to still show attempt)
         bool negated = false;
-        if (target != null && !target.HasStatus(StatusTag.Suppressed) && target.traits != null)
+        if (target != null && !target.HasStatus(StatusTag.Suppress) && target.traits != null)
         {
             var tgtSnap2 = target.traits.ToArray();
             foreach (var tr in tgtSnap2)
@@ -615,7 +615,7 @@ public class ResolutionManager : MonoBehaviour
             ? 1
             : Mathf.Max(1, GetEffectiveBody(attacker) - GetEffectiveBody(target) + 1);
         bool overridden = false;
-        if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
+        if (!attacker.HasStatus(StatusTag.Suppress) && attacker.traits != null)
         {
             var atkSnapshot2 = attacker.traits.ToArray();
             foreach (var tr in atkSnapshot2)
@@ -639,7 +639,7 @@ public class ResolutionManager : MonoBehaviour
         if (
             !overridden
             && target != null
-            && !target.HasStatus(StatusTag.Suppressed)
+            && !target.HasStatus(StatusTag.Suppress)
             && target.traits != null
         )
         {
@@ -906,7 +906,7 @@ public class ResolutionManager : MonoBehaviour
         bool isAvianAtk = atk.data.type == CardType.Avian;
         bool isCarnivoreAtk = atk.data.type == CardType.Carnivore;
         // Trait-level general gating
-        if (!atk.HasStatus(StatusTag.Suppressed) && atk.traits != null)
+        if (!atk.HasStatus(StatusTag.Suppress) && atk.traits != null)
         {
             foreach (var t in atk.traits.ToArray())
             {
@@ -919,7 +919,7 @@ public class ResolutionManager : MonoBehaviour
         if (isAvianAtk)
         {
             bool ignoreSpeed =
-                !atk.HasStatus(StatusTag.Suppressed)
+                !atk.HasStatus(StatusTag.Suppress)
                 && atk.traits != null
                 && atk.traits.Any(tr => tr != null && tr.IgnoreAvianSpeedRequirement(atk, tgt));
             if (!ignoreSpeed && GetEffectiveSpeed(atk) < GetEffectiveSpeed(tgt))
@@ -934,7 +934,7 @@ public class ResolutionManager : MonoBehaviour
             if (tgt.data.type == CardType.Avian && isCarnivoreAtk)
             {
                 bool ignoreSpeed =
-                    !atk.HasStatus(StatusTag.Suppressed)
+                    !atk.HasStatus(StatusTag.Suppress)
                     && atk.traits != null
                     && atk.traits.Any(tr => tr != null && tr.IgnoreAvianSpeedRequirement(atk, tgt));
                 if (!ignoreSpeed && GetEffectiveSpeed(atk) < GetEffectiveSpeed(tgt))
@@ -946,7 +946,7 @@ public class ResolutionManager : MonoBehaviour
         if (tgt.data.type == CardType.Avian && isCarnivoreAtk)
         {
             bool ignoreSpeed =
-                !atk.HasStatus(StatusTag.Suppressed)
+                !atk.HasStatus(StatusTag.Suppress)
                 && atk.traits != null
                 && atk.traits.Any(tr => tr != null && tr.IgnoreAvianSpeedRequirement(atk, tgt));
             if (!ignoreSpeed && GetEffectiveSpeed(atk) < GetEffectiveSpeed(tgt))
@@ -957,7 +957,7 @@ public class ResolutionManager : MonoBehaviour
         // (e.g. Carnivore-vs-Carnivore fallback, reactive attacks) may request to ignore
         // the body rule entirely via ignoreBodyRule.
         bool traitIgnoresBody =
-            !atk.HasStatus(StatusTag.Suppressed)
+            !atk.HasStatus(StatusTag.Suppress)
             && atk.traits != null
             && atk.traits.Any(tr => tr != null && tr.IgnoreBodySizeRequirement(atk, tgt));
         bool effectiveIgnoreBody = ignoreBodyRule || traitIgnoresBody;
@@ -982,7 +982,7 @@ public class ResolutionManager : MonoBehaviour
         // Trait allowing any targeting skips carnivore exclusion/body gate but not
         // stealth/taunt/speed-into-avian rule.
         bool canTargetAny =
-            !atk.HasStatus(StatusTag.Suppressed)
+            !atk.HasStatus(StatusTag.Suppress)
             && atk.traits != null
             && atk.traits.Any(tr => tr != null && tr.CanTargetAny(atk));
         if (canTargetAny)
@@ -1008,7 +1008,7 @@ public class ResolutionManager : MonoBehaviour
             .Where(c => c != null && c.data != null && c.owner != attacker.owner);
         var tauntTargets = enemies.Where(c => c.HasStatus(StatusTag.Taunt)).ToList();
         bool canTargetAny =
-            !attacker.HasStatus(StatusTag.Suppressed)
+            !attacker.HasStatus(StatusTag.Suppress)
             && attacker.traits != null
             && attacker.traits.Any(tr => tr != null && tr.CanTargetAny(attacker));
         bool isAvianAttacker = attacker.data != null && attacker.data.type == CardType.Avian;
@@ -1149,7 +1149,7 @@ public class ResolutionManager : MonoBehaviour
         int baseDmg = harass ? 1 : Mathf.Max(1, effAtkBody - GetEffectiveBody(target) + 1);
         // Try fixed-damage override first
         bool overridden = false;
-        if (!attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
+        if (!attacker.HasStatus(StatusTag.Suppress) && attacker.traits != null)
         {
             foreach (var tr in attacker.traits.ToArray())
             {
@@ -1161,7 +1161,7 @@ public class ResolutionManager : MonoBehaviour
                 }
             }
         }
-        if (!overridden && !attacker.HasStatus(StatusTag.Suppressed) && attacker.traits != null)
+        if (!overridden && !attacker.HasStatus(StatusTag.Suppress) && attacker.traits != null)
         {
             foreach (var tr in attacker.traits.ToArray())
             {
@@ -1169,7 +1169,7 @@ public class ResolutionManager : MonoBehaviour
                     baseDmg = tr.ModifyOutgoingDamage(attacker, target, baseDmg);
             }
         }
-        if (!overridden && !target.HasStatus(StatusTag.Suppressed) && target.traits != null)
+        if (!overridden && !target.HasStatus(StatusTag.Suppress) && target.traits != null)
         {
             foreach (var tr in target.traits.ToArray())
             {
@@ -1215,10 +1215,10 @@ public class ResolutionManager : MonoBehaviour
         if (c == null)
             return 0;
         int traitBody =
-            (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+            (!c.HasStatus(StatusTag.Suppress) && c.traits != null)
                 ? c.traits.Sum(t => t != null ? t.BodyBonus(c) : 0)
                 : 0;
-        int temp = c.GetStatus(StatusTag.BodyUp) - c.GetStatus(StatusTag.Malnourished);
+        int temp = c.GetStatus(StatusTag.BodyUp) - c.GetStatus(StatusTag.Malnourish);
         return c.body + temp + traitBody;
     }
 
@@ -1227,10 +1227,10 @@ public class ResolutionManager : MonoBehaviour
         if (c == null)
             return 0;
         int traitSpeed =
-            (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+            (!c.HasStatus(StatusTag.Suppress) && c.traits != null)
                 ? c.traits.Sum(t => t != null ? t.SpeedBonus(c) : 0)
                 : 0;
-        int temp = c.GetStatus(StatusTag.SpeedUp) - c.GetStatus(StatusTag.Fatigued);
+        int temp = c.GetStatus(StatusTag.SpeedUp) - c.GetStatus(StatusTag.Fatigue);
         return c.speed + temp + traitSpeed;
     }
 }

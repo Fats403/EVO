@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: ThickHideTrait
   m_EditorClassIdentifier: Assembly-CSharp::ThickHideTrait
   traitName: Thick Hide
-  description: After eating, gain Absorb (2)
+  description: After eating, gain <link="Absorb"><color=#FFD35B><b>+2 Absorb</b></color></link>

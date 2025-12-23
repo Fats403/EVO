@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: HerdCallerTrait
   m_EditorClassIdentifier: Assembly-CSharp::HerdCallerTrait
   traitName: Herd Caller
-  description: When this eats, all adjacent herbivores gain +1 Regen
+  description: When this eats, all adjacent herbivores gain <link="Regen"><color=#FFD35B><b>+1
+    Regen</b></color></link>

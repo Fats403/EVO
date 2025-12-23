@@ -8,7 +8,7 @@ public class RallyingCallTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         // All allied avians: +2 Regen and remove all Fatigued
         var allies = Object
@@ -34,9 +34,9 @@ public class RallyingCallTrait : Trait
         foreach (var ally in allies)
         {
             ally.AddStatus(StatusTag.Regen, 2);
-            int f = ally.GetStatus(StatusTag.Fatigued);
+            int f = ally.GetStatus(StatusTag.Fatigue);
             if (f > 0)
-                ally.ClearStatus(StatusTag.Fatigued);
+                ally.ClearStatus(StatusTag.Fatigue);
         }
     }
 }

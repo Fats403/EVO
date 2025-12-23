@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: BoneBreakerTrait
   m_EditorClassIdentifier: Assembly-CSharp::BoneBreakerTrait
   traitName: Bone Breaker
-  description: Attacks apply Malnourished +2 to target
+  description: Attacks apply <link="Malnourish"><color=#FFD35B><b>+2 Malnourish</b></color></link>
+    to target

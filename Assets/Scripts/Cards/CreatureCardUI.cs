@@ -47,7 +47,7 @@ public class CreatureCardUI : BaseCardUI
                 var t = data.baseTraits[0];
                 string tName = string.IsNullOrEmpty(t.traitName) ? t.name : t.traitName;
                 if (!string.IsNullOrEmpty(t.description))
-                    traitLine = $"{tName}: {t.description}";
+                    traitLine = $"<b>{tName}</b>: {t.description}";
                 else
                     traitLine = tName;
             }

@@ -7,7 +7,7 @@ public class CamouflageHunterTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         self.AddStatus(StatusTag.Stealth, 1);
         FeedbackManager.Instance?.ShowFloatingText(

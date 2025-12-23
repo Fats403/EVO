@@ -11,7 +11,7 @@ public class ElementalTrait : Trait
     {
         if (self == null)
             return 0;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return 0;
 
         var wm = WeatherManager.Instance;
@@ -27,7 +27,7 @@ public class ElementalTrait : Trait
     {
         if (self == null)
             return 0;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return 0;
 
         var wm = WeatherManager.Instance;
@@ -46,7 +46,7 @@ public class ElementalTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
 
         // --- Wildfire max HP bonus should exist only while Wildfire is active. ---

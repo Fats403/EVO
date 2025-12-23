@@ -8,7 +8,7 @@ public class PhalanxLeaderTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         // Apply BodyUp +1 aura to allied herbivores for this round
         var allies = Object
@@ -31,9 +31,9 @@ public class PhalanxLeaderTrait : Trait
     {
         if (self == null || attacker == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
-        attacker.AddStatus(StatusTag.Bleeding, 1);
+        attacker.AddStatus(StatusTag.Bleed, 1);
         FeedbackManager.Instance?.ShowFloatingText(
             "Phalanx Leader",
             self.transform.position,

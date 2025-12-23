@@ -15,8 +15,8 @@ MonoBehaviour:
   cardId: EFF_TERRITORIAL_PUSH
   effectName: Territorial Push
   icon: {fileID: 21300000, guid: 5d51a2d1f0b654e55bdaa8538f8ce05a, type: 3}
-  description: Move target enemy to a random empty slot on its side and Stun it.
-    If no slot exists, also apply Suppressed (1)
+  description: Move target enemy to a random empty slot on its side and <link="Stun"><color=#FFD35B><b>Stun</b></color></link>
+    it. If no slot exists, also apply <link="Suppress"><color=#FFD35B><b>+1 Suppress</b></color></link>
   targetSide: 1
   targetType: 0
   targetCount: 0

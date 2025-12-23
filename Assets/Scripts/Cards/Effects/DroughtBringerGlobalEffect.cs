@@ -26,7 +26,7 @@ public class DroughtBringerGlobalEffect : GlobalEffectBase
             .ToList();
         foreach (var c in all)
         {
-            c.AddStatus(StatusTag.Malnourished, 1);
+            c.AddStatus(StatusTag.Malnourish, 1);
         }
 
         // Visual feedback for all affected creatures, unless the source card suppressed it.

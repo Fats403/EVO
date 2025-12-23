@@ -12,7 +12,7 @@ public class RadiantScalesTrait : Trait
             return;
         if (finalDamage <= 0)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
 
         // If this takes 2+ damage in a single attack, flag Reflect for next round.

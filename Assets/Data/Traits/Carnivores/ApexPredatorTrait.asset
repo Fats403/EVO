@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: ApexPredatorTrait
   m_EditorClassIdentifier: Assembly-CSharp::ApexPredatorTrait
   traitName: Apex Predator
-  description: At round start, the two nearest allied carnivores gain Rage. Ignore
-    body size restrictions when attacking
+  description: At round start, the two nearest allied carnivores gain <link="Rage"><color=#FFD35B><b>Rage</b></color></link>.
+    Ignore body size restrictions when attacking

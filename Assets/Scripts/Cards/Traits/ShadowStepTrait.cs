@@ -9,7 +9,7 @@ public class ShadowStepTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         if (self.IsImmovable)
             return;

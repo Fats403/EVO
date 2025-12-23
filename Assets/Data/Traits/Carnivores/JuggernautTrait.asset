@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: JuggernautTrait
   m_EditorClassIdentifier: Assembly-CSharp::JuggernautTrait
   traitName: Juggernaut
-  description: When attacking, apply Suppressed (1) to target. Gains Absorb (1) when
-    taking damage
+  description: When attacking, apply <link="Suppress"><color=#FFD35B><b>+1 Suppress</b></color></link>
+    to target. Gains <link="Absorb"><color=#FFD35B><b>+1 Absorb</b></color></link>
+    when taking damage

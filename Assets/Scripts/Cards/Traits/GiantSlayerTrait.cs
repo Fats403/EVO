@@ -7,7 +7,7 @@ public class GiantSlayerTrait : Trait
     {
         if (self == null || target == null)
             return baseDamage;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return baseDamage;
 
         int selfEff = ResolutionManager.Instance.GetEffectiveBody(self);

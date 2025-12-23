@@ -7,19 +7,19 @@ public class JuggernautTrait : Trait
     {
         if (self == null || target == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         if (finalDamage <= 0)
             return;
 
-        target.AddStatus(StatusTag.Suppressed, 1);
+        target.AddStatus(StatusTag.Suppress, 1);
         FeedbackManager.Instance?.ShowFloatingText(
             "Juggernaut",
             self.transform.position,
             GameColorPalette.TextWarning
         );
         FeedbackManager.Instance?.ShowFloatingText(
-            "Suppressed +1",
+            "Suppress +1",
             target.transform.position,
             GameColorPalette.TextWarning
         );
@@ -31,7 +31,7 @@ public class JuggernautTrait : Trait
             return;
         if (finalDamage <= 0)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
 
         self.AddStatus(StatusTag.Absorb, 1);

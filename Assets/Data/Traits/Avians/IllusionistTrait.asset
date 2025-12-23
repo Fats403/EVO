@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: IllusionistTrait
   m_EditorClassIdentifier: Assembly-CSharp::IllusionistTrait
   traitName: Illusionist
-  description: After an adjacent ally takes damage, gain Stealth
+  description: After an adjacent ally takes damage, gain <link="Stealth"><color=#FFD35B><b>Stealth</b></color></link>

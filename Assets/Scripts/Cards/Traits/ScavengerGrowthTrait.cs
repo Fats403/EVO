@@ -7,7 +7,7 @@ public class ScavengerGrowthTrait : Trait
     {
         if (self == null || dead == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         self.body += 1;
         self.RefreshStatsUI();

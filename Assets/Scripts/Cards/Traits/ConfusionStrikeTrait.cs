@@ -8,11 +8,11 @@ public class ConfusionStrikeTrait : Trait
     {
         if (self == null || target == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         if (finalDamage <= 0)
             return;
-        // If controller controls another avian, apply Suppressed to target
+        // If controller controls another avian, apply Suppress to target
         var anyOtherAvian = Object
             .FindObjectsByType<Creature>(FindObjectsSortMode.None)
             .Any(c =>
@@ -26,14 +26,14 @@ public class ConfusionStrikeTrait : Trait
             );
         if (anyOtherAvian)
         {
-            target.AddStatus(StatusTag.Suppressed, 2);
+            target.AddStatus(StatusTag.Suppress, 2);
             FeedbackManager.Instance?.ShowFloatingText(
                 "Confusion Strike",
                 self.transform.position,
                 GameColorPalette.TextWarning
             );
             FeedbackManager.Instance?.ShowFloatingText(
-                "Suppressed +2",
+                "Suppress +2",
                 target.transform.position,
                 GameColorPalette.TextWarning
             );

@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: CamouflageHunterTrait
   m_EditorClassIdentifier: Assembly-CSharp::CamouflageHunterTrait
   traitName: Camouflage Hunter
-  description: Gains Stealth at start of each round
+  description: Gains <link="Stealth"><color=#FFD35B><b>Stealth</b></color></link>
+    at start of each round

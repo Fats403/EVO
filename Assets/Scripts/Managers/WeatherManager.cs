@@ -252,7 +252,7 @@ public class WeatherManager : MonoBehaviour
                 {
                     // Allow traits to negate storm fatigue as a weather penalty.
                     bool negated = false;
-                    if (!a.HasStatus(StatusTag.Suppressed) && a.traits != null)
+                    if (!a.HasStatus(StatusTag.Suppress) && a.traits != null)
                     {
                         foreach (var tr in a.traits.ToArray())
                         {
@@ -265,7 +265,7 @@ public class WeatherManager : MonoBehaviour
                     }
                     if (negated)
                         continue;
-                    a.AddStatus(StatusTag.Fatigued, 1);
+                    a.AddStatus(StatusTag.Fatigue, 1);
                 }
                 break;
             }
@@ -303,7 +303,7 @@ public class WeatherManager : MonoBehaviour
                 {
                     // Allow traits to negate wildfire damage as a weather penalty.
                     bool negated = false;
-                    if (!c.HasStatus(StatusTag.Suppressed) && c.traits != null)
+                    if (!c.HasStatus(StatusTag.Suppress) && c.traits != null)
                     {
                         foreach (var tr in c.traits.ToArray())
                         {

@@ -20,7 +20,7 @@ public class StampedeFormationEffect : EffectTraitBase
             return false;
         if (self.data.type != CardType.Herbivore)
             return base.CanAttack(self);
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return base.CanAttack(self);
         return true;
     }
@@ -32,7 +32,7 @@ public class StampedeFormationEffect : EffectTraitBase
             return false;
         if (self.data.type != CardType.Herbivore)
             return false;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return false;
         return true;
     }

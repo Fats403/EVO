@@ -15,7 +15,7 @@ public class IllusionistTrait : Trait
             return;
         if (finalDamage <= 0)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         if (self.HasStatus(StatusTag.Stealth))
             return;

@@ -12,7 +12,7 @@ public class EvasiveTrait : Trait
             return;
         if (finalDamage <= 0)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         // Flag to gain Stealth next round
         grantNextRound.Add(self);

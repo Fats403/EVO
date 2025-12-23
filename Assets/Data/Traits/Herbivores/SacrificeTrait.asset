@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SacrificeTrait
   traitName: Sacrifice
   description: After eating, your lowest HP ally (not self) gains +1 HP, this gains
-    +1 Malnourished
+    <link="Malnourish"><color=#FFD35B><b>+1 Malnourish</b></color></link>

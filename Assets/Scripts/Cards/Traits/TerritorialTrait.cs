@@ -8,7 +8,7 @@ public class TerritorialTrait : Trait
     {
         if (self == null || target == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
 
         var slot = BoardUtils.GetSlotOf(target);

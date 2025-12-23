@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: ResilientTrait
   m_EditorClassIdentifier: Assembly-CSharp::ResilientTrait
   traitName: Resilient
-  description: When taking damage, gain Absorb (1) after damage resolves
+  description: When taking damage, gain <link="Absorb"><color=#FFD35B><b>+1 Absorb</b></color></link>
+    after damage resolves

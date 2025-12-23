@@ -8,15 +8,12 @@ public class NurturingTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
 
         var adj = BoardUtils.GetAdjacentAllies(self);
         var validAllies = adj.Where(c =>
-                c != null
-                && c.currentHealth > 0
-                && !c.isDying
-                && c.GetStatus(StatusTag.Fatigued) > 0
+                c != null && c.currentHealth > 0 && !c.isDying && c.GetStatus(StatusTag.Fatigue) > 0
             )
             .ToList();
 
@@ -31,7 +28,7 @@ public class NurturingTrait : Trait
 
         foreach (var ally in validAllies)
         {
-            ally.DecrementStatus(StatusTag.Fatigued, 1);
+            ally.DecrementStatus(StatusTag.Fatigue, 1);
             FeedbackManager.Instance?.ShowFloatingText(
                 "Fatigue -1",
                 ally.transform.position,

@@ -11,7 +11,7 @@ public class UpdraftTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         if (ResolutionManager.Instance == null)
             return;

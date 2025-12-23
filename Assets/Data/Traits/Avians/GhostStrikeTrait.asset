@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: GhostStrikeTrait
   m_EditorClassIdentifier: Assembly-CSharp::GhostStrikeTrait
   traitName: Ghost Strike
-  description: After attacking, immediately gain Stealth
+  description: After attacking, immediately gain <link="Stealth"><color=#FFD35B><b>Stealth</b></color></link>

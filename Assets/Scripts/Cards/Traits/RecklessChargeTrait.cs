@@ -9,6 +9,10 @@ public class RecklessChargeTrait : Trait
     // speed gate enforced in ResolutionManager.
     public override bool CanTargetAny(Creature self)
     {
+        if (self == null)
+            return false;
+        if (self.HasStatus(StatusTag.Suppress))
+            return false;
         return true;
     }
 
@@ -43,7 +47,7 @@ public class RecklessChargeTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         // Recoil only on successful (non-negated) attacks.
         if (wasNegated)

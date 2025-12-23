@@ -903,7 +903,7 @@ public class AIManager : MonoBehaviour
             return false;
 
         // Stunned creatures cannot act this round.
-        if (attacker.HasStatus(StatusTag.Stunned))
+        if (attacker.HasStatus(StatusTag.Stun))
             return false;
 
         // Herbivores only attack if a trait explicitly allows it.

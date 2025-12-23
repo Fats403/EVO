@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SunbatherTrait
   traitName: Sunbather
   description: Gains +2 Speed during Clear weather. When weather changes to Clear,
-    gain +1 Regen
+    gain <link="Regen"><color=#FFD35B><b>+1 Regen</b></color></link>

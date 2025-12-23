@@ -7,7 +7,7 @@ public class FlameDancerTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
 
         var wm = WeatherManager.Instance;

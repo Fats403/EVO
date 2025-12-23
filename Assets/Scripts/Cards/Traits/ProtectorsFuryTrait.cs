@@ -18,7 +18,7 @@ public class ProtectorsFuryTrait : Trait
     {
         if (self == null || victim == null || attacker == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         if (finalDamage <= 0)
             return;

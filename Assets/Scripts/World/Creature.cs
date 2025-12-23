@@ -379,9 +379,9 @@ public class Creature : MonoBehaviour
     )
     {
         // Shielded negates the next incoming damage instance per charge
-        if (amount > 0 && GetStatus(StatusTag.Shielded) > 0)
+        if (amount > 0 && GetStatus(StatusTag.Shield) > 0)
         {
-            DecrementStatus(StatusTag.Shielded, 1);
+            DecrementStatus(StatusTag.Shield, 1);
             string label =
                 damageSourceLabel != null ? $"Shielded ({damageSourceLabel})" : "Shielded";
             FeedbackManager.Instance?.ShowFloatingText(
@@ -535,8 +535,8 @@ public class Creature : MonoBehaviour
         if (healed > 0)
         {
             // Any healing clears all Bleeding stacks
-            if (GetStatus(StatusTag.Bleeding) > 0)
-                ClearStatus(StatusTag.Bleeding);
+            if (GetStatus(StatusTag.Bleed) > 0)
+                ClearStatus(StatusTag.Bleed);
             OnAnyCreatureHealed?.Invoke(this, healed);
             RefreshStatsUI();
         }
@@ -678,10 +678,10 @@ public class Creature : MonoBehaviour
     public int GetEffectiveBodyForScoring()
     {
         int traitBody =
-            (!HasStatus(StatusTag.Suppressed) && traits != null)
+            (!HasStatus(StatusTag.Suppress) && traits != null)
                 ? traits.Sum(t => t != null ? t.BodyBonus(this) : 0)
                 : 0;
-        int temp = GetStatus(StatusTag.BodyUp) - GetStatus(StatusTag.Malnourished);
+        int temp = GetStatus(StatusTag.BodyUp) - GetStatus(StatusTag.Malnourish);
         return body + traitBody + temp;
     }
 
@@ -691,10 +691,10 @@ public class Creature : MonoBehaviour
         if (speedText != null)
         {
             int traitSpeed =
-                (!HasStatus(StatusTag.Suppressed) && traits != null)
+                (!HasStatus(StatusTag.Suppress) && traits != null)
                     ? traits.Sum(t => t != null ? t.SpeedBonus(this) : 0)
                     : 0;
-            int tempSpeed = GetStatus(StatusTag.SpeedUp) - GetStatus(StatusTag.Fatigued);
+            int tempSpeed = GetStatus(StatusTag.SpeedUp) - GetStatus(StatusTag.Fatigue);
             int displaySpeed = speed + tempSpeed + traitSpeed;
             speedText.text = displaySpeed.ToString();
             if (displaySpeed > baseSpeed)
@@ -709,11 +709,11 @@ public class Creature : MonoBehaviour
         if (bodyText != null)
         {
             int traitBody =
-                (!HasStatus(StatusTag.Suppressed) && traits != null)
+                (!HasStatus(StatusTag.Suppress) && traits != null)
                     ? traits.Sum(t => t != null ? t.BodyBonus(this) : 0)
                     : 0;
             int displayBody =
-                body + traitBody + GetStatus(StatusTag.BodyUp) - GetStatus(StatusTag.Malnourished);
+                body + traitBody + GetStatus(StatusTag.BodyUp) - GetStatus(StatusTag.Malnourish);
             bodyText.text = displayBody.ToString();
             if (displayBody > baseBody)
                 bodyText.color = Color.green;
@@ -766,12 +766,12 @@ public class Creature : MonoBehaviour
 
         // Mutual exclusivity: BodyUp vs Malnourished; SpeedUp vs Fatigued
         if (tag == StatusTag.BodyUp)
-            ClearStatus(StatusTag.Malnourished);
-        if (tag == StatusTag.Malnourished)
+            ClearStatus(StatusTag.Malnourish);
+        if (tag == StatusTag.Malnourish)
             ClearStatus(StatusTag.BodyUp);
         if (tag == StatusTag.SpeedUp)
-            ClearStatus(StatusTag.Fatigued);
-        if (tag == StatusTag.Fatigued)
+            ClearStatus(StatusTag.Fatigue);
+        if (tag == StatusTag.Fatigue)
             ClearStatus(StatusTag.SpeedUp);
 
         int newValue = GetStatus(tag) + stacks;
@@ -779,9 +779,9 @@ public class Creature : MonoBehaviour
         // Stealth, Sheilded, Stunned, No Forage, Rage, Immune is non-stacking: clamp to 1
         if (tag == StatusTag.Stealth)
             newValue = newValue > 0 ? 1 : 0;
-        if (tag == StatusTag.Shielded)
+        if (tag == StatusTag.Shield)
             newValue = newValue > 0 ? 1 : 0;
-        if (tag == StatusTag.Stunned)
+        if (tag == StatusTag.Stun)
             newValue = newValue > 0 ? 1 : 0;
         if (tag == StatusTag.NoForage)
             newValue = newValue > 0 ? 1 : 0;
@@ -859,11 +859,11 @@ public class Creature : MonoBehaviour
     {
         bool didAny = false;
         // Infected: deal 1, then -1 stack
-        if (GetStatus(StatusTag.Infected) > 0)
+        if (GetStatus(StatusTag.Infection) > 0)
         {
             didAny = true;
             int applied = ApplyDamage(1, null, null, "Infected");
-            DecrementStatus(StatusTag.Infected, 1);
+            DecrementStatus(StatusTag.Infection, 1);
             if (applied > 0)
             {
                 FeedbackManager.Instance?.ShowFloatingText(
@@ -884,9 +884,9 @@ public class Creature : MonoBehaviour
     {
         bool didAny = false;
         // Fatigued: -1
-        if (GetStatus(StatusTag.Fatigued) > 0)
+        if (GetStatus(StatusTag.Fatigue) > 0)
         {
-            DecrementStatus(StatusTag.Fatigued, 1);
+            DecrementStatus(StatusTag.Fatigue, 1);
             didAny = true;
         }
         // SpeedUp: -1
@@ -924,7 +924,7 @@ public class Creature : MonoBehaviour
         }
 
         // Bleeding: damage equal to stacks (does not self-decrement)
-        int bleed = GetStatus(StatusTag.Bleeding);
+        int bleed = GetStatus(StatusTag.Bleed);
         if (bleed > 0)
         {
             didAny = true;
@@ -946,9 +946,9 @@ public class Creature : MonoBehaviour
             didAny = true;
         }
 
-        if (GetStatus(StatusTag.Malnourished) > 0)
+        if (GetStatus(StatusTag.Malnourish) > 0)
         {
-            DecrementStatus(StatusTag.Malnourished, 1);
+            DecrementStatus(StatusTag.Malnourish, 1);
             didAny = true;
         }
         // Absorb: clear remaining stacks at end of round
@@ -959,16 +959,16 @@ public class Creature : MonoBehaviour
         }
 
         // Suppressed: -1
-        if (GetStatus(StatusTag.Suppressed) > 0)
+        if (GetStatus(StatusTag.Suppress) > 0)
         {
-            DecrementStatus(StatusTag.Suppressed, 1);
+            DecrementStatus(StatusTag.Suppress, 1);
             didAny = true;
         }
 
         // Stunned: -1
-        if (GetStatus(StatusTag.Stunned) > 0)
+        if (GetStatus(StatusTag.Stun) > 0)
         {
-            DecrementStatus(StatusTag.Stunned, 1);
+            DecrementStatus(StatusTag.Stun, 1);
             didAny = true;
         }
 

@@ -10,7 +10,7 @@ public class SunbatherTrait : Trait
         var wm = WeatherManager.Instance;
         if (wm == null)
             return 0;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return 0;
 
         return wm.CurrentWeather == WeatherType.Clear ? 2 : 0;
@@ -20,7 +20,7 @@ public class SunbatherTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
 
         var wm = WeatherManager.Instance;

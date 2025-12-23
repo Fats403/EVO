@@ -7,7 +7,7 @@ public class GaleforceTrait : Trait
     // so it updates instantly on weather change and shows in both UI and ordering.
     public override int SpeedBonus(Creature self)
     {
-        if (self == null || self.HasStatus(StatusTag.Suppressed))
+        if (self == null || self.HasStatus(StatusTag.Suppress))
             return 0;
 
         var wm = WeatherManager.Instance;
@@ -21,7 +21,7 @@ public class GaleforceTrait : Trait
     {
         if (self == null || target == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         if (finalDamage <= 0)
             return;
@@ -30,7 +30,7 @@ public class GaleforceTrait : Trait
         if (wm == null || wm.CurrentWeather != WeatherType.Storm)
             return;
 
-        target.AddStatus(StatusTag.Fatigued, 1);
+        target.AddStatus(StatusTag.Fatigue, 1);
         FeedbackManager.Instance?.ShowFloatingText(
             "Galeforce",
             self.transform.position,

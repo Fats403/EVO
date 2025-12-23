@@ -7,7 +7,7 @@ public class PrecisionStrikeTrait : Trait
     {
         if (self == null)
             return false;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return false;
         return true;
     }
@@ -22,9 +22,9 @@ public class PrecisionStrikeTrait : Trait
     {
         if (target == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
-        target.AddStatus(StatusTag.Stunned, 1);
+        target.AddStatus(StatusTag.Stun, 1);
         FeedbackManager.Instance?.ShowFloatingText(
             "Precision Strike",
             self.transform.position,

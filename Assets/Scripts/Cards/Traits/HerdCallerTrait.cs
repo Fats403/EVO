@@ -8,7 +8,7 @@ public class HerdCallerTrait : Trait
     {
         if (self == null || amountTaken <= 0)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         var adj = BoardUtils.GetAdjacentAllies(self);
         var validAllies = adj.Where(c =>

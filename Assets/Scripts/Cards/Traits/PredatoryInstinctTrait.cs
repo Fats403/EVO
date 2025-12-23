@@ -13,7 +13,7 @@ public class PredatoryInstinctTrait : Trait
     {
         if (self == null)
             return defaultTarget;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return defaultTarget;
         if (candidates == null)
             return defaultTarget;

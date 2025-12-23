@@ -8,7 +8,7 @@ public class DisorientingCryTrait : Trait
         fixedDamage = 0;
         if (self == null || target == null)
             return false;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return false;
         // Instead of damage, this attack only stuns.
         return true;
@@ -18,12 +18,12 @@ public class DisorientingCryTrait : Trait
     {
         if (self == null || target == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         if (wasNegated)
             return;
 
-        target.AddStatus(StatusTag.Stunned, 1);
+        target.AddStatus(StatusTag.Stun, 1);
         FeedbackManager.Instance?.ShowFloatingText(
             "Disorienting Cry",
             self.transform.position,

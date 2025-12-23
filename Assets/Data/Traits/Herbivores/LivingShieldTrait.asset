@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: LivingShieldTrait
   m_EditorClassIdentifier: Assembly-CSharp::LivingShieldTrait
   traitName: Living Sheild
-  description: Adjacent allies gain Absorb (1) at round start
+  description: Adjacent allies gain <link="Absorb"><color=#FFD35B><b>+1 Absorb</b></color></link>
+    at round start

@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: FlameDancerTrait
   m_EditorClassIdentifier: Assembly-CSharp::FlameDancerTrait
   traitName: Flame Dancer
-  description: When weather changes to Wildfire, gain +2 Regen
+  description: When weather changes to Wildfire, gain <link="Regen"><color=#FFD35B><b>+2
+    Regen</b></color></link>

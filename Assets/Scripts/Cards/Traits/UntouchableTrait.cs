@@ -8,7 +8,7 @@ public class UntouchableTrait : Trait
     {
         if (self == null || attacker == null)
             return false;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return false;
 
         int effSpeed = ResolutionManager.Instance?.GetEffectiveSpeed(attacker) ?? 0;

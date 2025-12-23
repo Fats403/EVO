@@ -158,7 +158,8 @@ public class DeckBuilderCardItem : MonoBehaviour
             Debug.LogWarning($"DeckBuilderCardItem: Unsupported card type {card.GetType().Name}.");
         }
 
-        // Disable BaseCardUI + child Graphics raycasts so this preview doesn't handle drag/hover or steal clicks.
+        // Disable BaseCardUI so this preview doesn't handle drag / drop, but keep
+        // text raycasts enabled so keyword/status tooltips still work in the deck builder.
         if (previewObj != null)
         {
             var baseCard = previewObj.GetComponent<BaseCardUI>();
@@ -168,11 +169,16 @@ public class DeckBuilderCardItem : MonoBehaviour
             var graphics = previewObj.GetComponentsInChildren<Graphic>(includeInactive: true);
             foreach (var g in graphics)
             {
-                if (g != null)
-                    g.raycastTarget = false;
+                if (g == null)
+                    continue;
+
+                // Preserve raycasts on TextMeshProUGUI so KeywordTooltipLinkHandler /
+                // TooltipTriggerBase on text can still receive hover events.
+                if (g is TextMeshProUGUI)
+                    continue;
+
+                g.raycastTarget = false;
             }
         }
     }
 }
-
-

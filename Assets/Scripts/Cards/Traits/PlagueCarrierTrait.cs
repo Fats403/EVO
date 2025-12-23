@@ -7,12 +7,12 @@ public class PlagueCarrierTrait : Trait
     {
         if (self == null || target == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         // Apply only on successful attacks (not negated)
         if (wasNegated)
             return;
-        target.AddStatus(StatusTag.Infected, 1);
+        target.AddStatus(StatusTag.Infection, 1);
         target.AddStatus(StatusTag.NoForage, 1);
         FeedbackManager.Instance?.ShowFloatingText(
             "Plague Carrier",

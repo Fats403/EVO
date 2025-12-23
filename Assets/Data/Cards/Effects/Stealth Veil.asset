@@ -15,7 +15,8 @@ MonoBehaviour:
   cardId: EFF_STEALTH_VEIL
   effectName: Stealth Veil
   icon: {fileID: 21300000, guid: efe022b6558114b27ab95a90707276e8, type: 3}
-  description: Apply Stealth to an ally
+  description: Apply <link="Stealth"><color=#FFD35B><b>Stealth</b></color></link>
+    to an ally
   targetSide: 0
   targetType: 0
   targetCount: 0

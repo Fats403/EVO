@@ -7,7 +7,7 @@ public class ThickHideTrait : Trait
     {
         if (self == null || amountTaken <= 0)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         self.AddStatus(StatusTag.Absorb, 2);
         FeedbackManager.Instance?.ShowFloatingText(

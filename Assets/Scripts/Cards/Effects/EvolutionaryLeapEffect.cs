@@ -8,7 +8,7 @@ public class EvolutionaryLeapEffect : EffectTraitBase
         if (self == null)
             return;
         self.speed += 1;
-        self.ClearStatus(StatusTag.Fatigued);
+        self.ClearStatus(StatusTag.Fatigue);
         self.RefreshStatsUI();
         remainingRounds = 0;
     }

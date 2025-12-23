@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Effects/Territorial Push")]
@@ -13,7 +11,7 @@ public class TerritorialPushEffect : EffectTraitBase
             return;
 
         // Always stun the target this round.
-        target.AddStatus(StatusTag.Stunned, 1);
+        target.AddStatus(StatusTag.Stun, 1);
         FeedbackManager.Instance?.ShowFloatingText(
             "Territorial Push",
             target.transform.position,
@@ -39,7 +37,7 @@ public class TerritorialPushEffect : EffectTraitBase
             else
             {
                 // No empty space to move into: also Suppress the target.
-                target.AddStatus(StatusTag.Suppressed, 1);
+                target.AddStatus(StatusTag.Suppress, 1);
                 FeedbackManager.Instance?.ShowFloatingText(
                     "Suppressed",
                     target.transform.position,

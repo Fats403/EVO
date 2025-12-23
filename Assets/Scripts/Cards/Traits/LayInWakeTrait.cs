@@ -7,7 +7,7 @@ public class LayInWakeTrait : Trait
     {
         if (self == null)
             return 0;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return 0;
         if (GameManager.Instance == null)
             return 0;
@@ -23,7 +23,7 @@ public class LayInWakeTrait : Trait
     {
         if (self == null)
             return 0;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return 0;
         if (GameManager.Instance == null)
             return 0;

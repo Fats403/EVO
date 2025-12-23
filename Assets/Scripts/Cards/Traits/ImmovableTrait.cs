@@ -11,9 +11,9 @@ public class ImmovableTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
-        if (self.HasStatus(StatusTag.Shielded))
+        if (self.HasStatus(StatusTag.Shield))
             return;
 
         if (!lastWeather.HasValue)
@@ -21,7 +21,7 @@ public class ImmovableTrait : Trait
 
         if (lastWeather.Value != newWeather)
         {
-            self.AddStatus(StatusTag.Shielded, 1);
+            self.AddStatus(StatusTag.Shield, 1);
             FeedbackManager.Instance?.ShowFloatingText(
                 "Immovable",
                 self.transform.position,

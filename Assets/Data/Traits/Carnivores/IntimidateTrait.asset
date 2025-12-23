@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: IntimidateTrait
   m_EditorClassIdentifier: Assembly-CSharp::IntimidateTrait
   traitName: Intimidate
-  description: At round start, the nearest enemy gains +2 Fatigued
+  description: At round start, the nearest enemy gains <link="Fatigue"><color=#FFD35B><b>+2
+    Fatigue</b></color></link>

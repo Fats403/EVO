@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: ConfusionStrikeTrait
   m_EditorClassIdentifier: Assembly-CSharp::ConfusionStrikeTrait
   traitName: Confusion Strike
-  description: If you control 2+ avians, attacks apply Suppressed (2) to target
+  description: If you control 2+ avians, attacks apply <link="Suppress"><color=#FFD35B><b>+2
+    Suppress</b></color></link> to target

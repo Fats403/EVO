@@ -8,7 +8,7 @@ public class ReinforcedCarapaceEffect : EffectTraitBase
     {
         if (self == null)
             return;
-        self.AddStatus(StatusTag.Shielded, 1);
+        self.AddStatus(StatusTag.Shield, 1);
         remainingRounds = 0;
     }
 }

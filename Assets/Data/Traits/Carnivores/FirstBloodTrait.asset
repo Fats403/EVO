@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: FirstBloodTrait
   m_EditorClassIdentifier: Assembly-CSharp::FirstBloodTrait
   traitName: First Blood
-  description: First attack each round deals no damage but applies Bleeding (1) to
-    target
+  description: First attack each round deals no damage but applies <link="Bleed"><color=#FFD35B><b>+1
+    Bleed</b></color></link> to target

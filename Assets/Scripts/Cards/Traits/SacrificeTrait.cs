@@ -8,7 +8,7 @@ public class SacrificeTrait : Trait
     {
         if (self == null || amountTaken <= 0)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         // Find lowest HP ally (not self)
         var allies = Object
@@ -26,7 +26,7 @@ public class SacrificeTrait : Trait
         if (target != null)
         {
             target.Heal(1);
-            self.AddStatus(StatusTag.Malnourished, 1);
+            self.AddStatus(StatusTag.Malnourish, 1);
             FeedbackManager.Instance?.ShowFloatingText(
                 "+1 HP",
                 target.transform.position,

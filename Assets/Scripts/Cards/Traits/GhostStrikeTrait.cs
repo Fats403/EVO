@@ -7,7 +7,7 @@ public class GhostStrikeTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         // Gain Stealth after attacking regardless of negation
         self.AddStatus(StatusTag.Stealth, 1);

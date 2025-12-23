@@ -7,7 +7,7 @@ public class ExtendedReachTrait : Trait
     {
         if (self == null || amountTaken <= 0)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         self.eaten += 1;
         FeedbackManager.Instance?.ShowFloatingText(

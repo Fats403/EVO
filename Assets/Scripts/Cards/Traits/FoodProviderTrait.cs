@@ -9,7 +9,7 @@ public class FoodProviderTrait : Trait
             return;
         if (amountTaken <= 0)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
 
         pile.count = Mathf.Max(0, pile.count + 1);

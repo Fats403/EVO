@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: StormRiderTrait
   m_EditorClassIdentifier: Assembly-CSharp::StormRiderTrait
   traitName: Storm Rider
-  description: Immune to weather penalties. Gains +1 DamageUp during Storm and Drought
+  description: <link="Immune"><color=#FFD35B><b>Immune</b></color></link> to weather
+    penalties. Gains <link="DamageUp"><color=#FFD35B><b>+1 Damage Up</b></color></link>
+    during Storm and Drought

@@ -10,7 +10,7 @@ public class PackLeaderTrait : Trait
             return;
         if (wasNegated)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         // Order: other allied carnivores (excluding self)
         var allies = Object

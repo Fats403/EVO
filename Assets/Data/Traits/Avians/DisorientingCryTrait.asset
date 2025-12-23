@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: DisorientingCryTrait
   m_EditorClassIdentifier: Assembly-CSharp::DisorientingCryTrait
   traitName: Disorienting Cry
-  description: Instead of damage, attacks apply Stunned to target
+  description: Instead of damage, attacks apply <link="Stun"><color=#FFD35B><b>Stun</b></color></link>
+    to target

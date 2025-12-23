@@ -7,12 +7,12 @@ public class IntimidateTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         var enemy = BoardUtils.GetClosestEnemy(self);
         if (enemy == null)
             return;
-        enemy.AddStatus(StatusTag.Fatigued, 2);
+        enemy.AddStatus(StatusTag.Fatigue, 2);
         FeedbackManager.Instance?.ShowFloatingText(
             "Intimidate",
             self.transform.position,

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: UndyingSpiritTrait
   m_EditorClassIdentifier: Assembly-CSharp::UndyingSpiritTrait
   traitName: Undying Spirit
-  description: When reduced to 0 HP, survive with 1 HP instead, gain +3 Regen, and
-    remove all negative statuses one time
+  description: When reduced to 0 HP, survive with 1 HP instead, gain <link="Regen"><color=#FFD35B><b>+3
+    Regen</b></color></link>, and remove all negative statuses one time

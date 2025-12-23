@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: RallyingCallTrait
   m_EditorClassIdentifier: Assembly-CSharp::RallyingCallTrait
   traitName: Rallying Call
-  description: On Kill, all allied avians gain +2 Regen and remove all Fatigue
+  description: On Kill, all allied avians gain <link="Regen"><color=#FFD35B><b>+2
+    Regen</b></color></link> and remove all <link="Fatigue"><color=#FFD35B><b>Fatigue</b></color></link>

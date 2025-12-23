@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PhalanxLeaderTrait
   traitName: Phalanx Leader
   description: All allied herbivores gain +1 Body while alive. When attacked, attacker
-    gains 1 Bleeding
+    gains <link="Bleed"><color=#FFD35B><b>+1 Bleed</b></color></link>

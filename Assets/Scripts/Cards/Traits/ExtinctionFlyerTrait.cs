@@ -7,7 +7,7 @@ public class ExtinctionFlyerTrait : Trait
     {
         if (self == null || target == null)
             return baseDamage;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return baseDamage;
         if (GameManager.Instance == null)
             return baseDamage;
@@ -21,7 +21,7 @@ public class ExtinctionFlyerTrait : Trait
     {
         if (self == null || target == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
         if (finalDamage <= 0)
             return;
@@ -30,14 +30,14 @@ public class ExtinctionFlyerTrait : Trait
         if (GameManager.Instance.currentEra != Era.Extinction)
             return;
 
-        target.AddStatus(StatusTag.Suppressed, 1);
+        target.AddStatus(StatusTag.Suppress, 1);
         FeedbackManager.Instance?.ShowFloatingText(
             "Extinction Flyer",
             self.transform.position,
             GameColorPalette.TextWarning
         );
         FeedbackManager.Instance?.ShowFloatingText(
-            "Suppressed +1",
+            "Suppress +1",
             target.transform.position,
             GameColorPalette.TextWarning
         );

@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: ImmovableTrait
   m_EditorClassIdentifier: Assembly-CSharp::ImmovableTrait
   traitName: Immovable
-  description: Cannot be moved by effects. Gains +1 Shield when weather changes
+  description: Cannot be moved by effects. Gains <link="Shield"><color=#FFD35B><b>+1
+    Shield</b></color></link> when weather changes

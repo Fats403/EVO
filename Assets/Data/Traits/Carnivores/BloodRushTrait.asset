@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: BloodRushTrait
   m_EditorClassIdentifier: Assembly-CSharp::BloodRushTrait
   traitName: Blood Rush
-  description: On kill, gain +2 Regen and +1 DamageUp next round
+  description: On kill, gain +2 HP and <link="DamageUp"><color=#FFD35B><b>+1 Damage
+    Up</b></color></link> next round

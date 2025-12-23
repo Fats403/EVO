@@ -7,7 +7,7 @@ public class NightHunterTrait : Trait
     {
         if (self == null)
             return 0;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return 0;
 
         var wm = WeatherManager.Instance;

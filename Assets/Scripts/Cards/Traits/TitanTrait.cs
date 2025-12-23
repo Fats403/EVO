@@ -8,7 +8,7 @@ public class TitanTrait : Trait
     {
         if (self == null)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
 
         // Gains Taunt each round while alive.
@@ -21,7 +21,7 @@ public class TitanTrait : Trait
             return;
         if (amountTaken <= 0)
             return;
-        if (self.HasStatus(StatusTag.Suppressed))
+        if (self.HasStatus(StatusTag.Suppress))
             return;
 
         var allies = Object
