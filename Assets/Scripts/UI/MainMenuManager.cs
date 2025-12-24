@@ -178,7 +178,7 @@ public class MainMenuManager : MonoBehaviour
         }
 
         // Make sure the scene is added to Build Settings.
-        SceneManager.LoadScene(gameSceneName, LoadSceneMode.Single);
+        SceneTransitionManager.Instance.LoadScene(gameSceneName);
     }
 
     /// <summary>
@@ -194,7 +194,7 @@ public class MainMenuManager : MonoBehaviour
         }
 
         // Make sure the scene is added to Build Settings.
-        SceneManager.LoadScene(deckHubSceneName, LoadSceneMode.Single);
+        SceneTransitionManager.Instance.LoadScene(deckHubSceneName);
     }
 
     /// <summary>

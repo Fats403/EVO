@@ -331,7 +331,7 @@ public class GameManager : MonoBehaviour
                 {
                     phaseText.text =
                         awaitingTurnOwner.Value == SlotOwner.Player1
-                            ? "Player 1 Turn"
+                            ? "Your Turn"
                             : "Player 2 Turn";
                 }
                 else
@@ -536,6 +536,11 @@ public class GameManager : MonoBehaviour
     {
         UpdatePhaseStatusText();
         FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(owner)}: Your move");
+
+        if (owner == SlotOwner.Player1)
+        {
+            FeedbackManager.Instance?.ShowGlobalAlert("Your Turn", GameColorPalette.AlertInfo);
+        }
     }
 
     void UpdateEndTurnButtonState()
@@ -597,7 +602,7 @@ public class GameManager : MonoBehaviour
             }
             // Show pass information in the phase text instead of a global alert.
             if (phaseText != null)
-                phaseText.text = owner == SlotOwner.Player1 ? "Player 1 passes" : "Player 2 passes";
+                phaseText.text = owner == SlotOwner.Player1 ? "You pass" : "Player 2 passes";
 
             // For the AI, also surface a brief global alert so it's obvious that it passed.
             if (owner == SlotOwner.Player2 && FeedbackManager.Instance != null)
@@ -1656,7 +1661,7 @@ public class GameManager : MonoBehaviour
     public void OnGameOverResetClicked()
     {
         // Reload the current scene for a clean restart
-        Scene activeScene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(activeScene.buildIndex);
+        // Scene activeScene = SceneManager.GetActiveScene();
+        SceneTransitionManager.Instance.LoadScene("MainMenu");
     }
 }

@@ -28,6 +28,9 @@ public class ProtectorsFuryTrait : Trait
             return;
         if (self == victim)
             return;
+        // Don't retaliate against our own team or ourselves (prevents proccing on self-attacks)
+        if (attacker == null || self.owner == attacker.owner)
+            return;
         if (victim.data == null || victim.data.type != CardType.Herbivore)
             return;
         // Immediate retaliatory strike ignoring body rules, with animation.

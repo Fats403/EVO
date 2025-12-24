@@ -703,6 +703,7 @@ GameObject:
   - component: {fileID: 131098502}
   - component: {fileID: 131098504}
   - component: {fileID: 131098503}
+  - component: {fileID: 131098505}
   m_Layer: 5
   m_Name: MomentumIconP1
   m_TagString: Untagged
@@ -767,6 +768,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 131098501}
   m_CullTransparentMesh: 1
+--- !u!114 &131098505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131098501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58019934de0c44800a5ae4ef4b4239f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TooltipTrigger
+  hoverDelaySeconds: 0.4
+  title: Momentum
+  body: Momentum is used to play cards, players take turns spending momentum until
+    one player passes or they are out of momentum.
+  icon: {fileID: 4941541555232882662, guid: 53543951fab174711b355fa0f8528fb9, type: 3}
+  useStacks: 0
+  stacks: 0
 --- !u!1 &143499476
 GameObject:
   m_ObjectHideFlags: 0
@@ -3523,7 +3543,6 @@ GameObject:
   - component: {fileID: 693812568}
   - component: {fileID: 693812571}
   - component: {fileID: 693812570}
-  - component: {fileID: 693812569}
   m_Layer: 5
   m_Name: FossilsP2
   m_TagString: Untagged
@@ -3550,24 +3569,6 @@ RectTransform:
   m_AnchoredPosition: {x: 732.0001, y: 287}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &693812569
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 693812567}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58019934de0c44800a5ae4ef4b4239f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TooltipTrigger
-  hoverDelaySeconds: 0.4
-  title: Fossils
-  body: The amount of fossils you have, this is your score
-  icon: {fileID: -7573719082908306157, guid: 630d2b0d8e64845edb2bf7d793b8ee72, type: 3}
-  useStacks: 0
-  stacks: 0
 --- !u!114 &693812570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3617,6 +3618,7 @@ GameObject:
   - component: {fileID: 696769739}
   - component: {fileID: 696769741}
   - component: {fileID: 696769740}
+  - component: {fileID: 696769742}
   m_Layer: 5
   m_Name: HandIconP1
   m_TagString: Untagged
@@ -3681,6 +3683,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 696769738}
   m_CullTransparentMesh: 1
+--- !u!114 &696769742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696769738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58019934de0c44800a5ae4ef4b4239f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TooltipTrigger
+  hoverDelaySeconds: 0.4
+  title: Hand Size
+  body: This represents how many card are currently in the players hand
+  icon: {fileID: -4944111823540459514, guid: 9066c4e5c21374622b32f92632a56127, type: 3}
+  useStacks: 0
+  stacks: 0
 --- !u!1 &698757403
 GameObject:
   m_ObjectHideFlags: 0
@@ -5573,6 +5593,7 @@ GameObject:
   - component: {fileID: 1125964588}
   - component: {fileID: 1125964590}
   - component: {fileID: 1125964589}
+  - component: {fileID: 1125964591}
   m_Layer: 5
   m_Name: DeckP1
   m_TagString: Untagged
@@ -5637,6 +5658,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1125964587}
   m_CullTransparentMesh: 1
+--- !u!114 &1125964591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1125964587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58019934de0c44800a5ae4ef4b4239f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TooltipTrigger
+  hoverDelaySeconds: 0.4
+  title: Player Deck
+  body: This is your deck, below it shows how many cards are left in your deck
+  icon: {fileID: 0}
+  useStacks: 0
+  stacks: 0
 --- !u!1 &1130042757
 GameObject:
   m_ObjectHideFlags: 0

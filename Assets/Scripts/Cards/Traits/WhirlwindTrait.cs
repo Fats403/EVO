@@ -17,8 +17,9 @@ public class WhirlwindTrait : Trait
         if (ResolutionManager.Instance == null)
             return;
 
+        // Find the best target (can be the same target if still alive)
         var next = ResolutionManager.Instance.FindBestTarget(self);
-        if (next == null || next == target)
+        if (next == null)
             return;
 
         usedThisRound.Add(self);

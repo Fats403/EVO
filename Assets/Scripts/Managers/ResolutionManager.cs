@@ -798,6 +798,17 @@ public class ResolutionManager : MonoBehaviour
                     FeedbackManager.Instance?.Log(
                         $"{FeedbackManager.TagOwner(c.owner)} {c.name} gains Starvation (x{stacksNow})"
                     );
+
+                    if (stacksNow == 1)
+                    {
+                        // Show floating text for the starvation status gain
+                        FeedbackManager.Instance?.ShowFloatingText(
+                            "Starving!",
+                            c.transform.position,
+                            GameColorPalette.Starvation
+                        );
+                    }
+
                     didAnyStarveChange = true;
                 }
 

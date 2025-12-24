@@ -108,7 +108,7 @@ public class DeckSlotUI : MonoBehaviour
         if (playButton != null)
             playButton.interactable = false;
         if (editButton != null)
-            editButton.interactable = false;  // cannot edit a non-existent deck
+            editButton.interactable = false; // cannot edit a non-existent deck
         if (deleteButton != null)
             deleteButton.interactable = false; // nothing to delete yet
     }
@@ -168,5 +168,3 @@ public class DeckSlotUI : MonoBehaviour
             go.SetActive(active);
     }
 }
-
-

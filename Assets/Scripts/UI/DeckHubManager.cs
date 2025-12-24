@@ -317,7 +317,7 @@ public class DeckHubManager : MonoBehaviour
     public void OnClick_PlayDraft()
     {
         SelectedDeckStore.SetDraftMode();
-        SceneManager.LoadScene("MainScene");
+        SceneTransitionManager.Instance.LoadScene("MainScene");
     }
 
     /// <summary>
@@ -559,7 +559,7 @@ public class DeckHubManager : MonoBehaviour
             }
 
             SelectedDeckStore.SetConstructedDeck(slot.DeckId, name, slot.slotIndex, entries);
-            SceneManager.LoadScene("MainScene");
+            SceneTransitionManager.Instance.LoadScene("MainScene");
         }
         catch (System.Exception e)
         {
