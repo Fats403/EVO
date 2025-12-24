@@ -53,6 +53,19 @@ public class DeckBuilderManager : MonoBehaviour
     [SerializeField]
     private Button saveButton;
 
+    [Header("Filters & Status")]
+    [Tooltip("Optional search box to filter cards by name or trait text.")]
+    [SerializeField]
+    private TMP_InputField searchInput;
+
+    [Tooltip("Label that shows how many cards are currently in the deck (e.g., '0 / 20').")]
+    [SerializeField]
+    private TextMeshProUGUI draftedCountLabel;
+
+    [Tooltip("Dropdown used to choose sort order for the card collection list.")]
+    [SerializeField]
+    private TMP_Dropdown sortDropdown;
+
     private int _maxDeckSize;
 
     // cardId -> count
@@ -60,6 +73,20 @@ public class DeckBuilderManager : MonoBehaviour
 
     // All instantiated card items in the collection list.
     private readonly List<DeckBuilderCardItem> _items = new();
+
+    // Current lowercase search query for filtering the collection list.
+    private string _currentSearch = string.Empty;
+
+    private enum SortMode
+    {
+        TypeThenName = 0,
+        NameAsc = 1,
+        MomentumAsc = 2,
+        MomentumDesc = 3,
+    }
+
+    // Default sort: group by type, then name.
+    private SortMode _currentSortMode = SortMode.TypeThenName;
 
     /// <summary>
     /// Raised after a successful Save click (deck is valid).
@@ -71,6 +98,28 @@ public class DeckBuilderManager : MonoBehaviour
     private void Awake()
     {
         _maxDeckSize = deckSizeSource != null ? deckSizeSource.deckSize : defaultDeckSize;
+
+        // Enforce a hard character limit on the deck name input so users can't type
+        // excessively long names. The save logic will still validate min/max length.
+        if (deckNameInput != null)
+            deckNameInput.characterLimit = 16;
+
+        if (searchInput != null)
+        {
+            searchInput.onValueChanged.AddListener(OnSearchValueChanged);
+            // Set a friendlier placeholder hint than the TMP default.
+            var placeholder = searchInput.placeholder as TMP_Text;
+            if (placeholder != null)
+                placeholder.text = "Search...";
+        }
+
+        if (sortDropdown != null)
+        {
+            sortDropdown.onValueChanged.AddListener(OnSortDropdownChanged);
+            // Ensure dropdown starts on the default sort mode and apply it.
+            sortDropdown.value = (int)_currentSortMode;
+            sortDropdown.RefreshShownValue();
+        }
 
         if (saveButton != null)
             saveButton.onClick.AddListener(OnSaveClicked);
@@ -84,6 +133,12 @@ public class DeckBuilderManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (searchInput != null)
+            searchInput.onValueChanged.RemoveListener(OnSearchValueChanged);
+
+        if (sortDropdown != null)
+            sortDropdown.onValueChanged.RemoveListener(OnSortDropdownChanged);
+
         if (saveButton != null)
             saveButton.onClick.RemoveListener(OnSaveClicked);
     }
@@ -136,6 +191,13 @@ public class DeckBuilderManager : MonoBehaviour
             if (!_cardCounts.ContainsKey(card.cardId))
                 _cardCounts[card.cardId] = 0;
         }
+
+        // Apply default sort and any active search filter now that items are built.
+        ApplySort();
+        ApplySearchFilter();
+
+        // Update drafted count label for an empty deck.
+        UpdateDraftedCountLabel();
     }
 
     private void OnCardItemCountChanged(DeckBuilderCardItem item, int newLocalCount)
@@ -160,6 +222,7 @@ public class DeckBuilderManager : MonoBehaviour
         }
 
         UpdateDeckSummaryUI();
+        UpdateDraftedCountLabel();
     }
 
     private int GetTotalCardCount()
@@ -205,14 +268,29 @@ public class DeckBuilderManager : MonoBehaviour
             var label = Instantiate(deckListItemPrefab, deckListContentRoot);
             label.text = $"{count}x {name}";
         }
+
+        // Also keep the drafted count label in sync.
+        UpdateDraftedCountLabel();
     }
 
     private void OnSaveClicked()
     {
         string deckName =
-            deckNameInput != null && !string.IsNullOrEmpty(deckNameInput.text)
-                ? deckNameInput.text
-                : "New Deck";
+            deckNameInput != null ? (deckNameInput.text ?? string.Empty).Trim() : string.Empty;
+
+        // Validate name length: between 1 and 16 characters (after trimming).
+        if (deckName.Length < 1)
+        {
+            Debug.LogWarning("DeckBuilderManager: Deck name must be at least 1 character long.");
+            return;
+        }
+        if (deckName.Length > 16)
+        {
+            Debug.LogWarning(
+                $"DeckBuilderManager: Deck name '{deckName}' is too long ({deckName.Length}/16)."
+            );
+            return;
+        }
 
         int total = GetTotalCardCount();
         if (total == 0)
@@ -239,6 +317,170 @@ public class DeckBuilderManager : MonoBehaviour
 
         // Notify listeners (e.g., DeckHubManager) that a valid deck has been saved.
         DeckSaved?.Invoke(deckName, entries);
+    }
+
+    private void OnSearchValueChanged(string value)
+    {
+        _currentSearch = string.IsNullOrWhiteSpace(value) ? string.Empty : value.ToLowerInvariant();
+        ApplySearchFilter();
+    }
+
+    private void OnSortDropdownChanged(int optionIndex)
+    {
+        Debug.Log($"[DeckBuilder] Sort changed to index {optionIndex}");
+        // Clamp to valid range; assumes dropdown options are ordered to match SortMode.
+        if (optionIndex < 0)
+            optionIndex = 0;
+        if (optionIndex > (int)SortMode.MomentumDesc)
+            optionIndex = (int)SortMode.MomentumDesc;
+
+        _currentSortMode = (SortMode)optionIndex;
+        ApplySort();
+        // Re-apply filter so the visible subset respects the new order.
+        ApplySearchFilter();
+    }
+
+    private void ApplySearchFilter()
+    {
+        if (_items == null || _items.Count == 0)
+            return;
+
+        foreach (var item in _items)
+        {
+            if (item == null || item.Card == null)
+                continue;
+
+            bool visible = MatchesSearch(item.Card, _currentSearch);
+            if (item.gameObject.activeSelf != visible)
+                item.gameObject.SetActive(visible);
+        }
+    }
+
+    private bool MatchesSearch(CardDefinition card, string queryLower)
+    {
+        if (string.IsNullOrEmpty(queryLower) || card == null)
+            return true;
+
+        // Card name
+        string name = card.DisplayName ?? card.name;
+        if (!string.IsNullOrEmpty(name) && name.ToLowerInvariant().Contains(queryLower))
+            return true;
+
+        // Creature traits (name + description)
+        if (card is CreatureCard creature && creature.baseTraits != null)
+        {
+            foreach (var trait in creature.baseTraits)
+            {
+                if (trait == null)
+                    continue;
+
+                string tName = string.IsNullOrEmpty(trait.traitName) ? trait.name : trait.traitName;
+                if (!string.IsNullOrEmpty(tName) && tName.ToLowerInvariant().Contains(queryLower))
+                    return true;
+
+                if (
+                    !string.IsNullOrEmpty(trait.description)
+                    && trait.description.ToLowerInvariant().Contains(queryLower)
+                )
+                    return true;
+            }
+        }
+
+        // Effect card description text
+        if (card is EffectCard effect)
+        {
+            if (
+                !string.IsNullOrEmpty(effect.description)
+                && effect.description.ToLowerInvariant().Contains(queryLower)
+            )
+                return true;
+        }
+
+        return false;
+    }
+
+    private void UpdateDraftedCountLabel()
+    {
+        if (draftedCountLabel == null)
+            return;
+
+        int total = GetTotalCardCount();
+        draftedCountLabel.text = $"{total} / {_maxDeckSize}";
+    }
+
+    private void ApplySort()
+    {
+        if (_items == null || _items.Count == 0 || collectionContentRoot == null)
+            return;
+
+        // Create a sorted snapshot of items with valid cards.
+        var sortable = _items.Where(i => i != null && i.Card != null).ToList();
+
+        switch (_currentSortMode)
+        {
+            case SortMode.MomentumAsc:
+                sortable = sortable
+                    .OrderBy(i => i.Card.MomentumCost)
+                    .ThenBy(i => GetCardTypeSortIndex(i.Card))
+                    .ThenBy(i => (i.Card.DisplayName ?? i.Card.name))
+                    .ToList();
+                break;
+            case SortMode.MomentumDesc:
+                sortable = sortable
+                    .OrderByDescending(i => i.Card.MomentumCost)
+                    .ThenBy(i => GetCardTypeSortIndex(i.Card))
+                    .ThenBy(i => (i.Card.DisplayName ?? i.Card.name))
+                    .ToList();
+                break;
+            case SortMode.TypeThenName:
+                sortable = sortable
+                    .OrderBy(i => GetCardTypeSortIndex(i.Card))
+                    .ThenBy(i => (i.Card.DisplayName ?? i.Card.name))
+                    .ToList();
+                break;
+            case SortMode.NameAsc:
+            default:
+                sortable = sortable.OrderBy(i => (i.Card.DisplayName ?? i.Card.name)).ToList();
+                break;
+        }
+
+        // Apply sibling indices to reflect the new order.
+        for (int i = 0; i < sortable.Count; i++)
+        {
+            var item = sortable[i];
+            if (item != null)
+                item.transform.SetSiblingIndex(i);
+        }
+
+        // Keep _items in a consistent order (sorted items first, then any null/invalid).
+        var remaining = _items.Except(sortable).ToList();
+        _items.Clear();
+        _items.AddRange(sortable);
+        _items.AddRange(remaining);
+    }
+
+    private int GetCardTypeSortIndex(CardDefinition card)
+    {
+        if (card is CreatureCard creature)
+        {
+            // Group creatures by type, then effects after.
+            switch (creature.type)
+            {
+                case CardType.Herbivore:
+                    return 0;
+                case CardType.Carnivore:
+                    return 1;
+                case CardType.Avian:
+                    return 2;
+                default:
+                    return 3;
+            }
+        }
+
+        if (card is EffectCard)
+            return 4; // effects come after creatures
+
+        return 5;
     }
 
     // Simple serialisable deck entry structure for future Firestore integration.
@@ -277,6 +519,7 @@ public class DeckBuilderManager : MonoBehaviour
             deckNameInput.text = string.IsNullOrEmpty(defaultName) ? "New Deck" : defaultName;
 
         UpdateDeckSummaryUI();
+        UpdateDraftedCountLabel();
     }
 
     /// <summary>
@@ -313,5 +556,6 @@ public class DeckBuilderManager : MonoBehaviour
         }
 
         UpdateDeckSummaryUI();
+        UpdateDraftedCountLabel();
     }
 }

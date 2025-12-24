@@ -54,8 +54,8 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: 1046e0a0ea9804dad9ff2236f397a0e8, type: 3}
   - tag: 8
     displayName: Suppress
-    description: "This creature\u2019s traits are suppressed and provide no bonuses
-      while Suppressed. One Suppressed stack is removed at the end of each round."
+    description: "This creature\u2019s traits are suppressed and provide no bonuses.
+      One Suppressed stack is removed at the end of each round."
     icon: {fileID: 21300000, guid: 97cfe5af5ae36429d8f4dbf56dc41733, type: 3}
   - tag: 9
     displayName: Damage Up
@@ -64,8 +64,8 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: bc13ab71ffdd5480f9e9a06efa784a94, type: 3}
   - tag: 10
     displayName: No Forage
-    description: This creature cannot forage for food while NoForage is active. One
-      No Forage stack is removed at the end of each round.
+    description: This creature cannot forage for food while No Forage is active.
+      One No Forage stack is removed at the end of each round.
     icon: {fileID: 21300000, guid: 23ac52ab6b4c04d13a67fc4d8c3f0d35, type: 3}
   - tag: 11
     displayName: Immune

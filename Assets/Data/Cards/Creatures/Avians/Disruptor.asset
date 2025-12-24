@@ -22,6 +22,6 @@ MonoBehaviour:
   speed: 4
   maxHealth: 4
   isImmovable: 0
-  momentumCost: 3
+  momentumCost: 4
   baseTraits:
   - {fileID: 11400000, guid: 389246ff75d624d519ae9f9f8f4e1b10, type: 2}

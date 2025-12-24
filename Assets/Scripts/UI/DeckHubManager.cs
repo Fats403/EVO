@@ -320,6 +320,28 @@ public class DeckHubManager : MonoBehaviour
         SceneManager.LoadScene("MainScene");
     }
 
+    /// <summary>
+    /// Called by a UI button in the deck builder view to return to the main
+    /// deck hub without saving changes.
+    /// </summary>
+    public void OnClick_BackFromDeckBuilder()
+    {
+        // Clear any editing context.
+        _activeSlotIndex = -1;
+        _activeDeckId = null;
+
+        // Swap views: hide builder, show hub.
+        if (deckBuilderRoot != null)
+            deckBuilderRoot.SetActive(false);
+        if (deckHubRoot != null)
+            deckHubRoot.SetActive(true);
+        if (loadingRoot != null)
+            loadingRoot.SetActive(false);
+
+        // Optionally refresh deck summaries from Firestore so the hub view is up-to-date.
+        _ = LoadDecksAsync();
+    }
+
     private async void HandleDeckSaved(
         string deckName,
         List<DeckBuilderManager.DeckCardEntry> cards

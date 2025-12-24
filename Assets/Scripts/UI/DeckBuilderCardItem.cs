@@ -174,7 +174,7 @@ public class DeckBuilderCardItem : MonoBehaviour
 
                 // Preserve raycasts on TextMeshProUGUI so KeywordTooltipLinkHandler /
                 // TooltipTriggerBase on text can still receive hover events.
-                if (g is TextMeshProUGUI)
+                if (g is TextMeshProUGUI || g is Image)
                     continue;
 
                 g.raycastTarget = false;
