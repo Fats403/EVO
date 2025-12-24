@@ -36,9 +36,16 @@ public class ShadowStepTrait : Trait
 
         int index = 0;
         if (GameManager.Instance != null)
+        {
             index = GameManager.Instance.NextRandomInt(0, lowest.Count);
+        }
         else
+        {
+            Debug.LogWarning(
+                "ShadowStepTrait: GameManager.Instance is null. Determinism may be compromised."
+            );
             index = Random.Range(0, lowest.Count);
+        }
 
         var target = lowest[index];
         if (target == null)

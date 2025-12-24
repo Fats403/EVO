@@ -78,6 +78,60 @@ public class GameManager : MonoBehaviour
     [Tooltip("Minimum time that a played creature stays spotlighted before the turn can advance.")]
     public float cardPreviewHoldSeconds = 3.0f;
 
+    private List<BoardSlot> allSlots = new List<BoardSlot>();
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+            Destroy(gameObject);
+        else
+            Instance = this;
+
+        if (rngSeed == 0)
+        {
+            rngSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        }
+        rng = new System.Random(rngSeed);
+        UnityEngine.Random.InitState(rngSeed);
+
+        InitializeBoardSlots();
+    }
+
+    public BoardSlot GetSlotByIndex(int index)
+    {
+        return allSlots.FirstOrDefault(s => s.index == index);
+    }
+
+    private void InitializeBoardSlots()
+    {
+        allSlots.Clear();
+        // Find and index all slots deterministically
+        var p1Slots = player1SlotContainer
+            .GetComponentsInChildren<BoardSlot>()
+            .OrderBy(s => s.transform.position.x)
+            .ToList();
+        var p2Slots = player2SlotContainer
+            .GetComponentsInChildren<BoardSlot>()
+            .OrderBy(s => s.transform.position.x)
+            .ToList();
+
+        for (int i = 0; i < p1Slots.Count; i++)
+        {
+            p1Slots[i].index = i;
+            allSlots.Add(p1Slots[i]);
+        }
+        for (int i = 0; i < p2Slots.Count; i++)
+        {
+            p2Slots[i].index = p1Slots.Count + i;
+            allSlots.Add(p2Slots[i]);
+        }
+    }
+
+    public int GetIndexForSlot(BoardSlot slot)
+    {
+        return slot != null ? slot.index : -1;
+    }
+
     [Tooltip("Delay between showing an effect card preview and applying its logic.")]
     public float effectRevealDelaySeconds = 1f;
 
@@ -100,24 +154,23 @@ public class GameManager : MonoBehaviour
     // Prevents Player 1 from queuing multiple actions while a card preview is still resolving.
     private bool p1ActionLocked;
 
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-            Destroy(gameObject);
-        else
-            Instance = this;
+    // Controllers
+    private IPlayerController player1Controller;
+    private IPlayerController player2Controller;
 
-        if (rngSeed == 0)
-        {
-            rngSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-        }
-        rng = new System.Random(rngSeed);
-        UnityEngine.Random.InitState(rngSeed);
-    }
+    private GameAction lastActionReceived;
 
-    void Start()
+    private void Start()
     {
         Debug.Log("[GameManager] Initialized in Phase: " + currentPhase + " | Seed: " + rngSeed);
+
+        // Initialize Controllers
+        player1Controller = new LocalHumanController();
+        player2Controller = new AIPlayerController(AIManager.Instance);
+
+        player1Controller.OnActionDecided += (action) => lastActionReceived = action;
+        player2Controller.OnActionDecided += (action) => lastActionReceived = action;
+
         if (endTurnButton != null)
             endTurnButton.onClick.AddListener(OnEndTurnClicked);
         if (toggleLogButton != null)
@@ -282,7 +335,11 @@ public class GameManager : MonoBehaviour
             return;
         if (!awaitingTurnOwner.HasValue || awaitingTurnOwner.Value != SlotOwner.Player1)
             return;
-        HandlePass(SlotOwner.Player1);
+
+        if (player1Controller is LocalHumanController human)
+        {
+            human.RequestPass();
+        }
     }
 
     void OnToggleLogClicked()
@@ -470,48 +527,155 @@ public class GameManager : MonoBehaviour
         UpdateEndTurnButtonState();
         NotifyYourMove(owner);
 
-        if (owner == SlotOwner.Player1)
+        // Get the relevant controller
+        IPlayerController controller =
+            (owner == SlotOwner.Player1) ? player1Controller : player2Controller;
+
+        bool turnSlotFinished = false;
+
+        while (!turnSlotFinished)
         {
-            while (awaitingTurnOwner.HasValue && awaitingTurnOwner.Value == owner)
+            lastActionReceived = null;
+
+            // Signal turn start to controller
+            controller.OnTurnStarted();
+
+            // Wait for an action from the controller
+            while (lastActionReceived == null)
             {
-                // Auto-pass when out of momentum, but ONLY if we are not currently
-                // resolving a previously played card (p1ActionLocked).
-                if (!HasMomentum(owner) && !p1ActionLocked)
+                controller.OnTurnUpdate();
+
+                // Auto-pass when out of momentum (P1 ONLY, AI handles this in its brain)
+                if (owner == SlotOwner.Player1 && !HasMomentum(owner) && !p1ActionLocked)
                 {
                     HandlePass(owner);
-                    break;
+                    yield break;
                 }
+
+                // Safety break if round ends or something else happens
+                if (awaitingTurnOwner != owner)
+                    yield break;
+
                 yield return null;
             }
-        }
-        else
-        {
-            // Give a brief moment after announcing the AI's turn before it acts.
-            float introDelay = Mathf.Max(0f, aiTurnDelaySeconds * 0.5f);
-            if (introDelay > 0f)
-                yield return new WaitForSeconds(introDelay);
 
-            if (!HasMomentum(owner))
-            {
-                HandlePass(owner);
-                yield break;
-            }
+            // Process the received action
+            GameAction action = lastActionReceived;
+            lastActionReceived = null;
 
-            bool played = AIManager.Instance != null && AIManager.Instance.TryPlaySingleAction();
-            if (!played)
+            if (action.type == GameActionType.ManualSelectionCancel)
             {
-                HandlePass(owner);
+                yield return StartCoroutine(ProcessReceivedAction(action));
+                // turnSlotFinished remains false, allowing the player to pick another card
             }
             else
             {
-                while (awaitingTurnOwner.HasValue && awaitingTurnOwner.Value == owner)
-                    yield return null;
-            }
+                // This is a "real" action (Play or Pass)
+                yield return StartCoroutine(ProcessReceivedAction(action));
 
-            // Small pause after AI acts or passes so its move is readable.
-            float pause = Mathf.Max(0f, aiTurnDelaySeconds);
-            if (pause > 0f)
-                yield return new WaitForSeconds(pause);
+                // For this implementation, once a non-cancel action is processed,
+                // we consider the single turn slot finished (turns alternate).
+                // Note: If Play failed validation, ProcessReceivedAction handles the cleanup.
+                turnSlotFinished = true;
+            }
+        }
+    }
+
+    private IEnumerator ProcessReceivedAction(GameAction action)
+    {
+        if (action == null)
+            yield break;
+
+        switch (action.type)
+        {
+            case GameActionType.Pass:
+                HandlePass(action.owner);
+                break;
+
+            case GameActionType.PlayCreature:
+                var cc = (CreatureCard)cardDatabase.GetById(action.cardId);
+                var slot = GetSlotByIndex(action.slotIndex);
+                if (CanPlayCreatureCard(cc, action.owner))
+                {
+                    // Success! Spawn the creature
+                    var creature = DeckManager.Instance.SpawnCreature(cc, slot);
+                    if (creature != null)
+                    {
+                        // Wait for the preview routine to complete before ending the turn
+                        yield return StartCoroutine(
+                            OnCreaturePlayedDuringPlacementRoutine(creature)
+                        );
+
+                        // Remove from hand (handled differently for P1 vs AI)
+                        if (action.owner == SlotOwner.Player1)
+                        {
+                            // CardUI is already destroyed by the drag script
+                        }
+                        else
+                        {
+                            AIManager.Instance.RemoveCardFromHand(action.cardId);
+                        }
+                    }
+                }
+                break;
+
+            case GameActionType.PlayEffect:
+                var ec = (EffectCard)cardDatabase.GetById(action.cardId);
+                var targets = action
+                    .targetSlotIndices.Select(idx => GetSlotByIndex(idx))
+                    .Where(s => s != null && s.currentCreature != null)
+                    .Select(s => s.currentCreature)
+                    .ToList();
+
+                // If it's a human playing a manual effect, momentum was spent in TryBeginManualEffectSelection
+                bool shouldSpend = !(
+                    ec.requiresManualSelection && action.owner == SlotOwner.Player1
+                );
+
+                if (
+                    TryPlayEffectCard(
+                        ec,
+                        action.owner,
+                        targets,
+                        out string failureReason,
+                        shouldSpend
+                    )
+                )
+                {
+                    // If this was a manual selection confirmation, clear the state now
+                    if (manualEffectSelection != null && manualEffectSelection.card == ec)
+                    {
+                        manualEffectSelection = null;
+                    }
+
+                    // Wait for the effect routine to complete before ending the turn
+                    yield return StartCoroutine(PlayEffectCardRoutine(ec, action.owner, targets));
+
+                    if (action.owner == SlotOwner.Player1)
+                    {
+                        // CardUI is already destroyed by the drag script
+                    }
+                    else
+                    {
+                        AIManager.Instance.RemoveCardFromHand(action.cardId);
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"GameManager: Effect action failed: {failureReason}");
+                    if (action.owner == SlotOwner.Player1)
+                        p1ActionLocked = false;
+                    if (manualEffectSelection != null && manualEffectSelection.card == ec)
+                    {
+                        manualEffectSelection = null;
+                    }
+                    CompleteTurnAction(action.owner); // Unlock turn
+                }
+                break;
+
+            case GameActionType.ManualSelectionCancel:
+                CancelManualEffectSelection();
+                break;
         }
     }
 
@@ -615,7 +779,10 @@ public class GameManager : MonoBehaviour
         }
 
         if (awaitingTurnOwner.HasValue && awaitingTurnOwner.Value == owner)
+        {
             awaitingTurnOwner = null;
+            lastActionReceived = GameAction.CreatePass(owner); // Mark as passed for the loop
+        }
 
         UpdateEndTurnButtonState();
         UpdatePhaseStatusText();
@@ -640,6 +807,11 @@ public class GameManager : MonoBehaviour
         return awaitingTurnOwner.HasValue && awaitingTurnOwner.Value == owner;
     }
 
+    public IPlayerController GetPlayerController(SlotOwner owner)
+    {
+        return (owner == SlotOwner.Player1) ? player1Controller : player2Controller;
+    }
+
     public void OnCreaturePlayedDuringPlacement(Creature creature)
     {
         if (creature == null || creature.data == null)
@@ -652,10 +824,11 @@ public class GameManager : MonoBehaviour
         if (creature.owner == SlotOwner.Player1)
             p1ActionLocked = true;
 
-        StartCoroutine(OnCreaturePlayedDuringPlacementRoutine(creature));
+        // NOTE: We no longer start the coroutine here because the turn loop (ExecuteTurn)
+        // now yield-returns the routine to ensure proper timing.
     }
 
-    IEnumerator OnCreaturePlayedDuringPlacementRoutine(Creature creature)
+    public IEnumerator OnCreaturePlayedDuringPlacementRoutine(Creature creature)
     {
         if (creature == null || creature.data == null)
             yield break;
@@ -669,8 +842,6 @@ public class GameManager : MonoBehaviour
 
         if (creature.owner == SlotOwner.Player1)
             p1ActionLocked = false;
-
-        CompleteTurnAction(creature.owner);
     }
 
     void AnnounceCardPlay(SlotOwner owner, string cardName)
@@ -752,7 +923,14 @@ public class GameManager : MonoBehaviour
 
     void OnManualEffectCancelClicked()
     {
-        CancelManualEffectSelection();
+        if (player1Controller is LocalHumanController human)
+        {
+            human.RequestManualSelectionCancel();
+        }
+        else
+        {
+            CancelManualEffectSelection();
+        }
     }
 
     void ConfirmManualEffectSelection()
@@ -783,8 +961,11 @@ public class GameManager : MonoBehaviour
         if (!canConfirm)
             return;
 
-        // Finalize: clear all highlights and resolve the effect.
+        // Manual finalize: clear all highlights and resolve the effect.
         var finalTargets = state.selected.Where(t => t != null).ToList();
+        var targetIndices = finalTargets
+            .Select(t => GetIndexForSlot(BoardUtils.GetSlotOf(t)))
+            .ToList();
 
         foreach (var cand in state.candidates)
         {
@@ -797,11 +978,22 @@ public class GameManager : MonoBehaviour
 
         var finalCard = state.card;
         var finalOwner = state.owner;
-        manualEffectSelection = null;
 
         SetManualEffectSelectionUIVisible(false);
 
-        StartCoroutine(PlayEffectCardRoutine(finalCard, finalOwner, finalTargets));
+        if (GetPlayerController(finalOwner) is LocalHumanController human)
+        {
+            var finalTargetIndices = finalTargets
+                .Select(t => GetIndexForSlot(BoardUtils.GetSlotOf(t)))
+                .ToList();
+            human.RequestPlayEffect(finalCard.cardId, finalTargetIndices);
+        }
+        else
+        {
+            // Fallback for non-human or if needed
+            manualEffectSelection = null;
+            StartCoroutine(PlayEffectCardRoutine(finalCard, finalOwner, finalTargets));
+        }
     }
 
     void CancelManualEffectSelection()
@@ -857,7 +1049,8 @@ public class GameManager : MonoBehaviour
         EffectCard card,
         SlotOwner owner,
         IEnumerable<Creature> targets,
-        out string failureReason
+        out string failureReason,
+        bool spendMomentum = true
     )
     {
         failureReason = null;
@@ -868,28 +1061,60 @@ public class GameManager : MonoBehaviour
         }
 
         // Manual-selection cards should not be resolved through this path for the
-        // human player; they are started via TryBeginManualEffectSelection and
-        // completed via clicks. The AI, however, can still resolve them directly
-        // by providing an auto-chosen target set.
-        if (card.requiresManualSelection && owner == SlotOwner.Player1)
+        // human player unless targets are provided (which they are during confirmation).
+        if (
+            card.requiresManualSelection
+            && owner == SlotOwner.Player1
+            && (targets == null || !targets.Any())
+        )
         {
             failureReason = "This effect requires you to select targets manually.";
             return false;
         }
 
-        if (!CanPlayEffectCard(card, owner, out failureReason))
-            return false;
+        if (spendMomentum)
+        {
+            // Normal play path: perform a full rules check that also spends momentum.
+            if (!CanPlayEffectCard(card, owner, out failureReason))
+                return false;
+        }
+        else
+        {
+            // Preview / confirmation path (no additional momentum spend).
+            //
+            // For manual-selection effects for the local player, momentum was already
+            // spent when TryBeginManualEffectSelection succeeded. If we call the
+            // preview check again here, it will see 0 remaining momentum and wrongly
+            // reject the confirm with "Not enough Momentum." even though we already
+            // paid the cost.
+            bool isManualConfirmForLocalPlayer =
+                card.requiresManualSelection
+                && owner == SlotOwner.Player1
+                && manualEffectSelection != null
+                && manualEffectSelection.card == card;
+
+            if (!isManualConfirmForLocalPlayer)
+            {
+                if (!CanPlayEffectCardPreview(card, owner, out failureReason))
+                    return false;
+            }
+        }
 
         var list = targets != null ? targets.Where(c => c != null).ToList() : new List<Creature>();
 
         if (owner == SlotOwner.Player1)
             p1ActionLocked = true;
 
-        StartCoroutine(PlayEffectCardRoutine(card, owner, list));
+        // NOTE: We no longer start the coroutine here because the turn loop (ExecuteTurn)
+        // now yield-returns the routine to ensure proper timing.
         return true;
     }
 
-    IEnumerator PlayEffectCardRoutine(EffectCard card, SlotOwner owner, List<Creature> targets)
+    public IEnumerator PlayEffectCardRoutine(
+        EffectCard card,
+        SlotOwner owner,
+        List<Creature> targets
+    )
     {
         AnnounceCardPlay(owner, card.effectName);
         CardPreviewManager.Instance?.ShowForcedEffect(card, owner);
@@ -911,8 +1136,6 @@ public class GameManager : MonoBehaviour
 
         if (owner == SlotOwner.Player1)
             p1ActionLocked = false;
-
-        CompleteTurnAction(owner);
     }
 
     /// <summary>
@@ -1114,18 +1337,6 @@ public class GameManager : MonoBehaviour
         }
         // Update confirm button state after any change.
         UpdateManualEffectSelectionUIState();
-
-        // For effects that must hit exactly maxCount targets (no flexibility),
-        // auto-confirm once the required number has been selected so behavior
-        // matches the original \"exact N\" flow.
-        int selectedCount = state.selected.Count;
-        bool shouldAutoConfirm =
-            !state.allowFewerThanMax && state.maxCount > 0 && selectedCount == state.maxCount;
-
-        if (shouldAutoConfirm)
-        {
-            ConfirmManualEffectSelection();
-        }
     }
 
     IEnumerator BeginResolve()
@@ -1476,8 +1687,15 @@ public class GameManager : MonoBehaviour
         // card preview is still resolving.
         if (owner == SlotOwner.Player1 && p1ActionLocked)
         {
-            failureReason = "You have already taken an action. Wait for the other player.";
-            return false;
+            // If we are currently in manual selection for THIS card, allow it to continue
+            // (this happens during confirmation).
+            bool isConfirmingManual =
+                manualEffectSelection != null && manualEffectSelection.card == card;
+            if (!isConfirmingManual)
+            {
+                failureReason = "You have already taken an action. Wait for the other player.";
+                return false;
+            }
         }
 
         int cost = GetCreatureCost(card);
@@ -1563,8 +1781,15 @@ public class GameManager : MonoBehaviour
         // card preview is still resolving.
         if (owner == SlotOwner.Player1 && p1ActionLocked)
         {
-            failureReason = "You have already taken an action. Wait for the other player.";
-            return false;
+            // If we are currently in manual selection for THIS card, allow it to continue
+            // (this happens during confirmation).
+            bool isConfirmingManual =
+                manualEffectSelection != null && manualEffectSelection.card == card;
+            if (!isConfirmingManual)
+            {
+                failureReason = "You have already taken an action. Wait for the other player.";
+                return false;
+            }
         }
 
         // Era requirement

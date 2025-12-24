@@ -83,29 +83,20 @@ public class CreatureCardUI : BaseCardUI
                 {
                     // Check global rules (era, tier, momentum) before spawning
                     if (
-                        GameManager.Instance.CanPlayCreatureCard(
+                        GameManager.Instance.CanPlayCreatureCardPreview(
                             Data,
                             SlotOwner.Player1,
                             out string reason
                         )
                     )
                     {
-                        Creature spawned = DeckManager.Instance.SpawnCreature(Data, closest);
-                        placed = spawned != null;
-                        if (!placed && !string.IsNullOrEmpty(reason))
+                        if (
+                            GameManager.Instance.GetPlayerController(SlotOwner.Player1)
+                            is LocalHumanController human
+                        )
                         {
-                            // If spawn failed for some reason, refund the momentum we just spent
-                            // (best-effort: simply add cost back based on card)
-                            int cost = GameManager.Instance.GetCreatureCost(Data);
-                            if (cost > 0)
-                            {
-                                // Manual refund since TrySpendMomentum only subtracts
-                                if (GameManager.Instance != null)
-                                {
-                                    GameManager.Instance.p1Momentum += cost;
-                                    GameManager.Instance.UpdateMomentumUI();
-                                }
-                            }
+                            human.RequestPlayCreature(Data.cardId, closest.index);
+                            placed = true;
                         }
                     }
                     else

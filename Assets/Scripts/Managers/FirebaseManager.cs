@@ -23,7 +23,7 @@ public class FirebaseManager : MonoBehaviour
     [Header("Backend Settings")]
     [Tooltip("HTTP endpoint for your authSteam backend (Cloud Run / Cloud Function).")]
     [SerializeField]
-    private string authSteamUrl = "https://authsteam-dh567oabqa-uc.a.run.app";
+    private readonly string authSteamUrl = "https://authsteam-dh567oabqa-uc.a.run.app";
 
     /// <summary>True when Firebase is initialized and ready.</summary>
     public bool IsFirebaseReady { get; private set; }
@@ -59,6 +59,13 @@ public class FirebaseManager : MonoBehaviour
     /// <summary>
     /// Initializes Firebase and, once both Firebase and Steam are ready,
     /// automatically performs the Steam → backend → Firebase login flow.
+    ///
+    /// IMPORTANT:
+    /// - If Firebase already has a cached user from a previous session,
+    ///   we *reuse* that session and DO NOT call the authSteam backend again.
+    /// - This means you only mint a custom token the first time (or after
+    ///   an explicit sign‑out), which prevents hammering your backend and
+    ///   avoids Steam 429s on every game launch.
     /// </summary>
     private async Task InitializeAndAutoLoginAsync()
     {
@@ -67,6 +74,26 @@ public class FirebaseManager : MonoBehaviour
         if (!IsFirebaseReady)
             return;
 
+        // --------------------------------------------------------------
+        // 1. Reuse cached Firebase session if available
+        // --------------------------------------------------------------
+        // Firebase Auth persists the user across app restarts and will
+        // refresh ID tokens automatically. If we already have a user,
+        // we treat that as "logged in" and skip the Steam → backend call.
+        if (Auth != null && Auth.CurrentUser != null)
+        {
+            IsLoggedIn = true;
+            HasTriedLogin = true;
+            LastLoginError = null;
+            Debug.Log(
+                $"FirebaseManager: Reusing cached Firebase user uid={Auth.CurrentUser.UserId} – skipping authSteam call."
+            );
+            return;
+        }
+
+        // --------------------------------------------------------------
+        // 2. No cached user → perform normal Steam‑based login
+        // --------------------------------------------------------------
         // Wait for Steam to be initialized by SteamManager.
         // This will silently wait in the background during your main-menu loading state.
         const int maxWaitMs = 15000; // 15 seconds safety timeout
@@ -88,8 +115,25 @@ public class FirebaseManager : MonoBehaviour
             return;
         }
 
-        // Perform the actual login.
+        // Perform the actual login via Steam → authSteam → Firebase custom token.
         await LoginWithSteamAsync();
+    }
+
+    /// <summary>
+    /// Optional helper to explicitly sign out the current Firebase user.
+    /// After calling this, the next startup (or manual login call) will
+    /// go through the full Steam → backend flow again.
+    /// </summary>
+    public void SignOut()
+    {
+        if (Auth == null)
+            return;
+
+        Auth.SignOut();
+        IsLoggedIn = false;
+        HasTriedLogin = false;
+        LastLoginError = null;
+        Debug.Log("FirebaseManager: Signed out current Firebase user.");
     }
 
     private async Task InitializeFirebaseAsync()

@@ -8,6 +8,9 @@ public enum SlotOwner
 
 public class BoardSlot : MonoBehaviour
 {
+    [Header("Identification")]
+    public int index = -1; // 0-4 for P1, 5-9 for P2 (or auto-assigned)
+
     public bool occupied;
     public Creature currentCreature;
     public SlotOwner owner = SlotOwner.Player1;

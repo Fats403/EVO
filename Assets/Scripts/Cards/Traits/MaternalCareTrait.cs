@@ -23,10 +23,16 @@ public class MaternalCareTrait : Trait
         var target = allies
             .OrderBy(c => c.currentHealth)
             .ThenBy(_ =>
-                GameManager.Instance != null
-                    ? GameManager.Instance.NextRandomInt(0, allies.Count)
-                    : Random.Range(0, allies.Count)
-            )
+            {
+                if (GameManager.Instance == null)
+                {
+                    Debug.LogWarning(
+                        "MaternalCareTrait: GameManager.Instance is null. Determinism may be compromised."
+                    );
+                    return Random.Range(0, allies.Count);
+                }
+                return GameManager.Instance.NextRandomInt(0, allies.Count);
+            })
             .FirstOrDefault();
         if (target == null)
             return;

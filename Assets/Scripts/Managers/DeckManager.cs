@@ -100,10 +100,18 @@ public class DeckManager : MonoBehaviour
         // Shuffle pool
         for (int i = pool.Count - 1; i > 0; i--)
         {
-            int j =
-                (GameManager.Instance != null)
-                    ? GameManager.Instance.NextRandomInt(0, i + 1)
-                    : Random.Range(0, i + 1);
+            int j = 0;
+            if (GameManager.Instance == null)
+            {
+                Debug.LogWarning(
+                    "DeckManager: GameManager.Instance is null during shuffle. Determinism may be compromised."
+                );
+                j = UnityEngine.Random.Range(0, i + 1);
+            }
+            else
+            {
+                j = GameManager.Instance.NextRandomInt(0, i + 1);
+            }
             (pool[j], pool[i]) = (pool[i], pool[j]);
         }
         // Take up to deckSize unique
@@ -408,10 +416,18 @@ public class DeckManager : MonoBehaviour
 
         for (int i = drawPile.Count - 1; i > 0; i--)
         {
-            int j =
-                (GameManager.Instance != null)
-                    ? GameManager.Instance.NextRandomInt(0, i + 1)
-                    : Random.Range(0, i + 1);
+            int j = 0;
+            if (GameManager.Instance == null)
+            {
+                Debug.LogWarning(
+                    "DeckManager: GameManager.Instance is null during ShuffleDrawPile. Determinism may be compromised."
+                );
+                j = UnityEngine.Random.Range(0, i + 1);
+            }
+            else
+            {
+                j = GameManager.Instance.NextRandomInt(0, i + 1);
+            }
             (drawPile[j], drawPile[i]) = (drawPile[i], drawPile[j]);
         }
     }

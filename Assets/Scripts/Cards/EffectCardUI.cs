@@ -114,16 +114,17 @@ public class EffectCardUI : BaseCardUI
             if (dz != null && dz.IsPointerInside(eventData.position))
             {
                 string reason = null;
-                if (
-                    GameManager.Instance != null
-                    && GameManager.Instance.TryBeginManualEffectSelection(
-                        effectData,
-                        owner,
-                        out reason
-                    )
-                )
+                // Pre-check playable rules
+                if (GameManager.Instance.CanPlayEffectCardPreview(effectData, owner, out reason))
                 {
-                    played = true;
+                    // This still triggers the manual selection UI in GameManager
+                    // We don't route manual selection through controllers yet as it's a multi-step process
+                    if (
+                        GameManager.Instance.TryBeginManualEffectSelection(effectData, owner, out _)
+                    )
+                    {
+                        played = true;
+                    }
                 }
                 else if (!string.IsNullOrEmpty(reason))
                 {
@@ -138,7 +139,7 @@ public class EffectCardUI : BaseCardUI
             if (dz != null && dz.IsPointerInside(eventData.position))
             {
                 string reason;
-                if (TryQueueEffectCard(Enumerable.Empty<Creature>(), out reason))
+                if (TryRequestEffectCard(Enumerable.Empty<Creature>(), out reason))
                 {
                     played = true;
                 }
@@ -161,7 +162,7 @@ public class EffectCardUI : BaseCardUI
             if (all.Count > 0)
             {
                 string reason;
-                if (TryQueueEffectCard(all, out reason))
+                if (TryRequestEffectCard(all, out reason))
                 {
                     played = true;
                 }
@@ -209,7 +210,7 @@ public class EffectCardUI : BaseCardUI
             if (list.Count > 0)
             {
                 string reason;
-                if (TryQueueEffectCard(list, out reason))
+                if (TryRequestEffectCard(list, out reason))
                 {
                     played = true;
                 }
@@ -223,7 +224,7 @@ public class EffectCardUI : BaseCardUI
         else if (target != null && distPx <= targetRadiusPx)
         {
             string reason;
-            if (TryQueueEffectCard(new[] { target }, out reason))
+            if (TryRequestEffectCard(new[] { target }, out reason))
             {
                 played = true;
             }
@@ -410,13 +411,22 @@ public class EffectCardUI : BaseCardUI
         return best;
     }
 
-    private bool TryQueueEffectCard(IEnumerable<Creature> targets, out string failureReason)
+    private bool TryRequestEffectCard(IEnumerable<Creature> targets, out string failureReason)
     {
-        return GameManager.Instance.TryPlayEffectCard(
-            effectData,
-            owner,
-            targets,
-            out failureReason
-        );
+        failureReason = null;
+        if (GameManager.Instance.CanPlayEffectCardPreview(effectData, owner, out failureReason))
+        {
+            if (GameManager.Instance.GetPlayerController(owner) is LocalHumanController human)
+            {
+                var indices = targets
+                    .Select(c => BoardUtils.GetSlotOf(c))
+                    .Where(s => s != null)
+                    .Select(s => s.index)
+                    .ToList();
+                human.RequestPlayEffect(effectData.cardId, indices);
+                return true;
+            }
+        }
+        return false;
     }
 }

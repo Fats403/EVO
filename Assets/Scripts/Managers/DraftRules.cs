@@ -325,6 +325,7 @@ public static class DraftRules
             return GameManager.Instance.NextRandomInt(minInclusive, maxExclusive);
         }
 
+        Debug.LogWarning("DraftRules: GameManager.Instance is null during NextRandomInt. Determinism may be compromised.");
         return Random.Range(minInclusive, maxExclusive);
     }
 

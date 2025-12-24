@@ -113,10 +113,16 @@ public static class BoardUtils
             .ToList();
         if (emptySlots.Count == 0)
             return null;
-        int idx =
-            GameManager.Instance != null
-                ? GameManager.Instance.NextRandomInt(0, emptySlots.Count)
-                : Random.Range(0, emptySlots.Count);
+        int idx = 0;
+        if (GameManager.Instance != null)
+        {
+            idx = GameManager.Instance.NextRandomInt(0, emptySlots.Count);
+        }
+        else
+        {
+            Debug.LogWarning("BoardUtils: GameManager.Instance is null during GetRandomEmptySlot. Determinism may be compromised.");
+            idx = Random.Range(0, emptySlots.Count);
+        }
         return emptySlots[idx];
     }
 }

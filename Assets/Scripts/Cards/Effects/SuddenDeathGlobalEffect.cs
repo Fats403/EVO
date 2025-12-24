@@ -17,19 +17,31 @@ public class SuddenDeathGlobalEffect : GlobalEffectBase
         var p2 = all.Where(c => c.owner == SlotOwner.Player2).ToList();
         if (p1.Count > 0)
         {
-            int i =
-                (GameManager.Instance != null)
-                    ? GameManager.Instance.NextRandomInt(0, p1.Count)
-                    : Random.Range(0, p1.Count);
+            int i = 0;
+            if (GameManager.Instance != null)
+            {
+                i = GameManager.Instance.NextRandomInt(0, p1.Count);
+            }
+            else
+            {
+                Debug.LogWarning("SuddenDeathGlobalEffect: GameManager.Instance is null. Determinism may be compromised.");
+                i = Random.Range(0, p1.Count);
+            }
             var pick = p1[i];
             pick?.Kill("Sudden Death");
         }
         if (p2.Count > 0)
         {
-            int i =
-                (GameManager.Instance != null)
-                    ? GameManager.Instance.NextRandomInt(0, p2.Count)
-                    : Random.Range(0, p2.Count);
+            int i = 0;
+            if (GameManager.Instance != null)
+            {
+                i = GameManager.Instance.NextRandomInt(0, p2.Count);
+            }
+            else
+            {
+                Debug.LogWarning("SuddenDeathGlobalEffect: GameManager.Instance is null. Determinism may be compromised.");
+                i = Random.Range(0, p2.Count);
+            }
             var pick = p2[i];
             if (pick != null)
             {

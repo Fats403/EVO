@@ -27,6 +27,9 @@ public class AIManager : MonoBehaviour
     [Tooltip("If true, the AI will log its hand and top-scoring actions each time it acts.")]
     public bool debugAI = false;
 
+    [Tooltip("Delay in seconds before the AI takes an action.")]
+    public float actionDelay = 1.0f;
+
     [Tooltip("Maximum number of candidate actions to include in debug logs.")]
     [Range(1, 20)]
     public int debugMaxActionsToLog = 8;
@@ -168,10 +171,18 @@ public class AIManager : MonoBehaviour
 
             for (int i = pool.Count - 1; i > 0; i--)
             {
-                int j =
-                    (GameManager.Instance != null)
-                        ? GameManager.Instance.NextRandomInt(0, i + 1)
-                        : Random.Range(0, i + 1);
+                int j = 0;
+                if (GameManager.Instance == null)
+                {
+                    Debug.LogWarning(
+                        "AIManager: GameManager.Instance is null during shuffle. Determinism may be compromised."
+                    );
+                    j = Random.Range(0, i + 1);
+                }
+                else
+                {
+                    j = GameManager.Instance.NextRandomInt(0, i + 1);
+                }
                 (pool[j], pool[i]) = (pool[i], pool[j]);
             }
 
@@ -310,10 +321,12 @@ public class AIManager : MonoBehaviour
         public EffectCard effectCard;
         public List<Creature> effectTargets;
         public float score;
+        public int tieBreaker; // Added for determinism
     }
 
-    public bool TryPlaySingleAction()
+    public bool TryPlaySingleAction(out GameAction action)
     {
+        action = null;
         var gm = GameManager.Instance;
         if (gm == null)
             return false;
@@ -347,12 +360,19 @@ public class AIManager : MonoBehaviour
         );
 
         // Always include an explicit pass option.
-        actions.Add(new AIAction { type = AIActionType.Pass, score = 0f });
+        actions.Add(
+            new AIAction
+            {
+                type = AIActionType.Pass,
+                score = 0f,
+                tieBreaker = gm.NextRandomInt(0, 1000000),
+            }
+        );
 
         if (actions.Count == 0)
             return false;
 
-        var best = actions.OrderByDescending(a => a.score).First();
+        var best = actions.OrderByDescending(a => a.score).ThenBy(a => a.tieBreaker).First();
 
         if (debugAI)
         {
@@ -366,11 +386,45 @@ public class AIManager : MonoBehaviour
         switch (best.type)
         {
             case AIActionType.PlayCreature:
-                return ExecuteCreatureAction(gm, best);
+                action = new GameAction
+                {
+                    type = GameActionType.PlayCreature,
+                    owner = SlotOwner.Player2,
+                    cardId = best.creatureCard.cardId,
+                    slotIndex = best.creatureSlot != null ? best.creatureSlot.index : -1,
+                };
+                return true;
             case AIActionType.PlayEffect:
-                return ExecuteEffectAction(gm, best);
+                action = new GameAction
+                {
+                    type = GameActionType.PlayEffect,
+                    owner = SlotOwner.Player2,
+                    cardId = best.effectCard.cardId,
+                    targetSlotIndices =
+                        best.effectTargets != null
+                            ? best
+                                .effectTargets.Select(c => BoardUtils.GetSlotOf(c))
+                                .Where(s => s != null)
+                                .Select(s => s.index)
+                                .ToList()
+                            : new List<int>(),
+                };
+                return true;
             default:
                 return false;
+        }
+    }
+
+    public void RemoveCardFromHand(string cardId)
+    {
+        var card = hand.FirstOrDefault(c =>
+            (c is CreatureCard cc && cc.cardId == cardId)
+            || (c is EffectCard ec && ec.cardId == cardId)
+        );
+        if (card != null)
+        {
+            hand.Remove(card);
+            UpdateHandUI();
         }
     }
 
@@ -440,6 +494,7 @@ public class AIManager : MonoBehaviour
                         creatureCard = card,
                         creatureSlot = slot,
                         score = score,
+                        tieBreaker = gm.NextRandomInt(0, 1000000),
                     }
                 );
             }
@@ -560,6 +615,7 @@ public class AIManager : MonoBehaviour
                         // derives targets from side/type filters. We pass an empty list here.
                         effectTargets = new List<Creature>(),
                         score = score,
+                        tieBreaker = gm.NextRandomInt(0, 1000000),
                     }
                 );
 
@@ -610,6 +666,7 @@ public class AIManager : MonoBehaviour
                             effectCard = card,
                             effectTargets = list,
                             score = score,
+                            tieBreaker = gm.NextRandomInt(0, 1000000),
                         }
                     );
                 }
@@ -667,6 +724,7 @@ public class AIManager : MonoBehaviour
                         effectCard = card,
                         effectTargets = picks,
                         score = score,
+                        tieBreaker = gm.NextRandomInt(0, 1000000),
                     }
                 );
             }
@@ -702,6 +760,7 @@ public class AIManager : MonoBehaviour
                         effectCard = card,
                         effectTargets = picks,
                         score = score,
+                        tieBreaker = gm.NextRandomInt(0, 1000000),
                     }
                 );
             }
@@ -1022,7 +1081,7 @@ public class AIManager : MonoBehaviour
 
         // Action ranking
         sb.AppendLine("[AI] Candidate actions (top scored first):");
-        var ordered = actions.OrderByDescending(a => a.score).ToList();
+        var ordered = actions.OrderByDescending(a => a.score).ThenBy(a => a.tieBreaker).ToList();
         int limit = Mathf.Clamp(debugMaxActionsToLog, 1, 20);
         for (int i = 0; i < ordered.Count && i < limit; i++)
         {
@@ -1030,6 +1089,9 @@ public class AIManager : MonoBehaviour
             string label;
             switch (a.type)
             {
+                case AIActionType.Pass:
+                    label = "Pass";
+                    break;
                 case AIActionType.PlayCreature:
                     label =
                         $"PlayCreature - {a.creatureCard?.cardName ?? "null"} "
@@ -1041,10 +1103,10 @@ public class AIManager : MonoBehaviour
                         + $"(targets={a.effectTargets?.Count ?? 0})";
                     break;
                 default:
-                    label = "Pass";
+                    label = "Unknown";
                     break;
             }
-            sb.AppendLine($"  [{i}] {label}, score={a.score:F2}");
+            sb.AppendLine($"  [{i}] {label}, score={a.score:F2}, tie={a.tieBreaker}");
         }
 
         // Highlight final choice.
@@ -1052,52 +1114,5 @@ public class AIManager : MonoBehaviour
         sb.AppendLine($"  Type={best.type}, Score={best.score:F2}");
 
         Debug.Log(sb.ToString());
-    }
-
-    bool ExecuteCreatureAction(GameManager gm, AIAction action)
-    {
-        var card = action.creatureCard;
-        var slot = action.creatureSlot;
-        if (card == null || slot == null)
-            return false;
-
-        string reason;
-        if (!gm.CanPlayCreatureCard(card, SlotOwner.Player2, out reason))
-        {
-            if (!string.IsNullOrEmpty(reason))
-                Debug.Log($"[AI] Cannot play {card.cardName}: {reason}");
-            return false;
-        }
-
-        var creature =
-            DeckManager.Instance != null ? DeckManager.Instance.SpawnCreature(card, slot) : null;
-
-        if (creature == null)
-            return false;
-        hand.Remove(card);
-        UpdateHandUI();
-        return true;
-    }
-
-    bool ExecuteEffectAction(GameManager gm, AIAction action)
-    {
-        var card = action.effectCard;
-        if (card == null)
-            return false;
-
-        var targets = action.effectTargets ?? new List<Creature>();
-
-        string reason;
-        bool ok = gm.TryPlayEffectCard(card, SlotOwner.Player2, targets, out reason);
-        if (!ok)
-        {
-            if (!string.IsNullOrEmpty(reason))
-                Debug.Log($"[AI] Cannot play effect {card.effectName}: {reason}");
-            return false;
-        }
-
-        hand.Remove(card);
-        UpdateHandUI();
-        return true;
     }
 }

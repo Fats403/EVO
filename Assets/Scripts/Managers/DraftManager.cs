@@ -366,10 +366,16 @@ public class DraftManager : MonoBehaviour
 
         for (int i = list.Count - 1; i > 0; i--)
         {
-            int j =
-                (GameManager.Instance != null)
-                    ? GameManager.Instance.NextRandomInt(0, i + 1)
-                    : Random.Range(0, i + 1);
+            int j = 0;
+            if (GameManager.Instance != null)
+            {
+                j = GameManager.Instance.NextRandomInt(0, i + 1);
+            }
+            else
+            {
+                Debug.LogWarning("DraftManager: GameManager.Instance is null during ShuffleList. Determinism may be compromised.");
+                j = Random.Range(0, i + 1);
+            }
             (list[j], list[i]) = (list[i], list[j]);
         }
     }

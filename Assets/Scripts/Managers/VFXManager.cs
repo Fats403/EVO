@@ -54,6 +54,24 @@ public class VFXManager : MonoBehaviour
     public bool HasMeteorPrefab => meteorPrefab != null;
 
     /// <summary>
+    /// Helper to get a deterministic random value if GameManager is available,
+    /// otherwise fall back to UnityEngine.Random (warning logged).
+    /// </summary>
+    private float NextFloat(float minInclusive, float maxExclusive)
+    {
+        if (GameManager.Instance == null)
+        {
+            Debug.LogWarning(
+                "VFXManager: GameManager.Instance is null during NextFloat. Determinism may be compromised."
+            );
+            return UnityEngine.Random.Range(minInclusive, maxExclusive);
+        }
+        // System.Random.NextDouble is [0, 1)
+        double val = (double)GameManager.Instance.NextRandomInt(0, 1000000) / 1000000.0;
+        return (float)(minInclusive + (val * (maxExclusive - minInclusive)));
+    }
+
+    /// <summary>
     /// Spawn a single meteor above the camera, aimed at the given creature.
     /// The provided callback is invoked when the meteor connects.
     /// </summary>
@@ -72,7 +90,7 @@ public class VFXManager : MonoBehaviour
         float camHeight = 2f * cam.orthographicSize;
         float camWidth = camHeight * cam.aspect;
 
-        bool spawnRight = UnityEngine.Random.value > 0.5f;
+        bool spawnRight = NextFloat(0f, 1f) > 0.5f;
         float clampedFactor = Mathf.Clamp(horizontalOffsetFactor, 0f, 0.99f);
         float xOffset = camWidth * clampedFactor * 0.5f;
         float spawnX = cam.transform.position.x + (spawnRight ? xOffset : -xOffset);
@@ -94,19 +112,18 @@ public class VFXManager : MonoBehaviour
         float speedMult = 1f;
         if (meteorSpeedVariance > 0f)
         {
-            float delta = UnityEngine.Random.Range(-meteorSpeedVariance, meteorSpeedVariance);
+            float delta = NextFloat(-meteorSpeedVariance, meteorSpeedVariance);
             speedMult = Mathf.Max(0.1f, 1f + delta);
         }
 
         float sizeMult = 1f;
         if (meteorSizeVariance > 0f)
         {
-            float delta = UnityEngine.Random.Range(-meteorSizeVariance, meteorSizeVariance);
+            float delta = NextFloat(-meteorSizeVariance, meteorSizeVariance);
             sizeMult = Mathf.Max(0.3f, 1f + delta);
         }
 
-        float startDelay =
-            meteorMaxStartDelay > 0f ? UnityEngine.Random.Range(0f, meteorMaxStartDelay) : 0f;
+        float startDelay = meteorMaxStartDelay > 0f ? NextFloat(0f, meteorMaxStartDelay) : 0f;
 
         meteor.Initialize(target, onImpact, speedMult, startDelay, sizeMult);
     }

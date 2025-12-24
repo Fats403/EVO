@@ -209,12 +209,18 @@ public class ResolutionManager : MonoBehaviour
         var q = FindObjectsByType<Creature>(FindObjectsSortMode.None)
             .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
             .OrderByDescending(c => GetEffectiveSpeed(c));
+
         // Deterministic tie-breaker: RNG-based shuffle for equals
         int Rand()
         {
-            return GameManager.Instance != null
-                ? GameManager.Instance.NextRandomInt(0, int.MaxValue)
-                : UnityEngine.Random.Range(0, int.MaxValue);
+            if (GameManager.Instance == null)
+            {
+                Debug.LogWarning(
+                    "ResolutionManager: GameManager.Instance is null during Rand() tie-breaker. Determinism may be compromised."
+                );
+                return UnityEngine.Random.Range(0, int.MaxValue);
+            }
+            return GameManager.Instance.NextRandomInt(0, int.MaxValue);
         }
         return q.ThenBy(_ => Rand());
     }
@@ -276,9 +282,14 @@ public class ResolutionManager : MonoBehaviour
 
         static int Rand()
         {
-            return GameManager.Instance != null
-                ? GameManager.Instance.NextRandomInt(0, int.MaxValue)
-                : UnityEngine.Random.Range(0, int.MaxValue);
+            if (GameManager.Instance == null)
+            {
+                Debug.LogWarning(
+                    "ResolutionManager: GameManager.Instance is null during Rand() tie-breaker. Determinism may be compromised."
+                );
+                return UnityEngine.Random.Range(0, int.MaxValue);
+            }
+            return GameManager.Instance.NextRandomInt(0, int.MaxValue);
         }
 
         // Priority first, then speed.

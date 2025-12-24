@@ -910,6 +910,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
+  index: -1
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 0
@@ -1276,6 +1277,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
+  index: -1
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 1
@@ -1361,7 +1363,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &205841993
 RectTransform:
@@ -2020,6 +2022,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
+  index: -1
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 0
@@ -2126,6 +2129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
+  index: -1
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 0
@@ -5098,6 +5102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
+  index: -1
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 0
@@ -5286,6 +5291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
+  index: -1
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 1
@@ -5827,7 +5833,7 @@ GameObject:
   - component: {fileID: 1148425609}
   - component: {fileID: 1148425608}
   m_Layer: 5
-  m_Name: EndTurnButton
+  m_Name: MainMenuButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6657,6 +6663,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
+  index: -1
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 1
@@ -6709,6 +6716,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
+  index: -1
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 1
@@ -8581,6 +8589,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
+  index: -1
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 1
@@ -9484,6 +9493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e975dedf3f94f7fa67269a86a84488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardSlot
+  index: -1
   occupied: 0
   currentCreature: {fileID: 0}
   owner: 0

@@ -57,9 +57,14 @@ public class WeatherManager : MonoBehaviour
 
     int Next(int minInclusive, int maxExclusive)
     {
-        return GameManager.Instance != null
-            ? GameManager.Instance.NextRandomInt(minInclusive, maxExclusive)
-            : UnityEngine.Random.Range(minInclusive, maxExclusive);
+        if (GameManager.Instance == null)
+        {
+            Debug.LogWarning(
+                "WeatherManager: GameManager.Instance is null during Next(). Determinism may be compromised."
+            );
+            return UnityEngine.Random.Range(minInclusive, maxExclusive);
+        }
+        return GameManager.Instance.NextRandomInt(minInclusive, maxExclusive);
     }
 
     public WeatherType RollNextWeather()
