@@ -7,7 +7,6 @@ using System.Collections.Generic;
 public enum GameStartMode
 {
     None,
-    Draft,
     Constructed,
 }
 
@@ -19,8 +18,12 @@ public static class SelectedDeckStore
     public static string DeckName;
     public static int SlotIndex;
 
-    public static List<DeckBuilderManager.DeckCardEntry> Cards { get; } =
-        new List<DeckBuilderManager.DeckCardEntry>();
+    /// <summary>
+    /// Canonical deck contents chosen in the DeckHubScene. This now uses the
+    /// shared DeckCardEntry type so it can be consumed by both gameplay and
+    /// networking systems without depending on DeckBuilderManager.
+    /// </summary>
+    public static List<DeckCardEntry> Cards { get; } = new List<DeckCardEntry>();
 
     public static bool HasConstructedDeck =>
         Mode == GameStartMode.Constructed && Cards != null && Cards.Count > 0;
@@ -29,7 +32,7 @@ public static class SelectedDeckStore
         string deckId,
         string deckName,
         int slotIndex,
-        List<DeckBuilderManager.DeckCardEntry> cards
+        List<DeckCardEntry> cards
     )
     {
         Mode = GameStartMode.Constructed;
@@ -40,15 +43,6 @@ public static class SelectedDeckStore
         Cards.Clear();
         if (cards != null)
             Cards.AddRange(cards);
-    }
-
-    public static void SetDraftMode()
-    {
-        Mode = GameStartMode.Draft;
-        DeckId = null;
-        DeckName = null;
-        SlotIndex = -1;
-        Cards.Clear();
     }
 
     public static void Clear()

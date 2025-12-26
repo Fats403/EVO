@@ -316,17 +316,13 @@ public static class DraftRules
     }
 
     /// <summary>
-    /// Shared RNG helper that respects GameManager's seeded RNG when available.
+    /// Shared RNG helper that uses the central DeterministicRng so that draft
+    /// and deck building behave deterministically across scenes and, later,
+    /// across networked peers.
     /// </summary>
     public static int NextRandomInt(int minInclusive, int maxExclusive)
     {
-        if (GameManager.Instance != null)
-        {
-            return GameManager.Instance.NextRandomInt(minInclusive, maxExclusive);
-        }
-
-        Debug.LogWarning("DraftRules: GameManager.Instance is null during NextRandomInt. Determinism may be compromised.");
-        return Random.Range(minInclusive, maxExclusive);
+        return DeterministicRng.NextInt(minInclusive, maxExclusive);
     }
 
     private static void MergeUnique(List<CardEntry> target, List<CardEntry> source)

@@ -36,7 +36,6 @@ public class GameManager : MonoBehaviour
     public FoodPile foodPile;
     public WeatherManager weatherManager;
     public WeatherVideoBackgroundController weatherVideoBackground;
-    public DraftManager draftManager;
 
     [Header("Round & Era")]
     public int currentRound = 1;
@@ -53,8 +52,9 @@ public class GameManager : MonoBehaviour
 
     [Header("Debug")]
     public GamePhase currentPhase = GamePhase.Setup;
+
+    [Tooltip("Seed used for the deterministic RNG in this run (for debugging/replays).")]
     public int rngSeed = 0;
-    private System.Random rng;
 
     [Header("Turn Order")]
     [Tooltip("Determines which player starts the Place phase for this round.")]
@@ -66,6 +66,13 @@ public class GameManager : MonoBehaviour
 
     private List<BoardSlot> allSlots = new List<BoardSlot>();
 
+    // If true, the game is being started by an external bootstrapper that prepares
+    // decks before calling into GameManager. When this is true, GameManager.Start
+    // will skip its own deck/draft selection logic and only perform core
+    // initialisation. This is a static flag so that the bootstrapper does not
+    // need to be referenced directly from this class.
+    private static bool s_isExternallyBootstrapped;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -73,12 +80,21 @@ public class GameManager : MonoBehaviour
         else
             Instance = this;
 
-        if (rngSeed == 0)
+        // Ensure the central deterministic RNG is initialised. If a seed has
+        // already been chosen earlier in the session (e.g., in DeckHub), use
+        // that; otherwise, pick a new seed and initialise the RNG.
+        if (DeterministicRng.IsInitialized)
         {
-            rngSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            rngSeed = DeterministicRng.Seed;
         }
-        rng = new System.Random(rngSeed);
-        UnityEngine.Random.InitState(rngSeed);
+        else
+        {
+            if (rngSeed == 0)
+            {
+                rngSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            }
+            DeterministicRng.Initialize(rngSeed);
+        }
 
         InitializeBoardSlots();
     }
@@ -183,83 +199,33 @@ public class GameManager : MonoBehaviour
         // Initialize AI deck/hand before the first round begins so both players follow the same rules.
         AIManager.Instance?.BuildDeckAndDrawStartingHand();
 
-        bool useConstructed =
-            SelectedDeckStore.Mode == GameStartMode.Constructed
-            && SelectedDeckStore.HasConstructedDeck;
-
-        if (useConstructed)
+        // If an external bootstrapper is responsible for deck initialisation
+        // (constructed / draft decks provided via SelectedDeckStore), it will
+        // call BeginGameWithReadyDeck once ready. Otherwise, start immediately
+        // using whatever deck configuration is present.
+        if (!s_isExternallyBootstrapped)
         {
-            // Build the player's deck from the SelectedDeckStore and jump straight into the game.
-            InitializeConstructedPlayerDeck();
-            SelectedDeckStore.Clear();
             BeginSetup();
-        }
-        else
-        {
-            // Draft-based start (existing behaviour).
-            if (draftManager != null)
-            {
-                draftManager.BeginDraft();
-            }
-            else
-            {
-                Debug.LogWarning(
-                    "GameManager: DraftManager not assigned; starting game without draft."
-                );
-                BeginSetup();
-            }
         }
     }
 
     /// <summary>
-    /// Builds the local player's deck from SelectedDeckStore using the CardDatabase
-    /// and initializes the DeckManager.
+    /// Called by an external bootstrapper when it intends to own the deck
+    /// startup flow for constructed games.
     /// </summary>
-    private void InitializeConstructedPlayerDeck()
+    public static void MarkExternallyBootstrapped()
     {
-        if (!SelectedDeckStore.HasConstructedDeck)
-        {
-            Debug.LogError("GameManager: InitializeConstructedPlayerDeck called with no deck.");
-            return;
-        }
+        s_isExternallyBootstrapped = true;
+    }
 
-        if (DeckManager.Instance == null || cardDatabase == null)
-        {
-            Debug.LogError(
-                "GameManager: Cannot initialize constructed deck – missing DeckManager or CardDatabase."
-            );
-            return;
-        }
-
-        var cards = new List<ScriptableObject>();
-        foreach (var entry in SelectedDeckStore.Cards)
-        {
-            if (string.IsNullOrEmpty(entry.cardId) || entry.count <= 0)
-                continue;
-
-            var def = cardDatabase.GetById(entry.cardId);
-            if (def == null)
-            {
-                Debug.LogWarning(
-                    $"GameManager: Card with id '{entry.cardId}' not found in CardDatabase."
-                );
-                continue;
-            }
-
-            for (int i = 0; i < entry.count; i++)
-            {
-                cards.Add(def);
-            }
-        }
-
-        if (cards.Count == 0)
-        {
-            Debug.LogError("GameManager: Constructed deck contained no valid cards.");
-            return;
-        }
-
-        DeckManager.Instance.InitializeFromDraft(cards);
-        DeckManager.Instance.InitializeAndDraw();
+    /// <summary>
+    /// Entry point for external bootstrappers once they have fully initialised
+    /// the player's deck (and AI deck). This simply transitions the game into
+    /// the normal setup / round flow.
+    /// </summary>
+    public void BeginGameWithReadyDeck()
+    {
+        BeginSetup();
     }
 
     public void OnEndTurnClicked()
@@ -298,22 +264,6 @@ public class GameManager : MonoBehaviour
             GameColorPalette.AlertInfo
         );
         BeginDraw();
-    }
-
-    /// <summary>
-    /// Called by the DraftManager once the local player's draft is complete
-    /// and the DeckManager has been initialized from the drafted list.
-    /// </summary>
-    public void OnDraftCompleted()
-    {
-        // Let the DeckManager shuffle and draw the starting hand for the drafted deck.
-        if (DeckManager.Instance != null)
-        {
-            DeckManager.Instance.InitializeAndDraw();
-        }
-
-        // Proceed into the normal game setup / round flow.
-        BeginSetup();
     }
 
     void BeginDraw()
@@ -1213,7 +1163,7 @@ public class GameManager : MonoBehaviour
 
     public int NextRandomInt(int minInclusive, int maxExclusive)
     {
-        return rng.Next(minInclusive, maxExclusive);
+        return DeterministicRng.NextInt(minInclusive, maxExclusive);
     }
 
     public void OnGameOverResetClicked()

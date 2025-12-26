@@ -44,6 +44,15 @@ public class DeckHubManager : MonoBehaviour
     [SerializeField]
     private DeckBuilderManager deckBuilderManager;
 
+    [Header("Draft")]
+    [Tooltip("Root object containing the draft UI (moved from MainScene).")]
+    [SerializeField]
+    private GameObject draftRoot;
+
+    [Tooltip("Draft manager controlling the draft flow in the hub scene.")]
+    [SerializeField]
+    private DraftManager draftManager;
+
     private FirebaseManager Firebase => FirebaseManager.Instance;
 
     // Tracks which slot/deck is currently being edited/created.
@@ -57,18 +66,26 @@ public class DeckHubManager : MonoBehaviour
             loadingErrorText = loadingRoot.GetComponentInChildren<TextMeshProUGUI>(true);
         }
 
-        // Hub is the default view; hide the builder at startup.
+        // Hub is the default view; hide the builder and draft at startup.
         if (deckBuilderRoot != null)
             deckBuilderRoot.SetActive(false);
+        if (draftRoot != null)
+            draftRoot.SetActive(false);
 
         if (deckBuilderManager != null)
             deckBuilderManager.DeckSaved += HandleDeckSaved;
+
+        if (draftManager != null)
+            draftManager.DeckBuilt += HandleDraftDeckBuilt;
     }
 
     private void OnDestroy()
     {
         if (deckBuilderManager != null)
             deckBuilderManager.DeckSaved -= HandleDeckSaved;
+
+        if (draftManager != null)
+            draftManager.DeckBuilt -= HandleDraftDeckBuilt;
     }
 
     private void Start()
@@ -312,12 +329,51 @@ public class DeckHubManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Called by a UI button in the DeckHubScene to start a game in draft mode.
+    /// Called by a UI button in the DeckHubScene to open the draft UI. The
+    /// resulting drafted (or random) deck will be converted into a constructed
+    /// deck and passed into SelectedDeckStore before loading MainScene.
     /// </summary>
     public void OnClick_PlayDraft()
     {
-        SelectedDeckStore.SetDraftMode();
-        SceneTransitionManager.Instance.LoadScene("MainScene");
+        // Ensure the deterministic RNG is initialised for this run so that
+        // draft and later gameplay share the same seed.
+        if (!DeterministicRng.IsInitialized)
+        {
+            int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            DeterministicRng.Initialize(seed);
+        }
+
+        if (draftManager == null || draftRoot == null)
+        {
+            Debug.LogError("DeckHubManager: DraftManager or draftRoot not assigned.");
+            return;
+        }
+
+        // Swap to the draft view.
+        if (deckHubRoot != null)
+            deckHubRoot.SetActive(false);
+        if (deckBuilderRoot != null)
+            deckBuilderRoot.SetActive(false);
+        if (loadingRoot != null)
+            loadingRoot.SetActive(false);
+        draftRoot.SetActive(true);
+
+        // Ensure the draftable pool is configured if not set via inspector.
+        if (
+            (draftManager.allDraftableCards == null || draftManager.allDraftableCards.Count == 0)
+            && cardDatabase != null
+            && cardDatabase.allCards != null
+        )
+        {
+            draftManager.allDraftableCards.Clear();
+            foreach (var def in cardDatabase.allCards)
+            {
+                if (def != null)
+                    draftManager.allDraftableCards.Add(def);
+            }
+        }
+
+        draftManager.BeginDraft();
     }
 
     /// <summary>
@@ -342,10 +398,21 @@ public class DeckHubManager : MonoBehaviour
         _ = LoadDecksAsync();
     }
 
-    private async void HandleDeckSaved(
-        string deckName,
-        List<DeckBuilderManager.DeckCardEntry> cards
-    )
+    /// <summary>
+    /// Called by a button in the draft view to cancel drafting and return to
+    /// the main deck hub without starting a game.
+    /// </summary>
+    public void OnClick_CancelDraft()
+    {
+        if (draftRoot != null)
+            draftRoot.SetActive(false);
+        if (deckHubRoot != null)
+            deckHubRoot.SetActive(true);
+        if (loadingRoot != null)
+            loadingRoot.SetActive(false);
+    }
+
+    private async void HandleDeckSaved(string deckName, List<DeckCardEntry> cards)
     {
         if (Firebase == null || Firebase.CurrentUser == null)
         {
@@ -416,6 +483,62 @@ public class DeckHubManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Receives a completed drafted or random deck from DraftManager, converts
+    /// it into DeckCardEntry data, stores it in SelectedDeckStore as a
+    /// constructed deck, and then transitions to the main gameplay scene.
+    /// </summary>
+    private void HandleDraftDeckBuilt(List<ScriptableObject> draftedCards)
+    {
+        if (draftedCards == null || draftedCards.Count == 0)
+        {
+            Debug.LogWarning("DeckHubManager: Draft produced an empty deck.");
+            return;
+        }
+
+        // Group by cardId to build DeckCardEntry data.
+        var counts = new Dictionary<string, int>();
+        foreach (var so in draftedCards)
+        {
+            if (so == null)
+                continue;
+
+            var def = so as CardDefinition;
+            if (def == null || string.IsNullOrEmpty(def.cardId))
+                continue;
+
+            if (!counts.ContainsKey(def.cardId))
+                counts[def.cardId] = 0;
+            counts[def.cardId]++;
+        }
+
+        var entries = new List<DeckCardEntry>();
+        foreach (var kvp in counts)
+        {
+            entries.Add(new DeckCardEntry { cardId = kvp.Key, count = kvp.Value });
+        }
+
+        if (entries.Count == 0)
+        {
+            Debug.LogError("DeckHubManager: Draft deck contained no valid card entries.");
+            return;
+        }
+
+        // Treat drafted decks as constructed for the purposes of game startup.
+        SelectedDeckStore.SetConstructedDeck(
+            deckId: null,
+            deckName: "Draft Deck",
+            slotIndex: -1,
+            cards: entries
+        );
+
+        // Optionally hide the draft UI before transitioning.
+        if (draftRoot != null)
+            draftRoot.SetActive(false);
+
+        SceneTransitionManager.Instance.LoadScene("MainScene");
+    }
+
     private async void OpenExistingDeckForEdit(DeckSlotUI slot)
     {
         if (slot == null || string.IsNullOrEmpty(slot.DeckId))
@@ -452,7 +575,7 @@ public class DeckHubManager : MonoBehaviour
                     ? sName
                     : slot.DeckName;
 
-            var entries = new List<DeckBuilderManager.DeckCardEntry>();
+            var entries = new List<DeckCardEntry>();
             if (
                 dict.TryGetValue("cards", out var cardsObj)
                 && cardsObj is IEnumerable<object> rawCards
@@ -469,13 +592,7 @@ public class DeckHubManager : MonoBehaviour
                             && countObj is long lCount
                         )
                         {
-                            entries.Add(
-                                new DeckBuilderManager.DeckCardEntry
-                                {
-                                    cardId = id,
-                                    count = (int)lCount,
-                                }
-                            );
+                            entries.Add(new DeckCardEntry { cardId = id, count = (int)lCount });
                         }
                     }
                 }
@@ -529,7 +646,7 @@ public class DeckHubManager : MonoBehaviour
                     ? sName
                     : slot.DeckName;
 
-            var entries = new List<DeckBuilderManager.DeckCardEntry>();
+            var entries = new List<DeckCardEntry>();
             if (
                 dict.TryGetValue("cards", out var cardsObj)
                 && cardsObj is IEnumerable<object> rawCards
@@ -546,19 +663,23 @@ public class DeckHubManager : MonoBehaviour
                             && countObj is long lCount
                         )
                         {
-                            entries.Add(
-                                new DeckBuilderManager.DeckCardEntry
-                                {
-                                    cardId = id,
-                                    count = (int)lCount,
-                                }
-                            );
+                            entries.Add(new DeckCardEntry { cardId = id, count = (int)lCount });
                         }
                     }
                 }
             }
 
             SelectedDeckStore.SetConstructedDeck(slot.DeckId, name, slot.slotIndex, entries);
+
+            // Ensure the deterministic RNG is initialised for this run if it
+            // has not already been set (e.g., for constructed play without
+            // going through the draft flow).
+            if (!DeterministicRng.IsInitialized)
+            {
+                int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+                DeterministicRng.Initialize(seed);
+            }
+
             SceneTransitionManager.Instance.LoadScene("MainScene");
         }
         catch (System.Exception e)

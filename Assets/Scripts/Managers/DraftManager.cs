@@ -12,7 +12,6 @@ public class DraftManager : MonoBehaviour
 {
     [Header("Config & References")]
     public DraftConfig config;
-    public DeckManager deckManager;
 
     [Header("UI")]
     public CanvasGroup draftCanvasGroup;
@@ -36,6 +35,15 @@ public class DraftManager : MonoBehaviour
     private int picksDone;
 
     private DraftCardOptionUI selectedOption;
+
+    /// <summary>
+    /// Raised when this DraftManager has finished building a complete deck
+    /// (either via the normal draft flow or the Random Deck button). List
+    /// contains the concrete ScriptableObject card definitions that make up
+    /// the deck. Callers (e.g., DeckHubManager) are responsible for turning
+    /// this into DeckCardEntry data and starting a game.
+    /// </summary>
+    public event System.Action<List<ScriptableObject>> DeckBuilt;
 
     public bool IsDrafting => config != null && picksDone < config.deckSize;
 
@@ -81,9 +89,9 @@ public class DraftManager : MonoBehaviour
         draftPool.Clear();
 
         IEnumerable<ScriptableObject> source =
-            (allDraftableCards != null && allDraftableCards.Count > 0) ? allDraftableCards
-            : deckManager != null ? deckManager.allCards
-            : Enumerable.Empty<ScriptableObject>();
+            (allDraftableCards != null && allDraftableCards.Count > 0)
+                ? allDraftableCards
+                : Enumerable.Empty<ScriptableObject>();
 
         var built = DraftRules.BuildEntryPool(source, config);
         draftPool.AddRange(built);
@@ -138,11 +146,6 @@ public class DraftManager : MonoBehaviour
     /// </summary>
     public void OnRandomDeckClicked()
     {
-        if (deckManager == null)
-        {
-            Debug.LogError("DraftManager.OnRandomDeckClicked: DeckManager not assigned.");
-            return;
-        }
         if (config == null)
         {
             Debug.LogError("DraftManager.OnRandomDeckClicked: DraftConfig not assigned.");
@@ -153,19 +156,29 @@ public class DraftManager : MonoBehaviour
         // using the same rules as the normal draft.
         ShowDraftUI(false);
         CardPreviewManager.Instance?.HideAll();
-        var src = deckManager.allCards ?? new System.Collections.Generic.List<ScriptableObject>();
-        var built = BalancedDeckBuilder.BuildDeck(src, config);
-        deckManager.InitializeFromDraft(built);
 
-        // Hand off to normal game startup, which will draw the starting hand
-        // and begin the usual setup / round flow.
-        if (GameManager.Instance != null)
+        if (allDraftableCards == null || allDraftableCards.Count == 0)
         {
-            GameManager.Instance.OnDraftCompleted();
+            Debug.LogError(
+                "DraftManager.OnRandomDeckClicked: No draftable card pool available (allDraftableCards is empty or null)."
+            );
+            return;
+        }
+
+        var built = BalancedDeckBuilder.BuildDeck(allDraftableCards, config);
+
+        // Hand the deck off to whoever is listening (e.g., DeckHubManager),
+        // which will convert it into DeckCardEntry data and start a game
+        // using the unified deck pipeline.
+        if (DeckBuilt != null)
+        {
+            DeckBuilt.Invoke(built);
         }
         else
         {
-            Debug.LogWarning("DraftManager.OnRandomDeckClicked: No GameManager instance found.");
+            Debug.LogWarning(
+                "DraftManager.OnRandomDeckClicked: No DeckBuilt listener; deck was generated but not used."
+            );
         }
     }
 
@@ -341,21 +354,18 @@ public class DraftManager : MonoBehaviour
         // the in-game preview manager is reset as well.
         CardPreviewManager.Instance?.HideAll();
 
-        if (deckManager == null)
+        // Notify listeners (e.g., DeckHubManager) that a full drafted deck is
+        // ready. The listener is responsible for converting this into deck
+        // data and starting a game. If nobody is listening, just log a warning.
+        if (DeckBuilt != null)
         {
-            Debug.LogError("DraftManager.FinalizeDraft: DeckManager not assigned.");
-            return;
-        }
-
-        deckManager.InitializeFromDraft(draftedDeck);
-
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.OnDraftCompleted();
+            DeckBuilt.Invoke(new List<ScriptableObject>(draftedDeck));
         }
         else
         {
-            Debug.LogWarning("DraftManager.FinalizeDraft: No GameManager instance found.");
+            Debug.LogWarning(
+                "DraftManager.FinalizeDraft: No DeckBuilt listener; drafted deck was generated but not used."
+            );
         }
     }
 
@@ -366,16 +376,7 @@ public class DraftManager : MonoBehaviour
 
         for (int i = list.Count - 1; i > 0; i--)
         {
-            int j = 0;
-            if (GameManager.Instance != null)
-            {
-                j = GameManager.Instance.NextRandomInt(0, i + 1);
-            }
-            else
-            {
-                Debug.LogWarning("DraftManager: GameManager.Instance is null during ShuffleList. Determinism may be compromised.");
-                j = Random.Range(0, i + 1);
-            }
+            int j = DeterministicRng.NextInt(0, i + 1);
             (list[j], list[i]) = (list[i], list[j]);
         }
     }

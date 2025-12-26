@@ -92,6 +92,8 @@ public class DeckBuilderManager : MonoBehaviour
     /// Raised after a successful Save click (deck is valid).
     /// Args: deck name, list of card entries.
     /// DeckHubManager can listen to this to persist to Firestore.
+    /// Uses the shared DeckCardEntry type so that decks can be passed
+    /// between scenes and over the network.
     /// </summary>
     public event System.Action<string, List<DeckCardEntry>> DeckSaved;
 
@@ -483,13 +485,8 @@ public class DeckBuilderManager : MonoBehaviour
         return 5;
     }
 
-    // Simple serialisable deck entry structure for future Firestore integration.
-    [System.Serializable]
-    public struct DeckCardEntry
-    {
-        public string cardId;
-        public int count;
-    }
+    // NOTE: DeckCardEntry has been extracted into a shared DeckDefinition.cs file
+    // so that it can be reused by other systems (SelectedDeckStore, networking, etc.).
 
     /// <summary>
     /// Resets the builder to a fresh deck with the given default name,

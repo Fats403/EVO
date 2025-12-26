@@ -221,7 +221,6 @@ public class GameHUDController : MonoBehaviour
         bool useConstructed =
             SelectedDeckStore.Mode == GameStartMode.Constructed
             && SelectedDeckStore.HasConstructedDeck;
-        bool usingDraft = gameManager != null && gameManager.draftManager != null;
 
         if (useConstructed)
         {
@@ -231,29 +230,16 @@ public class GameHUDController : MonoBehaviour
             if (worldCanvasGroup != null)
                 worldCanvasGroup.gameObject.SetActive(true);
             SetCanvasGroupVisible(gameOverCanvasGroup, false);
-
-            // Explicitly hide any draft overlay if the scene still has one.
-            if (
-                gameManager != null
-                && gameManager.draftManager != null
-                && gameManager.draftManager.draftCanvasGroup != null
-            )
-            {
-                var cg = gameManager.draftManager.draftCanvasGroup;
-                cg.alpha = 0f;
-                cg.interactable = false;
-                cg.blocksRaycasts = false;
-            }
         }
         else
         {
-            // Ensure initial canvas visibility states for draft mode.
-            // Hide the main gameplay UI and world canvas while we are in the draft,
-            // show them otherwise.
-            SetCanvasGroupVisible(mainCanvasGroup, !usingDraft);
-            SetCanvasGroupVisible(worldCanvasGroup, !usingDraft);
+            // Non-constructed startup paths now also begin with the gameplay UI
+            // visible, since the draft flow has been moved entirely into the
+            // DeckHubScene.
+            SetCanvasGroupVisible(mainCanvasGroup, true);
+            SetCanvasGroupVisible(worldCanvasGroup, true);
             if (worldCanvasGroup != null)
-                worldCanvasGroup.gameObject.SetActive(!usingDraft);
+                worldCanvasGroup.gameObject.SetActive(true);
             SetCanvasGroupVisible(gameOverCanvasGroup, false);
         }
     }
