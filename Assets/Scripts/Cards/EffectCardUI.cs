@@ -114,13 +114,17 @@ public class EffectCardUI : BaseCardUI
             if (dz != null && dz.IsPointerInside(eventData.position))
             {
                 string reason = null;
-                // Pre-check playable rules
+                // Pre-check playable rules via GameManager
                 if (GameManager.Instance.CanPlayEffectCardPreview(effectData, owner, out reason))
                 {
-                    // This still triggers the manual selection UI in GameManager
-                    // We don't route manual selection through controllers yet as it's a multi-step process
+                    // Start manual selection workflow through the dedicated controller.
                     if (
-                        GameManager.Instance.TryBeginManualEffectSelection(effectData, owner, out _)
+                        ManualEffectSelectionController.Instance != null
+                        && ManualEffectSelectionController.Instance.TryBeginSelection(
+                            effectData,
+                            owner,
+                            out _
+                        )
                     )
                     {
                         played = true;

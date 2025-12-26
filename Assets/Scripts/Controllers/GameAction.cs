@@ -5,8 +5,6 @@ public enum GameActionType
     Pass,
     PlayCreature,
     PlayEffect,
-    ManualSelectionConfirm,
-    ManualSelectionCancel,
 }
 
 [System.Serializable]

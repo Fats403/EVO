@@ -4027,6 +4027,7 @@ MonoBehaviour:
   deckCountText: {fileID: 1606710267}
   handCountText: {fileID: 1442666412}
   debugAI: 1
+  actionDelay: 1
   debugMaxActionsToLog: 5
   creatureSizeWeight: 1.5
   creatureBaseValue: 2
@@ -4165,33 +4166,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   player1SlotContainer: {fileID: 1185440468}
   player2SlotContainer: {fileID: 821395420}
-  endTurnButton: {fileID: 1785638421}
-  toggleLogButton: {fileID: 1984540527}
-  phaseText: {fileID: 584109798}
-  roundText: {fileID: 895446171}
   resolutionManager: {fileID: 648372067}
   foodPile: {fileID: 508416461}
   weatherManager: {fileID: 707428238}
   weatherVideoBackground: {fileID: 49608290}
   draftManager: {fileID: 1055249265}
-  endTurnLabel: {fileID: 0}
-  endTurnIdleText: End Turn
-  endTurnBusyText: Resolving...
   currentRound: 1
   finalRound: 15
   currentEra: 0
   p1Momentum: 0
   p2Momentum: 0
-  p1MomentumLabel: {fileID: 567983865}
-  p2MomentumLabel: {fileID: 698757405}
   isGameOver: 0
-  mainCanvasGroup: {fileID: 2118664157}
-  gameOverCanvasGroup: {fileID: 205841994}
-  worldCanvasGroup: {fileID: 557953994}
-  gameOverOutcomeText: {fileID: 518741332}
-  player1ScoreText: {fileID: 223432673}
-  player2ScoreText: {fileID: 1167619538}
-  gameOverFadeDuration: 0.75
   postExtinctionUIPauseSeconds: 1.5
   currentPhase: 0
   rngSeed: 0
@@ -4201,9 +4186,6 @@ MonoBehaviour:
   aiTurnDelaySeconds: 1
   resolveStartDelaySeconds: 1
   cardDatabase: {fileID: 11400000, guid: 72ef1c9c57b244999999458f1f885f74, type: 2}
-  manualEffectSelectionGroup: {fileID: 1742597523}
-  manualEffectConfirmButton: {fileID: 1258303429}
-  manualEffectCancelButton: {fileID: 1739701177}
 --- !u!4 &815865959
 Transform:
   m_ObjectHideFlags: 0
@@ -6869,7 +6851,7 @@ GameObject:
   - component: {fileID: 1432409516}
   - component: {fileID: 1432409515}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: EndTurnLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9726,8 +9708,10 @@ GameObject:
   - component: {fileID: 2118664154}
   - component: {fileID: 2118664153}
   - component: {fileID: 2118664157}
+  - component: {fileID: 2118664158}
+  - component: {fileID: 2118664159}
   m_Layer: 5
-  m_Name: Canvas_UI
+  m_Name: Canvas_HUD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9844,6 +9828,51 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!114 &2118664158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2118664152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14633b2c67f1e4e71b6d697cc0af2c94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameHUDController
+  gameManager: {fileID: 815865958}
+  phaseText: {fileID: 584109798}
+  roundText: {fileID: 895446171}
+  endTurnButton: {fileID: 1785638421}
+  endTurnLabel: {fileID: 1432409515}
+  endTurnIdleText: End Turn
+  endTurnBusyText: Resolving...
+  p1MomentumLabel: {fileID: 567983865}
+  p2MomentumLabel: {fileID: 698757405}
+  toggleLogButton: {fileID: 1984540527}
+  mainCanvasGroup: {fileID: 2118664157}
+  worldCanvasGroup: {fileID: 557953994}
+  gameOverCanvasGroup: {fileID: 205841994}
+  gameOverOutcomeText: {fileID: 518741332}
+  player1ScoreText: {fileID: 223432673}
+  player2ScoreText: {fileID: 1167619538}
+  gameOverFadeDuration: 0.75
+--- !u!114 &2118664159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2118664152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34a6212d34ac14e11ad83806f0025d41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ManualEffectSelectionController
+  gameManager: {fileID: 815865958}
+  selectionGroup: {fileID: 1742597523}
+  confirmButton: {fileID: 1258303429}
+  cancelButton: {fileID: 1739701177}
 --- !u!1 &2127664224
 GameObject:
   m_ObjectHideFlags: 0

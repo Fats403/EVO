@@ -19,23 +19,24 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    // Events for decoupling core game state from specific UI/visuals.
+    // Other systems (HUD, VFX, networking, etc.) can subscribe to these
+    // instead of GameManager directly mutating their state.
+    public event System.Action<GamePhase> OnPhaseChanged;
+    public event System.Action<int, Era> OnRoundChanged;
+    public event System.Action<SlotOwner?> OnAwaitingTurnOwnerChanged;
+    public event System.Action<bool> OnGameOverChanged;
+    public event System.Action<Era, int, int> OnMomentumChanged;
+    public event System.Action OnShowGameOverRequested;
+
     [Header("Scene References")]
     public Transform player1SlotContainer;
     public Transform player2SlotContainer;
-    public Button endTurnButton;
-    public Button toggleLogButton;
-    public TextMeshProUGUI phaseText;
-    public TextMeshProUGUI roundText;
     public ResolutionManager resolutionManager;
     public FoodPile foodPile;
     public WeatherManager weatherManager;
     public WeatherVideoBackgroundController weatherVideoBackground;
     public DraftManager draftManager;
-
-    [Header("UI")]
-    public TextMeshProUGUI endTurnLabel;
-    public string endTurnIdleText = "End Turn";
-    public string endTurnBusyText = "Resolving...";
 
     [Header("Round & Era")]
     public int currentRound = 1;
@@ -45,24 +46,9 @@ public class GameManager : MonoBehaviour
     [Header("Momentum")]
     public int p1Momentum;
     public int p2Momentum;
-    public TextMeshProUGUI p1MomentumLabel;
-    public TextMeshProUGUI p2MomentumLabel;
 
     [Header("Game Over")]
     public bool isGameOver;
-
-    [Header("UI - Canvas Groups")]
-    public CanvasGroup mainCanvasGroup;
-    public CanvasGroup gameOverCanvasGroup;
-
-    [Tooltip("World-space gameplay canvas (Canvas_World).")]
-    public CanvasGroup worldCanvasGroup;
-
-    [Header("Game Over UI")]
-    public TextMeshProUGUI gameOverOutcomeText;
-    public TextMeshProUGUI player1ScoreText;
-    public TextMeshProUGUI player2ScoreText;
-    public float gameOverFadeDuration = 0.75f;
     public float postExtinctionUIPauseSeconds = 1.5f;
 
     [Header("Debug")]
@@ -160,6 +146,27 @@ public class GameManager : MonoBehaviour
 
     private GameAction lastActionReceived;
 
+    /// <summary>
+    /// Enqueues a local action (typically from UI controllers) into the same
+    /// pipeline used by IPlayerController implementations.
+    /// </summary>
+    public void EnqueueLocalAction(GameAction action)
+    {
+        lastActionReceived = action;
+    }
+
+    /// <summary>
+    /// Helper for UI/controllers to lock or unlock the local player's ability
+    /// to queue additional actions while an effect/preview is resolving.
+    /// </summary>
+    public void SetPlayerActionLocked(SlotOwner owner, bool locked)
+    {
+        if (owner == SlotOwner.Player1)
+        {
+            p1ActionLocked = locked;
+        }
+    }
+
     private void Start()
     {
         Debug.Log("[GameManager] Initialized in Phase: " + currentPhase + " | Seed: " + rngSeed);
@@ -171,60 +178,14 @@ public class GameManager : MonoBehaviour
         player1Controller.OnActionDecided += (action) => lastActionReceived = action;
         player2Controller.OnActionDecided += (action) => lastActionReceived = action;
 
-        if (endTurnButton != null)
-            endTurnButton.onClick.AddListener(OnEndTurnClicked);
-        if (toggleLogButton != null)
-            toggleLogButton.onClick.AddListener(OnToggleLogClicked);
-        // Auto-wire end turn label if not assigned
-        if (endTurnLabel == null && endTurnButton != null)
-            endTurnLabel = endTurnButton.GetComponentInChildren<TextMeshProUGUI>();
-
-        // Decide startup mode: constructed deck vs draft.
-        bool useConstructed =
-            SelectedDeckStore.Mode == GameStartMode.Constructed
-            && SelectedDeckStore.HasConstructedDeck;
-
-        if (useConstructed)
-        {
-            // Show gameplay UI immediately; no draft phase.
-            SetCanvasGroupVisible(mainCanvasGroup, true);
-            SetCanvasGroupVisible(worldCanvasGroup, true);
-            if (worldCanvasGroup != null)
-                worldCanvasGroup.gameObject.SetActive(true);
-            SetCanvasGroupVisible(gameOverCanvasGroup, false);
-
-            // Explicitly hide any draft overlay if the scene still has one.
-            if (draftManager != null && draftManager.draftCanvasGroup != null)
-            {
-                draftManager.draftCanvasGroup.alpha = 0f;
-                draftManager.draftCanvasGroup.interactable = false;
-                draftManager.draftCanvasGroup.blocksRaycasts = false;
-            }
-        }
-        else
-        {
-            // Ensure initial canvas visibility states for draft mode.
-            bool usingDraft = draftManager != null;
-            // Hide the main gameplay UI and world canvas while we are in the draft, show them otherwise.
-            SetCanvasGroupVisible(mainCanvasGroup, !usingDraft);
-            SetCanvasGroupVisible(worldCanvasGroup, !usingDraft);
-            if (worldCanvasGroup != null)
-                worldCanvasGroup.gameObject.SetActive(!usingDraft);
-            SetCanvasGroupVisible(gameOverCanvasGroup, false);
-        }
-
-        // Manual effect selection UI starts hidden.
-        SetManualEffectSelectionUIVisible(false);
-        if (manualEffectConfirmButton != null)
-            manualEffectConfirmButton.onClick.AddListener(OnManualEffectConfirmClicked);
-        if (manualEffectCancelButton != null)
-            manualEffectCancelButton.onClick.AddListener(OnManualEffectCancelClicked);
-
-        UpdatePhaseLabel();
         weatherVideoBackground?.ForceTo(WeatherType.Clear);
 
         // Initialize AI deck/hand before the first round begins so both players follow the same rules.
         AIManager.Instance?.BuildDeckAndDrawStartingHand();
+
+        bool useConstructed =
+            SelectedDeckStore.Mode == GameStartMode.Constructed
+            && SelectedDeckStore.HasConstructedDeck;
 
         if (useConstructed)
         {
@@ -301,45 +262,16 @@ public class GameManager : MonoBehaviour
         DeckManager.Instance.InitializeAndDraw();
     }
 
-    void SetCanvasGroupVisible(CanvasGroup cg, bool visible)
-    {
-        if (cg == null)
-            return;
-        cg.alpha = visible ? 1f : 0f;
-        cg.interactable = visible;
-        cg.blocksRaycasts = visible;
-    }
-
-    void SetCanvasGroupAlpha(CanvasGroup cg, float alpha)
-    {
-        if (cg == null)
-            return;
-        cg.alpha = alpha;
-    }
-
-    void OnDestroy()
-    {
-        if (endTurnButton != null)
-            endTurnButton.onClick.RemoveListener(OnEndTurnClicked);
-        if (toggleLogButton != null)
-            toggleLogButton.onClick.RemoveListener(OnToggleLogClicked);
-        if (manualEffectConfirmButton != null)
-            manualEffectConfirmButton.onClick.RemoveListener(OnManualEffectConfirmClicked);
-        if (manualEffectCancelButton != null)
-            manualEffectCancelButton.onClick.RemoveListener(OnManualEffectCancelClicked);
-    }
-
-    void OnEndTurnClicked()
+    public void OnEndTurnClicked()
     {
         if (isGameOver || currentPhase != GamePhase.Place)
             return;
         if (!awaitingTurnOwner.HasValue || awaitingTurnOwner.Value != SlotOwner.Player1)
             return;
 
-        if (player1Controller is LocalHumanController human)
-        {
-            human.RequestPass();
-        }
+        // Treat the end-turn button as a local input source that queues a Pass
+        // action into the same pipeline as other controller decisions.
+        lastActionReceived = GameAction.CreatePass(SlotOwner.Player1);
     }
 
     void OnToggleLogClicked()
@@ -350,70 +282,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void UpdatePhaseLabel()
-    {
-        string eraLabel = currentEra.ToString();
-
-        // Round/era display goes to roundText if assigned; otherwise fall back to phaseText
-        if (roundText != null)
-        {
-            roundText.text = $"Round {currentRound} – {eraLabel}";
-        }
-
-        UpdatePhaseStatusText();
-        UpdateMomentumUI();
-    }
-
-    void UpdatePhaseStatusText()
-    {
-        if (phaseText == null)
-            return;
-
-        if (isGameOver)
-        {
-            phaseText.text = "Game Over";
-            return;
-        }
-
-        switch (currentPhase)
-        {
-            case GamePhase.Setup:
-                phaseText.text = "Setup";
-                break;
-            case GamePhase.Draw:
-                phaseText.text = "Draw";
-                break;
-            case GamePhase.Place:
-                if (awaitingTurnOwner.HasValue)
-                {
-                    phaseText.text =
-                        awaitingTurnOwner.Value == SlotOwner.Player1
-                            ? "Your Turn"
-                            : "Player 2 Turn";
-                }
-                else
-                {
-                    phaseText.text = "Place Creatures";
-                }
-                break;
-            case GamePhase.Resolve:
-                phaseText.text = "Resolving...";
-                break;
-            case GamePhase.End:
-                phaseText.text = "End of Round";
-                break;
-        }
-    }
-
     void BeginSetup()
     {
         isGameOver = false;
+        OnGameOverChanged?.Invoke(isGameOver);
 
         // Seed already set; initialize round/era then move to Draw
         currentRound = 1;
         currentEra = GetEraForRound(currentRound);
         currentPhase = GamePhase.Draw;
-        UpdatePhaseLabel();
+        OnRoundChanged?.Invoke(currentRound, currentEra);
+        OnPhaseChanged?.Invoke(currentPhase);
         FeedbackManager.Instance?.ShowGlobalAlert(
             $"The {currentEra} Era Has began!",
             GameColorPalette.AlertInfo
@@ -427,12 +306,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void OnDraftCompleted()
     {
-        // When draft ends, reveal the main gameplay UI.
-        SetCanvasGroupVisible(mainCanvasGroup, true);
-        SetCanvasGroupVisible(worldCanvasGroup, true);
-        if (worldCanvasGroup != null)
-            worldCanvasGroup.gameObject.SetActive(true);
-
         // Let the DeckManager shuffle and draw the starting hand for the drafted deck.
         if (DeckManager.Instance != null)
         {
@@ -475,7 +348,7 @@ public class GameManager : MonoBehaviour
             weatherManager.ApplyRoundStartEffects(foodPile);
         }
         currentPhase = GamePhase.Place;
-        UpdatePhaseLabel();
+        OnPhaseChanged?.Invoke(currentPhase);
         BeginPlace();
     }
 
@@ -492,7 +365,6 @@ public class GameManager : MonoBehaviour
         if (placePhaseRoutine != null)
             StopCoroutine(placePhaseRoutine);
         placePhaseRoutine = StartCoroutine(PlacePhaseCoroutine());
-        UpdateEndTurnButtonState();
     }
 
     IEnumerator PlacePhaseCoroutine()
@@ -502,6 +374,7 @@ public class GameManager : MonoBehaviour
             if (OwnerFinished(currentPlaceTurnOwner))
             {
                 currentPlaceTurnOwner = Opponent(currentPlaceTurnOwner);
+                OnAwaitingTurnOwnerChanged?.Invoke(null);
                 continue;
             }
 
@@ -510,10 +383,10 @@ public class GameManager : MonoBehaviour
         }
 
         awaitingTurnOwner = null;
-        UpdateEndTurnButtonState();
+        OnAwaitingTurnOwnerChanged?.Invoke(awaitingTurnOwner);
         placePhaseRoutine = null;
         currentPhase = GamePhase.Resolve;
-        UpdatePhaseLabel();
+        OnPhaseChanged?.Invoke(currentPhase);
         // Hand off to resolve intro + resolution coroutine.
         yield return StartCoroutine(BeginResolve());
     }
@@ -524,7 +397,7 @@ public class GameManager : MonoBehaviour
             yield break;
 
         awaitingTurnOwner = owner;
-        UpdateEndTurnButtonState();
+        OnAwaitingTurnOwnerChanged?.Invoke(awaitingTurnOwner);
         NotifyYourMove(owner);
 
         // Get the relevant controller
@@ -559,25 +432,17 @@ public class GameManager : MonoBehaviour
                 yield return null;
             }
 
-            // Process the received action
+            // Process the received action (Play, Pass, PlayEffect, etc.)
             GameAction action = lastActionReceived;
             lastActionReceived = null;
 
-            if (action.type == GameActionType.ManualSelectionCancel)
-            {
-                yield return StartCoroutine(ProcessReceivedAction(action));
-                // turnSlotFinished remains false, allowing the player to pick another card
-            }
-            else
-            {
-                // This is a "real" action (Play or Pass)
-                yield return StartCoroutine(ProcessReceivedAction(action));
+            yield return StartCoroutine(ProcessReceivedAction(action));
 
-                // For this implementation, once a non-cancel action is processed,
-                // we consider the single turn slot finished (turns alternate).
-                // Note: If Play failed validation, ProcessReceivedAction handles the cleanup.
-                turnSlotFinished = true;
-            }
+            // For this implementation, once a non-null action is processed
+            // we consider the single turn slot finished (turns alternate).
+            // Note: If validation fails, ProcessReceivedAction is responsible
+            // for cleaning up / unlocking the turn as needed.
+            turnSlotFinished = true;
         }
     }
 
@@ -627,6 +492,35 @@ public class GameManager : MonoBehaviour
                     .Select(s => s.currentCreature)
                     .ToList();
 
+                // If this is a manual-selection confirmation for the local player,
+                // we already validated rules and spent momentum in
+                // TryBeginManualEffectSelection. We can bypass the normal
+                // TryPlayEffectCard pipeline and go straight to applying the
+                // effect using the chosen targets.
+                bool isManualConfirmForLocalPlayer =
+                    ec.requiresManualSelection
+                    && action.owner == SlotOwner.Player1
+                    && ManualEffectSelectionController.Instance != null
+                    && ManualEffectSelectionController.Instance.IsConfirming(ec, action.owner);
+
+                if (isManualConfirmForLocalPlayer)
+                {
+                    if (ManualEffectSelectionController.Instance != null)
+                    {
+                        ManualEffectSelectionController.Instance.ClearSelection();
+                    }
+
+                    // Wait for the effect routine to complete before ending the turn
+                    yield return StartCoroutine(PlayEffectCardRoutine(ec, action.owner, targets));
+
+                    if (action.owner != SlotOwner.Player1)
+                    {
+                        AIManager.Instance.RemoveCardFromHand(action.cardId);
+                    }
+
+                    break;
+                }
+
                 // If it's a human playing a manual effect, momentum was spent in TryBeginManualEffectSelection
                 bool shouldSpend = !(
                     ec.requiresManualSelection && action.owner == SlotOwner.Player1
@@ -642,20 +536,10 @@ public class GameManager : MonoBehaviour
                     )
                 )
                 {
-                    // If this was a manual selection confirmation, clear the state now
-                    if (manualEffectSelection != null && manualEffectSelection.card == ec)
-                    {
-                        manualEffectSelection = null;
-                    }
-
                     // Wait for the effect routine to complete before ending the turn
                     yield return StartCoroutine(PlayEffectCardRoutine(ec, action.owner, targets));
 
-                    if (action.owner == SlotOwner.Player1)
-                    {
-                        // CardUI is already destroyed by the drag script
-                    }
-                    else
+                    if (action.owner != SlotOwner.Player1)
                     {
                         AIManager.Instance.RemoveCardFromHand(action.cardId);
                     }
@@ -665,16 +549,8 @@ public class GameManager : MonoBehaviour
                     Debug.LogWarning($"GameManager: Effect action failed: {failureReason}");
                     if (action.owner == SlotOwner.Player1)
                         p1ActionLocked = false;
-                    if (manualEffectSelection != null && manualEffectSelection.card == ec)
-                    {
-                        manualEffectSelection = null;
-                    }
                     CompleteTurnAction(action.owner); // Unlock turn
                 }
-                break;
-
-            case GameActionType.ManualSelectionCancel:
-                CancelManualEffectSelection();
                 break;
         }
     }
@@ -698,7 +574,6 @@ public class GameManager : MonoBehaviour
 
     void NotifyYourMove(SlotOwner owner)
     {
-        UpdatePhaseStatusText();
         FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(owner)}: Your move");
 
         if (owner == SlotOwner.Player1)
@@ -709,45 +584,8 @@ public class GameManager : MonoBehaviour
 
     void UpdateEndTurnButtonState()
     {
-        if (endTurnButton == null || endTurnLabel == null)
-            return;
-
-        if (isGameOver)
-        {
-            endTurnButton.interactable = false;
-            endTurnLabel.text = "Game Over";
-            return;
-        }
-
-        bool playerTurnActive =
-            currentPhase == GamePhase.Place
-            && awaitingTurnOwner.HasValue
-            && awaitingTurnOwner.Value == SlotOwner.Player1
-            && !p1PassedThisRound
-            && HasMomentum(SlotOwner.Player1);
-
-        endTurnButton.interactable = playerTurnActive;
-
-        if (currentPhase == GamePhase.Resolve)
-        {
-            endTurnLabel.text = string.IsNullOrEmpty(endTurnBusyText)
-                ? "Resolving..."
-                : endTurnBusyText;
-        }
-        else if (playerTurnActive)
-        {
-            endTurnLabel.text = "Pass";
-        }
-        else if (currentPhase == GamePhase.Place)
-        {
-            endTurnLabel.text = "Waiting...";
-        }
-        else
-        {
-            endTurnLabel.text = string.IsNullOrEmpty(endTurnIdleText)
-                ? "End Turn"
-                : endTurnIdleText;
-        }
+        // Intentionally left empty – end-turn button state is now managed
+        // entirely by GameHUDController in response to GameManager events.
     }
 
     void HandlePass(SlotOwner owner)
@@ -764,10 +602,6 @@ public class GameManager : MonoBehaviour
                 string ownerTag = FeedbackManager.TagOwner(owner);
                 FeedbackManager.Instance.Log($"{ownerTag} passed.");
             }
-            // Show pass information in the phase text instead of a global alert.
-            if (phaseText != null)
-                phaseText.text = owner == SlotOwner.Player1 ? "You pass" : "Player 2 passes";
-
             // For the AI, also surface a brief global alert so it's obvious that it passed.
             if (owner == SlotOwner.Player2 && FeedbackManager.Instance != null)
             {
@@ -782,10 +616,8 @@ public class GameManager : MonoBehaviour
         {
             awaitingTurnOwner = null;
             lastActionReceived = GameAction.CreatePass(owner); // Mark as passed for the loop
+            OnAwaitingTurnOwnerChanged?.Invoke(awaitingTurnOwner);
         }
-
-        UpdateEndTurnButtonState();
-        UpdatePhaseStatusText();
     }
 
     void CompleteTurnAction(SlotOwner owner)
@@ -793,7 +625,7 @@ public class GameManager : MonoBehaviour
         if (awaitingTurnOwner.HasValue && awaitingTurnOwner.Value == owner)
         {
             awaitingTurnOwner = null;
-            UpdateEndTurnButtonState();
+            OnAwaitingTurnOwnerChanged?.Invoke(awaitingTurnOwner);
         }
     }
 
@@ -851,199 +683,7 @@ public class GameManager : MonoBehaviour
         FeedbackManager.Instance.Log($"{FeedbackManager.TagOwner(owner)} played {cardName}");
     }
 
-    // --- Manual effect-card target selection state ---
-
-    private class ManualEffectSelectionState
-    {
-        public EffectCard card;
-        public SlotOwner owner;
-        public List<Creature> candidates = new List<Creature>();
-        public HashSet<Creature> selected = new HashSet<Creature>();
-        public int minCount;
-        public int maxCount;
-        public bool allowFewerThanMax;
-    }
-
-    private ManualEffectSelectionState manualEffectSelection;
-
-    public bool HasActiveManualEffectSelection =>
-        manualEffectSelection != null && manualEffectSelection.card != null;
-
-    void SetManualEffectSelectionUIVisible(bool visible)
-    {
-        if (manualEffectSelectionGroup == null)
-            return;
-        manualEffectSelectionGroup.alpha = visible ? 1f : 0f;
-        manualEffectSelectionGroup.interactable = visible;
-        manualEffectSelectionGroup.blocksRaycasts = visible;
-    }
-
-    void UpdateManualEffectSelectionUIState()
-    {
-        if (!HasActiveManualEffectSelection)
-        {
-            SetManualEffectSelectionUIVisible(false);
-            return;
-        }
-
-        var state = manualEffectSelection;
-        if (state == null)
-        {
-            SetManualEffectSelectionUIVisible(false);
-            return;
-        }
-
-        SetManualEffectSelectionUIVisible(true);
-
-        int selectedCount = state.selected != null ? state.selected.Count : 0;
-        bool canConfirm;
-
-        if (state.allowFewerThanMax)
-        {
-            canConfirm =
-                selectedCount >= Mathf.Max(1, state.minCount)
-                && selectedCount <= Mathf.Max(1, state.maxCount);
-        }
-        else
-        {
-            canConfirm = selectedCount == Mathf.Max(1, state.maxCount);
-        }
-
-        if (manualEffectConfirmButton != null)
-            manualEffectConfirmButton.interactable = canConfirm;
-
-        if (manualEffectCancelButton != null)
-            manualEffectCancelButton.interactable = true;
-    }
-
-    void OnManualEffectConfirmClicked()
-    {
-        ConfirmManualEffectSelection();
-    }
-
-    void OnManualEffectCancelClicked()
-    {
-        if (player1Controller is LocalHumanController human)
-        {
-            human.RequestManualSelectionCancel();
-        }
-        else
-        {
-            CancelManualEffectSelection();
-        }
-    }
-
-    void ConfirmManualEffectSelection()
-    {
-        if (manualEffectSelection == null)
-            return;
-
-        var state = manualEffectSelection;
-        if (state.card == null)
-            return;
-
-        int selectedCount = state.selected != null ? state.selected.Count : 0;
-        if (selectedCount == 0)
-            return;
-
-        bool canConfirm;
-        if (state.allowFewerThanMax)
-        {
-            canConfirm =
-                selectedCount >= Mathf.Max(1, state.minCount)
-                && selectedCount <= Mathf.Max(1, state.maxCount);
-        }
-        else
-        {
-            canConfirm = selectedCount == Mathf.Max(1, state.maxCount);
-        }
-
-        if (!canConfirm)
-            return;
-
-        // Manual finalize: clear all highlights and resolve the effect.
-        var finalTargets = state.selected.Where(t => t != null).ToList();
-        var targetIndices = finalTargets
-            .Select(t => GetIndexForSlot(BoardUtils.GetSlotOf(t)))
-            .ToList();
-
-        foreach (var cand in state.candidates)
-        {
-            if (cand == null)
-                continue;
-            var h = cand.GetComponent<TargetHighlightController>();
-            if (h != null)
-                h.SetHighlighted(false);
-        }
-
-        var finalCard = state.card;
-        var finalOwner = state.owner;
-
-        SetManualEffectSelectionUIVisible(false);
-
-        if (GetPlayerController(finalOwner) is LocalHumanController human)
-        {
-            var finalTargetIndices = finalTargets
-                .Select(t => GetIndexForSlot(BoardUtils.GetSlotOf(t)))
-                .ToList();
-            human.RequestPlayEffect(finalCard.cardId, finalTargetIndices);
-        }
-        else
-        {
-            // Fallback for non-human or if needed
-            manualEffectSelection = null;
-            StartCoroutine(PlayEffectCardRoutine(finalCard, finalOwner, finalTargets));
-        }
-    }
-
-    void CancelManualEffectSelection()
-    {
-        if (manualEffectSelection == null)
-            return;
-
-        var state = manualEffectSelection;
-        manualEffectSelection = null;
-
-        // Clear highlights on all candidates.
-        foreach (var cand in state.candidates)
-        {
-            if (cand == null)
-                continue;
-            var h = cand.GetComponent<TargetHighlightController>();
-            if (h != null)
-                h.SetHighlighted(false);
-        }
-
-        // Hide preview and selection UI.
-        CardPreviewManager.Instance?.HideAll();
-        SetManualEffectSelectionUIVisible(false);
-
-        // Refund momentum and return the card to hand for the local player.
-        if (state.owner == SlotOwner.Player1)
-        {
-            int refund = Mathf.Max(0, state.card != null ? state.card.momentumCost : 0);
-            if (refund > 0)
-            {
-                RefundMomentum(state.owner, refund);
-            }
-
-            if (DeckManager.Instance != null && state.card != null)
-            {
-                DeckManager.Instance.CreateCardUI(state.card, triggerLayoutAndUI: true);
-            }
-
-            // Unlock action so the player can act again.
-            p1ActionLocked = false;
-            UpdateEndTurnButtonState();
-            UpdatePhaseStatusText();
-        }
-    }
-
-    [Header("Manual Effect Selection UI")]
-    [Tooltip("Container for confirm/cancel buttons shown while choosing manual effect targets.")]
-    public CanvasGroup manualEffectSelectionGroup;
-    public UnityEngine.UI.Button manualEffectConfirmButton;
-    public UnityEngine.UI.Button manualEffectCancelButton;
+    // Manual effect selection UI has been moved to ManualEffectSelectionController.
 
     public bool TryPlayEffectCard(
         EffectCard card,
@@ -1080,24 +720,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // Preview / confirmation path (no additional momentum spend).
-            //
-            // For manual-selection effects for the local player, momentum was already
-            // spent when TryBeginManualEffectSelection succeeded. If we call the
-            // preview check again here, it will see 0 remaining momentum and wrongly
-            // reject the confirm with "Not enough Momentum." even though we already
-            // paid the cost.
-            bool isManualConfirmForLocalPlayer =
-                card.requiresManualSelection
-                && owner == SlotOwner.Player1
-                && manualEffectSelection != null
-                && manualEffectSelection.card == card;
-
-            if (!isManualConfirmForLocalPlayer)
-            {
-                if (!CanPlayEffectCardPreview(card, owner, out failureReason))
-                    return false;
-            }
+            // Preview-only rules check; does not spend momentum.
+            if (!CanPlayEffectCardPreview(card, owner, out failureReason))
+                return false;
         }
 
         var list = targets != null ? targets.Where(c => c != null).ToList() : new List<Creature>();
@@ -1138,206 +763,7 @@ public class GameManager : MonoBehaviour
             p1ActionLocked = false;
     }
 
-    /// <summary>
-    /// Begins a manual-selection effect card flow where the player clicks up to
-    /// a fixed number of valid targets before the effect resolves.
-    /// </summary>
-    public bool TryBeginManualEffectSelection(
-        EffectCard card,
-        SlotOwner owner,
-        out string failureReason
-    )
-    {
-        failureReason = null;
-
-        if (card == null)
-        {
-            failureReason = "Invalid effect card.";
-            return false;
-        }
-
-        if (!card.requiresManualSelection)
-        {
-            failureReason = "This effect does not use manual target selection.";
-            return false;
-        }
-
-        if (manualEffectSelection != null)
-        {
-            failureReason = "You are already choosing targets for another effect.";
-            return false;
-        }
-
-        // Check rules and momentum without spending yet.
-        if (!CanPlayEffectCardPreview(card, owner, out failureReason))
-            return false;
-
-        // Discover all valid, living candidates for this effect.
-        IEnumerable<Creature> allCreatures;
-        if (resolutionManager != null)
-        {
-            allCreatures = resolutionManager.AllCreatures();
-        }
-        else
-        {
-            allCreatures = FindObjectsByType<Creature>(FindObjectsSortMode.None);
-        }
-
-        var candidates = allCreatures
-            .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
-            .Where(c =>
-                EffectsManager.Instance != null
-                && EffectsManager.Instance.IsValidTarget(card, c, owner)
-            )
-            .ToList();
-
-        // Determine manual selection min/max and availability requirements.
-        int maxCount = 1;
-        int minCount = 1;
-        bool allowFewerThanMax = card.allowFewerThanMax;
-
-        switch (card.targetCount)
-        {
-            case EffectTargetCount.One:
-                maxCount = 1;
-                minCount = 1;
-                allowFewerThanMax = false;
-                break;
-            case EffectTargetCount.ManySelectUpToN:
-                maxCount = Mathf.Max(1, card.maxTargets);
-                if (card.minTargets > 0)
-                {
-                    minCount = Mathf.Clamp(card.minTargets, 1, maxCount);
-                }
-                else
-                {
-                    // If no explicit min is set, default to 1 when the effect
-                    // allows fewer than max, otherwise require the full max.
-                    minCount = allowFewerThanMax ? 1 : maxCount;
-                }
-                break;
-            default:
-                maxCount = 1;
-                minCount = 1;
-                allowFewerThanMax = false;
-                break;
-        }
-
-        int requiredAvailable = allowFewerThanMax ? minCount : maxCount;
-
-        if (candidates.Count < requiredAvailable)
-        {
-            failureReason =
-                requiredAvailable == 1
-                    ? "There are no valid targets for this effect."
-                    : $"You need at least {requiredAvailable} valid targets for this effect.";
-            return false;
-        }
-
-        // Spend momentum and perform final rules check now that we know it is playable.
-        if (!CanPlayEffectCard(card, owner, out failureReason))
-            return false;
-
-        if (owner == SlotOwner.Player1)
-            p1ActionLocked = true;
-
-        manualEffectSelection = new ManualEffectSelectionState
-        {
-            card = card,
-            owner = owner,
-            candidates = candidates,
-            selected = new HashSet<Creature>(),
-            minCount = minCount,
-            maxCount = maxCount,
-            allowFewerThanMax = allowFewerThanMax,
-        };
-
-        if (FeedbackManager.Instance != null)
-        {
-            string ownerTag = FeedbackManager.TagOwner(owner);
-            string msg;
-            if (maxCount == 1)
-            {
-                msg = $"{ownerTag}: Choose a target for {card.effectName}.";
-            }
-            else if (allowFewerThanMax && minCount < maxCount)
-            {
-                msg =
-                    $"{ownerTag}: Choose {minCount}-{maxCount} targets for {card.effectName} (then Confirm).";
-            }
-            else
-            {
-                msg = $"{ownerTag}: Choose {maxCount} targets for {card.effectName}.";
-            }
-            FeedbackManager.Instance.Log(msg);
-        }
-
-        // Show the effect card preview with an instructional caption so the
-        // player has clear context while choosing targets.
-        if (CardPreviewManager.Instance != null)
-        {
-            string caption;
-            if (maxCount == 1)
-            {
-                caption = "Select 1 Creature";
-            }
-            else if (allowFewerThanMax && minCount < maxCount)
-            {
-                caption = $"Select {minCount}-{maxCount} Creatures";
-            }
-            else
-            {
-                caption = $"Select {maxCount} Creatures";
-            }
-            CardPreviewManager.Instance.ShowEffectSelection(card, owner, caption);
-        }
-
-        // Show and initialize confirm/cancel UI.
-        UpdateManualEffectSelectionUIState();
-
-        return true;
-    }
-
-    /// <summary>
-    /// Called by creatures when clicked; only active while a manual-selection
-    /// effect is in progress. Clicks outside the candidate set are ignored.
-    /// </summary>
-    public void HandleManualEffectCreatureClicked(Creature c)
-    {
-        if (c == null || manualEffectSelection == null)
-            return;
-
-        var state = manualEffectSelection;
-
-        if (state.card == null)
-            return;
-
-        if (!state.candidates.Contains(c))
-            return;
-
-        if (c.currentHealth <= 0 || c.isDying)
-            return;
-
-        bool nowSelected;
-        if (state.selected.Contains(c))
-        {
-            state.selected.Remove(c);
-            nowSelected = false;
-        }
-        else
-        {
-            state.selected.Add(c);
-            nowSelected = true;
-        }
-
-        var th = c.GetComponent<TargetHighlightController>();
-        if (th != null)
-        {
-            th.SetHighlighted(nowSelected);
-        }
-        // Update confirm button state after any change.
-        UpdateManualEffectSelectionUIState();
-    }
+    // Manual effect selection flow has been extracted to ManualEffectSelectionController.
 
     IEnumerator BeginResolve()
     {
@@ -1366,7 +792,7 @@ public class GameManager : MonoBehaviour
     {
         yield return StartCoroutine(resolutionManager.RevealAndResolveRound());
         currentPhase = GamePhase.End;
-        UpdatePhaseLabel();
+        OnPhaseChanged?.Invoke(currentPhase);
         BeginEndRound();
     }
 
@@ -1376,6 +802,7 @@ public class GameManager : MonoBehaviour
         Era previousEra = currentEra;
         currentRound = Mathf.Max(1, currentRound + 1);
         currentEra = GetEraForRound(currentRound);
+        OnRoundChanged?.Invoke(currentRound, currentEra);
 
         // Hard cap: at or beyond final round, trigger a game-ending extinction event.
         if (currentRound >= finalRound)
@@ -1406,22 +833,17 @@ public class GameManager : MonoBehaviour
             }
         }
         currentPhase = GamePhase.Draw;
-        UpdatePhaseLabel();
+        OnPhaseChanged?.Invoke(currentPhase);
         BeginDraw();
     }
 
     private IEnumerator HandleGameOverExtinction()
     {
         isGameOver = true;
-
-        // Lock out further input
-        if (endTurnButton != null)
-            endTurnButton.interactable = false;
-        if (endTurnLabel != null)
-            endTurnLabel.text = "Game Over";
+        OnGameOverChanged?.Invoke(isGameOver);
 
         currentPhase = GamePhase.End;
-        UpdatePhaseLabel();
+        OnPhaseChanged?.Invoke(currentPhase);
 
         // Crossfade background to the special extinction weather, if configured.
         if (weatherVideoBackground != null)
@@ -1458,80 +880,10 @@ public class GameManager : MonoBehaviour
         if (delay > 0f)
             yield return new WaitForSeconds(delay);
 
-        ShowGameOverScreen();
+        // Hand off to HUD to display the final game-over screen.
+        OnShowGameOverRequested?.Invoke();
 
         yield break;
-    }
-
-    void ShowGameOverScreen()
-    {
-        int p1 = ScoreManager.player1;
-        int p2 = ScoreManager.player2;
-
-        // Decide outcome from Player 1's perspective
-        if (gameOverOutcomeText != null)
-        {
-            if (p1 > p2)
-            {
-                gameOverOutcomeText.text = "Victory";
-            }
-            else if (p1 < p2)
-            {
-                gameOverOutcomeText.text = "Defeat";
-            }
-            else
-            {
-                gameOverOutcomeText.text = "Draw";
-            }
-        }
-
-        if (player1ScoreText != null)
-            player1ScoreText.text = p1.ToString();
-        if (player2ScoreText != null)
-            player2ScoreText.text = p2.ToString();
-
-        StartCoroutine(FadeToGameOverCoroutine());
-    }
-
-    IEnumerator FadeToGameOverCoroutine()
-    {
-        float duration = Mathf.Max(0.01f, gameOverFadeDuration);
-        float t = 0f;
-
-        // Prepare initial states
-        if (mainCanvasGroup != null)
-        {
-            mainCanvasGroup.interactable = false;
-            mainCanvasGroup.blocksRaycasts = false;
-        }
-
-        if (gameOverCanvasGroup != null)
-        {
-            gameOverCanvasGroup.interactable = false;
-            gameOverCanvasGroup.blocksRaycasts = false;
-            gameOverCanvasGroup.alpha = 0f;
-        }
-
-        while (t < duration)
-        {
-            t += Time.deltaTime;
-            float u = Mathf.Clamp01(t / duration);
-
-            SetCanvasGroupAlpha(mainCanvasGroup, 1f - u);
-            SetCanvasGroupAlpha(gameOverCanvasGroup, u);
-
-            yield return null;
-        }
-
-        // Final visibility and input states
-        SetCanvasGroupAlpha(mainCanvasGroup, 0f);
-        SetCanvasGroupAlpha(gameOverCanvasGroup, 1f);
-
-        if (gameOverCanvasGroup != null)
-        {
-            gameOverCanvasGroup.interactable = true;
-            gameOverCanvasGroup.blocksRaycasts = true;
-        }
     }
 
     public Era GetEraForRound(int round)
@@ -1606,12 +958,7 @@ public class GameManager : MonoBehaviour
 
     public void UpdateMomentumUI()
     {
-        int currentEraMomentum = GetMomentumForEra(currentEra);
-
-        if (p1MomentumLabel != null)
-            p1MomentumLabel.text = $"{p1Momentum} / {currentEraMomentum}";
-        if (p2MomentumLabel != null)
-            p2MomentumLabel.text = $"{p2Momentum} / {currentEraMomentum}";
+        OnMomentumChanged?.Invoke(currentEra, p1Momentum, p2Momentum);
     }
 
     public int GetCreatureCost(CreatureCard card)
@@ -1687,15 +1034,8 @@ public class GameManager : MonoBehaviour
         // card preview is still resolving.
         if (owner == SlotOwner.Player1 && p1ActionLocked)
         {
-            // If we are currently in manual selection for THIS card, allow it to continue
-            // (this happens during confirmation).
-            bool isConfirmingManual =
-                manualEffectSelection != null && manualEffectSelection.card == card;
-            if (!isConfirmingManual)
-            {
-                failureReason = "You have already taken an action. Wait for the other player.";
-                return false;
-            }
+            failureReason = "You have already taken an action. Wait for the other player.";
+            return false;
         }
 
         int cost = GetCreatureCost(card);
@@ -1781,15 +1121,8 @@ public class GameManager : MonoBehaviour
         // card preview is still resolving.
         if (owner == SlotOwner.Player1 && p1ActionLocked)
         {
-            // If we are currently in manual selection for THIS card, allow it to continue
-            // (this happens during confirmation).
-            bool isConfirmingManual =
-                manualEffectSelection != null && manualEffectSelection.card == card;
-            if (!isConfirmingManual)
-            {
-                failureReason = "You have already taken an action. Wait for the other player.";
-                return false;
-            }
+            failureReason = "You have already taken an action. Wait for the other player.";
+            return false;
         }
 
         // Era requirement

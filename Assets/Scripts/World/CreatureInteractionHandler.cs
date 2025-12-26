@@ -52,9 +52,9 @@ public class CreatureInteractionHandler
     {
         if (creature == null)
             return;
-        if (GameManager.Instance != null)
+        if (ManualEffectSelectionController.Instance != null)
         {
-            GameManager.Instance.HandleManualEffectCreatureClicked(creature);
+            ManualEffectSelectionController.Instance.HandleCreatureClicked(creature);
         }
     }
 

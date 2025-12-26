@@ -22,13 +22,6 @@ public class LocalHumanController : IPlayerController
         OnActionDecided?.Invoke(GameAction.CreatePass(Owner));
     }
 
-    public void RequestManualSelectionCancel()
-    {
-        OnActionDecided?.Invoke(
-            new GameAction { type = GameActionType.ManualSelectionCancel, owner = Owner }
-        );
-    }
-
     public void RequestPlayCreature(string cardId, int slotIndex)
     {
         OnActionDecided?.Invoke(
