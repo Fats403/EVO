@@ -64,6 +64,10 @@ public class GameLobbyManager : MonoBehaviour
     private SteamId _loadedHostAvatarId;
     private SteamId _loadedGuestAvatarId;
 
+    // Throttle avatar fetch attempts (Steam may return empty until it has cached the image)
+    private float _nextAvatarRefreshTime;
+    private const float AvatarRetryIntervalSeconds = 0.5f;
+
     private void Awake()
     {
         if (readyButton != null)
@@ -93,12 +97,22 @@ public class GameLobbyManager : MonoBehaviour
         _loadedHostAvatarId = default;
         _loadedGuestAvatarId = default;
 
+        // Reset all UI elements to clean state before loading new lobby data
+        ResetUIToDefaults();
         UpdateReadyLabel();
-        UpdateUIDisplay();
+
+        // Subscribe to events
         SubscribeToEvents();
 
-        // Load avatars on enable
+        // Prime UI from current lobby state if available
+        if (_lobby != null && _lobby.IsInLobby)
+            _lobby.RefreshLobbyData();
+
+        UpdateUIDisplay();
         LoadAvatarsAsync();
+
+        // Allow immediate retry attempts while avatars are blank
+        _nextAvatarRefreshTime = 0f;
     }
 
     private void OnDisable()
@@ -106,10 +120,44 @@ public class GameLobbyManager : MonoBehaviour
         UnsubscribeFromEvents();
     }
 
+    /// <summary>
+    /// Resets all UI elements to a clean default state.
+    /// Called when entering a new lobby to clear stale data from previous lobbies.
+    /// </summary>
+    private void ResetUIToDefaults()
+    {
+        // Clear text fields
+        if (lobbyStatusText != null)
+            lobbyStatusText.text = "Connecting...";
+        if (hostNameText != null)
+            hostNameText.text = "Host";
+        if (peerNameText != null)
+            peerNameText.text = "Waiting...";
+
+        // Reset ready indicators to waiting state
+        if (hostReadyIndicator != null)
+        {
+            hostReadyIndicator.text = "—";
+            hostReadyIndicator.color = waitingColor;
+        }
+        if (guestReadyIndicator != null)
+        {
+            guestReadyIndicator.text = "—";
+            guestReadyIndicator.color = waitingColor;
+        }
+
+        // Clear avatar textures
+        if (hostImage != null)
+            hostImage.texture = null;
+        if (peerImage != null)
+            peerImage.texture = null;
+    }
+
     private void SubscribeToEvents()
     {
         if (_lobby != null)
         {
+            _lobby.LobbyEntered += OnLobbyEntered;
             _lobby.LobbyDataChanged += OnLobbyDataChanged;
             _lobby.LobbyLeft += OnLobbyLeft;
             _lobby.BothPlayersReady += OnBothPlayersReady;
@@ -120,17 +168,46 @@ public class GameLobbyManager : MonoBehaviour
     {
         if (_lobby != null)
         {
+            _lobby.LobbyEntered -= OnLobbyEntered;
             _lobby.LobbyDataChanged -= OnLobbyDataChanged;
             _lobby.LobbyLeft -= OnLobbyLeft;
             _lobby.BothPlayersReady -= OnBothPlayersReady;
         }
     }
 
+    private void OnLobbyEntered()
+    {
+        // Lobby is now ready - refresh data and update UI
+        if (_lobby != null && _lobby.IsInLobby)
+        {
+            _lobby.RefreshLobbyData();
+        }
+        UpdateUIDisplay();
+        LoadAvatarsAsync();
+    }
+
     private void Update()
     {
-        // Only update the UI display, don't refresh lobby data every frame.
-        // Lobby data refresh happens via events (OnLobbyDataChanged).
+        if (_lobby == null)
+            _lobby = SteamLobbyManager.Instance;
+
+        // Always update the UI display to reflect current state
         UpdateUIDisplay();
+
+        // Retry avatar loading if needed (Steam may not have the image ready on first attempt)
+        if (
+            _lobby != null
+            && _lobby.IsInLobby
+            && Time.unscaledTime >= _nextAvatarRefreshTime
+            && (
+                (hostImage != null && hostImage.texture == null)
+                || (peerImage != null && peerImage.texture == null)
+            )
+        )
+        {
+            _nextAvatarRefreshTime = Time.unscaledTime + AvatarRetryIntervalSeconds;
+            LoadAvatarsAsync();
+        }
     }
 
     private void OnLobbyDataChanged()
@@ -146,8 +223,13 @@ public class GameLobbyManager : MonoBehaviour
 
     private void OnLobbyLeft()
     {
-        // Hide the lobby canvas when we leave
-        gameObject.SetActive(false);
+        // Reset UI to clean state so next lobby shows fresh
+        // Note: DeckHubManager.HandleLobbyLeft() handles hiding the canvas,
+        // so we don't call SetActive(false) here to avoid issues with
+        // unsubscribing from events mid-invocation
+        ResetUIToDefaults();
+        _isReady = false;
+        UpdateReadyLabel();
     }
 
     private void OnBothPlayersReady()
@@ -169,8 +251,15 @@ public class GameLobbyManager : MonoBehaviour
 
         if (_lobby == null || !_lobby.IsInLobby)
         {
+            // Show a connecting/waiting state instead of leaving stale data
             if (lobbyStatusText != null)
-                lobbyStatusText.text = "Not in lobby";
+                lobbyStatusText.text = "Connecting to lobby...";
+            if (hostNameText != null)
+                hostNameText.text = "Host";
+            if (peerNameText != null)
+                peerNameText.text = "Waiting...";
+            UpdateReadyIndicator(hostReadyIndicator, false, false);
+            UpdateReadyIndicator(guestReadyIndicator, false, false);
             return;
         }
 
@@ -264,13 +353,18 @@ public class GameLobbyManager : MonoBehaviour
         if (hostImage != null)
         {
             SteamId hostId = GetSteamIdFromString(_lobby.HostId);
-            if (hostId.Value != 0 && hostId != _loadedHostAvatarId)
+            // Only mark as "loaded" once we actually got a texture.
+            // Steam can return empty avatar results briefly after joining a lobby.
+            bool needsHostAvatar =
+                hostId.Value != 0 && (hostImage.texture == null || hostId != _loadedHostAvatarId);
+
+            if (needsHostAvatar)
             {
-                _loadedHostAvatarId = hostId;
                 var hostAvatar = await SteamFriends.GetLargeAvatarAsync(hostId);
                 if (hostAvatar.HasValue)
                 {
                     hostImage.texture = CreateTextureFromImage(hostAvatar.Value);
+                    _loadedHostAvatarId = hostId;
                 }
             }
         }
@@ -290,13 +384,16 @@ public class GameLobbyManager : MonoBehaviour
                 peerId = GetSteamIdFromString(_lobby.HostId);
             }
 
-            if (peerId.Value != 0 && peerId != _loadedGuestAvatarId)
+            bool needsPeerAvatar =
+                peerId.Value != 0 && (peerImage.texture == null || peerId != _loadedGuestAvatarId);
+
+            if (needsPeerAvatar)
             {
-                _loadedGuestAvatarId = peerId;
                 var peerAvatar = await SteamFriends.GetLargeAvatarAsync(peerId);
                 if (peerAvatar.HasValue)
                 {
                     peerImage.texture = CreateTextureFromImage(peerAvatar.Value);
+                    _loadedGuestAvatarId = peerId;
                 }
             }
             else if (peerId.Value == 0)
@@ -361,22 +458,29 @@ public class GameLobbyManager : MonoBehaviour
         _isReady = !_isReady;
         UpdateReadyLabel();
 
+        // Always use the current singleton (avoid stale cached reference)
+        _lobby = SteamLobbyManager.Instance;
+
         if (_lobby != null && _lobby.IsInLobby)
-        {
             _lobby.SetLocalReady(_isReady);
-        }
     }
 
     private void OnLeaveLobbyClicked()
     {
-        if (_lobby != null)
-        {
-            _lobby.LeaveLobby();
-        }
+        // Always refresh reference (avoid stale cached reference)
+        _lobby = SteamLobbyManager.Instance;
 
-        // Hide the lobby canvas; DeckHubManager is responsible for re-showing
-        // the main hub UI.
-        gameObject.SetActive(false);
+        if (_lobby != null)
+            _lobby.LeaveLobby();
+
+        // IMPORTANT:
+        // Do NOT deactivate this GameObject here. If we do, re-enabling the parent
+        // (gameLobbyRoot) later will not re-enable this child, and the lobby UI
+        // will appear "stuck" in a cleared state on subsequent lobbies.
+        // DeckHubManager.HandleLobbyLeft() controls visibility of the lobby root.
+        ResetUIToDefaults();
+        _isReady = false;
+        UpdateReadyLabel();
     }
 
     private void OnInviteClicked()

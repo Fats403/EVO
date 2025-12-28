@@ -67,6 +67,10 @@ public class DeckHubManager : MonoBehaviour
     [SerializeField]
     private Button joinLobbyButton;
 
+    [Tooltip("Button used to go back to the menu.")]
+    [SerializeField]
+    private Button backToMenuButton;
+
     [Tooltip("Root object for the in-game lobby UI (Canvas_Lobby).")]
     [SerializeField]
     private GameObject gameLobbyRoot;
@@ -148,8 +152,8 @@ public class DeckHubManager : MonoBehaviour
     {
         Debug.Log("DeckHubManager: Lobby entered");
 
-        // If we're a guest (not host), show the lobby UI
-        if (SteamLobbyManager.Instance != null && !SteamLobbyManager.Instance.IsHost)
+        // Show the lobby UI for both host and guest when entering a lobby
+        if (SteamLobbyManager.Instance != null && SteamLobbyManager.Instance.IsInLobby)
         {
             if (deckHubRoot != null)
                 deckHubRoot.SetActive(false);
@@ -502,16 +506,14 @@ public class DeckHubManager : MonoBehaviour
             return;
         }
 
+        // Start lobby creation - UI will be swapped in HandleLobbyEntered when lobby is ready
         SteamLobbyManager.Instance.CreateLobbyForMatch(
             _selectedSlot.DeckId,
             _selectedSlot.DeckName
         );
 
-        // Swap to the lobby UI; SteamLobbyManager will drive the details.
-        if (deckHubRoot != null)
-            deckHubRoot.SetActive(false);
-        if (gameLobbyRoot != null)
-            gameLobbyRoot.SetActive(true);
+        // Note: UI switching moved to HandleLobbyEntered() to avoid race condition
+        // The lobby UI should only appear after the lobby is actually created
     }
 
     /// <summary>
@@ -738,6 +740,11 @@ public class DeckHubManager : MonoBehaviour
             draftRoot.SetActive(false);
 
         SceneTransitionManager.Instance.LoadScene("MainScene");
+    }
+
+    public void OnClick_BackToMenu()
+    {
+        SceneTransitionManager.Instance.LoadScene("MainMenu");
     }
 
     private async void OpenExistingDeckForEdit(DeckSlotUI slot)

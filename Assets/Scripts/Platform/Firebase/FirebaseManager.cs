@@ -207,27 +207,6 @@ public class FirebaseManager : MonoBehaviour
     private FirebaseFirestore ConfigureFirestore()
     {
         FirebaseFirestore firestore = FirebaseFirestore.DefaultInstance;
-
-#if UNITY_STANDALONE_OSX && !UNITY_EDITOR
-        try
-        {
-            // In the Unity SDK, we modify the properties of the existing Settings object.
-            // This disables the disk-based cache and the 'LOCK' file contention.
-            var settings = firestore.Settings;
-            settings.PersistenceEnabled = false;
-
-            // Re-assign the modified settings back to the instance
-            firestore.Settings = settings;
-
-            Debug.Log("FirebaseManager: Firestore persistence disabled (Memory-only mode).");
-        }
-        catch (Exception e)
-        {
-            Debug.LogWarning(
-                $"FirebaseManager: Could not disable Firestore persistence: {e.Message}"
-            );
-        }
-#endif
         return firestore;
     }
 
