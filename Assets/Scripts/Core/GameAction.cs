@@ -18,8 +18,8 @@ public class GameAction
     public int slotIndex = -1; // Index of BoardSlot
 
     // For Effects/ManualSelection
-    public List<int> targetSlotIndices = new List<int>(); // Indices of targeted Creature slots
+    public List<int> targetSlotIndices = new(); // Indices of targeted Creature slots
 
     public static GameAction CreatePass(SlotOwner owner) =>
-        new GameAction { type = GameActionType.Pass, owner = owner };
+        new() { type = GameActionType.Pass, owner = owner };
 }

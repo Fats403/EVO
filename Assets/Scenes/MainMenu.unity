@@ -775,7 +775,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d6c3977b75c64675834ff150b463517, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FirebaseManager
-  authSteamUrl: https://authsteam-dh567oabqa-uc.a.run.app
 --- !u!4 &516692166
 Transform:
   m_ObjectHideFlags: 0
@@ -2330,6 +2329,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2112003969}
   - component: {fileID: 2112003968}
+  - component: {fileID: 2112003972}
+  - component: {fileID: 2112003971}
+  - component: {fileID: 2112003970}
   m_Layer: 0
   m_Name: SteamManager
   m_TagString: Untagged
@@ -2351,6 +2353,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SteamManager
   appId: 480
   debugLogging: 1
+  deckHubSceneName: DeckHubScene
 --- !u!4 &2112003969
 Transform:
   m_ObjectHideFlags: 0
@@ -2366,6 +2369,45 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2112003970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2112003967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 033548e48ef6e49f8bf00fe003064132, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkMatchManager
+  transportBehaviour: {fileID: 2112003971}
+--- !u!114 &2112003971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2112003967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c387542db49d9463f8fc8f20229c5790, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SteamP2PTransport
+  virtualPort: 0
+  debugLogging: 1
+--- !u!114 &2112003972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2112003967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e89b4fe53ed76494391554487ffce133, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SteamLobbyManager
 --- !u!1 &2135611976
 GameObject:
   m_ObjectHideFlags: 0

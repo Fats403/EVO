@@ -5,6 +5,7 @@ using Firebase.Firestore;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /// <summary>
 /// Top-level controller for the DeckHubScene.
@@ -53,11 +54,31 @@ public class DeckHubManager : MonoBehaviour
     [SerializeField]
     private DraftManager draftManager;
 
+    [Header("Matchmaking UI")]
+    [Tooltip("Button that creates a Steam lobby for a head-to-head match.")]
+    [SerializeField]
+    private Button createLobbyButton;
+
+    [Tooltip("Button that starts a local game vs AI using the selected deck.")]
+    [SerializeField]
+    private Button quickplayButton;
+
+    [Tooltip("Button used by the invited player to join a lobby after selecting a deck.")]
+    [SerializeField]
+    private Button joinLobbyButton;
+
+    [Tooltip("Root object for the in-game lobby UI (Canvas_Lobby).")]
+    [SerializeField]
+    private GameObject gameLobbyRoot;
+
     private FirebaseManager Firebase => FirebaseManager.Instance;
 
     // Tracks which slot/deck is currently being edited/created.
     private int _activeSlotIndex = -1;
     private string _activeDeckId;
+
+    // Currently selected deck slot for matchmaking actions.
+    private DeckSlotUI _selectedSlot;
 
     private void Awake()
     {
@@ -77,6 +98,9 @@ public class DeckHubManager : MonoBehaviour
 
         if (draftManager != null)
             draftManager.DeckBuilt += HandleDraftDeckBuilt;
+
+        if (gameLobbyRoot != null)
+            gameLobbyRoot.SetActive(false);
     }
 
     private void OnDestroy()
@@ -86,10 +110,72 @@ public class DeckHubManager : MonoBehaviour
 
         if (draftManager != null)
             draftManager.DeckBuilt -= HandleDraftDeckBuilt;
+
+        UnsubscribeFromSteamEvents();
+    }
+
+    private void SubscribeToSteamEvents()
+    {
+        if (SteamManager.Instance != null)
+            SteamManager.Instance.OnInviteReady += HandleInviteReady;
+
+        if (SteamLobbyManager.Instance != null)
+        {
+            SteamLobbyManager.Instance.LobbyEntered += HandleLobbyEntered;
+            SteamLobbyManager.Instance.LobbyLeft += HandleLobbyLeft;
+        }
+    }
+
+    private void UnsubscribeFromSteamEvents()
+    {
+        if (SteamManager.Instance != null)
+            SteamManager.Instance.OnInviteReady -= HandleInviteReady;
+
+        if (SteamLobbyManager.Instance != null)
+        {
+            SteamLobbyManager.Instance.LobbyEntered -= HandleLobbyEntered;
+            SteamLobbyManager.Instance.LobbyLeft -= HandleLobbyLeft;
+        }
+    }
+
+    private void HandleInviteReady(Steamworks.SteamId lobbyId)
+    {
+        Debug.Log($"DeckHubManager: Invite ready for lobby {lobbyId}");
+        UpdateMatchActionButtons();
+    }
+
+    private void HandleLobbyEntered()
+    {
+        Debug.Log("DeckHubManager: Lobby entered");
+
+        // If we're a guest (not host), show the lobby UI
+        if (SteamLobbyManager.Instance != null && !SteamLobbyManager.Instance.IsHost)
+        {
+            if (deckHubRoot != null)
+                deckHubRoot.SetActive(false);
+            if (gameLobbyRoot != null)
+                gameLobbyRoot.SetActive(true);
+        }
+
+        UpdateMatchActionButtons();
+    }
+
+    private void HandleLobbyLeft()
+    {
+        Debug.Log("DeckHubManager: Lobby left");
+
+        // Return to hub UI
+        if (gameLobbyRoot != null)
+            gameLobbyRoot.SetActive(false);
+        if (deckHubRoot != null)
+            deckHubRoot.SetActive(true);
+
+        UpdateMatchActionButtons();
     }
 
     private void Start()
     {
+        SubscribeToSteamEvents();
         _ = InitializeAsync();
     }
 
@@ -108,15 +194,30 @@ public class DeckHubManager : MonoBehaviour
         int waited = 0;
         const int stepMs = 250;
 
-        while (!Firebase.IsFirebaseReady || !Firebase.IsLoggedIn)
+        // Wait for Firebase to be ready and either logged in or have tried login
+        while (!Firebase.IsFirebaseReady || (!Firebase.IsLoggedIn && !Firebase.HasTriedLogin))
         {
             await Task.Delay(stepMs);
             waited += stepMs;
             if (waited >= timeoutMs)
             {
-                SetErrorState("Timed out waiting for Firebase login.");
+                // Check if there's a specific error from Firebase
+                string errorDetail = !string.IsNullOrEmpty(Firebase.LastLoginError)
+                    ? $": {Firebase.LastLoginError}"
+                    : ".";
+                SetErrorState($"Timed out waiting for Firebase login{errorDetail}");
                 return;
             }
+        }
+
+        // Check if login actually succeeded after waiting
+        if (!Firebase.IsLoggedIn)
+        {
+            string errorDetail = !string.IsNullOrEmpty(Firebase.LastLoginError)
+                ? Firebase.LastLoginError
+                : "Login failed.";
+            SetErrorState(errorDetail);
+            return;
         }
 
         await LoadDecksAsync();
@@ -180,14 +281,16 @@ public class DeckHubManager : MonoBehaviour
             if (slot != null)
             {
                 slot.CreateRequested -= OnCreateRequested;
-                slot.PlayRequested -= OnPlayRequested;
+                slot.SelectRequested -= OnSelectRequested;
                 slot.EditRequested -= OnEditRequested;
                 slot.DeleteRequested -= OnDeleteRequested;
 
                 slot.CreateRequested += OnCreateRequested;
-                slot.PlayRequested += OnPlayRequested;
+                slot.SelectRequested += OnSelectRequested;
                 slot.EditRequested += OnEditRequested;
                 slot.DeleteRequested += OnDeleteRequested;
+
+                slot.SetSelected(false);
             }
         }
 
@@ -205,6 +308,10 @@ public class DeckHubManager : MonoBehaviour
 
             slot.SetDeck(deck.deckId, deck.name);
         }
+
+        // Reset selection when decks are rebound.
+        _selectedSlot = null;
+        UpdateMatchActionButtons();
     }
 
     private void SetLoadingState(bool isLoading, string errorMessage)
@@ -250,17 +357,18 @@ public class DeckHubManager : MonoBehaviour
         deckBuilderManager?.StartNewDeck($"Deck {slot.slotIndex + 1}");
     }
 
-    private void OnPlayRequested(DeckSlotUI slot)
+    private void OnSelectRequested(DeckSlotUI slot)
     {
         if (slot == null || !slot.HasDeck)
             return;
 
+        // Clicking on a deck slot selects it. The actual game start is driven
+        // by the Quickplay/CreateLobby buttons using the currently selected deck.
         Debug.Log(
-            $"DeckHubManager: Play requested for deck '{slot.DeckName}' (id={slot.DeckId}) in slot {slot.slotIndex}"
+            $"DeckHubManager: Deck selected '{slot.DeckName}' (id={slot.DeckId}) in slot {slot.slotIndex}"
         );
 
-        // Start the game in constructed mode using this deck.
-        _ = StartGameWithDeckAsync(slot);
+        SelectDeckSlot(slot);
     }
 
     private void OnEditRequested(DeckSlotUI slot)
@@ -374,6 +482,99 @@ public class DeckHubManager : MonoBehaviour
         }
 
         draftManager.BeginDraft();
+    }
+
+    /// <summary>
+    /// Called by the \"Create Lobby\" button. Creates a Steam lobby for a
+    /// head-to-head match using the currently selected deck.
+    /// </summary>
+    public void OnClick_CreateLobby()
+    {
+        if (_selectedSlot == null || !_selectedSlot.HasDeck)
+        {
+            Debug.LogWarning("DeckHubManager: CreateLobby clicked with no deck selected.");
+            return;
+        }
+
+        if (SteamLobbyManager.Instance == null)
+        {
+            Debug.LogError("DeckHubManager: SteamLobbyManager instance not found.");
+            return;
+        }
+
+        SteamLobbyManager.Instance.CreateLobbyForMatch(
+            _selectedSlot.DeckId,
+            _selectedSlot.DeckName
+        );
+
+        // Swap to the lobby UI; SteamLobbyManager will drive the details.
+        if (deckHubRoot != null)
+            deckHubRoot.SetActive(false);
+        if (gameLobbyRoot != null)
+            gameLobbyRoot.SetActive(true);
+    }
+
+    /// <summary>
+    /// Called by the Quickplay button. Starts a local game vs AI using the
+    /// currently selected deck.
+    /// </summary>
+    public void OnClick_Quickplay()
+    {
+        if (_selectedSlot == null || !_selectedSlot.HasDeck)
+        {
+            Debug.LogWarning("DeckHubManager: Quickplay clicked with no deck selected.");
+            return;
+        }
+
+        _ = StartGameWithDeckAsync(_selectedSlot);
+    }
+
+    /// <summary>
+    /// Called by the Join button when the user has arrived in DeckHubScene
+    /// via an invite and selected a deck to use for the lobby.
+    /// </summary>
+    public async void OnClick_JoinLobby()
+    {
+        if (_selectedSlot == null || !_selectedSlot.HasDeck)
+        {
+            Debug.LogWarning("DeckHubManager: JoinLobby clicked with no deck selected.");
+            return;
+        }
+
+        var lobby = SteamLobbyManager.Instance;
+        if (lobby == null)
+        {
+            Debug.LogError("DeckHubManager: SteamLobbyManager instance not found.");
+            return;
+        }
+
+        // If we have a pending invite but haven't joined yet, join now
+        if (lobby.HasPendingInvite && !lobby.IsInLobby)
+        {
+            Debug.Log("DeckHubManager: Joining pending invite lobby...");
+
+            bool success = await lobby.JoinPendingInviteAsync();
+            if (!success)
+            {
+                Debug.LogError("DeckHubManager: Failed to join lobby from invite.");
+                return;
+            }
+        }
+
+        if (!lobby.IsInLobby)
+        {
+            Debug.LogError("DeckHubManager: JoinLobby clicked but no active lobby is present.");
+            return;
+        }
+
+        // Set our deck info in the lobby
+        lobby.SetLocalLobbyDeck(_selectedSlot.DeckId, _selectedSlot.DeckName);
+
+        // Swap to lobby UI
+        if (deckHubRoot != null)
+            deckHubRoot.SetActive(false);
+        if (gameLobbyRoot != null)
+            gameLobbyRoot.SetActive(true);
     }
 
     /// <summary>
@@ -685,6 +886,56 @@ public class DeckHubManager : MonoBehaviour
         catch (System.Exception e)
         {
             Debug.LogError($"DeckHubManager: Failed to start game with deck: {e.Message}");
+        }
+    }
+
+    private void Update()
+    {
+        // Keep the main action buttons in sync with selection and lobby state.
+        UpdateMatchActionButtons();
+    }
+
+    private void SelectDeckSlot(DeckSlotUI slot)
+    {
+        _selectedSlot = slot;
+
+        if (deckSlots != null)
+        {
+            foreach (var s in deckSlots)
+            {
+                if (s != null)
+                    s.SetSelected(s == _selectedSlot);
+            }
+        }
+
+        UpdateMatchActionButtons();
+    }
+
+    private void UpdateMatchActionButtons()
+    {
+        bool hasSelectedDeck = _selectedSlot != null && _selectedSlot.HasDeck;
+        var lobby = SteamLobbyManager.Instance;
+
+        // Host actions (Create Lobby, Quickplay) are available when not in a lobby
+        bool canHostActions = lobby == null || !lobby.IsInLobby;
+
+        if (createLobbyButton != null)
+            createLobbyButton.interactable = hasSelectedDeck && canHostActions;
+
+        if (quickplayButton != null)
+            quickplayButton.interactable = hasSelectedDeck && canHostActions;
+
+        // Join button is visible when:
+        // 1. We have a pending invite (haven't joined yet), OR
+        // 2. We're already in a lobby as a guest
+        bool hasPendingInvite = lobby != null && lobby.HasPendingInvite;
+        bool isGuestInLobby = lobby != null && lobby.IsInLobby && !lobby.IsHost;
+        bool showJoinButton = hasPendingInvite || isGuestInLobby;
+
+        if (joinLobbyButton != null)
+        {
+            joinLobbyButton.gameObject.SetActive(showJoinButton);
+            joinLobbyButton.interactable = hasSelectedDeck && showJoinButton;
         }
     }
 }

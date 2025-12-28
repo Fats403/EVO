@@ -27,20 +27,26 @@ public class DeckSlotUI : MonoBehaviour
     [SerializeField]
     private GameObject deleteIconRoot;
 
+    [Header("Selection Visuals")]
     [SerializeField]
-    private GameObject playIconRoot;
+    private GameObject selectedPlaqueRoot;
 
+    [Header("Buttons")]
+    [Tooltip("Button for creating a new deck in this slot (typically an Add icon).")]
     [SerializeField]
     private Button addButton;
 
+    [Tooltip("Button for editing this deck.")]
     [SerializeField]
     private Button editButton;
 
+    [Tooltip("Button for deleting this deck.")]
     [SerializeField]
     private Button deleteButton;
 
+    [Tooltip("Button that selects this deck slot. Wire this to the background image's Button component.")]
     [SerializeField]
-    private Button playButton;
+    private Button selectButton;
 
     /// <summary>True if this slot currently has a deck assigned.</summary>
     public bool HasDeck => _hasDeck;
@@ -54,8 +60,8 @@ public class DeckSlotUI : MonoBehaviour
     /// <summary>Requested to create a new deck in this slot.</summary>
     public event Action<DeckSlotUI> CreateRequested;
 
-    /// <summary>Requested to play this deck (only valid when HasDeck is true).</summary>
-    public event Action<DeckSlotUI> PlayRequested;
+    /// <summary>Requested to select this deck slot (only valid when HasDeck is true).</summary>
+    public event Action<DeckSlotUI> SelectRequested;
 
     public event Action<DeckSlotUI> EditRequested;
     public event Action<DeckSlotUI> DeleteRequested;
@@ -64,16 +70,21 @@ public class DeckSlotUI : MonoBehaviour
     private string _deckName;
     private string _deckId;
 
+    private bool _isSelected;
+    private Vector3 _baseScale;
+
     private void Awake()
     {
+        _baseScale = transform.localScale;
+
         if (addButton != null)
             addButton.onClick.AddListener(OnAddClicked);
         if (editButton != null)
             editButton.onClick.AddListener(OnEditClicked);
         if (deleteButton != null)
             deleteButton.onClick.AddListener(OnDeleteClicked);
-        if (playButton != null)
-            playButton.onClick.AddListener(OnPlayClicked);
+        if (selectButton != null)
+            selectButton.onClick.AddListener(OnSelectClicked);
     }
 
     private void OnDestroy()
@@ -84,8 +95,8 @@ public class DeckSlotUI : MonoBehaviour
             editButton.onClick.RemoveListener(OnEditClicked);
         if (deleteButton != null)
             deleteButton.onClick.RemoveListener(OnDeleteClicked);
-        if (playButton != null)
-            playButton.onClick.RemoveListener(OnPlayClicked);
+        if (selectButton != null)
+            selectButton.onClick.RemoveListener(OnSelectClicked);
     }
 
     public void SetEmptyState()
@@ -93,20 +104,21 @@ public class DeckSlotUI : MonoBehaviour
         _hasDeck = false;
         _deckName = null;
         _deckId = null;
+        _isSelected = false;
+        ApplySelectionVisuals();
 
         if (deckTitleText != null)
             deckTitleText.text = "NEW DECK";
 
-        // Show "Add" (create) but not "Play". Edit/Delete are visible but disabled.
+        // Show "Add" (create) icon. Edit/Delete are visible but disabled.
         SetActiveSafe(addIconRoot, true);
-        SetActiveSafe(playIconRoot, false);
         SetActiveSafe(editIconRoot, true);
         SetActiveSafe(deleteIconRoot, true);
 
         if (addButton != null)
             addButton.interactable = true; // create new deck
-        if (playButton != null)
-            playButton.interactable = false;
+        if (selectButton != null)
+            selectButton.interactable = false; // can't select an empty slot
         if (editButton != null)
             editButton.interactable = false; // cannot edit a non-existent deck
         if (deleteButton != null)
@@ -118,20 +130,20 @@ public class DeckSlotUI : MonoBehaviour
         _hasDeck = true;
         _deckId = deckId;
         _deckName = string.IsNullOrEmpty(deckName) ? "Unnamed Deck" : deckName;
+        _isSelected = false;
 
         if (deckTitleText != null)
             deckTitleText.text = _deckName;
 
-        // Show "Play" instead of "Add" for a valid deck.
+        // Hide "Add" icon when a deck exists.
         SetActiveSafe(addIconRoot, false);
-        SetActiveSafe(playIconRoot, true);
         SetActiveSafe(editIconRoot, true);
         SetActiveSafe(deleteIconRoot, true);
 
         if (addButton != null)
             addButton.interactable = false; // keep create separate from edit
-        if (playButton != null)
-            playButton.interactable = true;
+        if (selectButton != null)
+            selectButton.interactable = true; // can select this deck
         if (editButton != null)
             editButton.interactable = true;
         if (deleteButton != null)
@@ -143,10 +155,10 @@ public class DeckSlotUI : MonoBehaviour
         CreateRequested?.Invoke(this);
     }
 
-    private void OnPlayClicked()
+    private void OnSelectClicked()
     {
         if (_hasDeck)
-            PlayRequested?.Invoke(this);
+            SelectRequested?.Invoke(this);
     }
 
     private void OnEditClicked()
@@ -166,5 +178,27 @@ public class DeckSlotUI : MonoBehaviour
     {
         if (go != null && go.activeSelf != active)
             go.SetActive(active);
+    }
+
+    /// <summary>
+    /// Updates this slot's visual selection state. Intended to be driven by
+    /// the DeckHubManager when the user selects a single active deck.
+    /// </summary>
+    public void SetSelected(bool selected)
+    {
+        _isSelected = selected;
+        ApplySelectionVisuals();
+    }
+
+    private void ApplySelectionVisuals()
+    {
+        // Toggle the "SELECTED" plaque if one is wired.
+        SetActiveSafe(selectedPlaqueRoot, _isSelected && _hasDeck);
+
+        // Apply a subtle scale bump when selected.
+        if (_baseScale == Vector3.zero)
+            _baseScale = transform.localScale;
+
+        transform.localScale = _isSelected ? _baseScale * 1.05f : _baseScale;
     }
 }

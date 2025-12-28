@@ -37,6 +37,9 @@ public class FirebaseManager : MonoBehaviour
     /// <summary>Last login error message, if any.</summary>
     public string LastLoginError { get; private set; }
 
+    /// <summary>True if Firestore is available. False if locked by another process.</summary>
+    public bool IsFirestoreAvailable => Db != null;
+
     public FirebaseAuth Auth { get; private set; }
     public FirebaseFirestore Db { get; private set; }
     public FirebaseUser CurrentUser => Auth?.CurrentUser;
@@ -53,7 +56,27 @@ public class FirebaseManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        _ = InitializeAndAutoLoginAsync();
+        // Fire-and-forget with proper exception handling to prevent crashes
+        SafeInitializeAsync();
+    }
+
+    /// <summary>
+    /// Wraps the async initialization in a try-catch to prevent unhandled
+    /// exceptions from crashing the game on startup.
+    /// </summary>
+    private async void SafeInitializeAsync()
+    {
+        try
+        {
+            await InitializeAndAutoLoginAsync();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"FirebaseManager: Unhandled exception during initialization: {e}");
+            HasTriedLogin = true;
+            IsLoggedIn = false;
+            LastLoginError = $"Initialization failed: {e.Message}";
+        }
     }
 
     /// <summary>
@@ -151,10 +174,24 @@ public class FirebaseManager : MonoBehaviour
             }
 
             Auth = FirebaseAuth.DefaultInstance;
-            Db = FirebaseFirestore.DefaultInstance;
+
+            // Configure Firestore - may return null if database is locked
+            Db = ConfigureFirestore();
+
+            // Firebase is ready even if Firestore is unavailable (Auth still works)
             IsFirebaseReady = true;
 
-            Debug.Log("FirebaseManager: Firebase initialized.");
+            if (Db != null)
+            {
+                Debug.Log("FirebaseManager: Firebase initialized with Firestore.");
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "FirebaseManager: Firebase initialized WITHOUT Firestore. "
+                        + "Auth works but cloud saves are disabled."
+                );
+            }
         }
         catch (Exception e)
         {
@@ -162,6 +199,92 @@ public class FirebaseManager : MonoBehaviour
             IsFirebaseReady = false;
         }
     }
+
+    /// <summary>
+    /// Safely initializes Firestore. On standalone builds, we disable persistence
+    /// to avoid LevelDB lock conflicts with the Unity Editor.
+    /// </summary>
+    private FirebaseFirestore ConfigureFirestore()
+    {
+        FirebaseFirestore firestore = FirebaseFirestore.DefaultInstance;
+
+#if UNITY_STANDALONE_OSX && !UNITY_EDITOR
+        try
+        {
+            // In the Unity SDK, we modify the properties of the existing Settings object.
+            // This disables the disk-based cache and the 'LOCK' file contention.
+            var settings = firestore.Settings;
+            settings.PersistenceEnabled = false;
+
+            // Re-assign the modified settings back to the instance
+            firestore.Settings = settings;
+
+            Debug.Log("FirebaseManager: Firestore persistence disabled (Memory-only mode).");
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning(
+                $"FirebaseManager: Could not disable Firestore persistence: {e.Message}"
+            );
+        }
+#endif
+        return firestore;
+    }
+
+#if UNITY_STANDALONE_OSX && !UNITY_EDITOR
+    /// <summary>
+    /// Checks if the Firestore LevelDB database is locked by another process.
+    /// Updated to use a more reliable path for macOS.
+    /// </summary>
+    private bool IsFirestoreLocked()
+    {
+        try
+        {
+            // Get the user's home directory manually to avoid SpecialFolder issues
+            string homePath = System.Environment.GetEnvironmentVariable("HOME");
+            if (string.IsNullOrEmpty(homePath))
+                return false;
+
+            string firestorePath = System.IO.Path.Combine(
+                homePath,
+                "Library/Application Support/firestore"
+            );
+
+            if (!System.IO.Directory.Exists(firestorePath))
+                return false;
+
+            string[] lockFiles = System.IO.Directory.GetFiles(
+                firestorePath,
+                "LOCK",
+                System.IO.SearchOption.AllDirectories
+            );
+
+            foreach (string lockFile in lockFiles)
+            {
+                try
+                {
+                    using (
+                        var fs = new System.IO.FileStream(
+                            lockFile,
+                            System.IO.FileMode.Open,
+                            System.IO.FileAccess.ReadWrite,
+                            System.IO.FileShare.None
+                        )
+                    )
+                    {
+                        // File is not locked
+                    }
+                }
+                catch (System.IO.IOException)
+                {
+                    return true; // Locked!
+                }
+            }
+        }
+        catch { }
+        return false;
+    }
+#endif
 
     /// <summary>
     /// Public login method in case you ever want to trigger login manually.
@@ -283,6 +406,14 @@ public class FirebaseManager : MonoBehaviour
             return null;
         }
 
+        if (Db == null)
+        {
+            Debug.LogWarning(
+                "FirebaseManager: Firestore unavailable (database locked by Unity Editor?)."
+            );
+            return null;
+        }
+
         return Db.Collection("players").Document(CurrentUser.UserId);
     }
 
@@ -316,6 +447,12 @@ public class FirebaseManager : MonoBehaviour
             return;
         }
 
+        if (Db == null)
+        {
+            Debug.LogWarning("FirebaseManager: Cannot save deck - Firestore unavailable.");
+            return;
+        }
+
         var deckRef = Db.Collection("players")
             .Document(CurrentUser.UserId)
             .Collection("decks")
@@ -329,6 +466,12 @@ public class FirebaseManager : MonoBehaviour
         if (!IsFirebaseReady || CurrentUser == null)
         {
             Debug.LogWarning("FirebaseManager: LoadDeckAsync called before login.");
+            return null;
+        }
+
+        if (Db == null)
+        {
+            Debug.LogWarning("FirebaseManager: Cannot load deck - Firestore unavailable.");
             return null;
         }
 
