@@ -18,6 +18,7 @@ public class SteamLobbyManager : MonoBehaviour
     public static SteamLobbyManager Instance { get; private set; }
 
     private const int MaxLobbyMembers = 2;
+    private const string LogPrefix = "SteamLobbyManager:";
 
     // LobbyData keys (stored in the lobby's shared key-value store - host only can set these)
     private const string KeyHostId = "hostId";
@@ -68,6 +69,41 @@ public class SteamLobbyManager : MonoBehaviour
     public event Action BothPlayersReady;
 
     private bool _p2pHeaderSent;
+
+    private static void LogDev(string message)
+    {
+        if (Debug.isDebugBuild)
+            Debug.Log($"{LogPrefix} {message}");
+    }
+
+    private static void LogDevWarning(string message)
+    {
+        if (Debug.isDebugBuild)
+            Debug.LogWarning($"{LogPrefix} {message}");
+    }
+
+    private void SyncLocalLobbyStateFromCallback(Lobby lobby)
+    {
+        // IMPORTANT:
+        // We can enter a lobby without going through our own JoinLobbyAsync/CreateLobbyForMatch
+        // (e.g. accepting an invite from the Steam overlay). In that case, _currentLobbyId
+        // would still be default and IsInLobby would remain false, causing all later updates
+        // (RefreshLobbyData, ready state, UI) to never propagate.
+        _currentLobbyId = lobby.Id;
+        _pendingLobbyId = default;
+        _p2pHeaderSent = false;
+
+        // Determine host role from lobby ownership when possible.
+        // (Lobby-wide data like hostId may not be populated immediately on entry.)
+        try
+        {
+            IsHost = lobby.Owner.Id == SteamClient.SteamId;
+        }
+        catch
+        {
+            // Keep existing IsHost value.
+        }
+    }
 
     private void Awake()
     {
@@ -124,9 +160,7 @@ public class SteamLobbyManager : MonoBehaviour
     {
         if (SteamManager.Instance == null || !SteamManager.Instance.IsInitialized)
         {
-            Debug.LogError(
-                "SteamLobbyManager: Cannot create lobby – SteamManager not initialised."
-            );
+            Debug.LogError($"{LogPrefix} Cannot create lobby – SteamManager not initialised.");
             return;
         }
 
@@ -195,7 +229,7 @@ public class SteamLobbyManager : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogError(
-                $"SteamLobbyManager: Exception during CreateLobbyForMatch: {e.Message}\n{e.StackTrace}"
+                $"{LogPrefix} Exception during CreateLobbyForMatch: {e.Message}\n{e.StackTrace}"
             );
         }
     }
@@ -207,7 +241,7 @@ public class SteamLobbyManager : MonoBehaviour
     {
         if (SteamManager.Instance == null || !SteamManager.Instance.IsInitialized)
         {
-            Debug.LogError("SteamLobbyManager: Cannot join lobby – SteamManager not initialised.");
+            Debug.LogError($"{LogPrefix} Cannot join lobby – SteamManager not initialised.");
             return false;
         }
 
@@ -252,7 +286,7 @@ public class SteamLobbyManager : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogError(
-                $"SteamLobbyManager: Exception during JoinLobbyAsync: {e.Message}\n{e.StackTrace}"
+                $"{LogPrefix} Exception during JoinLobbyAsync: {e.Message}\n{e.StackTrace}"
             );
             return false;
         }
@@ -265,7 +299,7 @@ public class SteamLobbyManager : MonoBehaviour
     public void SetPendingInvite(SteamId lobbyId)
     {
         _pendingLobbyId = lobbyId;
-        Debug.Log($"SteamLobbyManager: Pending invite set for lobby {lobbyId}");
+        LogDev($"Pending invite set for lobby {lobbyId}");
     }
 
     /// <summary>
@@ -319,17 +353,11 @@ public class SteamLobbyManager : MonoBehaviour
         HostReady = false;
         GuestReady = false;
 
-        Debug.Log(
-            $"SteamLobbyManager.RefreshLobbyData: hostId={hostIdStr}, guestId={guestIdStr}, memberCount={lobby.MemberCount}"
-        );
-
         // Get ready states from lobby members
         foreach (var member in lobby.Members)
         {
             string memberReadyStr = lobby.GetMemberData(member, KeyMemberReady);
             bool memberReady = memberReadyStr == "1";
-
-            Debug.Log($"  Member: {member.Name} ({member.Id}), ready={memberReadyStr}");
 
             // Check if this member is the host
             if (!string.IsNullOrEmpty(hostIdStr) && member.Id.ToString() == hostIdStr)
@@ -347,10 +375,6 @@ public class SteamLobbyManager : MonoBehaviour
                     GuestDeckName = guestDeckName;
             }
         }
-
-        Debug.Log(
-            $"SteamLobbyManager.RefreshLobbyData: HostReady={HostReady}, GuestReady={GuestReady}"
-        );
     }
 
     /// <summary>
@@ -360,7 +384,7 @@ public class SteamLobbyManager : MonoBehaviour
     {
         if (!IsInLobby)
         {
-            Debug.LogWarning("SteamLobbyManager: SetLocalReady called but not in a lobby.");
+            LogDevWarning("SetLocalReady called but not in a lobby.");
             return;
         }
 
@@ -368,9 +392,7 @@ public class SteamLobbyManager : MonoBehaviour
         var lobby = new Lobby(_currentLobbyId);
         string value = ready ? "1" : "0";
 
-        Debug.Log(
-            $"SteamLobbyManager: Setting member ready data to '{value}' for lobby {_currentLobbyId}"
-        );
+        LogDev($"Setting member ready='{value}' for lobby {_currentLobbyId}");
 
         // Use SetMemberData - each player can only set their own member data
         lobby.SetMemberData(KeyMemberReady, value);
@@ -385,7 +407,7 @@ public class SteamLobbyManager : MonoBehaviour
             GuestReady = ready;
         }
 
-        Debug.Log($"SteamLobbyManager: Local ready state set to {ready} (IsHost={IsHost})");
+        LogDev($"Local ready set to {ready} (IsHost={IsHost})");
 
         // Notify listeners that data changed (OnLobbyMemberDataChanged will also fire for remote)
         LobbyDataChanged?.Invoke();
@@ -419,7 +441,7 @@ public class SteamLobbyManager : MonoBehaviour
             GuestDeckName = deckName;
         }
 
-        Debug.Log($"SteamLobbyManager: Local deck set to '{deckName}' (id={deckId})");
+        LogDev($"Local deck set to '{deckName}' (id={deckId})");
     }
 
     /// <summary>
@@ -477,7 +499,7 @@ public class SteamLobbyManager : MonoBehaviour
     {
         if (IsInLobby)
         {
-            Debug.Log($"SteamLobbyManager: Leaving lobby {_currentLobbyId}");
+            LogDev($"Leaving lobby {_currentLobbyId}");
             var lobby = new Lobby(_currentLobbyId);
             lobby.Leave();
         }
@@ -503,7 +525,7 @@ public class SteamLobbyManager : MonoBehaviour
         GuestDeckName = null;
         _p2pHeaderSent = false;
 
-        Debug.Log("SteamLobbyManager: Lobby state cleared.");
+        LogDev("Lobby state cleared.");
 
         LobbyLeft?.Invoke();
     }
@@ -532,13 +554,13 @@ public class SteamLobbyManager : MonoBehaviour
     {
         if (!IsInLobby)
         {
-            Debug.LogWarning("SteamLobbyManager: Cannot open invite overlay - not in a lobby.");
+            LogDevWarning("Cannot open invite overlay - not in a lobby.");
             return;
         }
 
         if (!IsHost)
         {
-            Debug.LogWarning("SteamLobbyManager: Only the host can open the invite overlay.");
+            LogDevWarning("Only the host can open the invite overlay.");
             return;
         }
 
@@ -567,43 +589,17 @@ public class SteamLobbyManager : MonoBehaviour
 
     private void HandleLobbyCreated(Result result, Lobby lobby)
     {
-        Debug.Log(
-            $"SteamLobbyManager: OnLobbyCreated callback - Result={result}, LobbyId={lobby.Id}"
-        );
+        LogDev($"OnLobbyCreated callback - Result={result}, LobbyId={lobby.Id}");
     }
 
     private void HandleLobbyEntered(Lobby lobby)
     {
-        Debug.Log($"SteamLobbyManager: OnLobbyEntered callback - LobbyId={lobby.Id}");
-
-        // IMPORTANT:
-        // We can enter a lobby without going through our own JoinLobbyAsync/CreateLobbyForMatch
-        // (e.g. accepting an invite from the Steam overlay). In that case, _currentLobbyId
-        // would still be default and IsInLobby would remain false, causing all later updates
-        // (RefreshLobbyData, ready state, UI) to never propagate.
         bool enteringNewLobby = !IsInLobby || _currentLobbyId != lobby.Id;
 
         if (enteringNewLobby)
         {
-            _currentLobbyId = lobby.Id;
-            _pendingLobbyId = default;
-            _p2pHeaderSent = false;
-
-            // Determine host role from lobby ownership when possible.
-            // (Lobby-wide data like hostId may not be populated immediately on entry.)
-            try
-            {
-                IsHost = lobby.Owner.Id == SteamClient.SteamId;
-            }
-            catch
-            {
-                // Fallback: keep existing IsHost value.
-            }
-
-            Debug.Log(
-                $"SteamLobbyManager: Synced local lobby state from callback. IsHost={IsHost}, LobbyId={_currentLobbyId}"
-            );
-
+            SyncLocalLobbyStateFromCallback(lobby);
+            LogDev($"Entered lobby {lobby.Id} via callback. IsHost={IsHost}");
             LobbyEntered?.Invoke();
         }
 
@@ -616,7 +612,7 @@ public class SteamLobbyManager : MonoBehaviour
         if (!IsInLobby || _currentLobbyId != lobby.Id)
             return;
 
-        Debug.Log($"SteamLobbyManager: OnLobbyDataChanged callback for lobby {lobby.Id}");
+        LogDev($"OnLobbyDataChanged callback for lobby {lobby.Id}");
         RefreshLobbyData();
         LobbyDataChanged?.Invoke();
         CheckBothReady();
@@ -627,7 +623,7 @@ public class SteamLobbyManager : MonoBehaviour
         if (!IsInLobby || _currentLobbyId != lobby.Id)
             return;
 
-        Debug.Log($"SteamLobbyManager: Member joined - {friend.Name} ({friend.Id})");
+        LogDev($"Member joined - {friend.Name} ({friend.Id})");
 
         // If we're the host and a guest joined, update lobby-wide guest info
         if (IsHost && friend.Id != SteamClient.SteamId)
@@ -648,7 +644,7 @@ public class SteamLobbyManager : MonoBehaviour
         if (!IsInLobby || _currentLobbyId != lobby.Id)
             return;
 
-        Debug.Log($"SteamLobbyManager: Member left - {friend.Name} ({friend.Id})");
+        LogDev($"Member left - {friend.Name} ({friend.Id})");
 
         // If the guest left, clear guest data from lobby
         if (IsHost && friend.Id.ToString() == GuestId)
@@ -663,7 +659,7 @@ public class SteamLobbyManager : MonoBehaviour
         // If we're the guest and the host left, leave the lobby
         if (!IsHost && friend.Id.ToString() == HostId)
         {
-            Debug.Log("SteamLobbyManager: Host left, leaving lobby...");
+            LogDev("Host left, leaving lobby...");
             LeaveLobby();
             return;
         }
@@ -683,7 +679,7 @@ public class SteamLobbyManager : MonoBehaviour
         if (!IsInLobby || _currentLobbyId != lobby.Id)
             return;
 
-        Debug.Log($"SteamLobbyManager: Member data changed for {friend.Name} ({friend.Id})");
+        LogDev($"Member data changed for {friend.Name} ({friend.Id})");
 
         RefreshLobbyData();
         LobbyDataChanged?.Invoke();
@@ -722,16 +718,14 @@ public class SteamLobbyManager : MonoBehaviour
         var transport = FindFirstObjectByType<SteamP2PTransport>();
         if (transport == null)
         {
-            Debug.LogWarning("SteamLobbyManager: No SteamP2PTransport found; cannot start match.");
+            LogDevWarning("No SteamP2PTransport found; cannot start match.");
             return;
         }
 
         SteamId remoteId = RemotePlayerId;
         if (remoteId.Value == 0)
         {
-            Debug.LogWarning(
-                "SteamLobbyManager: Remote player ID not set; cannot configure transport."
-            );
+            LogDevWarning("Remote player ID not set; cannot configure transport.");
             return;
         }
 
@@ -756,9 +750,7 @@ public class SteamLobbyManager : MonoBehaviour
         {
             // Guest marks as ready to receive
             _p2pHeaderSent = true;
-            Debug.Log(
-                "SteamLobbyManager: Guest transport configured, waiting for session header from host."
-            );
+            LogDev("Guest transport configured, waiting for session header from host.");
         }
     }
 
@@ -775,9 +767,7 @@ public class SteamLobbyManager : MonoBehaviour
 
         if (string.IsNullOrEmpty(hostId) || string.IsNullOrEmpty(guestId))
         {
-            Debug.LogWarning(
-                "SteamLobbyManager: Cannot send session header – hostId or guestId missing."
-            );
+            LogDevWarning("Cannot send session header – hostId or guestId missing.");
             return;
         }
 
@@ -785,9 +775,7 @@ public class SteamLobbyManager : MonoBehaviour
         var transport = FindFirstObjectByType<SteamP2PTransport>();
         if (transport == null)
         {
-            Debug.LogWarning(
-                "SteamLobbyManager: No SteamP2PTransport found; cannot send session header."
-            );
+            LogDevWarning("No SteamP2PTransport found; cannot send session header.");
             return;
         }
 
@@ -815,13 +803,11 @@ public class SteamLobbyManager : MonoBehaviour
         var matchManager = FindFirstObjectByType<NetworkMatchManager>();
         if (matchManager == null)
         {
-            Debug.LogWarning(
-                "SteamLobbyManager: No NetworkMatchManager found; cannot send session header."
-            );
+            LogDevWarning("No NetworkMatchManager found; cannot send session header.");
             return;
         }
 
-        Debug.Log("SteamLobbyManager: Sending NetSessionHeader via P2P transport.");
+        LogDev("Sending NetSessionHeader via P2P transport.");
         matchManager.SendSessionHeader(header);
         _p2pHeaderSent = true;
     }

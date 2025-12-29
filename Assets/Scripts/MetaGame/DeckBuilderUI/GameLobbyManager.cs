@@ -289,16 +289,12 @@ public class GameLobbyManager : MonoBehaviour
         }
 
         // Update player names
+        // Layout is consistent for both players: Host on left, Guest on right
         if (hostNameText != null)
             hostNameText.text = _lobby.HostName ?? "Host";
 
         if (peerNameText != null)
-        {
-            if (_lobby.IsHost)
-                peerNameText.text = _lobby.HasGuest ? (_lobby.GuestName ?? "Guest") : "Waiting...";
-            else
-                peerNameText.text = _lobby.HostName ?? "Host";
-        }
+            peerNameText.text = _lobby.HasGuest ? (_lobby.GuestName ?? "Guest") : "Waiting...";
 
         // Update ready indicators
         UpdateReadyIndicator(hostReadyIndicator, _lobby.HostReady, true);
@@ -369,36 +365,27 @@ public class GameLobbyManager : MonoBehaviour
             }
         }
 
-        // Load guest/peer avatar
+        // Load guest avatar (peer slot always shows the guest, regardless of who's viewing)
         if (peerImage != null)
         {
-            SteamId peerId;
-            if (_lobby.IsHost)
-            {
-                // We're host, peer is guest
-                peerId = GetSteamIdFromString(_lobby.GuestId);
-            }
-            else
-            {
-                // We're guest, peer is host
-                peerId = GetSteamIdFromString(_lobby.HostId);
-            }
+            SteamId guestId = GetSteamIdFromString(_lobby.GuestId);
 
-            bool needsPeerAvatar =
-                peerId.Value != 0 && (peerImage.texture == null || peerId != _loadedGuestAvatarId);
+            bool needsGuestAvatar =
+                guestId.Value != 0
+                && (peerImage.texture == null || guestId != _loadedGuestAvatarId);
 
-            if (needsPeerAvatar)
+            if (needsGuestAvatar)
             {
-                var peerAvatar = await SteamFriends.GetLargeAvatarAsync(peerId);
-                if (peerAvatar.HasValue)
+                var guestAvatar = await SteamFriends.GetLargeAvatarAsync(guestId);
+                if (guestAvatar.HasValue)
                 {
-                    peerImage.texture = CreateTextureFromImage(peerAvatar.Value);
-                    _loadedGuestAvatarId = peerId;
+                    peerImage.texture = CreateTextureFromImage(guestAvatar.Value);
+                    _loadedGuestAvatarId = guestId;
                 }
             }
-            else if (peerId.Value == 0)
+            else if (guestId.Value == 0)
             {
-                // No peer yet, clear the image
+                // No guest yet, clear the image
                 peerImage.texture = null;
             }
         }
@@ -473,11 +460,6 @@ public class GameLobbyManager : MonoBehaviour
         if (_lobby != null)
             _lobby.LeaveLobby();
 
-        // IMPORTANT:
-        // Do NOT deactivate this GameObject here. If we do, re-enabling the parent
-        // (gameLobbyRoot) later will not re-enable this child, and the lobby UI
-        // will appear "stuck" in a cleared state on subsequent lobbies.
-        // DeckHubManager.HandleLobbyLeft() controls visibility of the lobby root.
         ResetUIToDefaults();
         _isReady = false;
         UpdateReadyLabel();
