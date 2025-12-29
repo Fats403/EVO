@@ -39,8 +39,20 @@ public class SteamP2PTransport : MonoBehaviour, IMatchTransport
     public bool IsHost => _isHost;
     public bool IsConnected { get; private set; }
 
+    /// <summary>
+    /// True if the host has an active client connection, or if the guest is connected to the host.
+    /// Use this to check if messages can actually be sent (vs just having a socket open).
+    /// </summary>
+    public bool HasActiveConnection =>
+        _isHost ? _activeConnection.HasValue : (_connectionManager?.Connected ?? false);
+
     public event Action<byte[]> OnDataReceived;
     public event Action OnDisconnected;
+
+    /// <summary>
+    /// Raised when the transport becomes fully connected (host: client connected, guest: connected to host).
+    /// </summary>
+    public event Action OnConnected;
 
     private void OnEnable()
     {
@@ -148,8 +160,7 @@ public class SteamP2PTransport : MonoBehaviour, IMatchTransport
             _socketManager = SteamNetworkingSockets.CreateRelaySocket<GameSocketManager>(
                 virtualPort
             );
-            var gameSocketManager = _socketManager as GameSocketManager;
-            if (gameSocketManager != null)
+            if (_socketManager is GameSocketManager gameSocketManager)
             {
                 gameSocketManager.Initialize(this);
             }
@@ -181,8 +192,7 @@ public class SteamP2PTransport : MonoBehaviour, IMatchTransport
                 _remoteSteamId,
                 virtualPort
             );
-            var gameConnectionManager = _connectionManager as GameConnectionManager;
-            if (gameConnectionManager != null)
+            if (_connectionManager is GameConnectionManager gameConnectionManager)
             {
                 gameConnectionManager.Initialize(this);
             }
@@ -288,6 +298,9 @@ public class SteamP2PTransport : MonoBehaviour, IMatchTransport
 
         _activeConnection = connection;
         IsConnected = true;
+
+        // Notify listeners that we now have an active connection
+        OnConnected?.Invoke();
     }
 
     internal void HandleClientDisconnected(Connection connection, ConnectionInfo info)
@@ -313,6 +326,9 @@ public class SteamP2PTransport : MonoBehaviour, IMatchTransport
         }
 
         IsConnected = true;
+
+        // Notify listeners that we're now connected
+        OnConnected?.Invoke();
     }
 
     internal void HandleDisconnectedFromServer(ConnectionInfo info)

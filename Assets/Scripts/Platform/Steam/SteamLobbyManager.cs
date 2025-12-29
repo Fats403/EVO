@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Steamworks;
 using Steamworks.Data;
@@ -506,9 +507,16 @@ public class SteamLobbyManager : MonoBehaviour
 
         // Disconnect transport if active
         var transport = FindFirstObjectByType<SteamP2PTransport>();
-        if (transport != null && transport.IsConnected)
+        if (transport != null)
         {
-            transport.Disconnect();
+            // Unsubscribe from events before disconnecting
+            transport.OnDataReceived -= HandleTransportDataReceived;
+            transport.OnConnected -= HandleTransportConnected;
+
+            if (transport.IsConnected)
+            {
+                transport.Disconnect();
+            }
         }
 
         // Clear the network session store
@@ -729,28 +737,42 @@ public class SteamLobbyManager : MonoBehaviour
             return;
         }
 
+        // Subscribe to transport events before configuring
+        transport.OnDataReceived -= HandleTransportDataReceived;
+        transport.OnDataReceived += HandleTransportDataReceived;
+        transport.OnConnected -= HandleTransportConnected;
+        transport.OnConnected += HandleTransportConnected;
+
         // Configure transport based on role
         if (IsHost)
         {
             transport.ConfigureAsHost(remoteId);
+            // Host will send session header when guest connects (via OnConnected)
+            LogDev("Host transport configured, waiting for guest to connect...");
         }
         else
         {
             transport.ConfigureAsGuest(remoteId);
-        }
-
-        NetworkSessionStore.CurrentTransport = transport;
-
-        // Only the host sends the session header
-        if (IsHost)
-        {
-            TrySendSessionHeaderIfReady();
-        }
-        else
-        {
             // Guest marks as ready to receive
             _p2pHeaderSent = true;
             LogDev("Guest transport configured, waiting for session header from host.");
+        }
+
+        NetworkSessionStore.CurrentTransport = transport;
+    }
+
+    /// <summary>
+    /// Called when the transport establishes an active connection.
+    /// For host: guest has connected. For guest: connected to host.
+    /// </summary>
+    private void HandleTransportConnected()
+    {
+        LogDev("Transport connection established.");
+
+        // Host sends session header now that guest is connected
+        if (IsHost && !_p2pHeaderSent)
+        {
+            TrySendSessionHeaderIfReady();
         }
     }
 
@@ -771,20 +793,28 @@ public class SteamLobbyManager : MonoBehaviour
             return;
         }
 
-        // Configure the P2P transport with the guest's Steam ID
-        var transport = FindFirstObjectByType<SteamP2PTransport>();
+        var transport = NetworkSessionStore.CurrentTransport as SteamP2PTransport;
         if (transport == null)
         {
-            LogDevWarning("No SteamP2PTransport found; cannot send session header.");
+            LogDevWarning("Transport not available; cannot send session header.");
             return;
         }
 
-        transport.ConfigureAsHost(RemotePlayerId);
-        NetworkSessionStore.CurrentTransport = transport;
+        if (!transport.HasActiveConnection)
+        {
+            LogDevWarning("Transport has no active connection; cannot send session header.");
+            return;
+        }
 
         var lobby = new Lobby(_currentLobbyId);
 
-        // Build the session header
+        // Build host deck array from SelectedDeckStore
+        var hostDeckList = SelectedDeckStore.Cards;
+        var hostDeck = hostDeckList
+            .Select(e => new DeckCardEntry { cardId = e.cardId, count = e.count })
+            .ToArray();
+
+        // Build the session header with full deck data
         var header = new NetSessionHeader
         {
             protocolVersion = 1,
@@ -794,21 +824,171 @@ public class SteamLobbyManager : MonoBehaviour
             hostId = hostId,
             guestId = guestId,
             localRole = SlotOwner.Player1,
-            hostDeckId = lobby.GetData(KeyHostDeckId) ?? "",
+            hostDeckId = SelectedDeckStore.DeckId ?? "",
             guestDeckId = lobby.GetData(KeyGuestDeckId) ?? "",
-            hostDeck = Array.Empty<DeckCardEntry>(),
+            hostDeck = hostDeck,
             guestDeck = Array.Empty<DeckCardEntry>(),
         };
 
-        var matchManager = FindFirstObjectByType<NetworkMatchManager>();
-        if (matchManager == null)
+        // Store the header (will be updated with guest deck when ACK received)
+        NetworkSessionStore.CurrentHeader = header;
+
+        // Serialize and send the header
+        var payload = NetSerialization.SerializeNetSessionHeader(header);
+        var msg = new NetMessage
         {
-            LogDevWarning("No NetworkMatchManager found; cannot send session header.");
+            type = NetMessageType.SessionHeader,
+            sequenceId = 0,
+            payload = payload,
+        };
+
+        var bytes = NetSerialization.SerializeNetMessage(msg);
+        transport.Send(bytes);
+
+        LogDev(
+            $"Sent NetSessionHeader with {hostDeck.Length} host deck entries, RNG seed={header.rngSeed}"
+        );
+        _p2pHeaderSent = true;
+    }
+
+    // -------------------------------------------------------------------------
+    // Network Message Handling
+    // -------------------------------------------------------------------------
+
+    private void HandleTransportDataReceived(byte[] data)
+    {
+        if (!NetSerialization.TryDeserializeNetMessage(data, out var msg))
+        {
+            LogDevWarning("Received malformed NetMessage.");
             return;
         }
 
-        LogDev("Sending NetSessionHeader via P2P transport.");
-        matchManager.SendSessionHeader(header);
-        _p2pHeaderSent = true;
+        switch (msg.type)
+        {
+            case NetMessageType.SessionHeader:
+                HandleSessionHeaderReceived(msg.payload);
+                break;
+            case NetMessageType.SessionAck:
+                HandleSessionAckReceived(msg.payload);
+                break;
+            default:
+                LogDev($"Received message type {msg.type} – not handled in lobby phase.");
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Guest receives the session header from host, stores it, and sends ACK with their deck.
+    /// </summary>
+    private void HandleSessionHeaderReceived(byte[] payload)
+    {
+        if (IsHost)
+        {
+            LogDevWarning(
+                "Host received SessionHeader – ignoring (only guest should receive this)."
+            );
+            return;
+        }
+
+        if (!NetSerialization.TryDeserializeNetSessionHeader(payload, out var header))
+        {
+            Debug.LogError("SteamLobbyManager: Failed to deserialize SessionHeader.");
+            return;
+        }
+
+        LogDev(
+            $"Received SessionHeader: rngSeed={header.rngSeed}, hostDeck={header.hostDeck?.Length ?? 0} entries"
+        );
+
+        // Initialize RNG with host's seed
+        DeterministicRng.Initialize(header.rngSeed);
+
+        // Set guest's role
+        header.localRole = SlotOwner.Player2;
+
+        // Fill in guest's deck from SelectedDeckStore
+        header.guestDeck = SelectedDeckStore
+            .Cards.Select(e => new DeckCardEntry { cardId = e.cardId, count = e.count })
+            .ToArray();
+
+        // Store the complete header
+        NetworkSessionStore.CurrentHeader = header;
+
+        // Send ACK back to host with our deck
+        SendSessionAck(header.guestDeck);
+
+        // Transition to game scene
+        TransitionToGameScene();
+    }
+
+    /// <summary>
+    /// Host receives the session ACK from guest containing their deck.
+    /// </summary>
+    private void HandleSessionAckReceived(byte[] payload)
+    {
+        if (!IsHost)
+        {
+            LogDevWarning("Guest received SessionAck – ignoring (only host should receive this).");
+            return;
+        }
+
+        // Deserialize the guest deck from the ACK
+        var guestDeck = NetSerialization.DeserializeDeckEntries(payload);
+
+        LogDev($"Received SessionAck with {guestDeck.Length} guest deck entries");
+
+        // Update our stored header with guest's deck
+        if (NetworkSessionStore.CurrentHeader.HasValue)
+        {
+            var header = NetworkSessionStore.CurrentHeader.Value;
+            header.guestDeck = guestDeck;
+            NetworkSessionStore.CurrentHeader = header;
+        }
+
+        // Transition to game scene
+        TransitionToGameScene();
+    }
+
+    /// <summary>
+    /// Sends the SessionAck message with the guest's deck data.
+    /// </summary>
+    private void SendSessionAck(DeckCardEntry[] guestDeck)
+    {
+        var transport = NetworkSessionStore.CurrentTransport;
+        if (transport == null || !transport.IsConnected)
+        {
+            Debug.LogError("SteamLobbyManager: Cannot send SessionAck – transport not connected.");
+            return;
+        }
+
+        var payload = NetSerialization.SerializeDeckEntries(guestDeck);
+        var msg = new NetMessage
+        {
+            type = NetMessageType.SessionAck,
+            sequenceId = 0,
+            payload = payload,
+        };
+
+        var bytes = NetSerialization.SerializeNetMessage(msg);
+        transport.Send(bytes);
+
+        LogDev($"Sent SessionAck with {guestDeck.Length} deck entries");
+    }
+
+    /// <summary>
+    /// Unsubscribes from transport events and loads the game scene.
+    /// </summary>
+    private void TransitionToGameScene()
+    {
+        // Unsubscribe from transport events (will re-subscribe in game scene)
+        var transport = NetworkSessionStore.CurrentTransport as SteamP2PTransport;
+        if (transport != null)
+        {
+            transport.OnDataReceived -= HandleTransportDataReceived;
+            transport.OnConnected -= HandleTransportConnected;
+        }
+
+        LogDev("Transitioning to MainScene...");
+        SceneTransitionManager.Instance.LoadScene("MainScene");
     }
 }

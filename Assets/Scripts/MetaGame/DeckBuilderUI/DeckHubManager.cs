@@ -492,7 +492,7 @@ public class DeckHubManager : MonoBehaviour
     /// Called by the \"Create Lobby\" button. Creates a Steam lobby for a
     /// head-to-head match using the currently selected deck.
     /// </summary>
-    public void OnClick_CreateLobby()
+    public async void OnClick_CreateLobby()
     {
         if (_selectedSlot == null || !_selectedSlot.HasDeck)
         {
@@ -504,6 +504,21 @@ public class DeckHubManager : MonoBehaviour
         {
             Debug.LogError("DeckHubManager: SteamLobbyManager instance not found.");
             return;
+        }
+
+        // Load the full deck into SelectedDeckStore before creating the lobby
+        bool loaded = await LoadDeckIntoStoreAsync(_selectedSlot);
+        if (!loaded)
+        {
+            Debug.LogError("DeckHubManager: Failed to load deck for lobby creation.");
+            return;
+        }
+
+        // Host picks the RNG seed for this match
+        if (!DeterministicRng.IsInitialized)
+        {
+            int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            DeterministicRng.Initialize(seed);
         }
 
         // Start lobby creation - UI will be swapped in HandleLobbyEntered when lobby is ready
@@ -547,6 +562,14 @@ public class DeckHubManager : MonoBehaviour
         if (lobby == null)
         {
             Debug.LogError("DeckHubManager: SteamLobbyManager instance not found.");
+            return;
+        }
+
+        // Load the full deck into SelectedDeckStore before joining the lobby
+        bool loaded = await LoadDeckIntoStoreAsync(_selectedSlot);
+        if (!loaded)
+        {
+            Debug.LogError("DeckHubManager: Failed to load deck for lobby join.");
             return;
         }
 
@@ -816,18 +839,23 @@ public class DeckHubManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Loads the selected deck from Firestore into the SelectedDeckStore and
-    /// transitions to the main gameplay scene in constructed mode.
+    /// Loads the full deck data from Firestore and stores it in SelectedDeckStore.
+    /// Used by both CreateLobby (host) and JoinLobby (guest) to prepare deck data
+    /// for the network handshake.
     /// </summary>
-    private async Task StartGameWithDeckAsync(DeckSlotUI slot)
+    /// <returns>True if the deck was loaded successfully.</returns>
+    private async Task<bool> LoadDeckIntoStoreAsync(DeckSlotUI slot)
     {
         if (slot == null || string.IsNullOrEmpty(slot.DeckId))
-            return;
+        {
+            Debug.LogError("DeckHubManager: Cannot load deck – invalid slot or deck ID.");
+            return false;
+        }
 
         if (Firebase == null || Firebase.CurrentUser == null)
         {
-            Debug.LogError("DeckHubManager: Cannot start game – no Firebase user.");
-            return;
+            Debug.LogError("DeckHubManager: Cannot load deck – no Firebase user.");
+            return false;
         }
 
         var db = Firebase.Db;
@@ -842,8 +870,8 @@ public class DeckHubManager : MonoBehaviour
             var snap = await docRef.GetSnapshotAsync();
             if (!snap.Exists)
             {
-                Debug.LogError("DeckHubManager: Selected deck does not exist.");
-                return;
+                Debug.LogError("DeckHubManager: Selected deck does not exist in Firestore.");
+                return false;
             }
 
             var dict = snap.ToDictionary();
@@ -878,22 +906,39 @@ public class DeckHubManager : MonoBehaviour
             }
 
             SelectedDeckStore.SetConstructedDeck(slot.DeckId, name, slot.slotIndex, entries);
-
-            // Ensure the deterministic RNG is initialised for this run if it
-            // has not already been set (e.g., for constructed play without
-            // going through the draft flow).
-            if (!DeterministicRng.IsInitialized)
-            {
-                int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-                DeterministicRng.Initialize(seed);
-            }
-
-            SceneTransitionManager.Instance.LoadScene("MainScene");
+            Debug.Log(
+                $"DeckHubManager: Loaded deck '{name}' with {entries.Count} unique cards into store."
+            );
+            return true;
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"DeckHubManager: Failed to start game with deck: {e.Message}");
+            Debug.LogError($"DeckHubManager: Failed to load deck into store: {e.Message}");
+            return false;
         }
+    }
+
+    /// <summary>
+    /// Loads the selected deck from Firestore into the SelectedDeckStore and
+    /// transitions to the main gameplay scene in constructed mode.
+    /// </summary>
+    private async Task StartGameWithDeckAsync(DeckSlotUI slot)
+    {
+        // Reuse the shared loading logic
+        bool loaded = await LoadDeckIntoStoreAsync(slot);
+        if (!loaded)
+            return;
+
+        // Ensure the deterministic RNG is initialised for this run if it
+        // has not already been set (e.g., for constructed play without
+        // going through the draft flow).
+        if (!DeterministicRng.IsInitialized)
+        {
+            int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            DeterministicRng.Initialize(seed);
+        }
+
+        SceneTransitionManager.Instance.LoadScene("MainScene");
     }
 
     private void Update()

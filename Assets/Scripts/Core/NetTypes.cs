@@ -46,6 +46,7 @@ public enum NetMessageType : byte
     Unknown = 0,
     SessionHeader = 1,
     InputAction = 2,
+    SessionAck = 3,
 }
 
 /// <summary>
@@ -92,5 +93,3 @@ public static class NetworkSessionStore
         CurrentTransport = null;
     }
 }
-
-
