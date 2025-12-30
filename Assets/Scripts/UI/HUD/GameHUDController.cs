@@ -46,6 +46,13 @@ public class GameHUDController : MonoBehaviour
     public TextMeshProUGUI player2ScoreText;
     public float gameOverFadeDuration = 0.75f;
 
+    [Header("Opponent Deck (Networked)")]
+    [Tooltip("Label showing the opponent's current hand size in networked games.")]
+    public TextMeshProUGUI opponentHandLabel;
+
+    [Tooltip("Label showing the opponent's remaining deck size in networked games.")]
+    public TextMeshProUGUI opponentDeckLabel;
+
     // Cached state from GameManager events
     private GamePhase _currentPhase;
     private int _currentRound;
@@ -54,6 +61,8 @@ public class GameHUDController : MonoBehaviour
     private bool _isGameOver;
     private int _p1Momentum;
     private int _p2Momentum;
+
+    private OpponentDeckTracker _opponentTracker;
 
     private void Awake()
     {
@@ -94,6 +103,16 @@ public class GameHUDController : MonoBehaviour
             toggleLogButton.onClick.AddListener(OnToggleLogClicked);
         }
 
+        // Subscribe to opponent deck tracker in networked games
+        if (NetworkSessionStore.IsNetworkedGame)
+        {
+            _opponentTracker = OpponentDeckTracker.Instance;
+            if (_opponentTracker != null)
+            {
+                _opponentTracker.OnStateChanged += HandleOpponentDeckChanged;
+            }
+        }
+
         InitializeCanvasVisibility();
 
         // Initialize HUD from current GameManager state (in case we enable mid-game).
@@ -128,6 +147,12 @@ public class GameHUDController : MonoBehaviour
         if (toggleLogButton != null)
         {
             toggleLogButton.onClick.RemoveListener(OnToggleLogClicked);
+        }
+
+        if (_opponentTracker != null)
+        {
+            _opponentTracker.OnStateChanged -= HandleOpponentDeckChanged;
+            _opponentTracker = null;
         }
     }
 
@@ -214,6 +239,35 @@ public class GameHUDController : MonoBehaviour
         UpdatePhaseStatusText();
         UpdateMomentumUI();
         UpdateEndTurnButtonState();
+        RefreshOpponentDeckUI();
+    }
+
+    private void HandleOpponentDeckChanged()
+    {
+        RefreshOpponentDeckUI();
+    }
+
+    /// <summary>
+    /// Updates opponent hand/deck UI in networked games, if labels are assigned.
+    /// </summary>
+    private void RefreshOpponentDeckUI()
+    {
+        if (!NetworkSessionStore.IsNetworkedGame)
+            return;
+
+        var tracker = OpponentDeckTracker.Instance;
+        if (tracker == null)
+            return;
+
+        if (opponentHandLabel != null)
+        {
+            opponentHandLabel.text = tracker.HandSize.ToString();
+        }
+
+        if (opponentDeckLabel != null)
+        {
+            opponentDeckLabel.text = tracker.DeckRemaining.ToString();
+        }
     }
 
     private void InitializeCanvasVisibility()
@@ -275,8 +329,9 @@ public class GameHUDController : MonoBehaviour
             case GamePhase.Place:
                 if (_awaitingOwner.HasValue)
                 {
-                    phaseText.text =
-                        _awaitingOwner.Value == SlotOwner.Player1 ? "Your Turn" : "Player 2 Turn";
+                    // Use network-aware check for whose turn it is
+                    bool isLocalPlayerTurn = NetworkRoleHelper.IsLocalPlayer(_awaitingOwner.Value);
+                    phaseText.text = isLocalPlayerTurn ? "Your Turn" : "Opponent Turn";
                 }
                 else
                 {
@@ -304,11 +359,14 @@ public class GameHUDController : MonoBehaviour
             return;
         }
 
+        // Use network-aware check: is it the local player's turn and do they have momentum?
+        bool isLocalPlayerTurn =
+            _awaitingOwner.HasValue && NetworkRoleHelper.IsLocalPlayer(_awaitingOwner.Value);
+        int localMomentum =
+            NetworkRoleHelper.LocalRole == SlotOwner.Player1 ? _p1Momentum : _p2Momentum;
+
         bool playerTurnActive =
-            _currentPhase == GamePhase.Place
-            && _awaitingOwner.HasValue
-            && _awaitingOwner.Value == SlotOwner.Player1
-            && _p1Momentum > 0;
+            _currentPhase == GamePhase.Place && isLocalPlayerTurn && localMomentum > 0;
 
         endTurnButton.interactable = playerTurnActive;
 

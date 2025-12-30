@@ -35,7 +35,9 @@ public class PrimordialAwakeningGlobalEffect : GlobalEffectBase
         int oppScore = owner == SlotOwner.Player1 ? ScoreManager.player2 : ScoreManager.player1;
         if (myScore < oppScore)
         {
-            if (owner == SlotOwner.Player1)
+            // Only the local player draws cards. In networked games, the remote player
+            // handles their own draw on their client.
+            if (NetworkRoleHelper.IsLocalPlayer(owner))
             {
                 var dm = DeckManager.Instance;
                 if (dm != null)
@@ -48,11 +50,12 @@ public class PrimordialAwakeningGlobalEffect : GlobalEffectBase
                     }
                 }
             }
-            else if (AIManager.Instance != null)
+            else if (!NetworkSessionStore.IsNetworkedGame && AIManager.Instance != null)
             {
-                // Mirror player draw rules for AI: one draw if hand not full.
+                // AI mode only: mirror player draw rules for AI.
                 AIManager.Instance.TryDrawOneCard();
             }
+            // In networked games, the remote player's client handles their own draw.
         }
 
         remainingRounds = 0;

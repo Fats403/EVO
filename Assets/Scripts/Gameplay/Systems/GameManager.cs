@@ -80,6 +80,11 @@ public class GameManager : MonoBehaviour
         else
             Instance = this;
 
+        // Enable background execution so networked games continue to process
+        // messages even when the window loses focus. Without this, Unity pauses
+        // the game loop when not focused, causing network soft-locks.
+        Application.runInBackground = true;
+
         // Ensure the central deterministic RNG is initialised. If a seed has
         // already been chosen earlier in the session (e.g., in DeckHub), use
         // that; otherwise, pick a new seed and initialise the RNG.
@@ -160,7 +165,15 @@ public class GameManager : MonoBehaviour
     private IPlayerController player1Controller;
     private IPlayerController player2Controller;
 
+    // Network controller reference (null in AI mode)
+    private NetworkPlayerController _networkController;
+
     private GameAction lastActionReceived;
+
+    /// <summary>
+    /// Returns the network controller for the remote player, or null if not in networked mode.
+    /// </summary>
+    public NetworkPlayerController GetNetworkController() => _networkController;
 
     /// <summary>
     /// Enqueues a local action (typically from UI controllers) into the same
@@ -177,7 +190,8 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void SetPlayerActionLocked(SlotOwner owner, bool locked)
     {
-        if (owner == SlotOwner.Player1)
+        // Only apply action lock for the local player
+        if (NetworkRoleHelper.IsLocalPlayer(owner))
         {
             p1ActionLocked = locked;
         }
@@ -187,17 +201,46 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("[GameManager] Initialized in Phase: " + currentPhase + " | Seed: " + rngSeed);
 
-        // Initialize Controllers
-        player1Controller = new LocalHumanController();
-        player2Controller = new AIPlayerController(AIManager.Instance);
+        // Initialize Controllers based on game mode
+        if (NetworkSessionStore.IsNetworkedGame)
+        {
+            var header = NetworkSessionStore.CurrentHeader.Value;
+            bool isHost = header.localRole == SlotOwner.Player1;
+
+            if (isHost)
+            {
+                // Host is Player1, remote opponent is Player2
+                player1Controller = new LocalHumanController();
+                _networkController = new NetworkPlayerController(SlotOwner.Player2);
+                player2Controller = _networkController;
+            }
+            else
+            {
+                // Guest is Player2, remote host is Player1
+                _networkController = new NetworkPlayerController(SlotOwner.Player1);
+                player1Controller = _networkController;
+                player2Controller = new LocalHumanController();
+            }
+
+            Debug.Log($"[GameManager] Network mode: localRole={header.localRole}, isHost={isHost}");
+        }
+        else
+        {
+            // AI mode (existing behavior)
+            player1Controller = new LocalHumanController();
+            player2Controller = new AIPlayerController(AIManager.Instance);
+        }
 
         player1Controller.OnActionDecided += (action) => lastActionReceived = action;
         player2Controller.OnActionDecided += (action) => lastActionReceived = action;
 
         weatherVideoBackground?.ForceTo(WeatherType.Clear);
 
-        // Initialize AI deck/hand before the first round begins so both players follow the same rules.
-        AIManager.Instance?.BuildDeckAndDrawStartingHand();
+        // Initialize AI deck/hand before the first round begins (AI mode only)
+        if (!NetworkSessionStore.IsNetworkedGame)
+        {
+            AIManager.Instance?.BuildDeckAndDrawStartingHand();
+        }
 
         // If an external bootstrapper is responsible for deck initialisation
         // (constructed / draft decks provided via SelectedDeckStore), it will
@@ -232,12 +275,23 @@ public class GameManager : MonoBehaviour
     {
         if (isGameOver || currentPhase != GamePhase.Place)
             return;
-        if (!awaitingTurnOwner.HasValue || awaitingTurnOwner.Value != SlotOwner.Player1)
+
+        var localRole = NetworkRoleHelper.LocalRole;
+        if (!awaitingTurnOwner.HasValue || awaitingTurnOwner.Value != localRole)
             return;
 
-        // Treat the end-turn button as a local input source that queues a Pass
-        // action into the same pipeline as other controller decisions.
-        lastActionReceived = GameAction.CreatePass(SlotOwner.Player1);
+        // Route the pass through the LocalHumanController so it broadcasts
+        // to both the local GameManager AND the network (if in networked mode).
+        // Previously this directly set lastActionReceived which skipped networking.
+        if (GetPlayerController(localRole) is LocalHumanController human)
+        {
+            human.RequestPass();
+        }
+        else
+        {
+            // Fallback for non-human controllers (shouldn't happen for local player)
+            lastActionReceived = GameAction.CreatePass(localRole);
+        }
     }
 
     void OnToggleLogClicked()
@@ -280,9 +334,16 @@ public class GameManager : MonoBehaviour
             if (dm != null)
             {
                 dm.DrawCardsForRoundStart();
+
+                // In networked games, mirror the opponent's per-round draws so the
+                // tracker can keep their hand/deck counts roughly in sync.
+                if (NetworkSessionStore.IsNetworkedGame && OpponentDeckTracker.Instance != null)
+                {
+                    OpponentDeckTracker.Instance.OnOpponentDrew(dm.cardsPerRound);
+                }
             }
-            // Mirror per-round draws for the AI using the same rules from DeckManager.
-            if (AIManager.Instance != null)
+            // Mirror per-round draws for the AI using the same rules from DeckManager (AI mode only).
+            if (!NetworkSessionStore.IsNetworkedGame && AIManager.Instance != null)
             {
                 AIManager.Instance.DrawCardsForRoundStart();
             }
@@ -368,10 +429,19 @@ public class GameManager : MonoBehaviour
             {
                 controller.OnTurnUpdate();
 
-                // Auto-pass when out of momentum (P1 ONLY, AI handles this in its brain)
-                if (owner == SlotOwner.Player1 && !HasMomentum(owner) && !p1ActionLocked)
+                // Auto-pass when out of momentum (local player only, AI/network handles this themselves)
+                bool isLocalPlayer = NetworkRoleHelper.IsLocalPlayer(owner);
+                if (isLocalPlayer && !HasMomentum(owner) && !p1ActionLocked)
                 {
-                    HandlePass(owner);
+                    // Route through the controller to ensure network broadcast
+                    if (controller is LocalHumanController human)
+                    {
+                        human.RequestPass();
+                    }
+                    else
+                    {
+                        HandlePass(owner);
+                    }
                     yield break;
                 }
 
@@ -412,8 +482,10 @@ public class GameManager : MonoBehaviour
                 var slot = GetSlotByIndex(action.slotIndex);
                 if (CanPlayCreatureCard(cc, action.owner))
                 {
-                    // Success! Spawn the creature
-                    var creature = DeckManager.Instance.SpawnCreature(cc, slot);
+                    // Success! Spawn the creature with explicit owner from the action.
+                    // This is important for networked games where the guest places on
+                    // slots with owner=Player1 but the creature should be owned by Player2.
+                    var creature = DeckManager.Instance.SpawnCreature(cc, slot, action.owner);
                     if (creature != null)
                     {
                         // Wait for the preview routine to complete before ending the turn
@@ -421,14 +493,27 @@ public class GameManager : MonoBehaviour
                             OnCreaturePlayedDuringPlacementRoutine(creature)
                         );
 
-                        // Remove from hand (handled differently for P1 vs AI)
-                        if (action.owner == SlotOwner.Player1)
+                        // Remove from hand (handled differently for local vs remote)
+                        if (NetworkRoleHelper.IsLocalPlayer(action.owner))
                         {
                             // CardUI is already destroyed by the drag script
                         }
-                        else
+                        else if (!NetworkSessionStore.IsNetworkedGame)
                         {
-                            AIManager.Instance.RemoveCardFromHand(action.cardId);
+                            // AI mode: remove from AI hand
+                            AIManager.Instance?.RemoveCardFromHand(action.cardId);
+                        }
+                        // In network mode, the remote player's client handles their own hand
+
+                        // In networked games, notify the opponent deck tracker when the
+                        // remote player successfully plays a card from hand.
+                        if (
+                            NetworkSessionStore.IsNetworkedGame
+                            && !NetworkRoleHelper.IsLocalPlayer(action.owner)
+                            && OpponentDeckTracker.Instance != null
+                        )
+                        {
+                            OpponentDeckTracker.Instance.OnOpponentPlayed(action.cardId);
                         }
                     }
                 }
@@ -449,7 +534,7 @@ public class GameManager : MonoBehaviour
                 // effect using the chosen targets.
                 bool isManualConfirmForLocalPlayer =
                     ec.requiresManualSelection
-                    && action.owner == SlotOwner.Player1
+                    && NetworkRoleHelper.IsLocalPlayer(action.owner)
                     && ManualEffectSelectionController.Instance != null
                     && ManualEffectSelectionController.Instance.IsConfirming(ec, action.owner);
 
@@ -463,17 +548,31 @@ public class GameManager : MonoBehaviour
                     // Wait for the effect routine to complete before ending the turn
                     yield return StartCoroutine(PlayEffectCardRoutine(ec, action.owner, targets));
 
-                    if (action.owner != SlotOwner.Player1)
+                    // In AI mode, remove from AI hand; in network mode, remote cards are handled by their client
+                    if (
+                        !NetworkSessionStore.IsNetworkedGame
+                        && !NetworkRoleHelper.IsLocalPlayer(action.owner)
+                    )
                     {
-                        AIManager.Instance.RemoveCardFromHand(action.cardId);
+                        AIManager.Instance?.RemoveCardFromHand(action.cardId);
+                    }
+
+                    // In networked games, notify the tracker when the remote player plays an effect.
+                    if (
+                        NetworkSessionStore.IsNetworkedGame
+                        && !NetworkRoleHelper.IsLocalPlayer(action.owner)
+                        && OpponentDeckTracker.Instance != null
+                    )
+                    {
+                        OpponentDeckTracker.Instance.OnOpponentPlayed(action.cardId);
                     }
 
                     break;
                 }
 
-                // If it's a human playing a manual effect, momentum was spent in TryBeginManualEffectSelection
+                // If it's a local human playing a manual effect, momentum was spent in TryBeginManualEffectSelection
                 bool shouldSpend = !(
-                    ec.requiresManualSelection && action.owner == SlotOwner.Player1
+                    ec.requiresManualSelection && NetworkRoleHelper.IsLocalPlayer(action.owner)
                 );
 
                 if (
@@ -489,15 +588,29 @@ public class GameManager : MonoBehaviour
                     // Wait for the effect routine to complete before ending the turn
                     yield return StartCoroutine(PlayEffectCardRoutine(ec, action.owner, targets));
 
-                    if (action.owner != SlotOwner.Player1)
+                    // In AI mode, remove from AI hand; in network mode, remote cards are handled by their client
+                    if (
+                        !NetworkSessionStore.IsNetworkedGame
+                        && !NetworkRoleHelper.IsLocalPlayer(action.owner)
+                    )
                     {
-                        AIManager.Instance.RemoveCardFromHand(action.cardId);
+                        AIManager.Instance?.RemoveCardFromHand(action.cardId);
+                    }
+
+                    // In networked games, notify the tracker when the remote player plays an effect.
+                    if (
+                        NetworkSessionStore.IsNetworkedGame
+                        && !NetworkRoleHelper.IsLocalPlayer(action.owner)
+                        && OpponentDeckTracker.Instance != null
+                    )
+                    {
+                        OpponentDeckTracker.Instance.OnOpponentPlayed(action.cardId);
                     }
                 }
                 else
                 {
                     Debug.LogWarning($"GameManager: Effect action failed: {failureReason}");
-                    if (action.owner == SlotOwner.Player1)
+                    if (NetworkRoleHelper.IsLocalPlayer(action.owner))
                         p1ActionLocked = false;
                     CompleteTurnAction(action.owner); // Unlock turn
                 }
@@ -526,7 +639,7 @@ public class GameManager : MonoBehaviour
     {
         FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(owner)}: Your move");
 
-        if (owner == SlotOwner.Player1)
+        if (NetworkRoleHelper.IsLocalPlayer(owner))
         {
             FeedbackManager.Instance?.ShowGlobalAlert("Your Turn", GameColorPalette.AlertInfo);
         }
@@ -552,11 +665,11 @@ public class GameManager : MonoBehaviour
                 string ownerTag = FeedbackManager.TagOwner(owner);
                 FeedbackManager.Instance.Log($"{ownerTag} passed.");
             }
-            // For the AI, also surface a brief global alert so it's obvious that it passed.
-            if (owner == SlotOwner.Player2 && FeedbackManager.Instance != null)
+            // Show a brief global alert when the opponent passes so it's obvious
+            if (!NetworkRoleHelper.IsLocalPlayer(owner) && FeedbackManager.Instance != null)
             {
                 FeedbackManager.Instance.ShowGlobalAlert(
-                    "Player 2 passes",
+                    "Opponent passes",
                     GameColorPalette.AlertInfo
                 );
             }
@@ -601,9 +714,9 @@ public class GameManager : MonoBehaviour
         if (currentPhase != GamePhase.Place)
             return;
 
-        // Once a player card has been played, lock out additional P1 actions until
+        // Once a local player card has been played, lock out additional actions until
         // its preview/resolution finishes so turns truly alternate actions.
-        if (creature.owner == SlotOwner.Player1)
+        if (NetworkRoleHelper.IsLocalPlayer(creature.owner))
             p1ActionLocked = true;
 
         // NOTE: We no longer start the coroutine here because the turn loop (ExecuteTurn)
@@ -622,7 +735,7 @@ public class GameManager : MonoBehaviour
         if (hold > 0f)
             yield return new WaitForSeconds(hold);
 
-        if (creature.owner == SlotOwner.Player1)
+        if (NetworkRoleHelper.IsLocalPlayer(creature.owner))
             p1ActionLocked = false;
     }
 
@@ -651,10 +764,10 @@ public class GameManager : MonoBehaviour
         }
 
         // Manual-selection cards should not be resolved through this path for the
-        // human player unless targets are provided (which they are during confirmation).
+        // local player unless targets are provided (which they are during confirmation).
         if (
             card.requiresManualSelection
-            && owner == SlotOwner.Player1
+            && NetworkRoleHelper.IsLocalPlayer(owner)
             && (targets == null || !targets.Any())
         )
         {
@@ -677,7 +790,7 @@ public class GameManager : MonoBehaviour
 
         var list = targets != null ? targets.Where(c => c != null).ToList() : new List<Creature>();
 
-        if (owner == SlotOwner.Player1)
+        if (NetworkRoleHelper.IsLocalPlayer(owner))
             p1ActionLocked = true;
 
         // NOTE: We no longer start the coroutine here because the turn loop (ExecuteTurn)
@@ -709,7 +822,7 @@ public class GameManager : MonoBehaviour
         if (remaining > 0f)
             yield return new WaitForSeconds(remaining);
 
-        if (owner == SlotOwner.Player1)
+        if (NetworkRoleHelper.IsLocalPlayer(owner))
             p1ActionLocked = false;
     }
 
@@ -982,7 +1095,7 @@ public class GameManager : MonoBehaviour
 
         // For the local player, also prevent queuing multiple actions while a previous
         // card preview is still resolving.
-        if (owner == SlotOwner.Player1 && p1ActionLocked)
+        if (NetworkRoleHelper.IsLocalPlayer(owner) && p1ActionLocked)
         {
             failureReason = "You have already taken an action. Wait for the other player.";
             return false;
@@ -1069,7 +1182,7 @@ public class GameManager : MonoBehaviour
 
         // For the local player, also prevent queuing multiple actions while a previous
         // card preview is still resolving.
-        if (owner == SlotOwner.Player1 && p1ActionLocked)
+        if (NetworkRoleHelper.IsLocalPlayer(owner) && p1ActionLocked)
         {
             failureReason = "You have already taken an action. Wait for the other player.";
             return false;
@@ -1168,8 +1281,17 @@ public class GameManager : MonoBehaviour
 
     public void OnGameOverResetClicked()
     {
-        // Reload the current scene for a clean restart
-        // Scene activeScene = SceneManager.GetActiveScene();
+        // Clear network session if we were in a networked game
+        if (NetworkSessionStore.IsNetworkedGame)
+        {
+            NetworkSessionStore.CurrentTransport?.Disconnect();
+            NetworkSessionStore.Clear();
+        }
+
+        // Clear opponent tracker if present
+        OpponentDeckTracker.Instance?.Clear();
+
+        // Return to main menu
         SceneTransitionManager.Instance.LoadScene("MainMenu");
     }
 }

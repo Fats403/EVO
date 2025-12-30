@@ -2,9 +2,9 @@ using UnityEngine;
 
 /// <summary>
 /// Optional helper MonoBehaviour that owns the startup flow for constructed
-/// games. It reads the SelectedDeckStore (via a ConstructedDeckProvider),
-/// initialises the DeckManager, and then hands off to GameManager once the
-/// player's deck is ready.
+/// and networked games. It reads deck data from SelectedDeckStore or
+/// NetworkSessionStore, initialises the DeckManager, and then hands off to
+/// GameManager once the player's deck is ready.
 ///
 /// If this component is not present in a scene, GameManager falls back to
 /// its legacy startup behaviour so existing scenes continue to work.
@@ -28,24 +28,134 @@ public class GameSessionBootstrapper : MonoBehaviour
     private void Awake()
     {
         // Signal to GameManager that an external bootstrapper is responsible
-        // for constructed deck initialisation this session.
+        // for deck initialisation this session.
         GameManager.MarkExternallyBootstrapped();
     }
 
     private void Start()
     {
-        // For now we only bootstrap constructed games. Draft mode continues to be
-        // handled by GameManager directly until the draft flow is moved into the
-        // DeckHubScene.
-        if (SelectedDeckStore.Mode != GameStartMode.Constructed)
+        // Network mode takes priority - deck data comes from session header
+        if (NetworkSessionStore.IsNetworkedGame)
+        {
+            InitializeNetworkMode();
             return;
+        }
 
+        // Constructed mode (single player vs AI with a pre-built deck)
+        if (SelectedDeckStore.Mode == GameStartMode.Constructed)
+        {
+            InitializeConstructedMode();
+            return;
+        }
+
+        // No valid mode detected - let GameManager handle it
+        Debug.Log("GameSessionBootstrapper: No deck mode detected, deferring to GameManager.");
+    }
+
+    /// <summary>
+    /// Initializes decks for a networked game using data from the session header.
+    /// </summary>
+    private void InitializeNetworkMode()
+    {
+        if (gameManager == null)
+            gameManager = GameManager.Instance;
+
+        if (deckManager == null)
+            deckManager = DeckManager.Instance;
+
+        if (cardDatabase == null)
+            cardDatabase = gameManager?.cardDatabase;
+
+        if (deckManager == null || cardDatabase == null || gameManager == null)
+        {
+            Debug.LogError("GameSessionBootstrapper: Missing references for network mode.");
+            return;
+        }
+
+        var header = NetworkSessionStore.CurrentHeader.Value;
+        bool isHost = header.localRole == SlotOwner.Player1;
+
+        // Determine which deck is ours vs opponent's
+        var localDeckEntries = isHost ? header.hostDeck : header.guestDeck;
+
+        // For the host, the guest deck comes from the ACK and may be stored separately.
+        // For the guest, the host deck is already in the header.
+        DeckCardEntry[] remoteDeckEntries;
+        if (isHost)
+        {
+            // Host: Try to get guest deck from SteamLobbyManager (received via ACK)
+            // If not available there, fall back to header (which may be empty initially)
+            var lobbyManager = SteamLobbyManager.Instance;
+            var pendingGuestDeck = lobbyManager?.GetPendingGuestDeck();
+            remoteDeckEntries =
+                (pendingGuestDeck != null && pendingGuestDeck.Length > 0)
+                    ? pendingGuestDeck
+                    : header.guestDeck;
+        }
+        else
+        {
+            // Guest: Host deck is always in the header
+            remoteDeckEntries = header.hostDeck;
+        }
+
+        // Build local deck from entries
+        var localDef = new DeckDefinition();
+        if (localDeckEntries != null)
+        {
+            foreach (var entry in localDeckEntries)
+                localDef.cards.Add(entry);
+        }
+
+        var localCards = localDef.ToCardAssets(cardDatabase);
+        if (localCards.Count == 0)
+        {
+            Debug.LogError("GameSessionBootstrapper: Network deck contained no valid cards.");
+            return;
+        }
+
+        // Initialize local player's deck
+        deckManager.InitializeFromDraft(localCards);
+        deckManager.InitializeAndDraw();
+
+        // Initialize opponent tracker (if present in scene)
+        if (
+            OpponentDeckTracker.Instance != null
+            && remoteDeckEntries != null
+            && remoteDeckEntries.Length > 0
+        )
+        {
+            OpponentDeckTracker.Instance.Initialize(remoteDeckEntries);
+
+            // Assume the opponent drew their starting hand using the same rules as DeckManager.
+            // This keeps the opponent hand/deck counts in sync from turn 1.
+            OpponentDeckTracker.Instance.OnOpponentDrew(deckManager.startingHandSize);
+        }
+        else if (OpponentDeckTracker.Instance != null)
+        {
+            Debug.LogWarning(
+                "GameSessionBootstrapper: Could not initialize opponent tracker - remote deck data unavailable."
+            );
+        }
+
+        Debug.Log(
+            $"GameSessionBootstrapper: Network mode initialized. Local={localCards.Count} cards, isHost={isHost}"
+        );
+
+        // Hand off to game flow
+        gameManager.BeginGameWithReadyDeck();
+    }
+
+    /// <summary>
+    /// Initializes decks for a constructed (vs AI) game using SelectedDeckStore.
+    /// </summary>
+    private void InitializeConstructedMode()
+    {
         if (gameManager == null)
         {
             gameManager = GameManager.Instance;
         }
 
-        if (constructiveRefsInvalid())
+        if (ConstructiveRefsInvalid())
             return;
 
         // Build the deck definition from the store, then convert to concrete assets
@@ -74,7 +184,7 @@ public class GameSessionBootstrapper : MonoBehaviour
         gameManager.BeginGameWithReadyDeck();
     }
 
-    private bool constructiveRefsInvalid()
+    private bool ConstructiveRefsInvalid()
     {
         bool valid = true;
 

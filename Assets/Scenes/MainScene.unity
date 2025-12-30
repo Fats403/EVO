@@ -5503,7 +5503,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1204530484}
   m_Layer: 5
-  m_Name: Player1UI
+  m_Name: LocalPlayerUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5961,7 +5961,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1433047422}
   m_Layer: 5
-  m_Name: Player2UI
+  m_Name: OpponentUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7905,6 +7905,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2017726961}
   - component: {fileID: 2017726960}
+  - component: {fileID: 2017726962}
   m_Layer: 0
   m_Name: DeckManager
   m_TagString: Untagged
@@ -8063,6 +8064,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2017726962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2017726959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd8bda5035d654d7d88090625269cc71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OpponentDeckTracker
 --- !u!1 &2044170888
 GameObject:
   m_ObjectHideFlags: 0
@@ -8697,6 +8710,8 @@ MonoBehaviour:
   player1ScoreText: {fileID: 223432673}
   player2ScoreText: {fileID: 1167619538}
   gameOverFadeDuration: 0.75
+  opponentHandLabel: {fileID: 1442666412}
+  opponentDeckLabel: {fileID: 1606710267}
 --- !u!114 &2118664159
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -193,7 +193,7 @@ public class EffectsManager : MonoBehaviour
         // Feedback
         if (FeedbackManager.Instance != null)
         {
-            string who = player == SlotOwner.Player1 ? "P1" : "P2";
+            string who = NetworkRoleHelper.IsLocalPlayer(player) ? "You" : "Opponent";
             FeedbackManager.Instance.Log($"[{who}] played {card.effectName}");
         }
     }

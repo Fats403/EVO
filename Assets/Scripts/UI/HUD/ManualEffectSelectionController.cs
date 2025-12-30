@@ -189,7 +189,8 @@ public class ManualEffectSelectionController : MonoBehaviour
         if (!gameManager.CanPlayEffectCard(card, owner, out failureReason))
             return false;
 
-        if (owner == SlotOwner.Player1)
+        // Lock actions for the local player only
+        if (NetworkRoleHelper.IsLocalPlayer(owner))
             gameManager.SetPlayerActionLocked(owner, true);
 
         _state = new SelectionState
@@ -359,19 +360,28 @@ public class ManualEffectSelectionController : MonoBehaviour
             .Select(s => s.index)
             .ToList();
 
-        // Queue a normal PlayEffect action into the same pipeline used for all
-        // other controller decisions. We intentionally keep _state populated
-        // here so GameManager can detect this as a manual confirmation and
-        // avoid re-checking momentum that was already spent.
-        gameManager.EnqueueLocalAction(
-            new GameAction
-            {
-                type = GameActionType.PlayEffect,
-                owner = finalOwner,
-                cardId = finalCard.cardId,
-                targetSlotIndices = finalTargetIndices,
-            }
-        );
+        // Route through the LocalHumanController to ensure the action is broadcast
+        // to both the local GameManager AND the network (if in networked mode).
+        // We intentionally keep _state populated here so GameManager can detect
+        // this as a manual confirmation and avoid re-checking momentum that was
+        // already spent.
+        if (gameManager.GetPlayerController(finalOwner) is LocalHumanController human)
+        {
+            human.RequestPlayEffect(finalCard.cardId, finalTargetIndices);
+        }
+        else
+        {
+            // Fallback for non-human controllers (shouldn't happen for local player)
+            gameManager.EnqueueLocalAction(
+                new GameAction
+                {
+                    type = GameActionType.PlayEffect,
+                    owner = finalOwner,
+                    cardId = finalCard.cardId,
+                    targetSlotIndices = finalTargetIndices,
+                }
+            );
+        }
     }
 
     private void OnCancelClicked()
@@ -402,7 +412,7 @@ public class ManualEffectSelectionController : MonoBehaviour
         SetSelectionVisible(false);
 
         // Refund momentum and return the card to hand for the local player.
-        if (state.owner == SlotOwner.Player1)
+        if (NetworkRoleHelper.IsLocalPlayer(state.owner))
         {
             int refund = Mathf.Max(0, state.card != null ? state.card.momentumCost : 0);
             if (refund > 0 && gameManager != null)

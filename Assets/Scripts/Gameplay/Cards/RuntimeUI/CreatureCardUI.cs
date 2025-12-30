@@ -69,12 +69,17 @@ public class CreatureCardUI : BaseCardUI
         // Find closest board slot (world-space)
         BoardSlot closest = FindClosestSlot(eventData.position);
         bool placed = false;
+
+        // Use the local player's role for rules checks
+        var localRole = NetworkRoleHelper.LocalRole;
+
         if (
             closest != null
             && Vector2.Distance(closest.ScreenPosition, eventData.position) < highlightRadius
         )
         {
-            if (closest.owner == SlotOwner.Player1)
+            // Use visual slot check: both host and guest play on the bottom row (slots 0-4)
+            if (NetworkRoleHelper.IsLocalPlayerVisualSlot(closest))
             {
                 if (
                     GameManager.Instance != null
@@ -85,13 +90,13 @@ public class CreatureCardUI : BaseCardUI
                     if (
                         GameManager.Instance.CanPlayCreatureCardPreview(
                             Data,
-                            SlotOwner.Player1,
+                            localRole,
                             out string reason
                         )
                     )
                     {
                         if (
-                            GameManager.Instance.GetPlayerController(SlotOwner.Player1)
+                            GameManager.Instance.GetPlayerController(localRole)
                             is LocalHumanController human
                         )
                         {
@@ -181,8 +186,13 @@ public class CreatureCardUI : BaseCardUI
             return;
         }
 
+        // Use visual slot check: both host and guest hover on the bottom row (slots 0-4)
         float dist = Vector2.Distance(closest.ScreenPosition, screenPointer);
-        if (dist > highlightRadius || closest.owner != SlotOwner.Player1 || closest.occupied)
+        if (
+            dist > highlightRadius
+            || !NetworkRoleHelper.IsLocalPlayerVisualSlot(closest)
+            || closest.occupied
+        )
         {
             if (hoverSlot != null)
             {

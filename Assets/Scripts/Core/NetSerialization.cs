@@ -222,6 +222,43 @@ public static class NetSerialization
     }
 
     // -------------------------------------------------------------------------
+    // InputActionAck Serialization
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Serialises an InputActionAck payload containing only the acknowledged sequence ID.
+    /// </summary>
+    public static byte[] SerializeInputActionAck(int acknowledgedSequenceId)
+    {
+        using var ms = new MemoryStream();
+        using var bw = new BinaryWriter(ms);
+        bw.Write(acknowledgedSequenceId);
+        return ms.ToArray();
+    }
+
+    /// <summary>
+    /// Deserialises an InputActionAck payload to extract the acknowledged sequence ID.
+    /// </summary>
+    public static bool TryDeserializeInputActionAck(byte[] payload, out int acknowledgedSequenceId)
+    {
+        acknowledgedSequenceId = -1;
+        if (payload == null || payload.Length < 4)
+            return false;
+
+        try
+        {
+            using var ms = new MemoryStream(payload);
+            using var br = new BinaryReader(ms);
+            acknowledgedSequenceId = br.ReadInt32();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    // -------------------------------------------------------------------------
     // Private Helpers
     // -------------------------------------------------------------------------
 

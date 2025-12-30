@@ -220,7 +220,8 @@ public class DeckManager : MonoBehaviour
             if (ui != null)
             {
                 ui.Initialize(effectData);
-                ui.owner = SlotOwner.Player1;
+                // Use local player's role for card ownership
+                ui.owner = NetworkRoleHelper.LocalRole;
             }
         }
 
@@ -234,7 +235,21 @@ public class DeckManager : MonoBehaviour
         return cardObj;
     }
 
-    public Creature SpawnCreature(CreatureCard data, BoardSlot slot)
+    /// <summary>
+    /// Spawns a creature on the given board slot.
+    /// </summary>
+    /// <param name="data">The creature card data to spawn.</param>
+    /// <param name="slot">The target board slot.</param>
+    /// <param name="explicitOwner">
+    /// Optional explicit owner. If provided, overrides the slot's owner.
+    /// This is needed for networked games where the guest places on slots with
+    /// owner=Player1 but the creature should be owned by Player2.
+    /// </param>
+    public Creature SpawnCreature(
+        CreatureCard data,
+        BoardSlot slot,
+        SlotOwner? explicitOwner = null
+    )
     {
         if (creaturePrefab == null)
         {
@@ -255,7 +270,7 @@ public class DeckManager : MonoBehaviour
         );
         Creature creature = creatureObj.GetComponent<Creature>();
         creature.Initialize(data);
-        creature.owner = slot.owner;
+        creature.owner = explicitOwner ?? slot.owner;
         slot.Occupy(creature);
         GameManager.Instance?.OnCreaturePlayedDuringPlacement(creature);
         return creature;
@@ -414,21 +429,38 @@ public class DeckManager : MonoBehaviour
         if (drawPile == null || drawPile.Count <= 1)
             return;
 
-        for (int i = drawPile.Count - 1; i > 0; i--)
+        // In networked games, use a per-player sub-stream derived from the
+        // shared deterministic seed so that even identical decks produce
+        // different orders for each player while remaining deterministic.
+        if (NetworkSessionStore.IsNetworkedGame && DeterministicRng.IsInitialized)
         {
-            int j = 0;
-            if (GameManager.Instance == null)
+            int salt = NetworkRoleHelper.LocalRole == SlotOwner.Player1 ? 1 : 2;
+            var rnd = DeterministicRng.CreateSubRandom(salt);
+
+            for (int i = drawPile.Count - 1; i > 0; i--)
             {
-                Debug.LogWarning(
-                    "DeckManager: GameManager.Instance is null during ShuffleDrawPile. Determinism may be compromised."
-                );
-                j = UnityEngine.Random.Range(0, i + 1);
+                int j = rnd.Next(0, i + 1);
+                (drawPile[j], drawPile[i]) = (drawPile[i], drawPile[j]);
             }
-            else
+        }
+        else
+        {
+            for (int i = drawPile.Count - 1; i > 0; i--)
             {
-                j = GameManager.Instance.NextRandomInt(0, i + 1);
+                int j = 0;
+                if (GameManager.Instance == null)
+                {
+                    Debug.LogWarning(
+                        "DeckManager: GameManager.Instance is null during ShuffleDrawPile. Determinism may be compromised."
+                    );
+                    j = UnityEngine.Random.Range(0, i + 1);
+                }
+                else
+                {
+                    j = GameManager.Instance.NextRandomInt(0, i + 1);
+                }
+                (drawPile[j], drawPile[i]) = (drawPile[i], drawPile[j]);
             }
-            (drawPile[j], drawPile[i]) = (drawPile[i], drawPile[j]);
         }
     }
 }

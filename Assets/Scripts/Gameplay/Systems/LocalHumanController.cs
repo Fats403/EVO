@@ -1,10 +1,18 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
+/// <summary>
+/// IPlayerController implementation for the local human player.
+/// Handles input from UI (card drags, buttons) and broadcasts actions
+/// both locally and over the network in multiplayer mode.
+/// </summary>
 public class LocalHumanController : IPlayerController
 {
-    public SlotOwner Owner => SlotOwner.Player1;
+    /// <summary>
+    /// Returns the SlotOwner for the local player, which varies based on game mode.
+    /// </summary>
+    public SlotOwner Owner => NetworkRoleHelper.LocalRole;
+
     public event Action<GameAction> OnActionDecided;
 
     public void OnTurnStarted()
@@ -14,37 +22,72 @@ public class LocalHumanController : IPlayerController
 
     public void OnTurnUpdate()
     {
-        // No per-frame logic needed for now
+        // No per-frame logic needed
     }
 
     public void RequestPass()
     {
-        OnActionDecided?.Invoke(GameAction.CreatePass(Owner));
+        var action = GameAction.CreatePass(Owner);
+        BroadcastAction(action);
     }
 
     public void RequestPlayCreature(string cardId, int slotIndex)
     {
-        OnActionDecided?.Invoke(
-            new GameAction
-            {
-                type = GameActionType.PlayCreature,
-                owner = Owner,
-                cardId = cardId,
-                slotIndex = slotIndex,
-            }
-        );
+        var action = new GameAction
+        {
+            type = GameActionType.PlayCreature,
+            owner = Owner,
+            cardId = cardId,
+            slotIndex = slotIndex,
+        };
+        BroadcastAction(action);
     }
 
     public void RequestPlayEffect(string cardId, List<int> targetSlotIndices)
     {
-        OnActionDecided?.Invoke(
-            new GameAction
-            {
-                type = GameActionType.PlayEffect,
-                owner = Owner,
-                cardId = cardId,
-                targetSlotIndices = targetSlotIndices,
-            }
-        );
+        var action = new GameAction
+        {
+            type = GameActionType.PlayEffect,
+            owner = Owner,
+            cardId = cardId,
+            targetSlotIndices = targetSlotIndices,
+        };
+        BroadcastAction(action);
+    }
+
+    /// <summary>
+    /// Broadcasts an action to both the local GameManager and the network (if in networked mode).
+    /// </summary>
+    private void BroadcastAction(GameAction action)
+    {
+        // Notify local GameManager
+        OnActionDecided?.Invoke(action);
+
+        // Send to remote peer if in networked mode
+        if (NetworkSessionStore.IsNetworkedGame)
+        {
+            // Only the guest needs to mirror slot indices. The host's perspective is
+            // canonical, so guest actions are transformed to host coordinates for
+            // transmission. The host sends actions unmodified.
+            var networkAction = NetworkRoleHelper.IsGuest ? CreateMirroredAction(action) : action;
+            NetworkMatchManager.Instance?.SendInputAction(networkAction);
+        }
+    }
+
+    /// <summary>
+    /// Creates a copy of the action with slot indices mirrored for network transmission.
+    /// Used by the guest to convert local slot indices to the host's canonical view.
+    /// </summary>
+    private GameAction CreateMirroredAction(GameAction original)
+    {
+        var mirrored = new GameAction
+        {
+            type = original.type,
+            owner = original.owner,
+            cardId = original.cardId,
+            slotIndex = NetworkRoleHelper.MirrorSlotIndex(original.slotIndex),
+            targetSlotIndices = NetworkRoleHelper.MirrorSlotIndices(original.targetSlotIndices),
+        };
+        return mirrored;
     }
 }

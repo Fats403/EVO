@@ -109,7 +109,8 @@ public class CardPreviewManager : MonoBehaviour
         // Caption: who played what (forced previews only)
         if (forcedCaptionText != null)
         {
-            string who = creature.owner == SlotOwner.Player1 ? "You play" : "Player 2 plays";
+            // Use network-aware check for local vs opponent
+            string who = NetworkRoleHelper.IsLocalPlayer(creature.owner) ? "You play" : "Opponent plays";
             forcedCaptionText.text = $"{who} {creature.data.cardName}";
             forcedCaptionText.gameObject.SetActive(true);
         }
@@ -126,7 +127,8 @@ public class CardPreviewManager : MonoBehaviour
         // Caption: who played what (forced previews only)
         if (forcedCaptionText != null)
         {
-            string who = owner == SlotOwner.Player1 ? "You play" : "Player 2 plays";
+            // Use network-aware check for local vs opponent
+            string who = NetworkRoleHelper.IsLocalPlayer(owner) ? "You play" : "Opponent plays";
             forcedCaptionText.text = $"{who} {card.effectName}";
             forcedCaptionText.gameObject.SetActive(true);
         }

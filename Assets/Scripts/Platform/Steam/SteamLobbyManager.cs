@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using Steamworks;
@@ -914,11 +915,8 @@ public class SteamLobbyManager : MonoBehaviour
         // Store the complete header
         NetworkSessionStore.CurrentHeader = header;
 
-        // Send ACK back to host with our deck
-        SendSessionAck(header.guestDeck);
-
-        // Transition to game scene
-        TransitionToGameScene();
+        // Send ACK back to host with our deck (with retry logic)
+        StartCoroutine(SendSessionAckWithRetry(header.guestDeck));
     }
 
     /// <summary>
@@ -945,20 +943,77 @@ public class SteamLobbyManager : MonoBehaviour
             NetworkSessionStore.CurrentHeader = header;
         }
 
+        // Store the guest deck for later initialization of OpponentDeckTracker
+        // (will be picked up by GameSessionBootstrapper after scene load)
+        _pendingGuestDeck = guestDeck;
+
         // Transition to game scene
         TransitionToGameScene();
     }
 
     /// <summary>
-    /// Sends the SessionAck message with the guest's deck data.
+    /// Guest deck received from ACK, to be used for opponent tracker initialization.
     /// </summary>
-    private void SendSessionAck(DeckCardEntry[] guestDeck)
+    private DeckCardEntry[] _pendingGuestDeck;
+
+    /// <summary>
+    /// Returns the guest deck received from the ACK (host only), for use by GameSessionBootstrapper.
+    /// </summary>
+    public DeckCardEntry[] GetPendingGuestDeck() => _pendingGuestDeck;
+
+    /// <summary>
+    /// Coroutine that attempts to send SessionAck with retries, then transitions to game scene.
+    /// </summary>
+    private IEnumerator SendSessionAckWithRetry(DeckCardEntry[] guestDeck)
+    {
+        const int maxRetries = 10;
+        const float retryDelaySeconds = 0.3f;
+
+        for (int attempt = 0; attempt < maxRetries; attempt++)
+        {
+            if (TrySendSessionAck(guestDeck))
+            {
+                LogDev($"SessionAck sent successfully on attempt {attempt + 1}");
+                // Transition to game scene after successful ACK
+                TransitionToGameScene();
+                yield break;
+            }
+
+            LogDev(
+                $"SessionAck send attempt {attempt + 1} failed, retrying in {retryDelaySeconds}s..."
+            );
+            yield return new WaitForSeconds(retryDelaySeconds);
+        }
+
+        Debug.LogError(
+            $"SteamLobbyManager: Failed to send SessionAck after {maxRetries} attempts. "
+                + "The host may be stuck waiting. Consider leaving and rejoining the lobby."
+        );
+    }
+
+    /// <summary>
+    /// Attempts to send the SessionAck message. Returns true if sent successfully.
+    /// </summary>
+    private bool TrySendSessionAck(DeckCardEntry[] guestDeck)
     {
         var transport = NetworkSessionStore.CurrentTransport;
-        if (transport == null || !transport.IsConnected)
+        if (transport == null)
         {
-            Debug.LogError("SteamLobbyManager: Cannot send SessionAck – transport not connected.");
-            return;
+            LogDevWarning("TrySendSessionAck: Transport is null.");
+            return false;
+        }
+
+        if (!transport.IsConnected)
+        {
+            LogDevWarning("TrySendSessionAck: Transport not connected.");
+            return false;
+        }
+
+        // For SteamP2P, also check HasActiveConnection
+        if (transport is SteamP2PTransport steamTransport && !steamTransport.HasActiveConnection)
+        {
+            LogDevWarning("TrySendSessionAck: No active P2P connection yet.");
+            return false;
         }
 
         var payload = NetSerialization.SerializeDeckEntries(guestDeck);
@@ -973,6 +1028,7 @@ public class SteamLobbyManager : MonoBehaviour
         transport.Send(bytes);
 
         LogDev($"Sent SessionAck with {guestDeck.Length} deck entries");
+        return true;
     }
 
     /// <summary>

@@ -47,6 +47,7 @@ public enum NetMessageType : byte
     SessionHeader = 1,
     InputAction = 2,
     SessionAck = 3,
+    InputActionAck = 4,
 }
 
 /// <summary>
@@ -85,6 +86,12 @@ public static class NetworkSessionStore
     /// DeckHub challenge / invite flow and consumed by gameplay systems.
     /// </summary>
     public static IMatchTransport CurrentTransport { get; set; }
+
+    /// <summary>
+    /// Returns true if we are currently in a networked game with an active
+    /// session header and transport. Use this to check game mode.
+    /// </summary>
+    public static bool IsNetworkedGame => CurrentHeader.HasValue && CurrentTransport != null;
 
     /// <summary>Clears the current session and transport references.</summary>
     public static void Clear()

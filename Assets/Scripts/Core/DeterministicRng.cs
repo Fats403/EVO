@@ -48,6 +48,37 @@ public static class DeterministicRng
 
         return _rng.Next(minInclusive, maxExclusive);
     }
+
+    /// <summary>
+    /// Derives a stable sub-seed from the current session seed and a salt.
+    /// This is useful for creating independent deterministic streams (e.g.,
+    /// per-player deck shuffles) that are still fully determined by the
+    /// shared match seed.
+    /// </summary>
+    public static int DeriveSubSeed(int salt)
+    {
+        if (!_initialized)
+        {
+            int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            Initialize(seed);
+        }
+        unchecked
+        {
+            int h = _seed;
+            // FNV-style mixing with a small prime within 32-bit int range.
+            const int prime = 16777619;
+            h ^= salt * prime;
+            h ^= (h << 6) + (h >> 2);
+            return h;
+        }
+    }
+
+    /// <summary>
+    /// Creates a new System.Random instance using a sub-seed derived from the
+    /// current session seed and the given salt.
+    /// </summary>
+    public static System.Random CreateSubRandom(int salt)
+    {
+        return new System.Random(DeriveSubSeed(salt));
+    }
 }
-
-
