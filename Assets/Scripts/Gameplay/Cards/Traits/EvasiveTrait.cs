@@ -1,11 +1,8 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Traits/Avians/Evasive")]
 public class EvasiveTrait : Trait
 {
-    private static readonly HashSet<Creature> grantNextRound = new HashSet<Creature>();
-
     public override void OnDamageTaken(Creature self, Creature attacker, int finalDamage)
     {
         if (self == null)
@@ -14,28 +11,15 @@ public class EvasiveTrait : Trait
             return;
         if (self.HasStatus(StatusTag.Suppress))
             return;
-        // Flag to gain Stealth next round
-        grantNextRound.Add(self);
+
+        // Flag to gain Stealth next round (using per-creature state for determinism)
+        self.traitGrantEvasiveStealth = true;
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Evasive",
+            self.transform.position,
+            GameColorPalette.TextMuted
+        );
     }
 
-    public override void OnRoundStart(Creature self)
-    {
-        if (self == null)
-            return;
-        if (grantNextRound.Contains(self))
-        {
-            self.AddStatus(StatusTag.Stealth, 1);
-            grantNextRound.Remove(self);
-            FeedbackManager.Instance?.ShowFloatingText(
-                "Evasive",
-                self.transform.position,
-                GameColorPalette.TextWarning
-            );
-            FeedbackManager.Instance?.ShowFloatingText(
-                "Stealth",
-                self.transform.position,
-                GameColorPalette.TextMuted
-            );
-        }
-    }
+    // Stealth is granted in Creature.ResetRoundBookkeeping() at next round start
 }

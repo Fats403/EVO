@@ -201,6 +201,9 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("[GameManager] Initialized in Phase: " + currentPhase + " | Seed: " + rngSeed);
 
+        // Initialize action log for desync debugging
+        ActionLog.Instance?.Clear();
+
         // Initialize Controllers based on game mode
         if (NetworkSessionStore.IsNetworkedGame)
         {
@@ -470,6 +473,10 @@ public class GameManager : MonoBehaviour
     {
         if (action == null)
             yield break;
+
+        // Log action for desync debugging
+        bool wasLocal = NetworkRoleHelper.IsLocalPlayer(action.owner);
+        ActionLog.Instance?.LogAction(action, wasLocal);
 
         switch (action.type)
         {

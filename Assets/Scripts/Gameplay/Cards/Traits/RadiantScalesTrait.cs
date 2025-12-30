@@ -1,11 +1,8 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Traits/Herbivores/Radiant Scales")]
 public class RadiantScalesTrait : Trait
 {
-    private static readonly HashSet<Creature> grantNextRound = new HashSet<Creature>();
-
     public override void OnDamageTaken(Creature self, Creature attacker, int finalDamage)
     {
         if (self == null)
@@ -15,31 +12,14 @@ public class RadiantScalesTrait : Trait
         if (self.HasStatus(StatusTag.Suppress))
             return;
 
-        // If this takes 2+ damage in a single attack, flag Reflect for next round.
-        if (finalDamage >= 2)
-        {
-            grantNextRound.Add(self);
-        }
+        // Flag to gain Shielded next round (using per-creature state for determinism)
+        self.traitGrantRadiantShield = true;
+        FeedbackManager.Instance?.ShowFloatingText(
+            "Radiant Scales",
+            self.transform.position,
+            GameColorPalette.Shield
+        );
     }
 
-    public override void OnRoundStart(Creature self)
-    {
-        if (self == null)
-            return;
-        if (grantNextRound.Contains(self))
-        {
-            self.AddStatus(StatusTag.Reflect, 1);
-            grantNextRound.Remove(self);
-            FeedbackManager.Instance?.ShowFloatingText(
-                "Radiant Scales",
-                self.transform.position,
-                GameColorPalette.TextWarning
-            );
-            FeedbackManager.Instance?.ShowFloatingText(
-                "Reflect",
-                self.transform.position,
-                GameColorPalette.Reflect
-            );
-        }
-    }
+    // Shield is granted in Creature.ResetRoundBookkeeping() at next round start
 }

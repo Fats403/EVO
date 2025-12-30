@@ -1,18 +1,16 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Traits/Avians/Whirlwind")]
 public class WhirlwindTrait : Trait
 {
-    private static readonly HashSet<Creature> usedThisRound = new HashSet<Creature>();
-
     public override void OnAfterAttackResolved(Creature self, Creature target, bool wasNegated)
     {
         if (self == null)
             return;
         if (self.HasStatus(StatusTag.Suppress))
             return;
-        if (usedThisRound.Contains(self))
+        // Use per-creature flag instead of static HashSet for determinism
+        if (self.traitUsedWhirlwind)
             return;
         if (ResolutionManager.Instance == null)
             return;
@@ -22,7 +20,7 @@ public class WhirlwindTrait : Trait
         if (next == null)
             return;
 
-        usedThisRound.Add(self);
+        self.traitUsedWhirlwind = true;
         ResolutionManager.Instance.PerformImmediateAttack(
             self,
             next,
@@ -41,10 +39,5 @@ public class WhirlwindTrait : Trait
         );
     }
 
-    public override void OnRoundStart(Creature self)
-    {
-        if (self == null)
-            return;
-        usedThisRound.Remove(self);
-    }
+    // Per-creature flag is reset in Creature.ResetRoundBookkeeping() at round start
 }

@@ -1,19 +1,17 @@
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Traits/Carnivores/Bloodthirsty")]
 public class BloodthirstyTrait : Trait
 {
-    private static readonly HashSet<Creature> usedThisRound = new();
-
     public override void OnAfterKill(Creature self, Creature target)
     {
         if (self == null)
             return;
         if (self.HasStatus(StatusTag.Suppress))
             return;
-        if (usedThisRound.Contains(self))
+        // Use per-creature flag instead of static HashSet for determinism
+        if (self.traitUsedBloodthirsty)
             return;
         if (ResolutionManager.Instance == null)
             return;
@@ -40,14 +38,8 @@ public class BloodthirstyTrait : Trait
                 }
             }
         );
-        usedThisRound.Add(self);
+        self.traitUsedBloodthirsty = true;
     }
 
-    public override void OnRoundStart(Creature self)
-    {
-        if (self == null)
-            return;
-        // Reset per-round extra-attack flag for this creature.
-        usedThisRound.Remove(self);
-    }
+    // Per-creature flag is reset in Creature.ResetRoundBookkeeping() at round start
 }

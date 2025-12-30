@@ -1,12 +1,8 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Traits/Herbivores/Elemental")]
 public class ElementalTrait : Trait
 {
-    // Tracks the extra max HP granted while Wildfire is active so we can cleanly revert it.
-    private static readonly Dictionary<Creature, int> wildfireHpBonus = new();
-
     public override int SpeedBonus(Creature self)
     {
         if (self == null)
@@ -49,36 +45,32 @@ public class ElementalTrait : Trait
         if (self.HasStatus(StatusTag.Suppress))
             return;
 
-        // --- Wildfire max HP bonus should exist only while Wildfire is active. ---
+        // --- Wildfire max HP bonus using per-creature state for determinism ---
         if (newWeather == WeatherType.Wildfire)
         {
-            if (!wildfireHpBonus.ContainsKey(self))
+            if (self.traitElementalHpBonus == 0)
             {
                 int bonus = 2;
                 self.maxHealth += bonus;
                 self.currentHealth += bonus;
                 self.currentHealth = Mathf.Min(self.currentHealth, self.maxHealth);
-                wildfireHpBonus[self] = bonus;
+                self.traitElementalHpBonus = bonus;
             }
         }
         else
         {
-            if (wildfireHpBonus.TryGetValue(self, out int bonus))
+            if (self.traitElementalHpBonus > 0)
             {
+                int bonus = self.traitElementalHpBonus;
                 self.maxHealth = Mathf.Max(1, self.maxHealth - bonus);
                 // When removing the bonus, clamp current health but never below 1.
                 self.currentHealth = Mathf.Max(1, Mathf.Min(self.currentHealth, self.maxHealth));
-                wildfireHpBonus.Remove(self);
+                self.traitElementalHpBonus = 0;
             }
         }
 
         self.RefreshStatsUI();
     }
 
-    public override void OnAnyDeath(Creature self, Creature dead)
-    {
-        if (dead == null)
-            return;
-        wildfireHpBonus.Remove(dead);
-    }
+    // traitElementalHpBonus is automatically cleared when creature dies/is reinitialized
 }

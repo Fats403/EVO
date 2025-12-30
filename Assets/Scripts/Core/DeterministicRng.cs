@@ -29,6 +29,9 @@ public static class DeterministicRng
         _rng = new System.Random(seed);
         _initialized = true;
 
+        // Reset RNG call counter for desync tracking
+        GameStateChecksum.ResetRngCallCount();
+
         // Keep Unity's RNG in sync in case any legacy code still uses it.
         UnityEngine.Random.InitState(seed);
     }
@@ -44,7 +47,13 @@ public static class DeterministicRng
         {
             int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
             Initialize(seed);
+            Debug.LogWarning(
+                "DeterministicRng: Auto-initialized with random seed - this may cause desync in multiplayer!"
+            );
         }
+
+        // Track RNG calls for desync detection
+        GameStateChecksum.IncrementRngCallCount();
 
         return _rng.Next(minInclusive, maxExclusive);
     }

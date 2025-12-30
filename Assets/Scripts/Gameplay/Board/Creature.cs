@@ -35,6 +35,17 @@ public class Creature : MonoBehaviour
     public int roundKillCount;
     public bool roundHasScavengePoint; // Avians: true if an enemy died while this avian was alive (cap 1).
 
+    // Per-creature trait state flags (replaces static HashSets in traits for determinism)
+    // These are cleared in ResetRoundBookkeeping() at round start.
+    [Header("Trait State (Runtime)")]
+    public bool traitUsedWhirlwind; // WhirlwindTrait: extra attack used this round
+    public bool traitUsedBloodthirsty; // BloodthirstyTrait: extra attack used this round
+    public bool traitUsedUndyingSpirit; // UndyingSpiritTrait: resurrection used (persists until death)
+    public bool traitGrantRadiantShield; // RadiantScalesTrait: grant shield next round
+    public bool traitGrantEvasiveStealth; // EvasiveTrait: grant stealth next round
+    public bool traitGrantBloodRush; // BloodRushTrait: grant rage next round
+    public int traitElementalHpBonus; // ElementalTrait: current wildfire HP bonus
+
     public static event Action<Creature, int> OnAnyCreatureHealed;
 
     public bool IsWounded => currentHealth < maxHealth;
@@ -70,6 +81,15 @@ public class Creature : MonoBehaviour
         roundKillBody = 0;
         roundKillCount = 0;
         roundHasScavengePoint = false;
+
+        // Reset all trait state flags
+        traitUsedWhirlwind = false;
+        traitUsedBloodthirsty = false;
+        traitUsedUndyingSpirit = false;
+        traitGrantRadiantShield = false;
+        traitGrantEvasiveStealth = false;
+        traitGrantBloodRush = false;
+        traitElementalHpBonus = 0;
 
         traits.Clear();
         if (data.baseTraits != null && data.baseTraits.Length > 0)
@@ -502,7 +522,12 @@ public class Creature : MonoBehaviour
             }
         }
         // Global post-damage notification
-        var all = FindObjectsByType<Creature>(FindObjectsSortMode.None);
+        // CRITICAL: Sort by slot index for deterministic iteration order
+        var dmgSlots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
+            .ToDictionary(s => s, s => s.index);
+        var all = FindObjectsByType<Creature>(FindObjectsSortMode.None)
+            .OrderBy(c => GetSlotIndexForCreature(c, dmgSlots))
+            .ToArray();
         foreach (var other in all)
         {
             if (other == null || other.traits == null)
@@ -553,8 +578,13 @@ public class Creature : MonoBehaviour
         // Avian scavenging: when an ENEMY creature dies, living avians may scavenge:
         // - They become "fed" for starvation purposes (eaten set to at least 1)
         // - They may earn +1 scavenge point at end of round (cap 1 per avian per round)
-        var all = FindObjectsByType<Creature>(FindObjectsSortMode.None);
-        foreach (var other in all)
+        // CRITICAL: Sort by slot index for deterministic iteration order
+        var deathSlots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
+            .ToDictionary(s => s, s => s.index);
+        var allForDeath = FindObjectsByType<Creature>(FindObjectsSortMode.None)
+            .OrderBy(c => GetSlotIndexForCreature(c, deathSlots))
+            .ToArray();
+        foreach (var other in allForDeath)
         {
             if (other == null || other == this)
                 continue;
@@ -585,7 +615,7 @@ public class Creature : MonoBehaviour
             }
         }
         // Notify all traits about this death
-        foreach (var other in all)
+        foreach (var other in allForDeath)
         {
             if (other == null || other == this)
                 continue;
@@ -660,6 +690,26 @@ public class Creature : MonoBehaviour
         roundKillBody = 0;
         roundKillCount = 0;
         roundHasScavengePoint = false;
+
+        // Reset per-round trait flags (UndyingSpirit persists - only reset on creature death/init)
+        traitUsedWhirlwind = false;
+        traitUsedBloodthirsty = false;
+        // Process "grant next round" effects before clearing them
+        if (traitGrantRadiantShield)
+        {
+            AddStatus(StatusTag.Shield, 1);
+            traitGrantRadiantShield = false;
+        }
+        if (traitGrantEvasiveStealth)
+        {
+            AddStatus(StatusTag.Stealth, 1);
+            traitGrantEvasiveStealth = false;
+        }
+        if (traitGrantBloodRush)
+        {
+            AddStatus(StatusTag.Rage, 1);
+            traitGrantBloodRush = false;
+        }
     }
 
     public void RecordKill(Creature victim)
@@ -990,5 +1040,19 @@ public class Creature : MonoBehaviour
                 return s;
         }
         return null;
+    }
+
+    /// <summary>
+    /// Gets the slot index for a creature, or a large value if not on a slot.
+    /// Used for deterministic ordering in networked games.
+    /// </summary>
+    private static int GetSlotIndexForCreature(Creature c, Dictionary<BoardSlot, int> slotIndices)
+    {
+        foreach (var kvp in slotIndices)
+        {
+            if (kvp.Key.currentCreature == c)
+                return kvp.Value;
+        }
+        return int.MaxValue;
     }
 }

@@ -48,6 +48,7 @@ public enum NetMessageType : byte
     InputAction = 2,
     SessionAck = 3,
     InputActionAck = 4,
+    RoundChecksum = 5, // Sent at end of each round for desync detection
 }
 
 /// <summary>

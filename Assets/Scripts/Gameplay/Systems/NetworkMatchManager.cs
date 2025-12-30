@@ -82,6 +82,9 @@ public class NetworkMatchManager : MonoBehaviour
 
     private void HandleDataReceived(byte[] data)
     {
+        // Notify sync validator that we received data (resets disconnect timer)
+        NetworkSyncValidator.Instance?.OnMessageReceived();
+
         if (!NetSerialization.TryDeserializeNetMessage(data, out var msg))
         {
             Debug.LogWarning("NetworkMatchManager: Received malformed NetMessage.");
@@ -143,6 +146,31 @@ public class NetworkMatchManager : MonoBehaviour
                 }
                 break;
 
+            case NetMessageType.RoundChecksum:
+                if (
+                    NetworkSyncValidator.TryDeserializeChecksumPayload(
+                        msg.payload,
+                        out int round,
+                        out int checksum,
+                        out int rngCallCount
+                    )
+                )
+                {
+                    Debug.Log(
+                        $"NetworkMatchManager: Received RoundChecksum round={round} checksum={checksum:X8}"
+                    );
+                    NetworkSyncValidator.Instance?.HandleRemoteChecksum(
+                        round,
+                        checksum,
+                        rngCallCount
+                    );
+                }
+                else
+                {
+                    Debug.LogWarning("NetworkMatchManager: Received malformed RoundChecksum.");
+                }
+                break;
+
             default:
                 Debug.LogWarning(
                     $"NetworkMatchManager: Received NetMessage with unknown type {msg.type}."
@@ -154,7 +182,7 @@ public class NetworkMatchManager : MonoBehaviour
     private void HandleDisconnected()
     {
         Debug.Log("NetworkMatchManager: Transport disconnected.");
-        // Phase 4 will add proper disconnection handling with UI modal
+        // NetworkSyncValidator handles disconnect UI and recovery
     }
 
     public void SendSessionHeader(NetSessionHeader header)

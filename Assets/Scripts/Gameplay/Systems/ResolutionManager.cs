@@ -206,9 +206,17 @@ public class ResolutionManager : MonoBehaviour
 
     public IEnumerable<Creature> AllCreatures()
     {
+        // CRITICAL: First apply a deterministic base ordering by slot index to ensure
+        // consistent iteration order across both clients. FindObjectsByType with
+        // FindObjectsSortMode.None returns objects in an arbitrary order that may
+        // differ between clients, causing desync.
+        var allSlots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
+            .ToDictionary(s => s, s => s.index);
+
         var q = FindObjectsByType<Creature>(FindObjectsSortMode.None)
             .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
-            .OrderByDescending(c => GetEffectiveSpeed(c));
+            .OrderBy(c => GetSlotIndexForCreature(c, allSlots)) // Deterministic base order
+            .ThenByDescending(c => GetEffectiveSpeed(c));
 
         // Deterministic tie-breaker: RNG-based shuffle for equals
         int Rand()
@@ -223,6 +231,20 @@ public class ResolutionManager : MonoBehaviour
             return GameManager.Instance.NextRandomInt(0, int.MaxValue);
         }
         return q.ThenBy(_ => Rand());
+    }
+
+    /// <summary>
+    /// Gets the slot index for a creature, or a large value if not on a slot.
+    /// Used for deterministic ordering.
+    /// </summary>
+    private int GetSlotIndexForCreature(Creature c, Dictionary<BoardSlot, int> slotIndices)
+    {
+        foreach (var kvp in slotIndices)
+        {
+            if (kvp.Key.currentCreature == c)
+                return kvp.Value;
+        }
+        return int.MaxValue;
     }
 
     void InvokeGlobal(System.Action<GlobalEffectBase> call)
@@ -277,6 +299,11 @@ public class ResolutionManager : MonoBehaviour
 
     public IEnumerable<Creature> AllCreaturesInActionOrder()
     {
+        // CRITICAL: First apply a deterministic base ordering by slot index to ensure
+        // consistent iteration order across both clients.
+        var allSlots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
+            .ToDictionary(s => s, s => s.index);
+
         var q = FindObjectsByType<Creature>(FindObjectsSortMode.None)
             .Where(c => c != null && c.currentHealth > 0 && !c.isDying);
 
@@ -292,8 +319,9 @@ public class ResolutionManager : MonoBehaviour
             return GameManager.Instance.NextRandomInt(0, int.MaxValue);
         }
 
-        // Priority first, then speed.
-        return q.OrderByDescending(c => GetActionPriority(c))
+        // Slot index first (deterministic), then priority, then speed.
+        return q.OrderBy(c => GetSlotIndexForCreature(c, allSlots))
+            .ThenByDescending(c => GetActionPriority(c))
             .ThenByDescending(c => GetEffectiveSpeed(c))
             .ThenBy(_ => Rand());
     }

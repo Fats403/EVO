@@ -1,11 +1,8 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Traits/Avians/Undying Spirit")]
 public class UndyingSpiritTrait : Trait
 {
-    private static readonly HashSet<Creature> used = new();
-
     public override void OnDamageTaken(Creature self, Creature attacker, int finalDamage)
     {
         if (self == null)
@@ -14,8 +11,9 @@ public class UndyingSpiritTrait : Trait
             return;
         if (finalDamage <= 0)
             return;
-        // Trigger on any lethal damage, once per creature
-        if (self.currentHealth == 0 && !used.Contains(self))
+        // Trigger on any lethal damage, once per creature lifetime
+        // Use per-creature flag instead of static HashSet for determinism
+        if (self.currentHealth == 0 && !self.traitUsedUndyingSpirit)
         {
             self.currentHealth = 1;
             self.RefreshStatsUI();
@@ -24,7 +22,7 @@ public class UndyingSpiritTrait : Trait
             // Clear negative statuses
             self.ClearAllNegativeStatuses();
 
-            used.Add(self);
+            self.traitUsedUndyingSpirit = true;
             FeedbackManager.Instance?.ShowFloatingText(
                 "Undying Spirit",
                 self.transform.position,
@@ -32,4 +30,7 @@ public class UndyingSpiritTrait : Trait
             );
         }
     }
+
+    // Per-creature flag persists until creature dies/is reinitialized
+    // Reset happens in Creature.Initialize()
 }
