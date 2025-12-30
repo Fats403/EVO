@@ -45,6 +45,7 @@ public static class GameStateSerialization
         public int eaten;
         public List<string> traitNames;
         public Dictionary<StatusTag, int> statuses;
+
         // Trait flags
         public bool traitUsedWhirlwind;
         public bool traitUsedBloodthirsty;
@@ -53,6 +54,8 @@ public static class GameStateSerialization
         public bool traitGrantEvasiveStealth;
         public bool traitGrantBloodRush;
         public int traitElementalHpBonus;
+
+        // TODO: capture bleed and infection source for perfect replay?
     }
 
     [Serializable]
@@ -88,14 +91,16 @@ public static class GameStateSerialization
             rngSeed = DeterministicRng.Seed,
             rngCallCount = GameStateChecksum.GetRngCallCount(),
             creatures = new List<CreatureState>(),
-            globalEffects = new List<GlobalEffectState>()
+            globalEffects = new List<GlobalEffectState>(),
         };
 
         // Capture creatures in deterministic order
-        var allSlots = UnityEngine.Object.FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
+        var allSlots = UnityEngine
+            .Object.FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
             .ToDictionary(s => s, s => s.index);
 
-        var creatures = UnityEngine.Object.FindObjectsByType<Creature>(FindObjectsSortMode.None)
+        var creatures = UnityEngine
+            .Object.FindObjectsByType<Creature>(FindObjectsSortMode.None)
             .Where(c => c != null && !c.isDying)
             .OrderBy(c => GetSlotIndex(c, allSlots))
             .ToList();
@@ -112,7 +117,10 @@ public static class GameStateSerialization
                 body = c.body,
                 speed = c.speed,
                 eaten = c.eaten,
-                traitNames = c.traits?.Where(t => t != null).Select(t => t.traitName ?? t.GetType().Name).ToList() ?? new List<string>(),
+                traitNames =
+                    c.traits?.Where(t => t != null)
+                        .Select(t => t.traitName ?? t.GetType().Name)
+                        .ToList() ?? new List<string>(),
                 statuses = new Dictionary<StatusTag, int>(),
                 traitUsedWhirlwind = c.traitUsedWhirlwind,
                 traitUsedBloodthirsty = c.traitUsedBloodthirsty,
@@ -120,7 +128,7 @@ public static class GameStateSerialization
                 traitGrantRadiantShield = c.traitGrantRadiantShield,
                 traitGrantEvasiveStealth = c.traitGrantEvasiveStealth,
                 traitGrantBloodRush = c.traitGrantBloodRush,
-                traitElementalHpBonus = c.traitElementalHpBonus
+                traitElementalHpBonus = c.traitElementalHpBonus,
             };
 
             foreach (var tag in c.GetActiveStatusTags())
@@ -136,13 +144,16 @@ public static class GameStateSerialization
         {
             foreach (var ge in rm.activeGlobalEffects)
             {
-                if (ge == null) continue;
-                state.globalEffects.Add(new GlobalEffectState
-                {
-                    effectTypeName = ge.GetType().Name,
-                    remainingRounds = ge.remainingRounds,
-                    owner = ge.owner
-                });
+                if (ge == null)
+                    continue;
+                state.globalEffects.Add(
+                    new GlobalEffectState
+                    {
+                        effectTypeName = ge.GetType().Name,
+                        remainingRounds = ge.remainingRounds,
+                        owner = ge.owner,
+                    }
+                );
             }
         }
 
@@ -250,7 +261,7 @@ public static class GameStateSerialization
         var state = new FullGameState
         {
             creatures = new List<CreatureState>(),
-            globalEffects = new List<GlobalEffectState>()
+            globalEffects = new List<GlobalEffectState>(),
         };
 
         if (data == null || data.Length == 0)
@@ -289,7 +300,7 @@ public static class GameStateSerialization
                 speed = br.ReadInt32(),
                 eaten = br.ReadInt32(),
                 traitNames = new List<string>(),
-                statuses = new Dictionary<StatusTag, int>()
+                statuses = new Dictionary<StatusTag, int>(),
             };
 
             int traitCount = br.ReadInt32();
@@ -319,15 +330,16 @@ public static class GameStateSerialization
         int geCount = br.ReadInt32();
         for (int i = 0; i < geCount; i++)
         {
-            state.globalEffects.Add(new GlobalEffectState
-            {
-                effectTypeName = br.ReadString(),
-                remainingRounds = br.ReadInt32(),
-                owner = (SlotOwner)br.ReadInt32()
-            });
+            state.globalEffects.Add(
+                new GlobalEffectState
+                {
+                    effectTypeName = br.ReadString(),
+                    remainingRounds = br.ReadInt32(),
+                    owner = (SlotOwner)br.ReadInt32(),
+                }
+            );
         }
 
         return state;
     }
 }
-

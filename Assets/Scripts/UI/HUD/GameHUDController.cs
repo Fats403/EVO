@@ -29,8 +29,8 @@ public class GameHUDController : MonoBehaviour
     public string endTurnBusyText = "Resolving...";
 
     [Header("Momentum")]
-    public TextMeshProUGUI p1MomentumLabel;
-    public TextMeshProUGUI p2MomentumLabel;
+    public TextMeshProUGUI localMomentumLabel;
+    public TextMeshProUGUI opponentMomentumLabel;
 
     [Header("Log")]
     public Button toggleLogButton;
@@ -42,8 +42,12 @@ public class GameHUDController : MonoBehaviour
 
     [Header("Game Over UI")]
     public TextMeshProUGUI gameOverOutcomeText;
-    public TextMeshProUGUI player1ScoreText;
-    public TextMeshProUGUI player2ScoreText;
+
+    [Tooltip("Left score display - always shows the local player's score.")]
+    public TextMeshProUGUI localScoreText;
+
+    [Tooltip("Right score display - always shows the opponent's score.")]
+    public TextMeshProUGUI opponentScoreText;
     public float gameOverFadeDuration = 0.75f;
 
     [Header("Opponent Deck (Networked)")]
@@ -195,29 +199,56 @@ public class GameHUDController : MonoBehaviour
 
     private void HandleShowGameOverRequested()
     {
-        int p1 = ScoreManager.player1;
-        int p2 = ScoreManager.player2;
+        // Use network-aware local/opponent scores
+        int localScore = ScoreManager.LocalScore;
+        int opponentScore = ScoreManager.OpponentScore;
+
+        // Determine outcome colors
+        Color winColor = GameColorPalette.TextPositive;
+        Color loseColor = GameColorPalette.TextNegative;
+        Color drawColor = GameColorPalette.TextNeutral;
 
         if (gameOverOutcomeText != null)
         {
-            if (p1 > p2)
+            if (localScore > opponentScore)
             {
                 gameOverOutcomeText.text = "Victory";
+                gameOverOutcomeText.color = winColor;
             }
-            else if (p1 < p2)
+            else if (localScore < opponentScore)
             {
                 gameOverOutcomeText.text = "Defeat";
+                gameOverOutcomeText.color = loseColor;
             }
             else
             {
                 gameOverOutcomeText.text = "Draw";
+                gameOverOutcomeText.color = drawColor;
             }
         }
 
-        if (player1ScoreText != null)
-            player1ScoreText.text = p1.ToString();
-        if (player2ScoreText != null)
-            player2ScoreText.text = p2.ToString();
+        // Local score on left, opponent score on right
+        if (localScoreText != null)
+        {
+            localScoreText.text = localScore.ToString();
+            if (localScore > opponentScore)
+                localScoreText.color = winColor;
+            else if (localScore < opponentScore)
+                localScoreText.color = loseColor;
+            else
+                localScoreText.color = drawColor;
+        }
+
+        if (opponentScoreText != null)
+        {
+            opponentScoreText.text = opponentScore.ToString();
+            if (opponentScore > localScore)
+                opponentScoreText.color = winColor;
+            else if (opponentScore < localScore)
+                opponentScoreText.color = loseColor;
+            else
+                opponentScoreText.color = drawColor;
+        }
 
         if (isActiveAndEnabled)
         {
@@ -394,16 +425,22 @@ public class GameHUDController : MonoBehaviour
 
     private void UpdateMomentumUI()
     {
-        if (p1MomentumLabel != null)
+        int perRound = gameManager != null ? gameManager.GetMomentumForEra(_currentEra) : 0;
+
+        // Map momentum to local/opponent based on network role
+        int localMomentum =
+            NetworkRoleHelper.LocalRole == SlotOwner.Player1 ? _p1Momentum : _p2Momentum;
+        int opponentMomentum =
+            NetworkRoleHelper.LocalRole == SlotOwner.Player1 ? _p2Momentum : _p1Momentum;
+
+        if (localMomentumLabel != null)
         {
-            int perRound = gameManager != null ? gameManager.GetMomentumForEra(_currentEra) : 0;
-            p1MomentumLabel.text = $"{_p1Momentum} / {perRound}";
+            localMomentumLabel.text = $"{localMomentum} / {perRound}";
         }
 
-        if (p2MomentumLabel != null)
+        if (opponentMomentumLabel != null)
         {
-            int perRound = gameManager != null ? gameManager.GetMomentumForEra(_currentEra) : 0;
-            p2MomentumLabel.text = $"{_p2Momentum} / {perRound}";
+            opponentMomentumLabel.text = $"{opponentMomentum} / {perRound}";
         }
     }
 

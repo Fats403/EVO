@@ -33,7 +33,9 @@ public class PhalanxLeaderTrait : Trait
             return;
         if (self.HasStatus(StatusTag.Suppress))
             return;
-        attacker.AddStatus(StatusTag.Bleed, 1);
+        // Attribute Bleed to this creature so ticks contribute to its
+        // roundDamageDealt scoring.
+        attacker.AddStatus(StatusTag.Bleed, 1, self);
         FeedbackManager.Instance?.ShowFloatingText(
             "Phalanx Leader",
             self.transform.position,

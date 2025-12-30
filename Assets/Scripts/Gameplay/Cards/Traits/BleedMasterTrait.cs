@@ -11,7 +11,9 @@ public class BleedMasterTrait : Trait
             return;
         if (finalDamage <= 0)
             return;
-        target.AddStatus(StatusTag.Bleed, 1);
+        // Attribute Bleed to this creature so ticks contribute to its
+        // roundDamageDealt scoring.
+        target.AddStatus(StatusTag.Bleed, 1, self);
         FeedbackManager.Instance?.ShowFloatingText(
             "Bleed Master",
             self.transform.position,

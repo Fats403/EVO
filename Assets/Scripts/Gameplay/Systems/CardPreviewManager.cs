@@ -110,7 +110,9 @@ public class CardPreviewManager : MonoBehaviour
         if (forcedCaptionText != null)
         {
             // Use network-aware check for local vs opponent
-            string who = NetworkRoleHelper.IsLocalPlayer(creature.owner) ? "You play" : "Opponent plays";
+            string who = NetworkRoleHelper.IsLocalPlayer(creature.owner)
+                ? "You play"
+                : "Opponent plays";
             forcedCaptionText.text = $"{who} {creature.data.cardName}";
             forcedCaptionText.gameObject.SetActive(true);
         }

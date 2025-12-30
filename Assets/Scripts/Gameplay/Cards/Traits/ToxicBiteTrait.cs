@@ -10,7 +10,9 @@ public class ToxicBiteTrait : Trait
             return;
         if (self.HasStatus(StatusTag.Suppress))
             return;
-        target.AddStatus(StatusTag.Infection, 2);
+        // Attribute Infection stacks to this creature so ticks contribute
+        // to its roundDamageDealt scoring.
+        target.AddStatus(StatusTag.Infection, 2, self);
         FeedbackManager.Instance?.ShowFloatingText(
             "Toxic Bite",
             self.transform.position,
@@ -26,7 +28,7 @@ public class ToxicBiteTrait : Trait
         {
             foreach (var c in adj.Where(c => c != null))
             {
-                c.AddStatus(StatusTag.Infection, 1);
+                c.AddStatus(StatusTag.Infection, 1, self);
                 FeedbackManager.Instance?.ShowFloatingText(
                     "Infected +1",
                     c.transform.position,

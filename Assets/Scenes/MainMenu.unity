@@ -2382,6 +2382,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NetworkMatchManager
   transportBehaviour: {fileID: 2112003971}
+  ackTimeoutSeconds: 1.5
+  maxRetries: 5
 --- !u!114 &2112003971
 MonoBehaviour:
   m_ObjectHideFlags: 0

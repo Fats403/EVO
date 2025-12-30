@@ -12,7 +12,9 @@ public class PlagueCarrierTrait : Trait
         // Apply only on successful attacks (not negated)
         if (wasNegated)
             return;
-        target.AddStatus(StatusTag.Infection, 1);
+        // Attribute Infection stacks to this creature so ticks contribute
+        // to its roundDamageDealt scoring.
+        target.AddStatus(StatusTag.Infection, 1, self);
         target.AddStatus(StatusTag.NoForage, 1);
         FeedbackManager.Instance?.ShowFloatingText(
             "Plague Carrier",

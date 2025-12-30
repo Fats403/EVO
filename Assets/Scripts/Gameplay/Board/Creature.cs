@@ -31,9 +31,15 @@ public class Creature : MonoBehaviour
     // accumulated during the round and converted into points during the
     // scoring phase (if still alive).
     [Header("Round Scoring (Runtime)")]
-    public int roundKillBody; // Sum of victim body values killed this round.
-    public int roundKillCount;
+    public int roundKillBody; // Sum of victim body values killed this round (for stats/traits).
+    public int roundKillCount; // Number of kills this round (for stats/traits).
     public bool roundHasScavengePoint; // Avians: true if an enemy died while this avian was alive (cap 1).
+    public int roundStartBodyForFood; // Snapshot of body at round start for herbivore food scoring.
+
+    // Sources for damage-over-time effects so their ticks can contribute
+    // to roundDamageDealt scoring when applied by creatures.
+    public Creature bleedSource;
+    public Creature infectionSource;
 
     // Per-creature trait state flags (replaces static HashSets in traits for determinism)
     // These are cleared in ResetRoundBookkeeping() at round start.
@@ -567,11 +573,30 @@ public class Creature : MonoBehaviour
         }
     }
 
-    public void Kill(string reason, GameObject vfxPrefab = null)
+    private void AwardKillScoreToOpponent()
+    {
+        // Decide opponent purely from this creature's owner.
+        SlotOwner opponent = owner == SlotOwner.Player1 ? SlotOwner.Player2 : SlotOwner.Player1;
+
+        const int killBonus = 2;
+        ScoreManager.Instance?.Add(opponent, killBonus);
+
+        // Red text above the dying creature to differentiate kill score.
+        FeedbackManager.Instance?.ShowFloatingText(
+            $"Score +{killBonus} (Kill)",
+            transform.position,
+            GameColorPalette.Damage
+        );
+    }
+
+    public void Kill(string reason, GameObject vfxPrefab = null, bool awardKillScore = true)
     {
         if (isDying)
             return;
         isDying = true;
+
+        if (awardKillScore)
+            AwardKillScoreToOpponent();
 
         PlayVFX(vfxPrefab);
 
@@ -691,6 +716,14 @@ public class Creature : MonoBehaviour
         roundKillCount = 0;
         roundHasScavengePoint = false;
 
+        // Cache body for herbivore food scoring at the start of the round.
+        // Use ResolutionManager's effective body helper if available so traits
+        // and temporary buffs present at round start are reflected exactly once.
+        roundStartBodyForFood =
+            ResolutionManager.Instance != null
+                ? ResolutionManager.Instance.GetEffectiveBody(this)
+                : body;
+
         // Reset per-round trait flags (UndyingSpirit persists - only reset on creature death/init)
         traitUsedWhirlwind = false;
         traitUsedBloodthirsty = false;
@@ -798,7 +831,7 @@ public class Creature : MonoBehaviour
         return GetStatus(tag) > 0;
     }
 
-    public void AddStatus(StatusTag tag, int stacks = 1)
+    public void AddStatus(StatusTag tag, int stacks = 1, Creature source = null)
     {
         if (stacks <= 0)
             return;
@@ -841,6 +874,15 @@ public class Creature : MonoBehaviour
             newValue = newValue > 0 ? 1 : 0;
 
         statuses[tag] = newValue;
+
+        // Track sources for damage-over-time statuses when there is a clear inflictor.
+        if (source != null)
+        {
+            if (tag == StatusTag.Bleed)
+                bleedSource = source;
+            else if (tag == StatusTag.Infection)
+                infectionSource = source;
+        }
         RefreshStatsUI();
     }
 
@@ -850,7 +892,14 @@ public class Creature : MonoBehaviour
             return;
         int v = GetStatus(tag) - amount;
         if (v <= 0)
+        {
             statuses.Remove(tag);
+            // Clear any remembered source when the status fully expires.
+            if (tag == StatusTag.Bleed)
+                bleedSource = null;
+            else if (tag == StatusTag.Infection)
+                infectionSource = null;
+        }
         else
             statuses[tag] = v;
         RefreshStatsUI();
@@ -859,7 +908,14 @@ public class Creature : MonoBehaviour
     public void ClearStatus(StatusTag tag)
     {
         if (statuses.Remove(tag))
+        {
+            // Also clear any remembered source when explicitly cleared.
+            if (tag == StatusTag.Bleed)
+                bleedSource = null;
+            else if (tag == StatusTag.Infection)
+                infectionSource = null;
             RefreshStatsUI();
+        }
     }
 
     /// <summary>
@@ -912,7 +968,9 @@ public class Creature : MonoBehaviour
         if (GetStatus(StatusTag.Infection) > 0)
         {
             didAny = true;
-            int applied = ApplyDamage(1, null, null, "Infected");
+            // Attribute Infection tick damage to the creature that applied it,
+            // if known. If infectionSource is null, this tick is neutral.
+            int applied = ApplyDamage(1, infectionSource, null, "Infected");
             DecrementStatus(StatusTag.Infection, 1);
             if (applied > 0)
             {
@@ -978,7 +1036,9 @@ public class Creature : MonoBehaviour
         if (bleed > 0)
         {
             didAny = true;
-            int applied = ApplyDamage(bleed, null, null, "Bleed");
+            // Attribute Bleed tick damage to the creature that applied it,
+            // if known. If bleedSource is null, this tick is neutral.
+            int applied = ApplyDamage(bleed, bleedSource, null, "Bleed");
             if (applied > 0)
             {
                 FeedbackManager.Instance?.ShowFloatingText(

@@ -128,6 +128,10 @@ public class EffectCard : CardDefinition
             case EffectTargetSide.Any:
                 break;
         }
+        // Stealth filter: you may still target your own stealthed allies,
+        // but enemy stealthed creatures cannot be directly targeted by effects.
+        if (candidate.HasStatus(StatusTag.Stealth) && candidate.owner != player)
+            return false;
         // Type filter
         switch (targetType)
         {

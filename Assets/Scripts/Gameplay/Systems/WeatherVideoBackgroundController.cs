@@ -187,9 +187,10 @@ public class WeatherVideoBackgroundController : MonoBehaviour
             var fromPlayer = GetPlayer(currentType);
             float startFrom = GetCameraAlpha(fromPlayer);
             float startTo = GetCameraAlpha(toPlayer);
-            // Ensure draw order: target on NearPlane, source on FarPlane during blend
+            // Both videos render on the camera's far plane; we crossfade purely via alpha
+            // so the board and other world-space content always remain in front.
             SetPlane(fromPlayer, VideoRenderMode.CameraFarPlane);
-            SetPlane(toPlayer, VideoRenderMode.CameraNearPlane);
+            SetPlane(toPlayer, VideoRenderMode.CameraFarPlane);
             float t = 0f;
             while (t < duration)
             {
@@ -203,7 +204,8 @@ public class WeatherVideoBackgroundController : MonoBehaviour
             SetCameraAlpha(toPlayer, 1f);
             // Optionally pause the previous video to save CPU
             SafePause(fromPlayer);
-            // Keep target visible; previous remains on FarPlane with alpha 0
+            // After the blend, the target remains on the far plane behind the board.
+            SetPlane(toPlayer, VideoRenderMode.CameraFarPlane);
         }
         else
         {

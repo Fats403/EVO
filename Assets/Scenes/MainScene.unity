@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 26087409}
   - component: {fileID: 26087411}
   - component: {fileID: 26087410}
+  - component: {fileID: 26087412}
   m_Layer: 5
   m_Name: Storm
   m_TagString: Untagged
@@ -144,18 +145,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 26087408}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2127664228}
+  m_Father: {fileID: 2118664156}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 2560, y: 1440}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &26087410
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,6 +192,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 26087408}
   m_CullTransparentMesh: 1
+--- !u!114 &26087412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 26087408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
+  m_AspectMode: 4
+  m_AspectRatio: 1.7777778
 --- !u!1 &33309898
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,7 +393,7 @@ MonoBehaviour:
   extinctionPlayer: {fileID: 1044412316}
   playOnStart: 1
   loopVideos: 1
-  targetCamera: {fileID: 0}
+  targetCamera: {fileID: 519420031}
 --- !u!1 &74413182
 GameObject:
   m_ObjectHideFlags: 0
@@ -414,8 +429,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000026703, y: 54}
-  m_SizeDelta: {x: 907.2753, y: 133}
+  m_AnchoredPosition: {x: 0, y: 60}
+  m_SizeDelta: {x: 1200, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &74413184
 MonoBehaviour:
@@ -439,8 +454,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Game Alert!
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2f426f7ffc1844a99ace8cf66729aa31, type: 2}
-  m_sharedMaterial: {fileID: -2173939195190086279, guid: 2f426f7ffc1844a99ace8cf66729aa31, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 59eeb9537589e4f109f4617a25297199, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 0a99fc09ab38e4691b60768844894adb, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -464,8 +479,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 48
-  m_fontSizeBase: 48
+  m_fontSize: 42
+  m_fontSizeBase: 42
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -540,7 +555,7 @@ GameObject:
   - component: {fileID: 85544436}
   - component: {fileID: 85544435}
   m_Layer: 5
-  m_Name: HandTextP1
+  m_Name: LocalHandText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -677,7 +692,7 @@ GameObject:
   - component: {fileID: 131098503}
   - component: {fileID: 131098505}
   m_Layer: 5
-  m_Name: MomentumIconP1
+  m_Name: LocalMomentumIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -899,7 +914,7 @@ GameObject:
   - component: {fileID: 182258613}
   - component: {fileID: 182258612}
   m_Layer: 5
-  m_Name: HandIconP2
+  m_Name: OpponentHandIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1201,7 +1216,7 @@ GameObject:
   - component: {fileID: 223432674}
   - component: {fileID: 223432673}
   m_Layer: 5
-  m_Name: Player1Score
+  m_Name: LocalPlayerScoreText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1359,7 +1374,7 @@ VideoPlayer:
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
   m_RenderMode: 2
-  m_AspectRatio: 2
+  m_AspectRatio: 5
   m_DataSource: 0
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
@@ -1404,6 +1419,7 @@ GameObject:
   - component: {fileID: 334928625}
   - component: {fileID: 334928627}
   - component: {fileID: 334928626}
+  - component: {fileID: 334928628}
   m_Layer: 5
   m_Name: Clear
   m_TagString: Untagged
@@ -1418,18 +1434,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 334928624}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2127664228}
+  m_Father: {fileID: 2118664156}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 2560, y: 1440}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &334928626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1465,6 +1481,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 334928624}
   m_CullTransparentMesh: 1
+--- !u!114 &334928628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 334928624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
+  m_AspectMode: 4
+  m_AspectRatio: 1.7777778
 --- !u!1 &374961277
 GameObject:
   m_ObjectHideFlags: 0
@@ -1477,7 +1507,7 @@ GameObject:
   - component: {fileID: 374961280}
   - component: {fileID: 374961279}
   m_Layer: 5
-  m_Name: MomentumIconP2
+  m_Name: OpponentMomentumIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2000,8 +2030,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 118aa14c3579d4bcabeb97759ca7e138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
-  p1Label: {fileID: 822616226}
-  p2Label: {fileID: 1950052821}
+  localScoreLabel: {fileID: 822616226}
+  opponentScoreLabel: {fileID: 1950052821}
 --- !u!4 &432473418
 Transform:
   m_ObjectHideFlags: 0
@@ -2308,9 +2338,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2118664156}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1650, y: -91}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 270, y: -90}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &518741330
@@ -2806,7 +2836,7 @@ GameObject:
   - component: {fileID: 567983866}
   - component: {fileID: 567983865}
   m_Layer: 5
-  m_Name: MomentumTextP1
+  m_Name: LocalMomentumText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3244,6 +3274,7 @@ GameObject:
   - component: {fileID: 594644634}
   - component: {fileID: 594644636}
   - component: {fileID: 594644635}
+  - component: {fileID: 594644637}
   m_Layer: 5
   m_Name: Wildfire
   m_TagString: Untagged
@@ -3258,18 +3289,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 594644633}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2127664228}
+  m_Father: {fileID: 2118664156}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 2560, y: 1440}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &594644635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3305,6 +3336,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 594644633}
   m_CullTransparentMesh: 1
+--- !u!114 &594644637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 594644633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
+  m_AspectMode: 4
+  m_AspectRatio: 1.7777778
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -3458,7 +3503,7 @@ GameObject:
   - component: {fileID: 693812571}
   - component: {fileID: 693812570}
   m_Layer: 5
-  m_Name: FossilsP2
+  m_Name: OpponentFossilsIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3534,7 +3579,7 @@ GameObject:
   - component: {fileID: 696769740}
   - component: {fileID: 696769742}
   m_Layer: 5
-  m_Name: HandIconP1
+  m_Name: LocalHandIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3627,7 +3672,7 @@ GameObject:
   - component: {fileID: 698757406}
   - component: {fileID: 698757405}
   m_Layer: 5
-  m_Name: MomentumTextP2
+  m_Name: OpponentMomentumText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4059,7 +4104,7 @@ GameObject:
   - component: {fileID: 822616227}
   - component: {fileID: 822616226}
   m_Layer: 5
-  m_Name: FossilsTextP1
+  m_Name: LocalFossilsText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4643,7 +4688,7 @@ GameObject:
   - component: {fileID: 940070268}
   - component: {fileID: 940070267}
   m_Layer: 5
-  m_Name: DeckTextP1
+  m_Name: LocalDeckText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4982,7 +5027,7 @@ VideoPlayer:
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
   m_RenderMode: 2
-  m_AspectRatio: 2
+  m_AspectRatio: 5
   m_DataSource: 0
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
@@ -5048,7 +5093,7 @@ VideoPlayer:
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
   m_RenderMode: 2
-  m_AspectRatio: 2
+  m_AspectRatio: 5
   m_DataSource: 0
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
@@ -5067,14 +5112,13 @@ VideoPlayer:
   m_WaitForFirstFrame: 1
   m_FrameReadyEventEnabled: 0
   m_VideoShaders: []
---- !u!4 &1057704646
-Transform:
+--- !u!224 &1057704646
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1057704644}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -5082,6 +5126,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 49608289}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1066915790
 GameObject:
   m_ObjectHideFlags: 0
@@ -5199,7 +5248,7 @@ GameObject:
   - component: {fileID: 1125964589}
   - component: {fileID: 1125964591}
   m_Layer: 5
-  m_Name: DeckP1
+  m_Name: LocalDeckBack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5835,7 +5884,7 @@ GameObject:
   - component: {fileID: 1167619539}
   - component: {fileID: 1167619538}
   m_Layer: 5
-  m_Name: Player2Score
+  m_Name: OpponentScoreText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6757,7 +6806,7 @@ GameObject:
   - component: {fileID: 1442666413}
   - component: {fileID: 1442666412}
   m_Layer: 5
-  m_Name: HandTextP2
+  m_Name: OpponentHandText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6894,7 +6943,7 @@ GameObject:
   - component: {fileID: 1531759649}
   - component: {fileID: 1531759651}
   m_Layer: 5
-  m_Name: FossilsP1
+  m_Name: LocalFossilsIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6987,7 +7036,7 @@ GameObject:
   - component: {fileID: 1606710268}
   - component: {fileID: 1606710267}
   m_Layer: 5
-  m_Name: DeckTextP2
+  m_Name: OpponentDeckText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7172,6 +7221,7 @@ GameObject:
   - component: {fileID: 1703869748}
   - component: {fileID: 1703869747}
   - component: {fileID: 1703869746}
+  - component: {fileID: 1703869749}
   m_Layer: 5
   m_Name: Extinction
   m_TagString: Untagged
@@ -7221,18 +7271,32 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1703869745}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2127664228}
+  m_Father: {fileID: 2118664156}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 2560, y: 1440}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
+--- !u!114 &1703869749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1703869745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
+  m_AspectMode: 4
+  m_AspectRatio: 1.7777778
 --- !u!1 &1739701175
 GameObject:
   m_ObjectHideFlags: 0
@@ -7416,7 +7480,7 @@ GameObject:
   - component: {fileID: 1754707277}
   - component: {fileID: 1754707276}
   m_Layer: 5
-  m_Name: DeckP2
+  m_Name: OpponentDeckBack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7759,7 +7823,7 @@ VideoPlayer:
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
   m_RenderMode: 2
-  m_AspectRatio: 2
+  m_AspectRatio: 5
   m_DataSource: 0
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
@@ -8075,9 +8139,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2118664156}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -875, y: 450}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 85, y: -90}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1929684835
@@ -8129,6 +8193,7 @@ GameObject:
   - component: {fileID: 1938749750}
   - component: {fileID: 1938749752}
   - component: {fileID: 1938749751}
+  - component: {fileID: 1938749753}
   m_Layer: 5
   m_Name: Draught
   m_TagString: Untagged
@@ -8143,17 +8208,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1938749749}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 156.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2127664228}
+  m_Father: {fileID: 2118664156}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 2560, y: 1440}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1938749751
 MonoBehaviour:
@@ -8190,6 +8255,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1938749749}
   m_CullTransparentMesh: 1
+--- !u!114 &1938749753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1938749749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
+  m_AspectMode: 4
+  m_AspectRatio: 1.7777778
 --- !u!1 &1950052819
 GameObject:
   m_ObjectHideFlags: 0
@@ -8202,7 +8281,7 @@ GameObject:
   - component: {fileID: 1950052822}
   - component: {fileID: 1950052821}
   m_Layer: 5
-  m_Name: FossilsTextP2
+  m_Name: OpponentFossilsText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8737,7 +8816,7 @@ VideoPlayer:
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
   m_RenderMode: 2
-  m_AspectRatio: 2
+  m_AspectRatio: 5
   m_DataSource: 0
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
@@ -9272,6 +9351,11 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1938749750}
+  - {fileID: 1703869748}
+  - {fileID: 26087409}
+  - {fileID: 594644634}
+  - {fileID: 334928625}
   - {fileID: 1770490316}
   - {fileID: 1868919980}
   - {fileID: 2069899325}
@@ -9327,15 +9411,15 @@ MonoBehaviour:
   endTurnLabel: {fileID: 1432409515}
   endTurnIdleText: End Turn
   endTurnBusyText: Resolving...
-  p1MomentumLabel: {fileID: 567983865}
-  p2MomentumLabel: {fileID: 698757405}
+  localMomentumLabel: {fileID: 567983865}
+  opponentMomentumLabel: {fileID: 698757405}
   toggleLogButton: {fileID: 1984540527}
   mainCanvasGroup: {fileID: 2118664157}
   worldCanvasGroup: {fileID: 557953994}
   gameOverCanvasGroup: {fileID: 205841994}
   gameOverOutcomeText: {fileID: 518741332}
-  player1ScoreText: {fileID: 223432673}
-  player2ScoreText: {fileID: 1167619538}
+  localScoreText: {fileID: 223432673}
+  opponentScoreText: {fileID: 1167619538}
   gameOverFadeDuration: 0.75
   opponentHandLabel: {fileID: 1442666412}
   opponentDeckLabel: {fileID: 1606710267}
@@ -9355,112 +9439,6 @@ MonoBehaviour:
   selectionGroup: {fileID: 1742597523}
   confirmButton: {fileID: 1258303429}
   cancelButton: {fileID: 1739701177}
---- !u!1 &2127664224
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2127664228}
-  - component: {fileID: 2127664227}
-  - component: {fileID: 2127664226}
-  - component: {fileID: 2127664225}
-  m_Layer: 5
-  m_Name: WeatherImages
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2127664225
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2127664224}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
-  m_BlockingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
---- !u!114 &2127664226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2127664224}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
-  m_ReferencePixelsPerUnit: 100
-  m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
-  m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
-  m_PhysicalUnit: 3
-  m_FallbackScreenDPI: 96
-  m_DefaultSpriteDPI: 96
-  m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
---- !u!223 &2127664227
-Canvas:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2127664224}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_RenderMode: 1
-  m_Camera: {fileID: 519420031}
-  m_PlaneDistance: 100
-  m_PixelPerfect: 0
-  m_ReceivesEvents: 1
-  m_OverrideSorting: 0
-  m_OverridePixelPerfect: 0
-  m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
-  m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: -1594491081
-  m_SortingOrder: 0
-  m_TargetDisplay: 0
---- !u!224 &2127664228
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2127664224}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1938749750}
-  - {fileID: 1703869748}
-  - {fileID: 26087409}
-  - {fileID: 594644634}
-  - {fileID: 334928625}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
 --- !u!1 &2128517700
 GameObject:
   m_ObjectHideFlags: 0
@@ -9637,7 +9615,6 @@ SceneRoots:
   - {fileID: 376443372}
   - {fileID: 2118664156}
   - {fileID: 205841993}
-  - {fileID: 2127664228}
   - {fileID: 49608289}
   - {fileID: 815865959}
   - {fileID: 2017726961}

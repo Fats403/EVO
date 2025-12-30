@@ -129,9 +129,9 @@ public class WeatherManager : MonoBehaviour
                 // Never announce the very first clear (handled by isFirstRound guard above),
                 // but do announce when harsh weather finally clears.
                 if (lastWeather.HasValue && lastWeather.Value != WeatherType.Clear)
-                    msg = "The weather clears.";
+                    msg = "The weather clears";
                 else
-                    msg = "Clear skies continue.";
+                    msg = "Clear skies continue";
                 break;
             case WeatherType.Drought:
                 msg =

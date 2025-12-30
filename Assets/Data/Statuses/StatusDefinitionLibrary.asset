@@ -15,90 +15,92 @@ MonoBehaviour:
   entries:
   - tag: 0
     displayName: Infection
-    description: At the start of each round, this creature takes 1 damage and Infected
-      is reduced by 1 stack.
+    description: At the start of each round causes 1 damage. One stack is removed
+      at the end of the round.
     icon: {fileID: 21300000, guid: 0c4355858300345e4adb62001160abbb, type: 3}
   - tag: 1
     displayName: Shield
-    description: Each stack blocks the next instance of damage entirely, then that
-      Shielded stack is removed.
+    description: Blocks next instance of damage entirely, then it is consumed. Cannot
+      be stacked.
     icon: {fileID: 21300000, guid: 639fb9d8f582741f7820906472a3c7f3, type: 3}
   - tag: 2
     displayName: Reflect
     description: The next time this creature would take damage, that damage is prevented
-      and dealt to the attacker instead, then Reflect is removed.
+      and dealt back to the attacker (if any), then it is consumed. Cannot be stacked.
     icon: {fileID: 21300000, guid: 36d027bd2bf6845878199df5cbdf8ab7, type: 3}
   - tag: 3
     displayName: Fatigue
-    description: "Each stack reduces this creature\u2019s speed by 1. One Fatigued
-      stack is removed at the end of each round."
+    description: "Each stack reduces this creature\u2019s speed by 1. One stack is
+      removed at the end of the round."
     icon: {fileID: 21300000, guid: ea577325c1fcd4003b6b5da087832d04, type: 3}
   - tag: 4
     displayName: Starvation
-    description: Each stack represents severe hunger that deals damage equal to the
-      number of stacks minus one.
+    description: Each stack represents severe hunger that damages the creature. The
+      first stack does no damage and it increase by one damage per stack after that.
+      Removed by attacking or feeding.
     icon: {fileID: 21300000, guid: 7037a2d33515d4e39a5529624fac1102, type: 3}
   - tag: 5
     displayName: Taunt
-    description: While Taunt is active, enemies are forced to target this creature
-      first. One Taunt stack is removed at the end of each round.
+    description: While Taunt is active, enemies are forced to attack this creautre
+      (ignoring body and speed rules).  One stack is removed at the end of the round.
     icon: {fileID: 21300000, guid: fe1ff0fce71144418824f806b12a61e8, type: 3}
   - tag: 6
     displayName: Rage
-    description: "This creature\u2019s next attack deals double damage, then Rage
-      is removed."
+    description: "This creature\u2019s next attack deals double damage, then it is
+      consumed."
     icon: {fileID: 21300000, guid: c0e7c22e60879472fbb127fe99121c23, type: 3}
   - tag: 7
     displayName: Stun
-    description: This creature cannot attack or act while Stunned. This cannot stack.
+    description: This creature cannot attack or act while Stunned. Cannot be stacked.
     icon: {fileID: 21300000, guid: 1046e0a0ea9804dad9ff2236f397a0e8, type: 3}
   - tag: 8
     displayName: Suppress
     description: "This creature\u2019s traits are suppressed and provide no bonuses.
-      One Suppressed stack is removed at the end of each round."
+      One stack is removed at the end of each round."
     icon: {fileID: 21300000, guid: 97cfe5af5ae36429d8f4dbf56dc41733, type: 3}
   - tag: 9
     displayName: Damage Up
     description: "Each stack increases this creature\u2019s attack damage by 1 this
-      round. All DamageUp stacks are cleared at the end of the round."
+      round. All stacks are removed at the end of the round."
     icon: {fileID: 21300000, guid: bc13ab71ffdd5480f9e9a06efa784a94, type: 3}
   - tag: 10
     displayName: No Forage
     description: This creature cannot forage for food while No Forage is active.
-      One No Forage stack is removed at the end of each round.
+      One stack is removed at the end of the round.
     icon: {fileID: 21300000, guid: 23ac52ab6b4c04d13a67fc4d8c3f0d35, type: 3}
   - tag: 11
     displayName: Immune
-    description: When this creature would gain a harmful status, one Immune stack
-      is consumed instead and the harmful status is ignored.
+    description: Negates the next harmful status the creature recieves, cosuming
+      one stack.
     icon: {fileID: 21300000, guid: 956ea1d390b074e24a0b3f71226f7a2c, type: 3}
   - tag: 12
     displayName: Regen
     description: At the end of each round, this creature heals 1 health per Regen
-      stack, then Regen is reduced by 1 stack.
+      stack. One stack is removed at the end of the round.
     icon: {fileID: 21300000, guid: 32c22c825e5bc4a0882efecf10ac9d4e, type: 3}
   - tag: 13
     displayName: Bleed
-    description: At the end of each round, this creature takes damage equal to its
-      Bleeding stacks. Any healing removes all Bleeding.
+    description: At the end of each round, this creature takes damage equal to the
+      number of bleeding stacks it has. Any healing removes all stacks.
     icon: {fileID: 21300000, guid: cdc8cc74d1d934c31bd1991f4d5a8e8c, type: 3}
   - tag: 14
     displayName: Stealth
-    description: While Stealth is active, this creature cannot be directly targeted.
-      Stealth is removed when it takes damage.
+    description: While Stealth is active, this creature cannot be directly targeted
+      by creatures or effects. Stealth is removed when it takes damage or makes an
+      action.
     icon: {fileID: 21300000, guid: 3a6efee49523e4e1bb1637bb0b41c7f5, type: 3}
   - tag: 15
     displayName: Absorb
     description: Absorb reduces incoming damage by its total stacks, consuming stacks
-      equal to the amount absorbed. Absorb is cleared at the end of the round.
+      equal to the amount absorbed. All stacks removed at the end of the round.
     icon: {fileID: 21300000, guid: 0ea3e55402c18462c87fc40737d81df7, type: 3}
   - tag: 16
     displayName: Body Up
-    description: "Each stack increases this creature\u2019s effective body size by
-      1 until the end of the round, then BodyUp is reduced by 1 stack."
+    description: "Each stack increases this creature\u2019s effective body size.
+      One stack is removed at the end of the round."
     icon: {fileID: 21300000, guid: 82817b82cd8a54b6081b9ede973eebb7, type: 3}
   - tag: 18
     displayName: Malnourish
     description: "Each stack reduces this creature\u2019s effective body size. One
-      Malnourished stack is removed at the end of each round."
+      stack is removed at the end of the round."
     icon: {fileID: 21300000, guid: ef5d6db46ee23429a8f68024577911a8, type: 3}

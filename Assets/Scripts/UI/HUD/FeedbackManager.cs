@@ -193,23 +193,20 @@ public class FeedbackManager : MonoBehaviour
     {
         if (go == null)
             yield break;
-        _ = go.transform.position; // Note: this is just the spawn point, but we will read current pos in loop
-        // We want to drift UP relative to wherever we are, but since other logic might move us (the stack push),
-        // we should perhaps just add a continuous drift velocity or simply fade out.
-        // The stack push handles the "make room" part.
-        // Let's just handle the Fade and maybe a slow drift, but be careful not to fight the stack push.
-        // Actually, if we just let the stack push handle the big moves, we can add a small drift here or just fade.
-
-        // To keep it simple and consistent with WoW style:
-        // The text appears, maybe pops a bit, then stays or drifts slowly, then fades.
-        // The "stack push" moves it up significantly.
 
         var canvasGroup = go.GetComponent<CanvasGroup>() ?? go.AddComponent<CanvasGroup>();
+
+        Vector3 baseScale = go.transform.localScale;
+
         float totalDuration = alphaHold + floatDuration;
+        float punchDuration = Mathf.Min(0.18f, totalDuration * 0.25f); // quick pop
+        float settleDuration = Mathf.Min(0.22f, totalDuration * 0.25f); // smooth settle
         float t = 0f;
 
-        // We'll add a small constant drift just so it's not static if no other events happen
-        float driftSpeed = 0.2f;
+        // Gentle upward drift that increases slightly during the fade-out;
+        // stackOffset remains the main mover for big jumps when stacking.
+        float baseDriftSpeed = 0.35f; // always-on drift
+        float extraDriftSpeed = 0.45f; // added as we fade out
 
         while (t < totalDuration)
         {
@@ -217,14 +214,45 @@ public class FeedbackManager : MonoBehaviour
                 yield break;
 
             t += Time.deltaTime;
+            float normalized = Mathf.Clamp01(t / totalDuration);
 
-            // Small continuous drift
-            go.transform.position += Vector3.up * (driftSpeed * Time.deltaTime);
-
-            // Alpha
+            // How far into the fade we are (0 while holding, 1 at end)
+            float fadeProgressForDrift = 0f;
             if (t > alphaHold)
             {
-                float fadeProgress = (t - alphaHold) / floatDuration;
+                fadeProgressForDrift = (t - alphaHold) / Mathf.Max(0.01f, floatDuration);
+                fadeProgressForDrift = Mathf.Clamp01(fadeProgressForDrift);
+            }
+
+            // Position: drift increases slightly as we fade out
+            float currentDrift = baseDriftSpeed + extraDriftSpeed * fadeProgressForDrift;
+            go.transform.position += Vector3.up * (currentDrift * Time.deltaTime);
+            // Scale: punch, then ease back to base, then stay
+            if (t < punchDuration)
+            {
+                float u = Mathf.Clamp01(t / punchDuration);
+                u = 1f - Mathf.Cos(u * Mathf.PI * 0.5f); // ease-out
+                Vector3 small = baseScale * 0.8f;
+                Vector3 big = baseScale * 1.15f;
+                go.transform.localScale = Vector3.Lerp(small, big, u);
+            }
+            else if (t < punchDuration + settleDuration)
+            {
+                float u = Mathf.Clamp01((t - punchDuration) / settleDuration);
+                // Smoothly go from big back to base
+                u = u * u * (3f - 2f * u); // smoothstep
+                Vector3 big = baseScale * 1.15f;
+                go.transform.localScale = Vector3.Lerp(big, baseScale, u);
+            }
+            else
+            {
+                go.transform.localScale = baseScale;
+            }
+
+            // Alpha: same hold-then-fade behavior
+            if (t > alphaHold)
+            {
+                float fadeProgress = (t - alphaHold) / Mathf.Max(0.01f, floatDuration);
                 canvasGroup.alpha = 1f - Mathf.Clamp01(fadeProgress);
             }
             else

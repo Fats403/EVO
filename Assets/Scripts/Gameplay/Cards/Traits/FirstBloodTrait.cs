@@ -32,7 +32,9 @@ public class FirstBloodTrait : Trait
         if (wasNegated)
             return;
 
-        target.AddStatus(StatusTag.Bleed, 1);
+        // Attribute Bleed to this creature so its ticks contribute to
+        // this creature's roundDamageDealt scoring.
+        target.AddStatus(StatusTag.Bleed, 1, self);
         FeedbackManager.Instance?.ShowFloatingText(
             "First Blood",
             self.transform.position,

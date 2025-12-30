@@ -890,7 +890,10 @@ public class ResolutionManager : MonoBehaviour
 
             if (c.data != null && c.data.type == CardType.Herbivore)
             {
-                int need = Mathf.Max(1, GetEffectiveBody(c));
+                // Use the cached body snapshot from round start so mid-round
+                // body changes (buffs/debuffs applied after eating) do not
+                // invalidate herbivore food scoring.
+                int need = Mathf.Max(1, c.roundStartBodyForFood);
                 if (c.eaten >= need)
                 {
                     int gain = need;
@@ -901,7 +904,7 @@ public class ResolutionManager : MonoBehaviour
             }
         }
 
-        // --- Pass 3: Kill-based scoring (alive-only) + Carnivore survival bonus + Avian scavenge bonus ---
+        // --- Pass 3: Damage-based scoring (alive-only) + Carnivore/Herbivore/Avian bonuses ---
         foreach (var c in creatures)
         {
             if (c == null || c.data == null)
@@ -909,20 +912,12 @@ public class ResolutionManager : MonoBehaviour
             if (c.isDying || c.currentHealth <= 0)
                 continue;
 
-            // Kills: award victim-body points (only if killer survived to scoring).
-            if (c.roundKillBody > 0)
+            // Damage: award 1:1 score for damage dealt this round if the creature survived.
+            if (c.roundDamageDealt > 0)
             {
-                int gain = Mathf.Max(0, c.roundKillBody);
+                int gain = Mathf.Max(0, c.roundDamageDealt);
                 ScoreManager.Instance?.Add(c.owner, gain);
-                ShowScoreBreakdown(c, gain, "Kills");
-                yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
-            }
-
-            // Carnivore survival: +1 if fed (eaten > 0) and alive.
-            if (c.data.type == CardType.Carnivore && c.eaten > 0)
-            {
-                ScoreManager.Instance?.Add(c.owner, 1);
-                ShowScoreBreakdown(c, 1, "Survival");
+                ShowScoreBreakdown(c, gain, "Damage");
                 yield return new WaitForSeconds(statusEffectDelay * pacingMultiplier);
             }
 
