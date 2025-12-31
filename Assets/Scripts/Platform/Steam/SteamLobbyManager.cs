@@ -31,7 +31,6 @@ public class SteamLobbyManager : MonoBehaviour
     private const string KeyHostDeckName = "hostDeckName";
     private const string KeyGuestDeckId = "guestDeckId";
     private const string KeyGuestDeckName = "guestDeckName";
-
     // MemberData keys (per-user data - each player sets their own)
     private const string KeyMemberReady = "ready";
     private const string KeyMemberDeckId = "deckId";
@@ -662,7 +661,6 @@ public class SteamLobbyManager : MonoBehaviour
             lobby.SetData(KeyGuestName, "Waiting...");
             lobby.SetData(KeyGuestDeckId, "");
             lobby.SetData(KeyGuestDeckName, "");
-            // Note: Guest's member data is automatically gone when they leave
         }
 
         // If we're the guest and the host left, leave the lobby

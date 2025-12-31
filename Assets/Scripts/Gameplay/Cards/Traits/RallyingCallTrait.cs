@@ -11,17 +11,9 @@ public class RallyingCallTrait : Trait
         if (self.HasStatus(StatusTag.Suppress))
             return;
         // All allied avians: +2 Regen and remove all Fatigued
-        var allies = Object
-            .FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c =>
-                c != null
-                && c.currentHealth > 0
-                && !c.isDying
-                && c.owner == self.owner
-                && c.data != null
-                && c.data.type == CardType.Avian
-            )
-            .ToList();
+        var allies = DeterministicHelpers.GetCreaturesSorted(c =>
+            c.owner == self.owner && c.data != null && c.data.type == CardType.Avian
+        );
         if (allies.Count > 0)
         {
             FeedbackManager.Instance?.ShowFloatingText(

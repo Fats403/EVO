@@ -59,7 +59,7 @@ MonoBehaviour:
       One stack is removed at the end of each round."
     icon: {fileID: 21300000, guid: 97cfe5af5ae36429d8f4dbf56dc41733, type: 3}
   - tag: 9
-    displayName: Damage Up
+    displayName: Fury
     description: "Each stack increases this creature\u2019s attack damage by 1 this
       round. All stacks are removed at the end of the round."
     icon: {fileID: 21300000, guid: bc13ab71ffdd5480f9e9a06efa784a94, type: 3}
@@ -95,9 +95,14 @@ MonoBehaviour:
       equal to the amount absorbed. All stacks removed at the end of the round.
     icon: {fileID: 21300000, guid: 0ea3e55402c18462c87fc40737d81df7, type: 3}
   - tag: 16
-    displayName: Body Up
+    displayName: Bulk
     description: "Each stack increases this creature\u2019s effective body size.
       One stack is removed at the end of the round."
+    icon: {fileID: 21300000, guid: 82817b82cd8a54b6081b9ede973eebb7, type: 3}
+  - tag: 17
+    displayName: Haste
+    description: "Each stack increases this creature\u2019s effective speed. One
+      stack is removed at the end of the round."
     icon: {fileID: 21300000, guid: 82817b82cd8a54b6081b9ede973eebb7, type: 3}
   - tag: 18
     displayName: Malnourish

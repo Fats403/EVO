@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Traits/Herbivores/Maternal Care")]
@@ -11,29 +10,15 @@ public class MaternalCareTrait : Trait
         if (self.HasStatus(StatusTag.Suppress))
             return;
 
-        var allies = Object
-            .FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c =>
-                c != null && c != self && c.currentHealth > 0 && !c.isDying && c.owner == self.owner
-            )
-            .ToList();
+        // Use centralized helpers for deterministic ally selection
+        var allies = DeterministicHelpers.GetCreaturesSorted(c =>
+            c != self && c.owner == self.owner
+        );
         if (allies.Count == 0)
             return;
 
-        var target = allies
-            .OrderBy(c => c.currentHealth)
-            .ThenBy(_ =>
-            {
-                if (GameManager.Instance == null)
-                {
-                    Debug.LogWarning(
-                        "MaternalCareTrait: GameManager.Instance is null. Determinism may be compromised."
-                    );
-                    return Random.Range(0, allies.Count);
-                }
-                return GameManager.Instance.NextRandomInt(0, allies.Count);
-            })
-            .FirstOrDefault();
+        // Find lowest HP ally deterministically
+        var target = DeterministicHelpers.FindMinBy(allies, c => c.currentHealth);
         if (target == null)
             return;
 

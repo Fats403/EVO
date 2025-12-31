@@ -11,7 +11,7 @@ public class BloodRushTrait : Trait
             return;
 
         // Immediate benefit: heal now.
-        self.Heal(2);
+        self.Heal(1);
 
         // Flag to gain Rage next round (using per-creature state for determinism)
         self.traitGrantBloodRush = true;

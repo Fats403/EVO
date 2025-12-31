@@ -343,3 +343,4 @@ public static class GameStateSerialization
         return state;
     }
 }
+

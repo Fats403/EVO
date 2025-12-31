@@ -9,8 +9,8 @@ public class ApexAscensionEffect : EffectTraitBase
             return;
         self.maxHealth += 2;
         self.currentHealth = Mathf.Min(self.maxHealth, self.currentHealth + 2);
-        self.body += 2;
-        self.speed += 2;
+        self.body += 1;
+        self.speed += 1;
         self.ClearAllNegativeStatuses();
         self.RefreshStatsUI();
         remainingRounds = 0;

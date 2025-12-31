@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Traits/Carnivores/Pack Leader")]
@@ -12,14 +11,15 @@ public class PackLeaderTrait : Trait
             return;
         if (self.HasStatus(StatusTag.Suppress))
             return;
-        // Order: other allied carnivores (excluding self)
-        var allies = Object
-            .FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c =>
-                c != null && c != self && c.owner == self.owner && c.currentHealth > 0 && !c.isDying
-            )
-            .Where(c => c.data != null && c.data.type == CardType.Carnivore)
-            .ToList();
+
+        // Get allied carnivores (excluding self) in deterministic order
+        var allies = DeterministicHelpers.GetCreaturesSorted(c =>
+            c != self
+            && c.owner == self.owner
+            && c.data != null
+            && c.data.type == CardType.Carnivore
+        );
+
         foreach (var ally in allies)
         {
             if (ResolutionManager.Instance == null)

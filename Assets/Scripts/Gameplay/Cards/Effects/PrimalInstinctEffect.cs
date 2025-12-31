@@ -7,15 +7,15 @@ public class PrimalInstinctEffect : EffectTraitBase
     {
         if (self == null)
             return;
-        self.AddStatus(StatusTag.SpeedUp, 2);
-        self.AddStatus(StatusTag.DamageUp, 1);
+        self.AddStatus(StatusTag.Haste, 2);
+        self.AddStatus(StatusTag.Fury, 1);
     }
 
     public override void OnRoundEnd(Creature self)
     {
         if (self != null)
         {
-            self.ClearStatus(StatusTag.SpeedUp);
+            self.ClearStatus(StatusTag.Haste);
         }
         base.OnRoundEnd(self);
     }

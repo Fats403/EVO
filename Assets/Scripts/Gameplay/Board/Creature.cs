@@ -31,7 +31,6 @@ public class Creature : MonoBehaviour
     // accumulated during the round and converted into points during the
     // scoring phase (if still alive).
     [Header("Round Scoring (Runtime)")]
-    public int roundKillBody; // Sum of victim body values killed this round (for stats/traits).
     public int roundKillCount; // Number of kills this round (for stats/traits).
     public bool roundHasScavengePoint; // Avians: true if an enemy died while this avian was alive (cap 1).
     public int roundStartBodyForFood; // Snapshot of body at round start for herbivore food scoring.
@@ -84,7 +83,7 @@ public class Creature : MonoBehaviour
         roundDamageDealt = 0;
         roundHealingUndone = 0;
         damagedTargetsThisRound.Clear();
-        roundKillBody = 0;
+
         roundKillCount = 0;
         roundHasScavengePoint = false;
 
@@ -528,12 +527,8 @@ public class Creature : MonoBehaviour
             }
         }
         // Global post-damage notification
-        // CRITICAL: Sort by slot index for deterministic iteration order
-        var dmgSlots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
-            .ToDictionary(s => s, s => s.index);
-        var all = FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .OrderBy(c => GetSlotIndexForCreature(c, dmgSlots))
-            .ToArray();
+        // Get all creatures in deterministic slot order (includes dying, we filter below)
+        var all = DeterministicHelpers.GetAllCreaturesInSlotOrder();
         foreach (var other in all)
         {
             if (other == null || other.traits == null)
@@ -603,12 +598,8 @@ public class Creature : MonoBehaviour
         // Avian scavenging: when an ENEMY creature dies, living avians may scavenge:
         // - They become "fed" for starvation purposes (eaten set to at least 1)
         // - They may earn +1 scavenge point at end of round (cap 1 per avian per round)
-        // CRITICAL: Sort by slot index for deterministic iteration order
-        var deathSlots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
-            .ToDictionary(s => s, s => s.index);
-        var allForDeath = FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .OrderBy(c => GetSlotIndexForCreature(c, deathSlots))
-            .ToArray();
+        // Get all creatures in deterministic slot order
+        var allForDeath = DeterministicHelpers.GetAllCreaturesInSlotOrder();
         foreach (var other in allForDeath)
         {
             if (other == null || other == this)
@@ -712,7 +703,7 @@ public class Creature : MonoBehaviour
         roundHealingUndone = 0;
         if (damagedTargetsThisRound != null)
             damagedTargetsThisRound.Clear();
-        roundKillBody = 0;
+
         roundKillCount = 0;
         roundHasScavengePoint = false;
 
@@ -740,7 +731,7 @@ public class Creature : MonoBehaviour
         }
         if (traitGrantBloodRush)
         {
-            AddStatus(StatusTag.Rage, 1);
+            AddStatus(StatusTag.Fury, 1);
             traitGrantBloodRush = false;
         }
     }
@@ -751,10 +742,7 @@ public class Creature : MonoBehaviour
             return;
         if (data == null)
             return;
-        // Only creatures that can meaningfully "get kills" care about this,
-        // but we keep it generic so trait-granted attacks on herbivores still work.
-        int bodyForScore = victim.GetEffectiveBodyForScoring();
-        roundKillBody += Mathf.Max(0, bodyForScore);
+
         roundKillCount += 1;
     }
 
@@ -764,8 +752,9 @@ public class Creature : MonoBehaviour
             (!HasStatus(StatusTag.Suppress) && traits != null)
                 ? traits.Sum(t => t != null ? t.BodyBonus(this) : 0)
                 : 0;
-        int temp = GetStatus(StatusTag.BodyUp) - GetStatus(StatusTag.Malnourish);
-        return body + traitBody + temp;
+        int temp = GetStatus(StatusTag.Bulk) - GetStatus(StatusTag.Malnourish);
+        // Body can never be lower than 1 for scoring, regardless of debuffs.
+        return Mathf.Max(1, body + traitBody + temp);
     }
 
     public void RefreshStatsUI()
@@ -777,8 +766,9 @@ public class Creature : MonoBehaviour
                 (!HasStatus(StatusTag.Suppress) && traits != null)
                     ? traits.Sum(t => t != null ? t.SpeedBonus(this) : 0)
                     : 0;
-            int tempSpeed = GetStatus(StatusTag.SpeedUp) - GetStatus(StatusTag.Fatigue);
-            int displaySpeed = speed + tempSpeed + traitSpeed;
+            int tempSpeed = GetStatus(StatusTag.Haste) - GetStatus(StatusTag.Fatigue);
+            // Speed can never go below 0, even with heavy Fatigue.
+            int displaySpeed = Mathf.Max(0, speed + tempSpeed + traitSpeed);
             speedText.text = displaySpeed.ToString();
             if (displaySpeed > baseSpeed)
                 speedText.color = Color.green;
@@ -795,8 +785,11 @@ public class Creature : MonoBehaviour
                 (!HasStatus(StatusTag.Suppress) && traits != null)
                     ? traits.Sum(t => t != null ? t.BodyBonus(this) : 0)
                     : 0;
-            int displayBody =
-                body + traitBody + GetStatus(StatusTag.BodyUp) - GetStatus(StatusTag.Malnourish);
+            // Body can never be lower than 1 on the UI either.
+            int displayBody = Mathf.Max(
+                1,
+                body + traitBody + GetStatus(StatusTag.Bulk) - GetStatus(StatusTag.Malnourish)
+            );
             bodyText.text = displayBody.ToString();
             if (displayBody > baseBody)
                 bodyText.color = Color.green;
@@ -847,15 +840,15 @@ public class Creature : MonoBehaviour
             return;
         }
 
-        // Mutual exclusivity: BodyUp vs Malnourished; SpeedUp vs Fatigued
-        if (tag == StatusTag.BodyUp)
+        // Mutual exclusivity: Bulk vs Malnourished; Haste vs Fatigued
+        if (tag == StatusTag.Bulk)
             ClearStatus(StatusTag.Malnourish);
         if (tag == StatusTag.Malnourish)
-            ClearStatus(StatusTag.BodyUp);
-        if (tag == StatusTag.SpeedUp)
+            ClearStatus(StatusTag.Bulk);
+        if (tag == StatusTag.Haste)
             ClearStatus(StatusTag.Fatigue);
         if (tag == StatusTag.Fatigue)
-            ClearStatus(StatusTag.SpeedUp);
+            ClearStatus(StatusTag.Haste);
 
         int newValue = GetStatus(tag) + stacks;
 
@@ -997,10 +990,10 @@ public class Creature : MonoBehaviour
             DecrementStatus(StatusTag.Fatigue, 1);
             didAny = true;
         }
-        // SpeedUp: -1
-        if (GetStatus(StatusTag.SpeedUp) > 0)
+        // Haste: -1
+        if (GetStatus(StatusTag.Haste) > 0)
         {
-            DecrementStatus(StatusTag.SpeedUp, 1);
+            DecrementStatus(StatusTag.Haste, 1);
             didAny = true;
         }
         // Taunt: -1
@@ -1010,10 +1003,10 @@ public class Creature : MonoBehaviour
             didAny = true;
         }
 
-        // DamageUp: clear all
-        if (GetStatus(StatusTag.DamageUp) > 0)
+        // Fury: clear all
+        if (GetStatus(StatusTag.Fury) > 0)
         {
-            ClearStatus(StatusTag.DamageUp);
+            ClearStatus(StatusTag.Fury);
             didAny = true;
         }
 
@@ -1049,10 +1042,10 @@ public class Creature : MonoBehaviour
             }
         }
 
-        // BodyUp: -1 ; Malnourished: -1
-        if (GetStatus(StatusTag.BodyUp) > 0)
+        // Bulk: -1 ; Malnourished: -1
+        if (GetStatus(StatusTag.Bulk) > 0)
         {
-            DecrementStatus(StatusTag.BodyUp, 1);
+            DecrementStatus(StatusTag.Bulk, 1);
             didAny = true;
         }
 
@@ -1093,26 +1086,7 @@ public class Creature : MonoBehaviour
 
     private BoardSlot FindSlotOf(Creature c)
     {
-        var slots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None);
-        foreach (var s in slots)
-        {
-            if (s.currentCreature == c)
-                return s;
-        }
-        return null;
-    }
-
-    /// <summary>
-    /// Gets the slot index for a creature, or a large value if not on a slot.
-    /// Used for deterministic ordering in networked games.
-    /// </summary>
-    private static int GetSlotIndexForCreature(Creature c, Dictionary<BoardSlot, int> slotIndices)
-    {
-        foreach (var kvp in slotIndices)
-        {
-            if (kvp.Key.currentCreature == c)
-                return kvp.Value;
-        }
-        return int.MaxValue;
+        // Use BoardUtils for deterministic slot lookup across all systems
+        return BoardUtils.GetSlotOf(c);
     }
 }

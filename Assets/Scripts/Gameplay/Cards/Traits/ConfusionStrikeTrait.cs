@@ -12,18 +12,15 @@ public class ConfusionStrikeTrait : Trait
             return;
         if (finalDamage <= 0)
             return;
-        // If controller controls another avian, apply Suppress to target
-        var anyOtherAvian = Object
-            .FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Any(c =>
-                c != null
-                && c != self
-                && c.currentHealth > 0
-                && !c.isDying
+        // If controller controls another avian, apply Suppress to target (deterministic creature set)
+        var anyOtherAvian = DeterministicHelpers
+            .GetCreaturesSorted(c =>
+                c != self
                 && c.owner == self.owner
                 && c.data != null
                 && c.data.type == CardType.Avian
-            );
+            )
+            .Any();
         if (anyOtherAvian)
         {
             target.AddStatus(StatusTag.Suppress, 2);

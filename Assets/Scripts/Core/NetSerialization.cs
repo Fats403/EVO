@@ -259,6 +259,112 @@ public static class NetSerialization
     }
 
     // -------------------------------------------------------------------------
+    // StateRequest/StateSync Serialization (for reconnection)
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Serialises a StateRequestPayload into a byte array.
+    /// </summary>
+    public static byte[] SerializeStateRequest(StateRequestPayload request)
+    {
+        using var ms = new MemoryStream();
+        using var bw = new BinaryWriter(ms);
+        bw.Write(request.lastKnownRound);
+        bw.Write(request.lastKnownChecksum);
+        bw.Write(request.isReconnecting);
+        return ms.ToArray();
+    }
+
+    /// <summary>
+    /// Deserialises a StateRequestPayload from a byte array.
+    /// </summary>
+    public static bool TryDeserializeStateRequest(byte[] payload, out StateRequestPayload request)
+    {
+        request = default;
+        if (payload == null || payload.Length < 9) // int + int + bool
+            return false;
+
+        try
+        {
+            using var ms = new MemoryStream(payload);
+            using var br = new BinaryReader(ms);
+            request.lastKnownRound = br.ReadInt32();
+            request.lastKnownChecksum = br.ReadInt32();
+            request.isReconnecting = br.ReadBoolean();
+            return true;
+        }
+        catch
+        {
+            request = default;
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Serialises a StateSyncPayload into a byte array.
+    /// </summary>
+    public static byte[] SerializeStateSync(StateSyncPayload sync)
+    {
+        using var ms = new MemoryStream();
+        using var bw = new BinaryWriter(ms);
+        bw.Write(sync.round);
+        bw.Write(sync.checksum);
+        bw.Write(sync.success);
+        bw.Write(sync.errorMessage ?? "");
+
+        int dataLength = sync.stateData?.Length ?? 0;
+        bw.Write(dataLength);
+        if (dataLength > 0)
+            bw.Write(sync.stateData);
+
+        return ms.ToArray();
+    }
+
+    /// <summary>
+    /// Deserialises a StateSyncPayload from a byte array.
+    /// </summary>
+    public static bool TryDeserializeStateSync(byte[] payload, out StateSyncPayload sync)
+    {
+        sync = default;
+        if (payload == null || payload.Length < 13) // int + int + bool + string length + int
+            return false;
+
+        try
+        {
+            using var ms = new MemoryStream(payload);
+            using var br = new BinaryReader(ms);
+            sync.round = br.ReadInt32();
+            sync.checksum = br.ReadInt32();
+            sync.success = br.ReadBoolean();
+            sync.errorMessage = br.ReadString();
+
+            int dataLength = br.ReadInt32();
+            if (dataLength > 0)
+                sync.stateData = br.ReadBytes(dataLength);
+            else
+                sync.stateData = Array.Empty<byte>();
+
+            return true;
+        }
+        catch
+        {
+            sync = default;
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Serialises an empty heartbeat payload.
+    /// </summary>
+    public static byte[] SerializeHeartbeat()
+    {
+        using var ms = new MemoryStream();
+        using var bw = new BinaryWriter(ms);
+        bw.Write(UnityEngine.Time.unscaledTime);
+        return ms.ToArray();
+    }
+
+    // -------------------------------------------------------------------------
     // Private Helpers
     // -------------------------------------------------------------------------
 

@@ -41,7 +41,7 @@ public class AerialSuperiorityTrait : Trait
 
         foreach (var ally in validAllies)
         {
-            ally.AddStatus(StatusTag.SpeedUp, 1);
+            ally.AddStatus(StatusTag.Haste, 1);
             FeedbackManager.Instance?.ShowFloatingText(
                 "Speed +1",
                 ally.transform.position,

@@ -15,7 +15,8 @@ MonoBehaviour:
   cardId: EFF_PACK_BOND
   effectName: Pack Bond
   icon: {fileID: 21300000, guid: 989b6c7621f994bac8a4085ed9cbfb69, type: 3}
-  description: Two target allies each gain +1 Body and +1 Speed this round only
+  description: Two target allies each gain <link="Bulk"><color=#FFD35B><b>+1 Bulk</b></color></link>
+    and <link="Haste"><color=#FFD35B><b>+1 Haste</b></color></link> this round only
   targetSide: 0
   targetType: 0
   targetCount: 1

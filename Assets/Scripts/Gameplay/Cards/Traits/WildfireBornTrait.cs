@@ -16,7 +16,7 @@ public class WildfireBornTrait : Trait
         if (wm.CurrentWeather != WeatherType.Wildfire)
             return;
 
-        self.AddStatus(StatusTag.DamageUp, 1);
+        self.AddStatus(StatusTag.Fury, 1);
         self.AddStatus(StatusTag.Immune, 1);
 
         FeedbackManager.Instance?.ShowFloatingText(
@@ -25,7 +25,7 @@ public class WildfireBornTrait : Trait
             GameColorPalette.TextWarning
         );
         FeedbackManager.Instance?.ShowFloatingText(
-            "DamageUp +1",
+            "Fury +1",
             self.transform.position,
             GameColorPalette.Rage
         );

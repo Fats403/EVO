@@ -44,7 +44,9 @@ public class DeckSlotUI : MonoBehaviour
     [SerializeField]
     private Button deleteButton;
 
-    [Tooltip("Button that selects this deck slot. Wire this to the background image's Button component.")]
+    [Tooltip(
+        "Button that selects this deck slot. Wire this to the background image's Button component."
+    )]
     [SerializeField]
     private Button selectButton;
 
@@ -110,10 +112,10 @@ public class DeckSlotUI : MonoBehaviour
         if (deckTitleText != null)
             deckTitleText.text = "NEW DECK";
 
-        // Show "Add" (create) icon. Edit/Delete are visible but disabled.
+        // Show only the "Add" (create) icon when there is no deck data.
         SetActiveSafe(addIconRoot, true);
-        SetActiveSafe(editIconRoot, true);
-        SetActiveSafe(deleteIconRoot, true);
+        SetActiveSafe(editIconRoot, false);
+        SetActiveSafe(deleteIconRoot, false);
 
         if (addButton != null)
             addButton.interactable = true; // create new deck
@@ -135,7 +137,7 @@ public class DeckSlotUI : MonoBehaviour
         if (deckTitleText != null)
             deckTitleText.text = _deckName;
 
-        // Hide "Add" icon when a deck exists.
+        // Hide "Add" icon when a deck exists, and show Edit/Delete controls.
         SetActiveSafe(addIconRoot, false);
         SetActiveSafe(editIconRoot, true);
         SetActiveSafe(deleteIconRoot, true);
@@ -194,11 +196,5 @@ public class DeckSlotUI : MonoBehaviour
     {
         // Toggle the "SELECTED" plaque if one is wired.
         SetActiveSafe(selectedPlaqueRoot, _isSelected && _hasDeck);
-
-        // Apply a subtle scale bump when selected.
-        if (_baseScale == Vector3.zero)
-            _baseScale = transform.localScale;
-
-        transform.localScale = _isSelected ? _baseScale * 1.05f : _baseScale;
     }
 }

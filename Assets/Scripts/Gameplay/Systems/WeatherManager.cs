@@ -55,6 +55,20 @@ public class WeatherManager : MonoBehaviour
         OnWeatherChanged?.Invoke(currentWeather);
     }
 
+    /// <summary>
+    /// Sets weather state directly for state restoration (reconnection/resync).
+    /// Does not fire events or update visuals - those should be handled by the restorer.
+    /// </summary>
+    public void SetWeatherForRestore(WeatherType weather, WeatherType? previousWeather)
+    {
+        currentWeather = weather;
+        lastWeather = previousWeather;
+        isFirstRound = false;
+        Debug.Log(
+            $"[WeatherManager] Weather restored to {weather} (previous: {previousWeather?.ToString() ?? "none"})"
+        );
+    }
+
     int Next(int minInclusive, int maxExclusive)
     {
         if (GameManager.Instance == null)
@@ -200,14 +214,8 @@ public class WeatherManager : MonoBehaviour
 
     void NotifyTraitsWeatherChanged(WeatherType newWeather, WeatherType? previousWeather)
     {
-        // CRITICAL: Sort by slot index for deterministic iteration order
-        var allSlots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
-            .ToDictionary(s => s, s => s.index);
-
-        var all = FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
-            .OrderBy(c => GetSlotIndexForCreature(c, allSlots))
-            .ToList();
+        // Get all creatures in deterministic slot order
+        var all = DeterministicHelpers.GetAllCreaturesSorted();
         foreach (var c in all)
         {
             if (c.traits == null)
@@ -219,16 +227,6 @@ public class WeatherManager : MonoBehaviour
             }
             c.RefreshStatsUI();
         }
-    }
-
-    private int GetSlotIndexForCreature(Creature c, Dictionary<BoardSlot, int> slotIndices)
-    {
-        foreach (var kvp in slotIndices)
-        {
-            if (kvp.Key.currentCreature == c)
-                return kvp.Value;
-        }
-        return int.MaxValue;
     }
 
     public void ApplyRoundStartEffects(FoodPile pile)
@@ -259,19 +257,9 @@ public class WeatherManager : MonoBehaviour
                 pile.UpdateUI();
 
                 // Apply 1 stack of Fatigued to all Avians at storm start
-                // CRITICAL: Sort by slot index for deterministic iteration order
-                var stormSlots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
-                    .ToDictionary(s => s, s => s.index);
-                var avians = FindObjectsByType<Creature>(FindObjectsSortMode.None)
-                    .Where(c =>
-                        c != null
-                        && c.currentHealth > 0
-                        && !c.isDying
-                        && c.data != null
-                        && c.data.type == CardType.Avian
-                    )
-                    .OrderBy(c => GetSlotIndexForCreature(c, stormSlots))
-                    .ToList();
+                var avians = DeterministicHelpers.GetCreaturesSorted(c =>
+                    c.data != null && c.data.type == CardType.Avian
+                );
                 foreach (var a in avians)
                 {
                     // Allow traits to negate storm fatigue as a weather penalty.
@@ -320,13 +308,8 @@ public class WeatherManager : MonoBehaviour
                 if (alertDelay > 0f)
                     yield return new WaitForSeconds(alertDelay);
 
-                // CRITICAL: Sort by slot index for deterministic iteration order
-                var fireSlots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
-                    .ToDictionary(s => s, s => s.index);
-                var all = FindObjectsByType<Creature>(FindObjectsSortMode.None)
-                    .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
-                    .OrderBy(c => GetSlotIndexForCreature(c, fireSlots))
-                    .ToList();
+                // Get all creatures in deterministic slot order
+                var all = DeterministicHelpers.GetAllCreaturesSorted();
                 foreach (var c in all)
                 {
                     // Allow traits to negate wildfire damage as a weather penalty.

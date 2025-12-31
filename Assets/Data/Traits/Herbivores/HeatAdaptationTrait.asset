@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: HeatAdaptationTrait
   m_EditorClassIdentifier: Assembly-CSharp::HeatAdaptationTrait
   traitName: Heat Adaption
-  description: During Wildfire, gain +2 Body and <link="Immune"><color=#FFD35B><b>+1
+  description: During Wildfire, gain +2 Body Size and <link="Immune"><color=#FFD35B><b>+1
     Immune</b></color></link>

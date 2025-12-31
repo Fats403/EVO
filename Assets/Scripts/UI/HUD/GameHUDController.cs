@@ -352,10 +352,10 @@ public class GameHUDController : MonoBehaviour
         switch (_currentPhase)
         {
             case GamePhase.Setup:
-                phaseText.text = "Setup";
+                phaseText.text = "--";
                 break;
             case GamePhase.Draw:
-                phaseText.text = "Draw";
+                phaseText.text = "--";
                 break;
             case GamePhase.Place:
                 if (_awaitingOwner.HasValue)

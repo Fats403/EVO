@@ -9,15 +9,15 @@ public enum StatusTag
     Rage, // Does not Stack, doubles next damage, clears once attack is made
     Stun, // Does not Stack, creatue cannot make any actions, clears at end of round
     Suppress, // Stacks suppressed, clears one stack at end of round
-    DamageUp, // Stacks damage up, adds 1 damage to all attacks, clears one stack at end of round
+    Fury, // Stacks fury, adds 1 damage to all attacks, clears one stack at end of round
     NoForage, // Does not stack, prevents foraging, clears at end of round
     Immune, // Stacks immune, negates next damage, clears one stack at end of round
     Regen, // Stacks regen, heals number ofstacks of health each round, clears one stack at end of round
     Bleed, // Stacks bleeding, deals 1 damage each round, clears one stack at end of round
     Stealth, // Does not stack, prevents targeting, clears at end of round
     Absorb, // Stacks absorb, absorbs damage up to number of stacks, clears all stacks at end of round
-    BodyUp, // Does not stack, adds number of stacks to body, clears one stack at end of round
-    SpeedUp, // Does not stack, adds number of stacks to speed, clears one stack at end of round
+    Bulk, // Stacks, adds number of stacks to body, clears one stack at end of round
+    Haste, // Stacks, adds number of stacks to speed, clears one stack at end of round
     Malnourish, // Reduces body by number of stacks each round, clears one stack at end of round
 }
 
@@ -40,12 +40,12 @@ public static class StatusTagGroups
     {
         StatusTag.Shield,
         StatusTag.Reflect,
-        StatusTag.DamageUp,
+        StatusTag.Fury,
         StatusTag.Regen,
         StatusTag.Stealth,
         StatusTag.Absorb,
-        StatusTag.BodyUp,
-        StatusTag.SpeedUp,
+        StatusTag.Bulk,
+        StatusTag.Haste,
         StatusTag.Immune,
     };
 }

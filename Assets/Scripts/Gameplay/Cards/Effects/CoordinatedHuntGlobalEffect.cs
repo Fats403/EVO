@@ -15,7 +15,7 @@ public class CoordinatedHuntGlobalEffect : GlobalEffectBase
 
         foreach (var c in all)
         {
-            c.AddStatus(StatusTag.SpeedUp, 1);
+            c.AddStatus(StatusTag.Haste, 1);
         }
 
         // If the caster owns 3+ carnivores, also grant Rage to their carnivores only.

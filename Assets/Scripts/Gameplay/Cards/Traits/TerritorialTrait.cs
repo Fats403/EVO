@@ -15,14 +15,9 @@ public class TerritorialTrait : Trait
         if (slot == null)
             return;
 
-        // Find enemy slots (same owner as the killed target) ordered by x.
-        var allSlots = Object
-            .FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
-            .Where(s =>
-                s != null && s.owner == slot.owner && s.occupied && s.currentCreature != null
-            )
-            .OrderBy(s => s.transform.position.x)
-            .ToList();
+        // Find enemy slots (same owner as the killed target) in deterministic order.
+        // Use BoardUtils.GetSlotsForOwner which returns slots sorted by slot index.
+        var allSlots = BoardUtils.GetSlotsForOwner(slot.owner, occupiedOnly: true);
         int idx = allSlots.FindIndex(s => s == slot);
         if (idx < 0)
             return;

@@ -25,8 +25,33 @@ public class NetworkMatchManager : MonoBehaviour
     [SerializeField]
     private int maxRetries = 5;
 
+    [Header("Heartbeat Settings")]
+    [Tooltip("Interval between heartbeat messages (seconds).")]
+    [SerializeField]
+    private float heartbeatIntervalSeconds = 3f;
+
+    [Header("Reconnection Settings")]
+    [Tooltip("Time to wait for state sync response (seconds).")]
+    [SerializeField]
+    private float stateSyncTimeoutSeconds = 10f;
+
     private IMatchTransport _transport;
     private int _nextSequenceId;
+    private float _lastHeartbeatTime;
+
+    // Reconnection state
+    private bool _awaitingStateSync;
+    private float _stateSyncRequestTime;
+
+    /// <summary>
+    /// Raised when a state sync is received and successfully applied.
+    /// </summary>
+    public event Action<int> OnStateSyncApplied;
+
+    /// <summary>
+    /// Raised when a state sync request fails.
+    /// </summary>
+    public event Action<string> OnStateSyncFailed;
 
     // Pending action tracking for reliability
     private struct PendingAction
@@ -77,6 +102,30 @@ public class NetworkMatchManager : MonoBehaviour
         {
             _transport.OnDataReceived -= HandleDataReceived;
             _transport.OnDisconnected -= HandleDisconnected;
+        }
+    }
+
+    private void Update()
+    {
+        if (_transport == null || !_transport.IsConnected)
+            return;
+
+        // Send periodic heartbeats to prevent false disconnect detection
+        if (Time.unscaledTime - _lastHeartbeatTime >= heartbeatIntervalSeconds)
+        {
+            SendHeartbeat();
+            _lastHeartbeatTime = Time.unscaledTime;
+        }
+
+        // Check for state sync timeout
+        if (
+            _awaitingStateSync
+            && Time.unscaledTime - _stateSyncRequestTime > stateSyncTimeoutSeconds
+        )
+        {
+            _awaitingStateSync = false;
+            OnStateSyncFailed?.Invoke("State sync request timed out.");
+            Debug.LogWarning("NetworkMatchManager: State sync request timed out.");
         }
     }
 
@@ -171,6 +220,38 @@ public class NetworkMatchManager : MonoBehaviour
                 }
                 break;
 
+            case NetMessageType.StateRequest:
+                if (NetSerialization.TryDeserializeStateRequest(msg.payload, out var stateRequest))
+                {
+                    Debug.Log(
+                        $"NetworkMatchManager: Received StateRequest (lastRound={stateRequest.lastKnownRound}, reconnecting={stateRequest.isReconnecting})"
+                    );
+                    HandleStateRequest(stateRequest);
+                }
+                else
+                {
+                    Debug.LogWarning("NetworkMatchManager: Received malformed StateRequest.");
+                }
+                break;
+
+            case NetMessageType.StateSync:
+                if (NetSerialization.TryDeserializeStateSync(msg.payload, out var stateSync))
+                {
+                    Debug.Log(
+                        $"NetworkMatchManager: Received StateSync (round={stateSync.round}, success={stateSync.success})"
+                    );
+                    HandleStateSync(stateSync);
+                }
+                else
+                {
+                    Debug.LogWarning("NetworkMatchManager: Received malformed StateSync.");
+                }
+                break;
+
+            case NetMessageType.Heartbeat:
+                // Heartbeat just resets the disconnect timer (already done via OnMessageReceived)
+                break;
+
             default:
                 Debug.LogWarning(
                     $"NetworkMatchManager: Received NetMessage with unknown type {msg.type}."
@@ -182,7 +263,20 @@ public class NetworkMatchManager : MonoBehaviour
     private void HandleDisconnected()
     {
         Debug.Log("NetworkMatchManager: Transport disconnected.");
-        // NetworkSyncValidator handles disconnect UI and recovery
+        // Notify the sync validator so it can show disconnect UI and begin
+        // waiting for potential reconnect. This is a hard signal from the
+        // transport, so we bypass the timeout-based check.
+        if (NetworkSyncValidator.Instance != null)
+        {
+            Debug.Log("NetworkMatchManager: Calling ForcePeerDisconnected on validator...");
+            NetworkSyncValidator.Instance.ForcePeerDisconnected("Transport reported disconnect");
+        }
+        else
+        {
+            Debug.LogError(
+                "NetworkMatchManager: NetworkSyncValidator.Instance is NULL! Cannot trigger disconnect overlay."
+            );
+        }
     }
 
     public void SendSessionHeader(NetSessionHeader header)
@@ -335,5 +429,205 @@ public class NetworkMatchManager : MonoBehaviour
         }
 
         _retryCoroutine = null;
+    }
+
+    // -------------------------------------------------------------------------
+    // Heartbeat
+    // -------------------------------------------------------------------------
+
+    private void SendHeartbeat()
+    {
+        if (_transport == null || !_transport.IsConnected)
+            return;
+
+        var payload = NetSerialization.SerializeHeartbeat();
+        var msg = new NetMessage
+        {
+            type = NetMessageType.Heartbeat,
+            sequenceId = 0,
+            payload = payload,
+        };
+
+        var bytes = NetSerialization.SerializeNetMessage(msg);
+        _transport.Send(bytes);
+    }
+
+    // -------------------------------------------------------------------------
+    // State Synchronization (Reconnection)
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Requests the current game state from the peer.
+    /// Called when reconnecting or when a desync is detected.
+    /// </summary>
+    public void RequestStateSync(
+        int lastKnownRound,
+        int lastKnownChecksum,
+        bool isReconnecting = true
+    )
+    {
+        if (_transport == null || !_transport.IsConnected)
+        {
+            Debug.LogWarning("NetworkMatchManager.RequestStateSync: No active transport.");
+            return;
+        }
+
+        if (_awaitingStateSync)
+        {
+            Debug.LogWarning("NetworkMatchManager: Already awaiting state sync.");
+            return;
+        }
+
+        var request = new StateRequestPayload
+        {
+            lastKnownRound = lastKnownRound,
+            lastKnownChecksum = lastKnownChecksum,
+            isReconnecting = isReconnecting,
+        };
+
+        var payload = NetSerialization.SerializeStateRequest(request);
+        var msg = new NetMessage
+        {
+            type = NetMessageType.StateRequest,
+            sequenceId = _nextSequenceId++,
+            payload = payload,
+        };
+
+        var bytes = NetSerialization.SerializeNetMessage(msg);
+        _transport.Send(bytes);
+
+        _awaitingStateSync = true;
+        _stateSyncRequestTime = Time.unscaledTime;
+
+        Debug.Log(
+            $"NetworkMatchManager: Sent StateRequest (lastRound={lastKnownRound}, checksum={lastKnownChecksum:X8})"
+        );
+    }
+
+    /// <summary>
+    /// Handles a state request from the peer by sending current game state.
+    /// </summary>
+    private void HandleStateRequest(StateRequestPayload request)
+    {
+        // Capture current game state
+        var currentState = GameStateSerialization.CaptureState();
+        var currentChecksum = GameStateChecksum.ComputeChecksum();
+
+        // Check if peer is already in sync
+        if (
+            request.lastKnownRound == currentState.round
+            && request.lastKnownChecksum == currentChecksum.checksum
+        )
+        {
+            // Peer is already in sync, send success without full state
+            SendStateSyncResponse(currentState.round, currentChecksum.checksum, null, true, null);
+            Debug.Log("NetworkMatchManager: Peer already in sync, sent confirmation.");
+            return;
+        }
+
+        // Serialize and send full state
+        var stateBytes = GameStateSerialization.Serialize(currentState);
+        SendStateSyncResponse(currentState.round, currentChecksum.checksum, stateBytes, true, null);
+
+        Debug.Log(
+            $"NetworkMatchManager: Sent StateSync (round={currentState.round}, size={stateBytes.Length} bytes)"
+        );
+    }
+
+    /// <summary>
+    /// Handles a state sync response from the peer.
+    /// </summary>
+    private void HandleStateSync(StateSyncPayload sync)
+    {
+        _awaitingStateSync = false;
+
+        if (!sync.success)
+        {
+            Debug.LogError($"NetworkMatchManager: State sync failed: {sync.errorMessage}");
+            OnStateSyncFailed?.Invoke(sync.errorMessage ?? "Unknown error");
+            return;
+        }
+
+        // If no state data, peer confirmed we're already in sync
+        if (sync.stateData == null || sync.stateData.Length == 0)
+        {
+            Debug.Log("NetworkMatchManager: Peer confirmed we're in sync.");
+            OnStateSyncApplied?.Invoke(sync.round);
+            return;
+        }
+
+        // Deserialize and apply the state
+        var gameState = GameStateSerialization.Deserialize(sync.stateData);
+
+        // Verify checksum
+        // Note: We'll apply the state first, then verify. In production you might
+        // want to validate before applying.
+
+        Debug.Log($"NetworkMatchManager: Applying state sync for round {sync.round}...");
+
+        // Apply the state through GameStateRestorer
+        if (GameStateRestorer.Instance != null)
+        {
+            GameStateRestorer.Instance.RestoreState(gameState);
+            OnStateSyncApplied?.Invoke(sync.round);
+            Debug.Log(
+                $"NetworkMatchManager: State sync applied successfully (round {sync.round})."
+            );
+        }
+        else
+        {
+            Debug.LogError(
+                "NetworkMatchManager: GameStateRestorer not found, cannot apply state sync."
+            );
+            OnStateSyncFailed?.Invoke("GameStateRestorer not available");
+        }
+    }
+
+    /// <summary>
+    /// Sends a state sync response to the peer.
+    /// </summary>
+    private void SendStateSyncResponse(
+        int round,
+        int checksum,
+        byte[] stateData,
+        bool success,
+        string errorMessage
+    )
+    {
+        if (_transport == null || !_transport.IsConnected)
+            return;
+
+        var sync = new StateSyncPayload
+        {
+            round = round,
+            checksum = checksum,
+            stateData = stateData ?? Array.Empty<byte>(),
+            success = success,
+            errorMessage = errorMessage ?? "",
+        };
+
+        var payload = NetSerialization.SerializeStateSync(sync);
+        var msg = new NetMessage
+        {
+            type = NetMessageType.StateSync,
+            sequenceId = _nextSequenceId++,
+            payload = payload,
+        };
+
+        var bytes = NetSerialization.SerializeNetMessage(msg);
+        _transport.Send(bytes);
+    }
+
+    /// <summary>
+    /// Returns true if we're currently waiting for a state sync response.
+    /// </summary>
+    public bool IsAwaitingStateSync => _awaitingStateSync;
+
+    /// <summary>
+    /// Cancels any pending state sync request.
+    /// </summary>
+    public void CancelStateSyncRequest()
+    {
+        _awaitingStateSync = false;
     }
 }

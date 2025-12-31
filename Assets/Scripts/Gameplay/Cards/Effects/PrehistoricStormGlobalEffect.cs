@@ -21,14 +21,12 @@ public class PrehistoricStormGlobalEffect : GlobalEffectBase
         if (rm == null)
             return;
 
-        var enemies = rm.AllCreatures().Where(c => c != null && c.owner != owner).ToList();
+        // Use deterministic helper for enemy selection and random choice
+        var enemies = DeterministicHelpers.GetCreaturesSorted(c => c.owner != owner);
         if (enemies.Count == 0)
             return;
 
-        Creature target;
-
-        int idx = GameManager.Instance.NextRandomInt(0, enemies.Count);
-        target = enemies[idx];
+        Creature target = DeterministicHelpers.PickRandom(enemies);
 
         if (target == null)
             return;

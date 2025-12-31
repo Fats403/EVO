@@ -115,7 +115,7 @@ public static class StatusKeywordLinkifier
 
     private struct KeywordPattern
     {
-        public string SearchText; // Text to look for in descriptions (e.g., "Bleeding" or "DamageUp")
+        public string SearchText; // Text to look for in descriptions (e.g., "Bleeding" or "Fury")
         public string Id; // StatusTag name used as link ID (e.g., "Bleeding")
         public string DisplayText; // Text to show inside the link (e.g., "Bleed" or "Damage Up")
     }
@@ -176,10 +176,10 @@ public static class StatusKeywordLinkifier
                     AddPattern("Sheild", "Shield");
                     break;
 
-                case StatusTag.DamageUp:
-                    // Normalize "DamageUp" and "Damage Up" to "Damage Up".
-                    AddPattern("DamageUp", "Damage Up");
-                    AddPattern("Damage Up", "Damage Up");
+                case StatusTag.Fury:
+                    // Normalize "Fury" references.
+                    AddPattern("Fury", "Fury");
+                    AddPattern("Fury +1", "Fury");
                     break;
 
                 case StatusTag.NoForage:

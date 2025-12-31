@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: DesperateHunterTrait
   m_EditorClassIdentifier: Assembly-CSharp::DesperateHunterTrait
   traitName: Desperate Hunter
-  description: "Gains <link=\"DamageUp\"><color=#FFD35B><b>+2 Damage Up</b></color></link>
+  description: "Gains <link=\"Fury\"><color=#FFD35B><b>+2 Fury</b></color></link>
     when food pile is \u2264 1. During Drought, gain +1 Body"

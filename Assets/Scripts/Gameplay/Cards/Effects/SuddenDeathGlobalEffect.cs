@@ -9,50 +9,29 @@ public class SuddenDeathGlobalEffect : GlobalEffectBase
         if (rm == null)
             return;
 
-        var all = Object
-            .FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
-            .ToList();
+        // Get all creatures in deterministic slot order
+        var all = DeterministicHelpers.GetAllCreaturesSorted();
         var p1 = all.Where(c => c.owner == SlotOwner.Player1).ToList();
         var p2 = all.Where(c => c.owner == SlotOwner.Player2).ToList();
-        if (p1.Count > 0)
+
+        // Kill one random creature from each player
+        var p1Pick = DeterministicHelpers.PickRandom(p1);
+        if (p1Pick != null)
         {
-            int i = 0;
-            if (GameManager.Instance != null)
-            {
-                i = GameManager.Instance.NextRandomInt(0, p1.Count);
-            }
-            else
-            {
-                Debug.LogWarning("SuddenDeathGlobalEffect: GameManager.Instance is null. Determinism may be compromised.");
-                i = Random.Range(0, p1.Count);
-            }
-            var pick = p1[i];
-            pick?.Kill("Sudden Death");
+            p1Pick.Kill("Sudden Death");
         }
-        if (p2.Count > 0)
+
+        var p2Pick = DeterministicHelpers.PickRandom(p2);
+        if (p2Pick != null)
         {
-            int i = 0;
-            if (GameManager.Instance != null)
-            {
-                i = GameManager.Instance.NextRandomInt(0, p2.Count);
-            }
-            else
-            {
-                Debug.LogWarning("SuddenDeathGlobalEffect: GameManager.Instance is null. Determinism may be compromised.");
-                i = Random.Range(0, p2.Count);
-            }
-            var pick = p2[i];
-            if (pick != null)
-            {
-                FeedbackManager.Instance?.ShowFloatingText(
-                    "Sudden Death",
-                    pick.transform.position,
-                    GameColorPalette.Damage
-                );
-                pick.Kill("Sudden Death");
-            }
+            FeedbackManager.Instance?.ShowFloatingText(
+                "Sudden Death",
+                p2Pick.transform.position,
+                GameColorPalette.Damage
+            );
+            p2Pick.Kill("Sudden Death");
         }
+
         remainingRounds = 0;
     }
 }

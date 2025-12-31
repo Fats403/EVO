@@ -79,14 +79,15 @@ public class DeckBuilderManager : MonoBehaviour
 
     private enum SortMode
     {
-        TypeThenName = 0,
-        NameAsc = 1,
-        MomentumAsc = 2,
-        MomentumDesc = 3,
+        TypeThenMomentum = 0,
+        TypeThenName = 1,
+        NameAsc = 2,
+        MomentumAsc = 3,
+        MomentumDesc = 4,
     }
 
     // Default sort: group by type, then name.
-    private SortMode _currentSortMode = SortMode.TypeThenName;
+    private SortMode _currentSortMode = SortMode.TypeThenMomentum;
 
     /// <summary>
     /// Raised after a successful Save click (deck is valid).
@@ -437,6 +438,14 @@ public class DeckBuilderManager : MonoBehaviour
             case SortMode.TypeThenName:
                 sortable = sortable
                     .OrderBy(i => GetCardTypeSortIndex(i.Card))
+                    .ThenBy(i => (i.Card.DisplayName ?? i.Card.name))
+                    .ToList();
+                break;
+            case SortMode.TypeThenMomentum:
+                // Group by type, then sort each group by momentum cost (low to high), then name.
+                sortable = sortable
+                    .OrderBy(i => GetCardTypeSortIndex(i.Card))
+                    .ThenBy(i => i.Card.MomentumCost)
                     .ThenBy(i => (i.Card.DisplayName ?? i.Card.name))
                     .ToList();
                 break;

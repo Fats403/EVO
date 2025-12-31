@@ -25,13 +25,6 @@ public class GameSessionBootstrapper : MonoBehaviour
     [SerializeField]
     private ConstructedDeckProvider constructedProvider;
 
-    private void Awake()
-    {
-        // Signal to GameManager that an external bootstrapper is responsible
-        // for deck initialisation this session.
-        GameManager.MarkExternallyBootstrapped();
-    }
-
     private void Start()
     {
         // Network mode takes priority - deck data comes from session header
@@ -114,8 +107,7 @@ public class GameSessionBootstrapper : MonoBehaviour
         }
 
         // Initialize local player's deck
-        deckManager.InitializeFromDraft(localCards);
-        deckManager.InitializeAndDraw();
+        deckManager.InitializeAndDraw(localCards);
 
         // Initialize opponent tracker (if present in scene)
         if (
@@ -141,8 +133,51 @@ public class GameSessionBootstrapper : MonoBehaviour
             $"GameSessionBootstrapper: Network mode initialized. Local={localCards.Count} cards, isHost={isHost}"
         );
 
+        // Initialize checkpoint manager for reconnection support
+        InitializeCheckpointManager(header);
+
         // Hand off to game flow
         gameManager.BeginGameWithReadyDeck();
+    }
+
+    /// <summary>
+    /// Initializes the MatchCheckpointManager for Firestore checkpoint storage.
+    /// </summary>
+    private void InitializeCheckpointManager(NetSessionHeader header)
+    {
+        if (MatchCheckpointManager.Instance == null)
+        {
+            Debug.LogWarning(
+                "GameSessionBootstrapper: MatchCheckpointManager not found in scene. Checkpoints disabled."
+            );
+            return;
+        }
+
+        // Determine opponent name and if we're host
+        bool isHost = header.localRole == SlotOwner.Player1;
+        string hostName = SteamLobbyManager.Instance?.HostName ?? "Player 1";
+        string guestName = SteamLobbyManager.Instance?.GuestName ?? "Player 2";
+        string opponentName = isHost ? guestName : hostName;
+
+        // Initialize with both player IDs and opponent info
+        MatchCheckpointManager.Instance.InitializeForMatch(
+            header.hostId,
+            header.guestId,
+            opponentName,
+            isHost
+        );
+
+        // Update match metadata in Firestore (fire and forget - don't block game start)
+        _ = MatchCheckpointManager.Instance.UpdateMatchMetadataAsync(
+            header.hostId,
+            header.guestId,
+            hostName,
+            guestName
+        );
+
+        Debug.Log(
+            $"GameSessionBootstrapper: MatchCheckpointManager initialized for match with opponent '{opponentName}'."
+        );
     }
 
     /// <summary>
@@ -174,8 +209,7 @@ public class GameSessionBootstrapper : MonoBehaviour
             return;
         }
 
-        deckManager.InitializeFromDraft(cards);
-        deckManager.InitializeAndDraw();
+        deckManager.InitializeAndDraw(cards);
 
         // Clear the selection so future sessions don't accidentally reuse it.
         SelectedDeckStore.Clear();

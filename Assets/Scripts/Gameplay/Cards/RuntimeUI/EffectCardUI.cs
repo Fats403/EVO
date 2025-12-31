@@ -156,7 +156,8 @@ public class EffectCardUI : BaseCardUI
         }
         else if (effectData != null && effectData.targetCount == EffectTargetCount.AllValid)
         {
-            var all = FindObjectsByType<Creature>(FindObjectsSortMode.None)
+            var all = DeterministicHelpers
+                .GetAllCreaturesSorted()
                 .Where(c =>
                     c != null
                     && EffectsManager.Instance != null
@@ -295,7 +296,7 @@ public class EffectCardUI : BaseCardUI
             bool inside = dz != null && dz.IsPointerInside(pointerScreen);
             if (inside)
             {
-                foreach (var c in FindObjectsByType<Creature>(FindObjectsSortMode.None))
+                foreach (var c in DeterministicHelpers.GetAllCreaturesSorted())
                 {
                     if (c == null)
                         continue;
@@ -360,7 +361,7 @@ public class EffectCardUI : BaseCardUI
         // AllValid highlight all valid
         if (effectData.targetCount == EffectTargetCount.AllValid)
         {
-            foreach (var c in FindObjectsByType<Creature>(FindObjectsSortMode.None))
+            foreach (var c in DeterministicHelpers.GetAllCreaturesSorted())
             {
                 if (c == null)
                     continue;
@@ -398,7 +399,7 @@ public class EffectCardUI : BaseCardUI
         bestDist = float.MaxValue;
         Creature best = null;
         var cam = (canvas != null && canvas.worldCamera != null) ? canvas.worldCamera : Camera.main;
-        foreach (var c in FindObjectsByType<Creature>(FindObjectsSortMode.None))
+        foreach (var c in DeterministicHelpers.GetAllCreaturesSorted())
         {
             if (c == null)
                 continue;

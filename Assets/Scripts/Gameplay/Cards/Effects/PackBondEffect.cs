@@ -7,8 +7,8 @@ public class PackBondEffect : EffectTraitBase
     {
         if (self == null)
             return;
-        self.AddStatus(StatusTag.BodyUp, 1);
-        self.AddStatus(StatusTag.SpeedUp, 1);
+        self.AddStatus(StatusTag.Bulk, 1);
+        self.AddStatus(StatusTag.Haste, 1);
         remainingRounds = 0;
     }
 }

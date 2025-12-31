@@ -10,20 +10,13 @@ public class PhalanxLeaderTrait : Trait
             return;
         if (self.HasStatus(StatusTag.Suppress))
             return;
-        // Apply BodyUp +1 aura to allied herbivores for this round
-        var allies = Object
-            .FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c =>
-                c != null
-                && c.currentHealth > 0
-                && !c.isDying
-                && c.owner == self.owner
-                && c.data != null
-                && c.data.type == CardType.Herbivore
-            );
+        // Apply Bulk +1 aura to allied herbivores for this round using deterministic ordering
+        var allies = DeterministicHelpers.GetCreaturesSorted(c =>
+            c.owner == self.owner && c.data != null && c.data.type == CardType.Herbivore
+        );
         foreach (var a in allies)
         {
-            a.AddStatus(StatusTag.BodyUp, 1);
+            a.AddStatus(StatusTag.Bulk, 1);
         }
     }
 

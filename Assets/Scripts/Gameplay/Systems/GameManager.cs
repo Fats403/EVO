@@ -57,6 +57,11 @@ public class GameManager : MonoBehaviour
     public int rngSeed = 0;
 
     [Header("Turn Order")]
+    [Tooltip(
+        "Player who starts the very first round; subsequent rounds alternate from this player."
+    )]
+    public SlotOwner firstPlayerForGame = SlotOwner.Player1;
+
     [Tooltip("Determines which player starts the Place phase for this round.")]
     public SlotOwner startingPlayerForRound = SlotOwner.Player1;
 
@@ -64,14 +69,10 @@ public class GameManager : MonoBehaviour
     [Tooltip("Minimum time that a played creature stays spotlighted before the turn can advance.")]
     public float cardPreviewHoldSeconds = 3.0f;
 
-    private List<BoardSlot> allSlots = new List<BoardSlot>();
+    [Tooltip("Optional controller that plays a coin flip at game start to choose who goes first.")]
+    public CoinFlipController coinFlipController;
 
-    // If true, the game is being started by an external bootstrapper that prepares
-    // decks before calling into GameManager. When this is true, GameManager.Start
-    // will skip its own deck/draft selection logic and only perform core
-    // initialisation. This is a static flag so that the bootstrapper does not
-    // need to be referenced directly from this class.
-    private static bool s_isExternallyBootstrapped;
+    private List<BoardSlot> allSlots = new List<BoardSlot>();
 
     private void Awake()
     {
@@ -161,6 +162,9 @@ public class GameManager : MonoBehaviour
     // Prevents Player 1 from queuing multiple actions while a card preview is still resolving.
     private bool p1ActionLocked;
 
+    // True once we have chosen firstPlayerForGame for this match.
+    private bool startingPlayerDecided;
+
     // Controllers
     private IPlayerController player1Controller;
     private IPlayerController player2Controller;
@@ -245,33 +249,75 @@ public class GameManager : MonoBehaviour
             AIManager.Instance?.BuildDeckAndDrawStartingHand();
         }
 
-        // If an external bootstrapper is responsible for deck initialisation
-        // (constructed / draft decks provided via SelectedDeckStore), it will
-        // call BeginGameWithReadyDeck once ready. Otherwise, start immediately
-        // using whatever deck configuration is present.
-        if (!s_isExternallyBootstrapped)
-        {
-            BeginSetup();
-        }
-    }
-
-    /// <summary>
-    /// Called by an external bootstrapper when it intends to own the deck
-    /// startup flow for constructed games.
-    /// </summary>
-    public static void MarkExternallyBootstrapped()
-    {
-        s_isExternallyBootstrapped = true;
+        // Game flow (including the coin flip) is started by GameSessionBootstrapper
+        // once decks have been fully initialised for the current mode.
     }
 
     /// <summary>
     /// Entry point for external bootstrappers once they have fully initialised
-    /// the player's deck (and AI deck). This simply transitions the game into
-    /// the normal setup / round flow.
+    /// the player's deck (and AI deck). This transitions the game into the
+    /// normal setup / round flow, optionally preceded by a coin flip animation.
     /// </summary>
     public void BeginGameWithReadyDeck()
     {
+        StartCoroutine(BeginGameAfterCoinFlip());
+    }
+
+    /// <summary>
+    /// Decides who goes first in a deterministic way, plays the optional
+    /// coin flip animation to show the result, then begins normal setup.
+    /// </summary>
+    private IEnumerator BeginGameAfterCoinFlip()
+    {
+        // Decide which player starts the match in a deterministic way.
+        DecideFirstPlayerDeterministically();
+
+        // Map to coin result: 0 = heads (host/Player1 starts), 1 = tails (peer/Player2 starts).
+        int coinResult = firstPlayerForGame == SlotOwner.Player1 ? 0 : 1;
+
+        if (coinFlipController != null)
+        {
+            // Full coin sequence up to and including the flip: initial delay,
+            // drop-in, pre-flip hold, and the flip animation itself. When this
+            // returns, the coin is visibly showing the final result.
+            yield return StartCoroutine(coinFlipController.PlayCoinSequence(coinResult));
+
+            // Now that the result is visible, show who actually goes first from
+            // the local player's perspective.
+            SlotOwner localOwner = NetworkSessionStore.IsNetworkedGame
+                ? NetworkRoleHelper.LocalRole
+                : SlotOwner.Player1;
+            bool localGoesFirst = firstPlayerForGame == localOwner;
+            string message = localGoesFirst ? "You go first!" : "Your opponent goes first!";
+            FeedbackManager.Instance?.ShowGlobalAlert(message, GameColorPalette.AlertInfo);
+
+            // Keep the coin on-screen for an additional configurable hold time,
+            // then fade it away before normal game flow begins.
+            float hold = coinFlipController.PostFlipHoldSeconds;
+            if (hold > 0f)
+                yield return new WaitForSeconds(hold);
+
+            yield return StartCoroutine(coinFlipController.FadeOutAndHide());
+        }
+
         BeginSetup();
+    }
+
+    /// <summary>
+    /// Uses the shared deterministic RNG to pick which slot owner starts the
+    /// very first round. In networked games this will be identical on host
+    /// and peer because they share the same RNG seed.
+    /// </summary>
+    private void DecideFirstPlayerDeterministically()
+    {
+        if (startingPlayerDecided)
+            return;
+
+        // 0 = Player1 goes first, 1 = Player2 goes first. Applies to both AI and network games.
+        int roll = NextRandomInt(0, 2);
+        firstPlayerForGame = (roll == 0) ? SlotOwner.Player1 : SlotOwner.Player2;
+
+        startingPlayerDecided = true;
     }
 
     public void OnEndTurnClicked()
@@ -316,10 +362,8 @@ public class GameManager : MonoBehaviour
         currentPhase = GamePhase.Draw;
         OnRoundChanged?.Invoke(currentRound, currentEra);
         OnPhaseChanged?.Invoke(currentPhase);
-        FeedbackManager.Instance?.ShowGlobalAlert(
-            $"The {currentEra} Era Has began!",
-            GameColorPalette.AlertInfo
-        );
+        // Initial era-start alert removed; early game pacing is now driven by the
+        // coin flip animation and subsequent round-start messaging.
         BeginDraw();
     }
 
@@ -373,7 +417,17 @@ public class GameManager : MonoBehaviour
         p1PassedThisRound = false;
         p2PassedThisRound = false;
         awaitingTurnOwner = null;
-        startingPlayerForRound = (currentRound % 2 == 1) ? SlotOwner.Player1 : SlotOwner.Player2;
+
+        // Decide the very first player once, then alternate each round from that.
+        if (!startingPlayerDecided)
+        {
+            // Fallback for legacy / non-bootstrapped flows to preserve old behaviour.
+            firstPlayerForGame = SlotOwner.Player1;
+            startingPlayerDecided = true;
+        }
+
+        startingPlayerForRound =
+            (currentRound % 2 == 1) ? firstPlayerForGame : Opponent(firstPlayerForGame);
         currentPlaceTurnOwner = startingPlayerForRound;
 
         if (placePhaseRoutine != null)
@@ -646,7 +700,9 @@ public class GameManager : MonoBehaviour
     {
         FeedbackManager.Instance?.Log($"{FeedbackManager.TagOwner(owner)}: Your move");
 
-        if (NetworkRoleHelper.IsLocalPlayer(owner))
+        // Skip the generic "Your Turn" alert on round 1 – the coin flip already
+        // explains who goes first. From round 2 onwards, show the normal alert.
+        if (NetworkRoleHelper.IsLocalPlayer(owner) && currentRound > 1)
         {
             FeedbackManager.Instance?.ShowGlobalAlert("Your Turn", GameColorPalette.AlertInfo);
         }

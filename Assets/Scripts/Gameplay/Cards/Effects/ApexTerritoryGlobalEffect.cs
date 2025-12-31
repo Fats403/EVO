@@ -9,9 +9,7 @@ public class ApexTerritoryGlobalEffect : GlobalEffectBase
         if (rm == null)
             return;
 
-        // All allies gain +1 body permanently; center-position ally gains +2 instead.
-        // We approximate center by choosing the occupied slot whose x-position is
-        // closest to the midpoint between the leftmost and rightmost ally slots.
+        // All allies gain +1 body permanently;
         SlotOwner sideOwner = owner;
         var allies = rm.AllCreatures().Where(c => c != null && c.owner == sideOwner).ToList();
         if (allies.Count == 0)
@@ -20,17 +18,12 @@ public class ApexTerritoryGlobalEffect : GlobalEffectBase
             return;
         }
 
-        var centerSlot = BoardUtils.GetCenterSlot(sideOwner, requireOccupied: true);
-        Creature center = centerSlot?.currentCreature;
-
         foreach (var c in allies)
         {
             if (c == null || c.data == null)
                 continue;
-            if (c == center)
-                c.body += 2;
-            else
-                c.body += 1;
+
+            c.body += 1;
             c.RefreshStatsUI();
         }
 

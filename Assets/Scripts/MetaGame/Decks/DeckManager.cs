@@ -65,8 +65,6 @@ public class DeckManager : MonoBehaviour
     private readonly List<ScriptableObject> currentDeck = new();
     private readonly List<ScriptableObject> drawPile = new();
 
-    private bool deckInitialized;
-
     private void Awake()
     {
         Instance = this;
@@ -86,53 +84,6 @@ public class DeckManager : MonoBehaviour
                 }
             }
         }
-    }
-
-    // DeckManager no longer auto-builds or draws a starting hand on Start().
-    // The deck is expected to be initialized explicitly via InitializeRandomDeck()
-    // or InitializeFromDraft(), followed by InitializeAndDraw() when appropriate.
-
-    void BuildDeck()
-    {
-        currentDeck.Clear();
-        // Source of truth: allCards; build a unique deck of size deckSize
-        var pool = new List<ScriptableObject>(allCards ?? new List<ScriptableObject>());
-        // Shuffle pool
-        for (int i = pool.Count - 1; i > 0; i--)
-        {
-            int j = 0;
-            if (GameManager.Instance == null)
-            {
-                Debug.LogWarning(
-                    "DeckManager: GameManager.Instance is null during shuffle. Determinism may be compromised."
-                );
-                j = UnityEngine.Random.Range(0, i + 1);
-            }
-            else
-            {
-                j = GameManager.Instance.NextRandomInt(0, i + 1);
-            }
-            (pool[j], pool[i]) = (pool[i], pool[j]);
-        }
-        // Take up to deckSize unique
-        var picked = new List<ScriptableObject>(deckSize);
-        var seen = new System.Collections.Generic.HashSet<ScriptableObject>();
-        for (int i = 0; i < pool.Count && picked.Count < deckSize; i++)
-        {
-            var card = pool[i];
-            if (card == null)
-                continue;
-            if (seen.Add(card))
-                picked.Add(card);
-        }
-
-        currentDeck.AddRange(picked);
-        drawPile.Clear();
-        drawPile.AddRange(currentDeck);
-
-        // Shuffle draw order
-        ShuffleDrawPile();
-        UpdateDeckUI();
     }
 
     IEnumerator DrawStartingHandRoutine()
@@ -372,29 +323,18 @@ public class DeckManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Build a fresh random deck from allCards using the configured deckSize.
-    /// Does not draw any cards; caller is responsible for triggering the starting hand draw.
+    /// Called by game flow once the deck content has been provided externally
     /// </summary>
-    public void InitializeRandomDeck()
-    {
-        BuildDeck();
-        deckInitialized = true;
-    }
-
-    /// <summary>
-    /// Initialize the internal deck state from an externally provided list
-    /// (e.g., a drafted deck or a deck loaded from a database).
-    /// </summary>
-    public void InitializeFromDraft(IReadOnlyList<ScriptableObject> draftedCards)
+    public void InitializeAndDraw(IReadOnlyList<ScriptableObject> cards)
     {
         currentDeck.Clear();
         drawPile.Clear();
 
-        if (draftedCards != null)
+        if (cards != null)
         {
-            for (int i = 0; i < draftedCards.Count; i++)
+            for (int i = 0; i < cards.Count; i++)
             {
-                var card = draftedCards[i];
+                var card = cards[i];
                 if (card == null)
                     continue;
                 currentDeck.Add(card);
@@ -403,24 +343,9 @@ public class DeckManager : MonoBehaviour
         }
 
         ShuffleDrawPile();
-        deckInitialized = true;
+
         UpdateDeckUI();
-    }
 
-    /// <summary>
-    /// Called by game flow once the deck content has been provided externally
-    /// (e.g., after draft completes) to shuffle and deal the starting hand.
-    /// </summary>
-    public void InitializeAndDraw()
-    {
-        if (!deckInitialized)
-        {
-            Debug.LogWarning("DeckManager.InitializeAndDraw called before deck was initialized.");
-            return;
-        }
-
-        // Ensure draw pile is shuffled before drawing the starting hand.
-        ShuffleDrawPile();
         StartCoroutine(DrawStartingHandRoutine());
     }
 

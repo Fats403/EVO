@@ -124,15 +124,11 @@ public class ManualEffectSelectionController : MonoBehaviour
             return false;
 
         // Discover all valid, living candidates for this effect.
-        IEnumerable<Creature> allCreatures;
-        if (gameManager.resolutionManager != null)
-        {
-            allCreatures = gameManager.resolutionManager.AllCreatures();
-        }
-        else
-        {
-            allCreatures = FindObjectsByType<Creature>(FindObjectsSortMode.None);
-        }
+        // Discover all valid, living candidates for this effect.
+        IEnumerable<Creature> allCreatures =
+            gameManager.resolutionManager != null
+                ? gameManager.resolutionManager.AllCreatures()
+                : DeterministicHelpers.GetAllCreaturesSorted();
 
         var candidates = allCreatures
             .Where(c => c != null && c.currentHealth > 0 && !c.isDying)

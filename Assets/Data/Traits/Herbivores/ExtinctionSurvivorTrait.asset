@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: ExtinctionSurvivorTrait
   m_EditorClassIdentifier: Assembly-CSharp::ExtinctionSurvivorTrait
   traitName: Extinction Survivor
-  description: During Extinction era, gain +2 Body and +1 Speed
+  description: During Extinction era, gain +2 Body Size and +1 Speed

@@ -15,12 +15,15 @@ public class EffectsManager : MonoBehaviour
         int maxCount
     )
     {
-        var all =
+        var baseCreatures =
             resolutionManager != null
                 ? resolutionManager.AllCreatures()
-                : FindObjectsByType<Creature>(FindObjectsSortMode.None);
-        return all.Where(c => c != null && c.owner == owner)
-            .OrderBy(c => Vector3.SqrMagnitude(c.transform.position - origin))
+                : DeterministicHelpers.GetAllCreaturesSorted();
+
+        var allies = baseCreatures.Where(c => c != null && c.owner == owner);
+        var ordered = DeterministicHelpers.OrderByDistanceWithTieBreaker(allies, origin);
+
+        return ordered
             .Where(c => Vector3.SqrMagnitude(c.transform.position - origin) <= radius * radius)
             .Take(Mathf.Max(0, maxCount))
             .ToList();
@@ -39,12 +42,15 @@ public class EffectsManager : MonoBehaviour
             return System.Array.Empty<Creature>();
         int count = Mathf.Max(0, card.maxTargets);
         float r = Mathf.Max(0f, radiusWorld);
-        var all =
+        var baseCreatures =
             resolutionManager != null
                 ? resolutionManager.AllCreatures()
-                : FindObjectsByType<Creature>(FindObjectsSortMode.None).AsEnumerable();
-        return all.Where(c => c != null && IsValidTarget(card, c, owner))
-            .OrderBy(c => Vector3.SqrMagnitude(c.transform.position - origin))
+                : DeterministicHelpers.GetAllCreaturesSorted();
+
+        var candidates = baseCreatures.Where(c => c != null && IsValidTarget(card, c, owner));
+        var ordered = DeterministicHelpers.OrderByDistanceWithTieBreaker(candidates, origin);
+
+        return ordered
             .Where(c => Vector3.SqrMagnitude(c.transform.position - origin) <= r * r)
             .Take(count)
             .ToList();

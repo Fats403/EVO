@@ -10,8 +10,8 @@ public class StampedeFormationEffect : EffectTraitBase
         if (self.data.type != CardType.Herbivore)
             return;
 
-        // +2 Body this round via BodyUp and allow this herbivore to attack.
-        self.AddStatus(StatusTag.BodyUp, 2);
+        // +2 Body this round via Bulk and allow this herbivore to attack.
+        self.AddStatus(StatusTag.Bulk, 2);
     }
 
     public override bool CanAttack(Creature self)
@@ -39,7 +39,7 @@ public class StampedeFormationEffect : EffectTraitBase
 
     public override void OnRoundEnd(Creature self)
     {
-        self?.ClearStatus(StatusTag.BodyUp);
+        self?.ClearStatus(StatusTag.Bulk);
         base.OnRoundEnd(self);
     }
 }

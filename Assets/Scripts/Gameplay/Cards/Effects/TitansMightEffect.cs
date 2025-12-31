@@ -9,10 +9,12 @@ public class TitansMightEffect : EffectTraitBase
     {
         if (self == null)
             return;
+        // Snapshot current body and directly double it.
         appliedBonus = Mathf.Max(0, self.body);
         if (appliedBonus > 0)
         {
-            self.AddStatus(StatusTag.BodyUp, appliedBonus);
+            self.body += appliedBonus; // body is now doubled
+            self.RefreshStatsUI();
         }
     }
 
@@ -20,7 +22,12 @@ public class TitansMightEffect : EffectTraitBase
     {
         if (self != null)
         {
-            self.ClearStatus(StatusTag.BodyUp);
+            // Remove exactly the amount we added so body returns to its original value.
+            if (appliedBonus > 0)
+            {
+                self.body = Mathf.Max(0, self.body - appliedBonus);
+                self.RefreshStatsUI();
+            }
         }
         base.OnRoundEnd(self);
     }

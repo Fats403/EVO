@@ -49,6 +49,9 @@ public enum NetMessageType : byte
     SessionAck = 3,
     InputActionAck = 4,
     RoundChecksum = 5, // Sent at end of each round for desync detection
+    StateRequest = 6, // Request full game state from peer (for reconnection)
+    StateSync = 7, // Full game state response (for reconnection recovery)
+    Heartbeat = 8, // Keep-alive message to prevent false disconnect detection
 }
 
 /// <summary>
@@ -71,6 +74,44 @@ public struct NetMessage
     /// responsible for encoding/decoding structured data into this buffer.
     /// </summary>
     public byte[] payload;
+}
+
+/// <summary>
+/// Payload for StateRequest message during reconnection.
+/// </summary>
+[Serializable]
+public struct StateRequestPayload
+{
+    /// <summary>Last round the requesting player has confirmed.</summary>
+    public int lastKnownRound;
+
+    /// <summary>Checksum of the last known state (for validation).</summary>
+    public int lastKnownChecksum;
+
+    /// <summary>True if this is an initial reconnect request.</summary>
+    public bool isReconnecting;
+}
+
+/// <summary>
+/// Payload for StateSync message during reconnection recovery.
+/// </summary>
+[Serializable]
+public struct StateSyncPayload
+{
+    /// <summary>The round number this state represents.</summary>
+    public int round;
+
+    /// <summary>Checksum of this state for validation.</summary>
+    public int checksum;
+
+    /// <summary>Serialized full game state bytes.</summary>
+    public byte[] stateData;
+
+    /// <summary>True if state sync was successful and valid.</summary>
+    public bool success;
+
+    /// <summary>Error message if sync failed.</summary>
+    public string errorMessage;
 }
 
 /// <summary>

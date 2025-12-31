@@ -10,21 +10,21 @@ public class ApexPredatorTrait : Trait
             return;
         if (self.HasStatus(StatusTag.Suppress))
             return;
-        var allies = Object
-            .FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c =>
-                c != null
-                && c != self
-                && c.owner == self.owner
-                && c.currentHealth > 0
-                && !c.isDying
-                && c.data != null
-                && c.data.type == CardType.Carnivore
-            )
-            .OrderBy(c => Vector3.SqrMagnitude(c.transform.position - self.transform.position))
+
+        // Get allied carnivores sorted by distance with slot tie-breaker, take closest 2
+        var alliedCarnivores = DeterministicHelpers.GetCreaturesSorted(c =>
+            c != self
+            && c.owner == self.owner
+            && c.data != null
+            && c.data.type == CardType.Carnivore
+        );
+
+        var allies = DeterministicHelpers
+            .OrderByDistanceWithTieBreaker(alliedCarnivores, self.transform.position)
             .Take(2)
             .ToList();
-        if (allies != null && allies.Count > 0)
+
+        if (allies.Count > 0)
         {
             FeedbackManager.Instance?.ShowFloatingText(
                 "Apex Predator",

@@ -79,20 +79,10 @@ public static class GameStateChecksum
         };
 
         // Get all creatures in a DETERMINISTIC order (by slot index)
-        var allCreatures = Object
-            .FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c => c != null && !c.isDying)
-            .ToList();
-
-        // Sort deterministically by slot index
-        var boardSlots = Object
-            .FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
-            .ToDictionary(s => s, s => s.index);
-
-        var sortedCreatures = allCreatures
-            .Select(c => new { Creature = c, SlotIndex = GetSlotIndexForCreature(c, boardSlots) })
-            .OrderBy(x => x.SlotIndex)
-            .Select(x => x.Creature)
+        var slotLookup = DeterministicHelpers.GetSlotIndexLookup();
+        var sortedCreatures = DeterministicHelpers
+            .GetAllCreaturesInSlotOrder()
+            .Where(c => !c.isDying)
             .ToList();
 
         foreach (var creature in sortedCreatures)
@@ -101,7 +91,7 @@ public static class GameStateChecksum
             {
                 cardId = creature.data?.cardId ?? "unknown",
                 owner = creature.owner,
-                slotIndex = GetSlotIndexForCreature(creature, boardSlots),
+                slotIndex = DeterministicHelpers.GetSlotIndex(creature, slotLookup),
                 currentHealth = creature.currentHealth,
                 maxHealth = creature.maxHealth,
                 body = creature.body,
@@ -129,16 +119,6 @@ public static class GameStateChecksum
         // Compute the checksum hash
         snapshot.checksum = ComputeHash(snapshot);
         return snapshot;
-    }
-
-    private static int GetSlotIndexForCreature(Creature c, Dictionary<BoardSlot, int> slotIndices)
-    {
-        foreach (var kvp in slotIndices)
-        {
-            if (kvp.Key.currentCreature == c)
-                return kvp.Value;
-        }
-        return -1;
     }
 
     private static int ComputeHash(GameStateSnapshot snapshot)

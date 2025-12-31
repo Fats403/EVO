@@ -8,7 +8,7 @@ using UnityEngine;
 /// 1. Exchange checksums at round end to detect desync
 /// 2. Detect and handle player disconnection
 /// 3. Fire events for UI to respond to network issues
-/// 
+///
 /// Attach this to a persistent GameObject alongside NetworkMatchManager.
 /// </summary>
 public class NetworkSyncValidator : MonoBehaviour
@@ -33,10 +33,17 @@ public class NetworkSyncValidator : MonoBehaviour
     public float reconnectGracePeriodSeconds = 30f;
 
     // Events for UI/game systems to respond to
-    public event Action<int, GameStateChecksum.GameStateSnapshot, GameStateChecksum.GameStateSnapshot> OnDesyncDetected;
+    public event Action<
+        int,
+        GameStateChecksum.GameStateSnapshot,
+        GameStateChecksum.GameStateSnapshot
+    > OnDesyncDetected;
     public event Action OnPeerDisconnected;
     public event Action OnPeerReconnected;
     public event Action<float> OnWaitingForPeer; // Passes seconds waited so far
+    public event Action OnResyncStarted;
+    public event Action<int> OnResyncCompleted; // Passes round number
+    public event Action<string> OnResyncFailed; // Passes error message
 
     // State
     private GameStateChecksum.GameStateSnapshot _lastLocalSnapshot;
@@ -50,9 +57,17 @@ public class NetworkSyncValidator : MonoBehaviour
     private bool _isWaitingForPeer;
     private float _waitingStartTime;
 
+    // Reconnection state
+    private int _lastValidatedRound;
+    private int _lastValidatedChecksum;
+    private bool _isResyncInProgress;
+
     public bool IsPeerDisconnected => _isPeerDisconnected;
     public bool IsWaitingForPeer => _isWaitingForPeer;
     public float SecondsSinceLastMessage => Time.unscaledTime - _lastMessageReceivedTime;
+    public int LastValidatedRound => _lastValidatedRound;
+    public int LastValidatedChecksum => _lastValidatedChecksum;
+    public bool IsResyncInProgress => _isResyncInProgress;
 
     private void Awake()
     {
@@ -100,14 +115,39 @@ public class NetworkSyncValidator : MonoBehaviour
     private void Update()
     {
         if (!NetworkSessionStore.IsNetworkedGame)
-            return;
-
-        // Check for disconnect timeout
-        float timeSinceMessage = SecondsSinceLastMessage;
-
-        if (!_isPeerDisconnected && timeSinceMessage > disconnectTimeoutSeconds)
         {
-            HandlePeerDisconnected();
+            // Uncomment to debug: Debug.Log("[NetworkSyncValidator] Not a networked game, skipping disconnect check.");
+            return;
+        }
+
+        // CRITICAL: Only check for disconnects during interactive phases (Place).
+        // During Resolve/End phases, no messages are expected and false positives occur.
+        // During Setup/Draw phases, we're transitioning and shouldn't interrupt.
+        var currentPhase = GameManager.Instance?.currentPhase ?? GamePhase.Setup;
+        bool shouldCheckDisconnect =
+            GameManager.Instance != null && currentPhase == GamePhase.Place;
+
+        if (shouldCheckDisconnect)
+        {
+            float timeSinceMessage = SecondsSinceLastMessage;
+
+            // Debug logging - remove after testing
+            if (timeSinceMessage > 5f && !_isPeerDisconnected)
+            {
+                Debug.Log(
+                    $"[NetworkSyncValidator] No message for {timeSinceMessage:F1}s (threshold: {disconnectTimeoutSeconds}s)"
+                );
+            }
+
+            if (!_isPeerDisconnected && timeSinceMessage > disconnectTimeoutSeconds)
+            {
+                HandlePeerDisconnected();
+            }
+        }
+        else if (!_isPeerDisconnected)
+        {
+            // Debug: Log why we're not checking (remove after testing)
+            // Debug.Log($"[NetworkSyncValidator] Not checking disconnect - phase is {currentPhase}, need Place");
         }
 
         // Update waiting state
@@ -132,10 +172,39 @@ public class NetworkSyncValidator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Forces the peer into a disconnected state immediately, bypassing the
+    /// normal timeout check. Use this when the transport reports a hard
+    /// disconnect (e.g., SteamP2P OnDisconnected).
+    /// </summary>
+    public void ForcePeerDisconnected(string reason = null)
+    {
+        Debug.LogWarning(
+            $"[NetworkSyncValidator] ForcePeerDisconnected called. Reason: {reason ?? "transport disconnect"}"
+        );
+
+        // Only force disconnect if we are in a networked game and haven't
+        // already marked the peer as disconnected.
+        if (!NetworkSessionStore.IsNetworkedGame)
+        {
+            Debug.LogWarning(
+                "[NetworkSyncValidator] ForcePeerDisconnected ignored - not a networked game."
+            );
+            return;
+        }
+
+        HandlePeerDisconnected();
+    }
+
     private void HandlePeerDisconnected()
     {
         if (_isPeerDisconnected)
+        {
+            Debug.Log(
+                "[NetworkSyncValidator] HandlePeerDisconnected called but already disconnected, ignoring."
+            );
             return;
+        }
 
         _isPeerDisconnected = true;
         _isWaitingForPeer = true;
@@ -143,15 +212,21 @@ public class NetworkSyncValidator : MonoBehaviour
 
         Debug.LogWarning("[NetworkSyncValidator] Peer appears to have disconnected!");
 
-        OnPeerDisconnected?.Invoke();
+        // Fire event - DisconnectOverlay handles the UI (single source of truth)
+        int subscriberCount = OnPeerDisconnected?.GetInvocationList()?.Length ?? 0;
+        Debug.Log(
+            $"[NetworkSyncValidator] Firing OnPeerDisconnected event to {subscriberCount} subscriber(s)..."
+        );
 
-        if (FeedbackManager.Instance != null)
+        if (subscriberCount == 0)
         {
-            FeedbackManager.Instance.ShowGlobalAlert(
-                "Connection lost...\nWaiting for opponent",
-                GameColorPalette.TextWarning
+            Debug.LogError(
+                "[NetworkSyncValidator] NO SUBSCRIBERS for OnPeerDisconnected! DisconnectOverlay may not have subscribed."
             );
         }
+
+        OnPeerDisconnected?.Invoke();
+        Debug.Log("[NetworkSyncValidator] OnPeerDisconnected event fired.");
     }
 
     private void HandlePeerReconnected()
@@ -164,14 +239,34 @@ public class NetworkSyncValidator : MonoBehaviour
 
         Debug.Log("[NetworkSyncValidator] Peer has reconnected!");
 
+        // Fire event - DisconnectOverlay handles the UI (single source of truth)
         OnPeerReconnected?.Invoke();
 
-        if (FeedbackManager.Instance != null)
+        // Initiate resync to ensure both clients are in the same state
+        // Only the client that was waiting (not the one who disconnected) initiates
+        StartCoroutine(DelayedResyncRequest());
+    }
+
+    /// <summary>
+    /// Delays the resync request slightly to allow the transport to stabilize.
+    /// </summary>
+    private System.Collections.IEnumerator DelayedResyncRequest()
+    {
+        // Small delay to let the connection stabilize
+        yield return new WaitForSeconds(0.5f);
+
+        // Check if we actually need to resync (if we have a last validated state)
+        if (_lastValidatedRound > 0)
         {
-            FeedbackManager.Instance.ShowGlobalAlert(
-                "Opponent reconnected!",
-                GameColorPalette.TextPositive
+            Debug.Log(
+                $"[NetworkSyncValidator] Initiating resync from round {_lastValidatedRound}..."
             );
+            OnResyncStarted?.Invoke();
+            RequestResyncAfterReconnect();
+        }
+        else
+        {
+            Debug.Log("[NetworkSyncValidator] No validated state to resync from.");
         }
     }
 
@@ -192,7 +287,23 @@ public class NetworkSyncValidator : MonoBehaviour
 
     private void HandlePhaseChanged(GamePhase phase)
     {
-        if (phase == GamePhase.End && NetworkSessionStore.IsNetworkedGame)
+        if (!NetworkSessionStore.IsNetworkedGame)
+            return;
+
+        // Reset disconnect timer when entering Place phase to avoid false positives
+        // from long resolution phases.
+        if (phase == GamePhase.Place)
+        {
+            _lastMessageReceivedTime = Time.unscaledTime;
+
+            // Clear any false disconnect state from resolution phase
+            if (_isPeerDisconnected && !_isWaitingForPeer)
+            {
+                _isPeerDisconnected = false;
+            }
+        }
+
+        if (phase == GamePhase.End)
         {
             SendRoundChecksum();
         }
@@ -273,18 +384,116 @@ public class NetworkSyncValidator : MonoBehaviour
 
         if (_lastLocalSnapshot.checksum != remoteChecksum)
         {
+            Debug.LogError(
+                $"[NetworkSyncValidator] MISMATCH! Local={_lastLocalSnapshot.checksum:X8} vs Remote={remoteChecksum:X8}"
+            );
             HandleDesyncDetectedInternal(round, remoteChecksum, remoteRngCallCount);
         }
         else
         {
-            Debug.Log($"[NetworkSyncValidator] Round {round} checksums MATCH ✓");
+            Debug.Log(
+                $"[NetworkSyncValidator] Round {round} checksums MATCH ✓ (checksum: {_lastLocalSnapshot.checksum:X8})"
+            );
+
+            // Save checkpoint on successful validation
+            _lastValidatedRound = round;
+            _lastValidatedChecksum = _lastLocalSnapshot.checksum;
+
+            // Save to Firestore asynchronously
+            Debug.Log($"[NetworkSyncValidator] Calling SaveCheckpointAsync for round {round}...");
+            SaveCheckpointAsync(round, _lastLocalSnapshot.checksum);
+        }
+    }
+
+    /// <summary>
+    /// Saves a checkpoint to Firestore after successful checksum validation.
+    /// </summary>
+    private async void SaveCheckpointAsync(int round, int checksum)
+    {
+        if (MatchCheckpointManager.Instance != null)
+        {
+            await MatchCheckpointManager.Instance.SaveCheckpointAsync(round, checksum);
+        }
+    }
+
+    /// <summary>
+    /// Initiates a state sync request after reconnection.
+    /// Call this when peer reconnects to ensure both clients are in sync.
+    /// </summary>
+    public void RequestResyncAfterReconnect()
+    {
+        if (_isResyncInProgress)
+        {
+            Debug.LogWarning("[NetworkSyncValidator] Resync already in progress.");
+            return;
+        }
+
+        _isResyncInProgress = true;
+
+        if (NetworkMatchManager.Instance != null)
+        {
+            NetworkMatchManager.Instance.OnStateSyncApplied += HandleResyncCompleted;
+            NetworkMatchManager.Instance.OnStateSyncFailed += HandleResyncFailed;
+            NetworkMatchManager.Instance.RequestStateSync(
+                _lastValidatedRound,
+                _lastValidatedChecksum,
+                true
+            );
+        }
+        else
+        {
+            Debug.LogError("[NetworkSyncValidator] NetworkMatchManager not available for resync.");
+            _isResyncInProgress = false;
+        }
+    }
+
+    private void HandleResyncCompleted(int round)
+    {
+        _isResyncInProgress = false;
+        _lastValidatedRound = round;
+
+        if (NetworkMatchManager.Instance != null)
+        {
+            NetworkMatchManager.Instance.OnStateSyncApplied -= HandleResyncCompleted;
+            NetworkMatchManager.Instance.OnStateSyncFailed -= HandleResyncFailed;
+        }
+
+        Debug.Log($"[NetworkSyncValidator] Resync completed successfully (round {round}).");
+
+        // Fire public event for UI
+        OnResyncCompleted?.Invoke(round);
+    }
+
+    private void HandleResyncFailed(string error)
+    {
+        _isResyncInProgress = false;
+
+        if (NetworkMatchManager.Instance != null)
+        {
+            NetworkMatchManager.Instance.OnStateSyncApplied -= HandleResyncCompleted;
+            NetworkMatchManager.Instance.OnStateSyncFailed -= HandleResyncFailed;
+        }
+
+        Debug.LogError($"[NetworkSyncValidator] Resync failed: {error}");
+
+        // Fire public event for UI
+        OnResyncFailed?.Invoke(error);
+
+        if (showDesyncAlert && FeedbackManager.Instance != null)
+        {
+            FeedbackManager.Instance.ShowGlobalAlert(
+                "Resync failed!\nGame state may be inconsistent.",
+                GameColorPalette.Damage
+            );
         }
     }
 
     private void HandleDesyncDetectedInternal(int round, int remoteChecksum, int remoteRngCallCount)
     {
         Debug.LogError($"[NetworkSyncValidator] DESYNC at round {round}!");
-        Debug.LogError($"  Local:  {_lastLocalSnapshot.checksum:X8} ({_lastLocalSnapshot.rngCallCount} RNG calls)");
+        Debug.LogError(
+            $"  Local:  {_lastLocalSnapshot.checksum:X8} ({_lastLocalSnapshot.rngCallCount} RNG calls)"
+        );
         Debug.LogError($"  Remote: {remoteChecksum:X8} ({remoteRngCallCount} RNG calls)");
 
         string localDump = GameStateChecksum.GenerateDebugDump(_lastLocalSnapshot);
@@ -307,7 +516,9 @@ public class NetworkSyncValidator : MonoBehaviour
 
         if (pauseOnDesync)
         {
-            Debug.LogWarning("[NetworkSyncValidator] Pausing for debugging. Press Play to continue.");
+            Debug.LogWarning(
+                "[NetworkSyncValidator] Pausing for debugging. Press Play to continue."
+            );
             Debug.Break();
         }
     }
@@ -401,4 +612,3 @@ public class NetworkSyncValidator : MonoBehaviour
         }
     }
 }
-

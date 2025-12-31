@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: WildfireBornTrait
   m_EditorClassIdentifier: Assembly-CSharp::WildfireBornTrait
   traitName: Wildfire Born
-  description: During Wildfire, gain <link="DamageUp"><color=#FFD35B><b>+1 Damage
-    Up</b></color></link> and <link="Immune"><color=#FFD35B><b>+1 Immune</b></color></link>
+  description: During Wildfire, gain <link="Fury"><color=#FFD35B><b>+1 Fury</b></color></link>
+    and <link="Immune"><color=#FFD35B><b>+1 Immune</b></color></link>

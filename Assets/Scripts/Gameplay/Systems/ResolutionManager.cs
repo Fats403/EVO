@@ -206,45 +206,15 @@ public class ResolutionManager : MonoBehaviour
 
     public IEnumerable<Creature> AllCreatures()
     {
-        // CRITICAL: First apply a deterministic base ordering by slot index to ensure
-        // consistent iteration order across both clients. FindObjectsByType with
-        // FindObjectsSortMode.None returns objects in an arbitrary order that may
-        // differ between clients, causing desync.
-        var allSlots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
-            .ToDictionary(s => s, s => s.index);
-
-        var q = FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
-            .OrderBy(c => GetSlotIndexForCreature(c, allSlots)) // Deterministic base order
-            .ThenByDescending(c => GetEffectiveSpeed(c));
-
-        // Deterministic tie-breaker: RNG-based shuffle for equals
-        int Rand()
-        {
-            if (GameManager.Instance == null)
-            {
-                Debug.LogWarning(
-                    "ResolutionManager: GameManager.Instance is null during Rand() tie-breaker. Determinism may be compromised."
-                );
-                return UnityEngine.Random.Range(0, int.MaxValue);
-            }
-            return GameManager.Instance.NextRandomInt(0, int.MaxValue);
-        }
-        return q.ThenBy(_ => Rand());
-    }
-
-    /// <summary>
-    /// Gets the slot index for a creature, or a large value if not on a slot.
-    /// Used for deterministic ordering.
-    /// </summary>
-    private int GetSlotIndexForCreature(Creature c, Dictionary<BoardSlot, int> slotIndices)
-    {
-        foreach (var kvp in slotIndices)
-        {
-            if (kvp.Key.currentCreature == c)
-                return kvp.Value;
-        }
-        return int.MaxValue;
+        // CRITICAL: Apply a fully deterministic ordering to ensure consistent
+        // iteration order across both clients.
+        //
+        // We sort by speed (descending) first, then by slot index as a stable
+        // tie-breaker. Slot index is unique per creature, so no RNG is needed.
+        return DeterministicHelpers.OrderByDescendingWithSlotTieBreaker(
+            DeterministicHelpers.GetAllCreaturesSorted(),
+            c => GetEffectiveSpeed(c)
+        );
     }
 
     void InvokeGlobal(System.Action<GlobalEffectBase> call)
@@ -299,31 +269,16 @@ public class ResolutionManager : MonoBehaviour
 
     public IEnumerable<Creature> AllCreaturesInActionOrder()
     {
-        // CRITICAL: First apply a deterministic base ordering by slot index to ensure
-        // consistent iteration order across both clients.
-        var allSlots = FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
-            .ToDictionary(s => s, s => s.index);
-
-        var q = FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c => c != null && c.currentHealth > 0 && !c.isDying);
-
-        static int Rand()
-        {
-            if (GameManager.Instance == null)
-            {
-                Debug.LogWarning(
-                    "ResolutionManager: GameManager.Instance is null during Rand() tie-breaker. Determinism may be compromised."
-                );
-                return UnityEngine.Random.Range(0, int.MaxValue);
-            }
-            return GameManager.Instance.NextRandomInt(0, int.MaxValue);
-        }
-
-        // Slot index first (deterministic), then priority, then speed.
-        return q.OrderBy(c => GetSlotIndexForCreature(c, allSlots))
-            .ThenByDescending(c => GetActionPriority(c))
+        // CRITICAL: Apply a fully deterministic ordering to ensure consistent
+        // iteration order across both clients.
+        //
+        // Sort by: priority (desc) -> speed (desc) -> slot index (asc, tie-breaker).
+        var slotLookup = DeterministicHelpers.GetSlotIndexLookup();
+        return DeterministicHelpers
+            .GetAllCreaturesSorted()
+            .OrderByDescending(c => GetActionPriority(c))
             .ThenByDescending(c => GetEffectiveSpeed(c))
-            .ThenBy(_ => Rand());
+            .ThenBy(c => DeterministicHelpers.GetSlotIndex(c, slotLookup));
     }
 
     IEnumerator ResolveMixedActions()
@@ -491,10 +446,10 @@ public class ResolutionManager : MonoBehaviour
             }
         }
 
-        // Candidates: opponent
-        var enemies = FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c => c != null && c.data != null && c.currentHealth > 0 && !c.isDying)
-            .Where(c => c.owner != attacker.owner);
+        // Candidates: opponent creatures
+        var enemies = DeterministicHelpers.GetCreaturesSorted(c =>
+            c.data != null && c.owner != attacker.owner
+        );
 
         // Taunt: if any enemy has Taunt, restrict to only taunt targets (closest wins)
         var tauntTargets = enemies.Where(c => c.HasStatus(StatusTag.Taunt)).ToList();
@@ -515,10 +470,11 @@ public class ResolutionManager : MonoBehaviour
                         : enemies.Where(c => c.data.type != CardType.Carnivore)
                 );
 
-        var candidates = basePool
-            .Where(c => IsValidAttackTarget(attacker, c))
-            .OrderBy(c => Vector3.SqrMagnitude(c.transform.position - attacker.transform.position))
-            .ToList();
+        // Order by distance with slot index tie-breaker
+        var candidates = DeterministicHelpers.OrderByDistanceWithTieBreaker(
+            basePool.Where(c => IsValidAttackTarget(attacker, c)),
+            attacker.transform.position
+        );
 
         // Carnivore-vs-carnivore fallback as in the original loop.
         if (candidates.Count == 0 && attacker.data.type == CardType.Carnivore)
@@ -529,12 +485,10 @@ public class ResolutionManager : MonoBehaviour
                 .ToList();
             var carniPool =
                 (tauntCarnivores.Count > 0) ? tauntCarnivores.AsEnumerable() : carnivoreEnemies;
-            candidates = carniPool
-                .Where(c => IsValidAttackTarget(attacker, c, ignoreBodyRule: true))
-                .OrderBy(c =>
-                    Vector3.SqrMagnitude(c.transform.position - attacker.transform.position)
-                )
-                .ToList();
+            candidates = DeterministicHelpers.OrderByDistanceWithTieBreaker(
+                carniPool.Where(c => IsValidAttackTarget(attacker, c, ignoreBodyRule: true)),
+                attacker.transform.position
+            );
         }
 
         if (candidates.Count == 0)
@@ -574,16 +528,11 @@ public class ResolutionManager : MonoBehaviour
                 tr?.OnTargetedByAttack(target, attacker);
             }
         }
-        foreach (
-            var ally in FindObjectsByType<Creature>(FindObjectsSortMode.None)
-                .Where(x =>
-                    x != null
-                    && x.currentHealth > 0
-                    && !x.isDying
-                    && x.owner == target.owner
-                    && x != target
-                )
-        )
+        // Get allies in deterministic order for trait trigger order
+        var allies = DeterministicHelpers.GetCreaturesSorted(x =>
+            x.owner == target.owner && x != target
+        );
+        foreach (var ally in allies)
         {
             if (!ally.HasStatus(StatusTag.Suppress) && ally.traits != null)
             {
@@ -691,7 +640,7 @@ public class ResolutionManager : MonoBehaviour
         }
         if (!overridden)
         {
-            baseDmg += Mathf.Max(0, attacker.GetStatus(StatusTag.DamageUp));
+            baseDmg += Mathf.Max(0, attacker.GetStatus(StatusTag.Fury));
             if (attacker.HasStatus(StatusTag.Rage) && baseDmg > 0)
             {
                 baseDmg *= 2;
@@ -746,7 +695,10 @@ public class ResolutionManager : MonoBehaviour
 
     IEnumerator ResolveStarvationAndScoring()
     {
-        var creatures = FindObjectsByType<Creature>(FindObjectsSortMode.None);
+        // CRITICAL: Deterministic ordering is essential here because:
+        // 1. Avian fallback scavenging from the pile depends on who eats first
+        // 2. Starvation damage can kill creatures, affecting subsequent processing
+        var creatures = DeterministicHelpers.GetAllCreaturesInSlotOrder();
 
         static void ShowScoreBreakdown(Creature c, int gain, string label)
         {
@@ -1045,12 +997,15 @@ public class ResolutionManager : MonoBehaviour
         return false;
     }
 
+    // TODO:  MAke sure these are deterministic
     public Creature FindBestTarget(Creature attacker)
     {
         if (attacker == null)
             return null;
-        var enemies = AllCreatures()
-            .Where(c => c != null && c.data != null && c.owner != attacker.owner);
+
+        var enemies = DeterministicHelpers.GetCreaturesSorted(c =>
+            c.data != null && c.owner != attacker.owner
+        );
         var tauntTargets = enemies.Where(c => c.HasStatus(StatusTag.Taunt)).ToList();
         bool canTargetAny =
             !attacker.HasStatus(StatusTag.Suppress)
@@ -1068,10 +1023,11 @@ public class ResolutionManager : MonoBehaviour
                         ? enemies
                         : enemies.Where(c => c.data.type != CardType.Carnivore)
                 );
-        var candidates = basePool
-            .Where(c => IsValidAttackTarget(attacker, c))
-            .OrderBy(c => Vector3.SqrMagnitude(c.transform.position - attacker.transform.position))
-            .ToList();
+
+        var candidates = DeterministicHelpers.OrderByDistanceWithTieBreaker(
+            basePool.Where(c => IsValidAttackTarget(attacker, c)),
+            attacker.transform.position
+        );
 
         // If no valid non-carnivore (or unrestricted) targets exist, Carnivores will still
         // fight each other as a fallback, ignoring body size rules but respecting stealth,
@@ -1088,12 +1044,10 @@ public class ResolutionManager : MonoBehaviour
                 .ToList();
             var carniPool =
                 (tauntCarnivores.Count > 0) ? tauntCarnivores.AsEnumerable() : carnivoreEnemies;
-            candidates = carniPool
-                .Where(c => IsValidAttackTarget(attacker, c, ignoreBodyRule: true))
-                .OrderBy(c =>
-                    Vector3.SqrMagnitude(c.transform.position - attacker.transform.position)
-                )
-                .ToList();
+            candidates = DeterministicHelpers.OrderByDistanceWithTieBreaker(
+                carniPool.Where(c => IsValidAttackTarget(attacker, c, ignoreBodyRule: true)),
+                attacker.transform.position
+            );
         }
 
         return candidates.Count > 0 ? candidates[0] : null;
@@ -1224,7 +1178,7 @@ public class ResolutionManager : MonoBehaviour
         }
         if (!overridden)
         {
-            baseDmg += Mathf.Max(0, attacker.GetStatus(StatusTag.DamageUp));
+            baseDmg += Mathf.Max(0, attacker.GetStatus(StatusTag.Fury));
             if (attacker.HasStatus(StatusTag.Rage) && baseDmg > 0)
             {
                 baseDmg *= 2;
@@ -1263,8 +1217,9 @@ public class ResolutionManager : MonoBehaviour
             (!c.HasStatus(StatusTag.Suppress) && c.traits != null)
                 ? c.traits.Sum(t => t != null ? t.BodyBonus(c) : 0)
                 : 0;
-        int temp = c.GetStatus(StatusTag.BodyUp) - c.GetStatus(StatusTag.Malnourish);
-        return c.body + temp + traitBody;
+        int temp = c.GetStatus(StatusTag.Bulk) - c.GetStatus(StatusTag.Malnourish);
+        // Body can never drop below 1, even with Malnourish and other debuffs.
+        return Mathf.Max(1, c.body + temp + traitBody);
     }
 
     public int GetEffectiveSpeed(Creature c)
@@ -1275,7 +1230,8 @@ public class ResolutionManager : MonoBehaviour
             (!c.HasStatus(StatusTag.Suppress) && c.traits != null)
                 ? c.traits.Sum(t => t != null ? t.SpeedBonus(c) : 0)
                 : 0;
-        int temp = c.GetStatus(StatusTag.SpeedUp) - c.GetStatus(StatusTag.Fatigue);
-        return c.speed + temp + traitSpeed;
+        int temp = c.GetStatus(StatusTag.Haste) - c.GetStatus(StatusTag.Fatigue);
+        // Speed can never drop below 0, even with multiple Fatigue stacks.
+        return Mathf.Max(0, c.speed + temp + traitSpeed);
     }
 }

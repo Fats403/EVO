@@ -307,3 +307,4 @@ public class ActionLog : MonoBehaviour
         return sb.ToString();
     }
 }
+

@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Effects/Global/Extinction Event")]
@@ -9,12 +8,10 @@ public class ExtinctionEventGlobalEffect : GlobalEffectBase
         if (rm == null)
             return;
 
-        var all = Object
-            .FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
-            .ToList();
+        // Get all creatures in deterministic slot order
+        var all = DeterministicHelpers.GetAllCreaturesSorted();
 
-        void ApplyExtinctionDamage(Creature c)
+        static void ApplyExtinctionDamage(Creature c)
         {
             if (c == null || c.isDying || c.currentHealth <= 0)
                 return;

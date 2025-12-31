@@ -15,8 +15,9 @@ MonoBehaviour:
   cardId: EFF_PRIMORDIAL_AWAKENING
   effectName: Primordial Awakening
   icon: {fileID: 21300000, guid: 6f17a48304fa74778a2be499def15839, type: 3}
-  description: 'All allies permanently gain +2 Body and +1 Speed. If you are behind
-    in fossils: Draw 1 card.'
+  description: 'All allies gain <link="Bulk"><color=#FFD35B><b>+2 Bulk</b></color></link>
+    and <link="Haste"><color=#FFD35B><b>+1 Haste</b></color></link>. If you are behind
+    in fossils: Draw 1 card'
   targetSide: 0
   targetType: 0
   targetCount: 0

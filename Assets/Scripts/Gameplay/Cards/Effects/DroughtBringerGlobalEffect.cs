@@ -20,10 +20,8 @@ public class DroughtBringerGlobalEffect : GlobalEffectBase
             GameManager.Instance.weatherVideoBackground.ForceTo(WeatherType.Drought);
         }
 
-        var all = Object
-            .FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
-            .ToList();
+        // Apply Malnourish to all living creatures in deterministic slot order
+        var all = DeterministicHelpers.GetAllCreaturesSorted();
         foreach (var c in all)
         {
             c.AddStatus(StatusTag.Malnourish, 1);

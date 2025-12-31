@@ -24,10 +24,8 @@ public class TitanTrait : Trait
         if (self.HasStatus(StatusTag.Suppress))
             return;
 
-        var allies = Object
-            .FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c => c != null && c.currentHealth > 0 && !c.isDying && c.owner == self.owner)
-            .ToList();
+        // All allied creatures gain Regen +1 (deterministic ordering for consistency)
+        var allies = DeterministicHelpers.GetCreaturesSorted(c => c.owner == self.owner);
 
         if (allies.Count > 0)
         {

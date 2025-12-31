@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Traits/Herbivores/Sacrifice")]
@@ -10,19 +9,16 @@ public class SacrificeTrait : Trait
             return;
         if (self.HasStatus(StatusTag.Suppress))
             return;
-        // Find lowest HP ally (not self)
-        var allies = Object
-            .FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(c =>
-                c != null && c != self && c.currentHealth > 0 && !c.isDying && c.owner == self.owner
-            )
-            .ToList();
+
+        // Use centralized helpers for deterministic ally selection
+        var allies = DeterministicHelpers.GetCreaturesSorted(c =>
+            c != self && c.owner == self.owner
+        );
         if (allies.Count == 0)
             return;
-        var target = allies
-            .OrderBy(c => c.currentHealth)
-            .ThenBy(_ => GameManager.Instance.NextRandomInt(0, allies.Count))
-            .FirstOrDefault();
+
+        // Find lowest HP ally deterministically
+        var target = DeterministicHelpers.FindMinBy(allies, c => c.currentHealth);
         if (target != null)
         {
             target.Heal(1);

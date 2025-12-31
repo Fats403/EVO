@@ -4,16 +4,21 @@ using UnityEngine;
 
 public static class BoardUtils
 {
-    // Returns the BoardSlot that currently contains the creature (or null)
+    /// <summary>
+    /// Returns the BoardSlot that currently contains the creature (or null).
+    /// Uses the cached slot lookup from DeterministicHelpers for consistency.
+    /// </summary>
     public static BoardSlot GetSlotOf(Creature c)
     {
         if (c == null)
             return null;
-        var slots = Object.FindObjectsByType<BoardSlot>(FindObjectsSortMode.None);
-        foreach (var s in slots)
+
+        // Use the deterministic slot index lookup for consistent behavior
+        var slotLookup = DeterministicHelpers.GetSlotIndexLookup();
+        foreach (var kvp in slotLookup)
         {
-            if (s != null && s.currentCreature == c)
-                return s;
+            if (kvp.Key != null && kvp.Key.currentCreature == c)
+                return kvp.Key;
         }
         return null;
     }
@@ -60,34 +65,34 @@ public static class BoardUtils
         return result;
     }
 
-    // Closest living enemy by world-space distance
+    // Closest living enemy by world-space distance (deterministic tie-breaking by slot index)
     public static Creature GetClosestEnemy(Creature c)
     {
         if (c == null)
             return null;
-        var enemies = Object
-            .FindObjectsByType<Creature>(FindObjectsSortMode.None)
-            .Where(x => x != null && x.currentHealth > 0 && !x.isDying && x.owner != c.owner)
-            .ToList();
+        var enemies = DeterministicHelpers.GetCreaturesSorted(x => x.owner != c.owner);
         if (enemies.Count == 0)
             return null;
-        var pos = c.transform.position;
-        return enemies
-            .OrderBy(e => Vector3.SqrMagnitude(e.transform.position - pos))
+        return DeterministicHelpers
+            .OrderByDistanceWithTieBreaker(enemies, c.transform.position)
             .FirstOrDefault();
     }
 
-    // All board slots for a given owner, optionally only those currently occupied.
+    /// <summary>
+    /// All board slots for a given owner, optionally only those currently occupied.
+    /// Returns slots in deterministic order (by slot index, which correlates with position.x).
+    /// </summary>
     public static List<BoardSlot> GetSlotsForOwner(SlotOwner owner, bool occupiedOnly)
     {
-        var slots = Object
-            .FindObjectsByType<BoardSlot>(FindObjectsSortMode.None)
-            .Where(s => s != null && s.owner == owner);
+        // Use the deterministic slot lookup for consistent ordering across clients
+        var slotLookup = DeterministicHelpers.GetSlotIndexLookup();
+        var slots = slotLookup.Keys.Where(s => s != null && s.owner == owner);
         if (occupiedOnly)
         {
             slots = slots.Where(s => s.occupied && s.currentCreature != null);
         }
-        return slots.OrderBy(s => s.transform.position.x).ToList();
+        // Sort by slot index (which is assigned deterministically based on position)
+        return slots.OrderBy(s => slotLookup[s]).ToList();
     }
 
     // Returns the slot closest to the horizontal center among a side's slots.
@@ -120,7 +125,9 @@ public static class BoardUtils
         }
         else
         {
-            Debug.LogWarning("BoardUtils: GameManager.Instance is null during GetRandomEmptySlot. Determinism may be compromised.");
+            Debug.LogWarning(
+                "BoardUtils: GameManager.Instance is null during GetRandomEmptySlot. Determinism may be compromised."
+            );
             idx = Random.Range(0, emptySlots.Count);
         }
         return emptySlots[idx];

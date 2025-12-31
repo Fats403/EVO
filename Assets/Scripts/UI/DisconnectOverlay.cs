@@ -1,10 +1,12 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
-/// UI overlay that displays when the opponent disconnects.
-/// Shows a waiting message with timer and a forfeit button.
+/// Simple disconnect overlay that shows when connection is lost.
+/// After a timeout, returns player to lobby where they can wait for opponent to rejoin.
 /// </summary>
 public class DisconnectOverlay : MonoBehaviour
 {
@@ -18,27 +20,21 @@ public class DisconnectOverlay : MonoBehaviour
     private TextMeshProUGUI statusText;
 
     [SerializeField]
-    private Button forfeitButton;
+    private Button returnToLobbyButton;
 
     [SerializeField]
-    private TextMeshProUGUI forfeitButtonText;
+    private TextMeshProUGUI buttonText;
 
     [Header("Settings")]
     [SerializeField]
-    private float minSecondsBeforeForfeit = 10f;
+    private float timeoutSeconds = 30f;
 
     [SerializeField]
-    private string waitingMessage = "Connection Lost\n\nWaiting for opponent...";
-
-    [SerializeField]
-    private string waitingWithTimerMessage = "Connection Lost\n\nWaiting for opponent...\n\n{0}s";
-
-    [SerializeField]
-    private string forfeitAvailableMessage =
-        "Connection Lost\n\nOpponent appears disconnected.\n\n{0}s";
+    private float minSecondsBeforeReturn = 10f;
 
     private bool _isShowing;
-    private float _waitingSeconds;
+    private float _elapsedTime;
+    private Coroutine _countdownCoroutine;
 
     private void Awake()
     {
@@ -49,17 +45,19 @@ public class DisconnectOverlay : MonoBehaviour
         }
         Instance = this;
 
-        // Start hidden
-        if (overlayRoot != null)
+        // Validate overlayRoot isn't this GameObject
+        if (overlayRoot == gameObject)
         {
-            overlayRoot.SetActive(false);
+            Debug.LogError(
+                "[DisconnectOverlay] overlayRoot should be a CHILD object, not this GameObject!"
+            );
         }
 
-        // Setup forfeit button
-        if (forfeitButton != null)
+        Hide();
+
+        if (returnToLobbyButton != null)
         {
-            forfeitButton.onClick.AddListener(OnForfeitClicked);
-            forfeitButton.interactable = false;
+            returnToLobbyButton.onClick.AddListener(OnReturnToLobbyClicked);
         }
     }
 
@@ -69,28 +67,20 @@ public class DisconnectOverlay : MonoBehaviour
             Instance = null;
     }
 
-    private void Start()
-    {
-        // Subscribe to NetworkSyncValidator events
-        if (NetworkSyncValidator.Instance != null)
-        {
-            NetworkSyncValidator.Instance.OnPeerDisconnected += Show;
-            NetworkSyncValidator.Instance.OnPeerReconnected += Hide;
-            NetworkSyncValidator.Instance.OnWaitingForPeer += UpdateWaitingTime;
-        }
-    }
-
     private void OnEnable()
     {
+        // Subscribe to disconnect events
         if (NetworkSyncValidator.Instance != null)
         {
-            NetworkSyncValidator.Instance.OnPeerDisconnected -= Show;
-            NetworkSyncValidator.Instance.OnPeerReconnected -= Hide;
-            NetworkSyncValidator.Instance.OnWaitingForPeer -= UpdateWaitingTime;
-
-            NetworkSyncValidator.Instance.OnPeerDisconnected += Show;
-            NetworkSyncValidator.Instance.OnPeerReconnected += Hide;
-            NetworkSyncValidator.Instance.OnWaitingForPeer += UpdateWaitingTime;
+            NetworkSyncValidator.Instance.OnPeerDisconnected += HandlePeerDisconnected;
+            NetworkSyncValidator.Instance.OnPeerReconnected += HandlePeerReconnected;
+            Debug.Log("[DisconnectOverlay] Subscribed to NetworkSyncValidator events.");
+        }
+        else
+        {
+            Debug.LogWarning(
+                "[DisconnectOverlay] NetworkSyncValidator.Instance is null on enable."
+            );
         }
     }
 
@@ -98,10 +88,21 @@ public class DisconnectOverlay : MonoBehaviour
     {
         if (NetworkSyncValidator.Instance != null)
         {
-            NetworkSyncValidator.Instance.OnPeerDisconnected -= Show;
-            NetworkSyncValidator.Instance.OnPeerReconnected -= Hide;
-            NetworkSyncValidator.Instance.OnWaitingForPeer -= UpdateWaitingTime;
+            NetworkSyncValidator.Instance.OnPeerDisconnected -= HandlePeerDisconnected;
+            NetworkSyncValidator.Instance.OnPeerReconnected -= HandlePeerReconnected;
         }
+    }
+
+    private void HandlePeerDisconnected()
+    {
+        Debug.Log("[DisconnectOverlay] Peer disconnected - showing overlay.");
+        Show();
+    }
+
+    private void HandlePeerReconnected()
+    {
+        Debug.Log("[DisconnectOverlay] Peer reconnected - hiding overlay.");
+        Hide();
     }
 
     public void Show()
@@ -110,115 +111,115 @@ public class DisconnectOverlay : MonoBehaviour
             return;
 
         _isShowing = true;
-        _waitingSeconds = 0f;
+        _elapsedTime = 0f;
 
         if (overlayRoot != null)
-        {
             overlayRoot.SetActive(true);
-        }
 
-        if (statusText != null)
-        {
-            statusText.text = waitingMessage;
-        }
+        UpdateUI();
 
-        if (forfeitButton != null)
-        {
-            forfeitButton.interactable = false;
-        }
-
-        if (forfeitButtonText != null)
-        {
-            forfeitButtonText.text = $"Wait {minSecondsBeforeForfeit:0}s...";
-        }
-
-        Debug.Log("[DisconnectOverlay] Showing disconnect overlay");
+        if (_countdownCoroutine != null)
+            StopCoroutine(_countdownCoroutine);
+        _countdownCoroutine = StartCoroutine(CountdownCoroutine());
     }
 
     public void Hide()
     {
-        if (!_isShowing)
-            return;
-
         _isShowing = false;
 
-        if (overlayRoot != null)
+        if (_countdownCoroutine != null)
         {
-            overlayRoot.SetActive(false);
+            StopCoroutine(_countdownCoroutine);
+            _countdownCoroutine = null;
         }
 
-        Debug.Log("[DisconnectOverlay] Hiding disconnect overlay");
+        if (overlayRoot != null)
+            overlayRoot.SetActive(false);
     }
 
-    private void UpdateWaitingTime(float seconds)
+    private IEnumerator CountdownCoroutine()
     {
-        _waitingSeconds = seconds;
+        while (_elapsedTime < timeoutSeconds)
+        {
+            _elapsedTime += Time.unscaledDeltaTime;
+            UpdateUI();
+            yield return null;
+        }
 
-        if (!_isShowing)
-            return;
+        // Timeout reached - return to lobby
+        Debug.Log("[DisconnectOverlay] Timeout reached, returning to lobby.");
+        ReturnToLobby();
+    }
 
-        bool canForfeit = seconds >= minSecondsBeforeForfeit;
+    private void UpdateUI()
+    {
+        float remaining = Mathf.Max(0, timeoutSeconds - _elapsedTime);
+        bool canReturn = _elapsedTime >= minSecondsBeforeReturn;
 
-        // Update status text
         if (statusText != null)
         {
-            if (canForfeit)
+            if (remaining <= 0)
             {
-                statusText.text = string.Format(forfeitAvailableMessage, Mathf.FloorToInt(seconds));
+                statusText.text = "Connection Lost\n\nReturning to lobby...";
             }
             else
             {
-                statusText.text = string.Format(waitingWithTimerMessage, Mathf.FloorToInt(seconds));
+                statusText.text =
+                    $"Connection Lost\n\nReturning to lobby in {remaining:0}s\n\nYou can rejoin from there.";
             }
         }
 
-        // Update forfeit button
-        if (forfeitButton != null)
+        if (returnToLobbyButton != null)
         {
-            forfeitButton.interactable = canForfeit;
+            returnToLobbyButton.interactable = canReturn;
         }
 
-        if (forfeitButtonText != null)
+        if (buttonText != null)
         {
-            if (canForfeit)
+            if (canReturn)
             {
-                forfeitButtonText.text = "Forfeit Match";
+                buttonText.text = "Return to Lobby";
             }
             else
             {
-                float remaining = minSecondsBeforeForfeit - seconds;
-                forfeitButtonText.text = $"Wait {remaining:0}s...";
+                float wait = minSecondsBeforeReturn - _elapsedTime;
+                buttonText.text = $"Wait {wait:0}s...";
             }
         }
     }
 
-    private void OnForfeitClicked()
+    private void OnReturnToLobbyClicked()
     {
-        Debug.Log("[DisconnectOverlay] Forfeit button clicked");
+        if (_elapsedTime < minSecondsBeforeReturn)
+            return;
 
-        // Hide this overlay
-        Hide();
-
-        // Tell the validator to handle the forfeit
-        NetworkSyncValidator.Instance?.ForfeitMatch();
+        Debug.Log("[DisconnectOverlay] User clicked return to lobby.");
+        ReturnToLobby();
     }
 
-    /// <summary>
-    /// Can be called manually to show the overlay (e.g., for testing).
-    /// </summary>
-    [ContextMenu("Test Show")]
-    public void TestShow()
-    {
-        Show();
-        UpdateWaitingTime(5f);
-    }
-
-    /// <summary>
-    /// Can be called manually to hide the overlay (e.g., for testing).
-    /// </summary>
-    [ContextMenu("Test Hide")]
-    public void TestHide()
+    private void ReturnToLobby()
     {
         Hide();
+
+        // Clear network session
+        NetworkSessionStore.Clear();
+
+        // Mark game as over so GameManager doesn't interfere
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.isGameOver = true;
+        }
+
+        Debug.Log("[DisconnectOverlay] Returning to DeckHub...");
+
+        // Return to deck hub
+        if (SceneTransitionManager.Instance != null)
+        {
+            SceneTransitionManager.Instance.LoadScene("DeckHubScene");
+        }
+        else
+        {
+            SceneManager.LoadScene("DeckHubScene");
+        }
     }
 }

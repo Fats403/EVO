@@ -152,6 +152,8 @@ public class VFXManager : MonoBehaviour
     {
         List<Creature> creatures;
 
+        // CRITICAL: Use deterministic ordering to ensure creatures are killed in the
+        // same order on all clients in networked games.
         if (ResolutionManager.Instance != null)
         {
             creatures = ResolutionManager
@@ -161,8 +163,9 @@ public class VFXManager : MonoBehaviour
         }
         else
         {
-            creatures = UnityEngine
-                .Object.FindObjectsByType<Creature>(FindObjectsSortMode.None)
+            // Fallback: use DeterministicHelpers to get creatures in slot order
+            creatures = DeterministicHelpers
+                .GetAllCreaturesSorted()
                 .Where(c => c != null && c.currentHealth > 0 && !c.isDying)
                 .ToList();
         }

@@ -71,6 +71,14 @@ public class DeckHubManager : MonoBehaviour
     [SerializeField]
     private Button backToMenuButton;
 
+    [Tooltip("Button to resume an interrupted match.")]
+    [SerializeField]
+    private Button resumeMatchButton;
+
+    [Tooltip("Text on the resume button to show opponent name.")]
+    [SerializeField]
+    private TextMeshProUGUI resumeMatchText;
+
     [Tooltip("Root object for the in-game lobby UI (Canvas_Lobby).")]
     [SerializeField]
     private GameObject gameLobbyRoot;
@@ -967,6 +975,7 @@ public class DeckHubManager : MonoBehaviour
     {
         bool hasSelectedDeck = _selectedSlot != null && _selectedSlot.HasDeck;
         var lobby = SteamLobbyManager.Instance;
+        var checkpoint = MatchCheckpointManager.Instance;
 
         // Host actions (Create Lobby, Quickplay) are available when not in a lobby
         bool canHostActions = lobby == null || !lobby.IsInLobby;
@@ -988,6 +997,65 @@ public class DeckHubManager : MonoBehaviour
         {
             joinLobbyButton.gameObject.SetActive(showJoinButton);
             joinLobbyButton.interactable = hasSelectedDeck && showJoinButton;
+        }
+
+        // Resume Match button - show if there's an active match to resume
+        bool hasActiveMatch = checkpoint != null && checkpoint.HasActiveMatch;
+
+        if (resumeMatchButton != null)
+        {
+            resumeMatchButton.gameObject.SetActive(hasActiveMatch && canHostActions);
+            resumeMatchButton.interactable = hasSelectedDeck && hasActiveMatch && canHostActions;
+
+            // Update button text with opponent name and round
+            if (hasActiveMatch && resumeMatchText != null)
+            {
+                var match = checkpoint.ActiveMatch;
+                resumeMatchText.text =
+                    $"Resume vs {match.opponentName}\n(Round {match.lastCheckpointRound})";
+            }
+        }
+    }
+
+    /// <summary>
+    /// Called when the Resume Match button is clicked.
+    /// Creates a lobby and prepares to resume the match.
+    /// </summary>
+    public void OnClick_ResumeMatch()
+    {
+        var checkpoint = MatchCheckpointManager.Instance;
+        if (checkpoint == null || !checkpoint.HasActiveMatch)
+        {
+            Debug.LogWarning("DeckHubManager: No active match to resume.");
+            return;
+        }
+
+        Debug.Log($"DeckHubManager: Resuming match {checkpoint.ActiveMatch.matchId}...");
+
+        // Initialize checkpoint manager for resume
+        checkpoint.InitializeForResume(checkpoint.ActiveMatch);
+
+        // Create a lobby like normal - the opponent will need to be invited
+        OnClick_CreateLobby();
+
+        // Show a message about inviting opponent
+        FeedbackManager.Instance?.ShowGlobalAlert(
+            $"Invite {checkpoint.ActiveMatch.opponentName} to continue your match!",
+            Color.cyan
+        );
+    }
+
+    /// <summary>
+    /// Called when the Abandon Match button is clicked (optional).
+    /// </summary>
+    public void OnClick_AbandonMatch()
+    {
+        var checkpoint = MatchCheckpointManager.Instance;
+        if (checkpoint != null)
+        {
+            Debug.Log("DeckHubManager: Abandoning active match.");
+            checkpoint.ClearActiveMatch();
+            UpdateMatchActionButtons();
         }
     }
 }
