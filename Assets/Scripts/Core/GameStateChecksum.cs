@@ -136,7 +136,9 @@ public static class GameStateChecksum
 
             foreach (var c in snapshot.creatures)
             {
-                hash = hash * 31 + (c.cardId?.GetHashCode() ?? 0);
+                // CRITICAL: Use deterministic string hash, NOT String.GetHashCode()
+                // which is randomized per-process in .NET for security.
+                hash = hash * 31 + DeterministicStringHash(c.cardId);
                 hash = hash * 31 + (int)c.owner;
                 hash = hash * 31 + c.slotIndex;
                 hash = hash * 31 + c.currentHealth;
@@ -148,7 +150,7 @@ public static class GameStateChecksum
 
                 foreach (var trait in c.traitNames)
                 {
-                    hash = hash * 31 + (trait?.GetHashCode() ?? 0);
+                    hash = hash * 31 + DeterministicStringHash(trait);
                 }
 
                 foreach (var kvp in c.statuses.OrderBy(k => (int)k.Key))
@@ -158,6 +160,30 @@ public static class GameStateChecksum
                 }
             }
 
+            return hash;
+        }
+    }
+
+    /// <summary>
+    /// Computes a deterministic hash code for a string that is consistent
+    /// across different machines and process runs. Uses FNV-1a algorithm.
+    /// </summary>
+    private static int DeterministicStringHash(string str)
+    {
+        if (string.IsNullOrEmpty(str))
+            return 0;
+        unchecked
+        {
+            // FNV-1a hash algorithm - deterministic and fast
+            const int fnvOffsetBasis = unchecked((int)2166136261);
+            const int fnvPrime = 16777619;
+
+            int hash = fnvOffsetBasis;
+            foreach (char c in str)
+            {
+                hash ^= c;
+                hash *= fnvPrime;
+            }
             return hash;
         }
     }

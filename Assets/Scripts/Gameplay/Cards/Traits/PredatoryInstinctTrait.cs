@@ -21,12 +21,12 @@ public class PredatoryInstinctTrait : Trait
         // Pick the lowest HP valid target with deterministic tie-breaking
         var validCandidates = candidates.Where(c => c != null && c.currentHealth > 0);
 
-        // Order by HP, then distance, then slot index for full determinism
+        // Order by HP, then distance, then fair tie-breaker (alternates each round)
         var slotLookup = DeterministicHelpers.GetSlotIndexLookup();
         var picked = validCandidates
             .OrderBy(c => c.currentHealth)
             .ThenBy(c => Vector3.SqrMagnitude(c.transform.position - self.transform.position))
-            .ThenBy(c => DeterministicHelpers.GetSlotIndex(c, slotLookup))
+            .ThenBy(c => DeterministicHelpers.GetFairTieBreakValue(c, slotLookup))
             .FirstOrDefault();
 
         return picked ?? defaultTarget;

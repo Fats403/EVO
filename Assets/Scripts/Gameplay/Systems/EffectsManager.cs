@@ -181,12 +181,22 @@ public class EffectsManager : MonoBehaviour
         }
 
         // Register global effect if any
-        if (card.globalEffect != null && resolutionManager != null)
+        if (card.globalEffect != null)
         {
-            var ge = ScriptableObject.Instantiate(card.globalEffect);
-            ge.owner = player;
-            ge.suppressHitBounceFromSource = card.suppressHitBounce;
-            resolutionManager.RegisterGlobalEffect(ge);
+            if (resolutionManager == null)
+            {
+                Debug.LogWarning(
+                    $"[EffectsManager] Cannot register global effect '{card.globalEffect.name}' - resolutionManager is null!"
+                );
+            }
+            else
+            {
+                var ge = ScriptableObject.Instantiate(card.globalEffect);
+                ge.owner = player;
+                ge.suppressHitBounceFromSource = card.suppressHitBounce;
+                Debug.Log($"[EffectsManager] Registering global effect: {ge.name} for {player}");
+                resolutionManager.RegisterGlobalEffect(ge);
+            }
         }
 
         // Custom runtime effect hook for bespoke logic over the final target set

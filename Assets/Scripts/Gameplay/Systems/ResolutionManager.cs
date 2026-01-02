@@ -235,7 +235,9 @@ public class ResolutionManager : MonoBehaviour
             return;
         activeGlobalEffects ??= new System.Collections.Generic.List<GlobalEffectBase>();
         activeGlobalEffects.Add(effect);
+        Debug.Log($"[ResolutionManager] Calling OnPlay for global effect: {effect.name}");
         effect.OnPlay(this);
+        Debug.Log($"[ResolutionManager] OnPlay returned for: {effect.name}");
     }
 
     /// <summary>
@@ -278,7 +280,7 @@ public class ResolutionManager : MonoBehaviour
             .GetAllCreaturesSorted()
             .OrderByDescending(c => GetActionPriority(c))
             .ThenByDescending(c => GetEffectiveSpeed(c))
-            .ThenBy(c => DeterministicHelpers.GetSlotIndex(c, slotLookup));
+            .ThenBy(c => DeterministicHelpers.GetFairTieBreakValue(c, slotLookup));
     }
 
     IEnumerator ResolveMixedActions()

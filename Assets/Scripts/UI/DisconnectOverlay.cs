@@ -27,14 +27,26 @@ public class DisconnectOverlay : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField]
+    [Tooltip("Seconds before auto-return to lobby (only on hard transport disconnect).")]
     private float timeoutSeconds = 30f;
 
     [SerializeField]
+    [Tooltip("Minimum seconds before Return/Forfeit button becomes clickable.")]
     private float minSecondsBeforeReturn = 10f;
+
+    [SerializeField]
+    [Tooltip(
+        "If true, auto-return only happens on hard transport disconnect. Soft disconnects (message timeout) only enable the forfeit button."
+    )]
+    private bool onlyAutoReturnOnHardDisconnect = true;
 
     private bool _isShowing;
     private float _elapsedTime;
     private Coroutine _countdownCoroutine;
+    private bool _isHardDisconnect;
+
+    // Tracks whether we've successfully subscribed to NetworkSyncValidator events.
+    private bool _subscribedToValidator;
 
     private void Awake()
     {
@@ -65,37 +77,73 @@ public class DisconnectOverlay : MonoBehaviour
     {
         if (Instance == this)
             Instance = null;
+
+        UnsubscribeFromValidator();
     }
 
     private void OnEnable()
     {
-        // Subscribe to disconnect events
-        if (NetworkSyncValidator.Instance != null)
-        {
-            NetworkSyncValidator.Instance.OnPeerDisconnected += HandlePeerDisconnected;
-            NetworkSyncValidator.Instance.OnPeerReconnected += HandlePeerReconnected;
-            Debug.Log("[DisconnectOverlay] Subscribed to NetworkSyncValidator events.");
-        }
-        else
-        {
-            Debug.LogWarning(
-                "[DisconnectOverlay] NetworkSyncValidator.Instance is null on enable."
-            );
-        }
+        // Attempt initial subscription to disconnect events. If the validator
+        // does not exist yet (e.g., different script execution order), Update()
+        // will keep trying until it appears.
+        TrySubscribeToValidator();
     }
 
     private void OnDisable()
     {
-        if (NetworkSyncValidator.Instance != null)
+        UnsubscribeFromValidator();
+    }
+
+    private void Update()
+    {
+        // If we weren't able to subscribe in OnEnable because the validator
+        // didn't exist yet, keep trying until it does.
+        if (!_subscribedToValidator)
         {
-            NetworkSyncValidator.Instance.OnPeerDisconnected -= HandlePeerDisconnected;
-            NetworkSyncValidator.Instance.OnPeerReconnected -= HandlePeerReconnected;
+            TrySubscribeToValidator();
         }
     }
 
-    private void HandlePeerDisconnected()
+    private void TrySubscribeToValidator()
     {
-        Debug.Log("[DisconnectOverlay] Peer disconnected - showing overlay.");
+        var validator = NetworkSyncValidator.Instance;
+        if (validator == null)
+            return;
+
+        // Ensure we don't double-subscribe if this is called multiple times.
+        validator.OnPeerDisconnected -= HandlePeerDisconnected;
+        validator.OnPeerReconnected -= HandlePeerReconnected;
+        validator.OnPeerDisconnected += HandlePeerDisconnected;
+        validator.OnPeerReconnected += HandlePeerReconnected;
+
+        _subscribedToValidator = true;
+        Debug.Log("[DisconnectOverlay] Subscribed to NetworkSyncValidator events.");
+    }
+
+    private void UnsubscribeFromValidator()
+    {
+        if (!_subscribedToValidator)
+            return;
+
+        var validator = NetworkSyncValidator.Instance;
+        if (validator != null)
+        {
+            validator.OnPeerDisconnected -= HandlePeerDisconnected;
+            validator.OnPeerReconnected -= HandlePeerReconnected;
+        }
+        _subscribedToValidator = false;
+    }
+
+    /// <summary>
+    /// Called when peer appears disconnected.
+    /// </summary>
+    /// <param name="isHardDisconnect">True if transport layer confirmed disconnect,
+    /// false if just message timeout (peer may be backgrounded, not truly gone).</param>
+    private void HandlePeerDisconnected(bool isHardDisconnect)
+    {
+        _isHardDisconnect = isHardDisconnect;
+        string type = isHardDisconnect ? "HARD" : "SOFT (message timeout)";
+        Debug.Log($"[DisconnectOverlay] Peer disconnected ({type}) - showing overlay.");
         Show();
     }
 
@@ -139,33 +187,58 @@ public class DisconnectOverlay : MonoBehaviour
 
     private IEnumerator CountdownCoroutine()
     {
-        while (_elapsedTime < timeoutSeconds)
-        {
-            _elapsedTime += Time.unscaledDeltaTime;
-            UpdateUI();
-            yield return null;
-        }
+        // For soft disconnects (message timeout), don't auto-return.
+        // Only auto-return on hard transport disconnects.
+        bool shouldAutoReturn = _isHardDisconnect || !onlyAutoReturnOnHardDisconnect;
 
-        // Timeout reached - return to lobby
-        Debug.Log("[DisconnectOverlay] Timeout reached, returning to lobby.");
-        ReturnToLobby();
+        if (shouldAutoReturn)
+        {
+            // Hard disconnect: countdown and auto-return
+            while (_elapsedTime < timeoutSeconds)
+            {
+                _elapsedTime += Time.unscaledDeltaTime;
+                UpdateUI();
+                yield return null;
+            }
+
+            Debug.Log("[DisconnectOverlay] Timeout reached, returning to lobby.");
+            ReturnToLobby();
+        }
+        else
+        {
+            // Soft disconnect: just keep updating UI, no auto-return
+            Debug.Log("[DisconnectOverlay] Soft disconnect - waiting for reconnect or forfeit.");
+            while (_isShowing)
+            {
+                _elapsedTime += Time.unscaledDeltaTime;
+                UpdateUI();
+                yield return null;
+            }
+        }
     }
 
     private void UpdateUI()
     {
         float remaining = Mathf.Max(0, timeoutSeconds - _elapsedTime);
         bool canReturn = _elapsedTime >= minSecondsBeforeReturn;
+        bool shouldAutoReturn = _isHardDisconnect || !onlyAutoReturnOnHardDisconnect;
 
         if (statusText != null)
         {
-            if (remaining <= 0)
+            if (shouldAutoReturn && remaining <= 0)
             {
                 statusText.text = "Connection Lost\n\nReturning to lobby...";
             }
-            else
+            else if (shouldAutoReturn)
             {
                 statusText.text =
                     $"Connection Lost\n\nReturning to lobby in {remaining:0}s\n\nYou can rejoin from there.";
+            }
+            else
+            {
+                // Soft disconnect - peer may be backgrounded/AFK
+                statusText.text =
+                    "Waiting for Opponent...\n\nThey may be temporarily away.\n\nClick Forfeit to leave.";
             }
         }
 
@@ -178,7 +251,7 @@ public class DisconnectOverlay : MonoBehaviour
         {
             if (canReturn)
             {
-                buttonText.text = "Return to Lobby";
+                buttonText.text = shouldAutoReturn ? "Return Now" : "Forfeit Match";
             }
             else
             {
@@ -200,6 +273,14 @@ public class DisconnectOverlay : MonoBehaviour
     private void ReturnToLobby()
     {
         Hide();
+
+        // If we were in a Steam lobby for this match, leave it so DeckHub
+        // no longer considers us "in a lobby" and can re-enable host actions
+        // (Create Lobby / Quickplay) after we return.
+        if (SteamLobbyManager.Instance != null)
+        {
+            SteamLobbyManager.Instance.LeaveLobby();
+        }
 
         // Clear network session
         NetworkSessionStore.Clear();

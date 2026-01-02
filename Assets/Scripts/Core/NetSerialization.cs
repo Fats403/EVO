@@ -365,6 +365,107 @@ public static class NetSerialization
     }
 
     // -------------------------------------------------------------------------
+    // CardChoice Serialization
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Serialises a CardChoicePayload into a byte array.
+    /// </summary>
+    public static byte[] SerializeCardChoice(CardChoicePayload choice)
+    {
+        using var ms = new MemoryStream();
+        using var bw = new BinaryWriter(ms);
+
+        bw.Write((int)choice.owner);
+        bw.Write(choice.choiceContextId ?? "");
+        bw.Write(choice.wasCancelled);
+
+        int count = choice.selectedCardIds?.Length ?? 0;
+        bw.Write(count);
+        for (int i = 0; i < count; i++)
+        {
+            bw.Write(choice.selectedCardIds[i] ?? "");
+        }
+
+        return ms.ToArray();
+    }
+
+    /// <summary>
+    /// Deserialises a CardChoicePayload from a byte array.
+    /// </summary>
+    public static bool TryDeserializeCardChoice(byte[] payload, out CardChoicePayload choice)
+    {
+        choice = default;
+        if (payload == null || payload.Length < 9) // owner + contextId length + wasCancelled + count
+            return false;
+
+        try
+        {
+            using var ms = new MemoryStream(payload);
+            using var br = new BinaryReader(ms);
+
+            choice.owner = (SlotOwner)br.ReadInt32();
+            choice.choiceContextId = br.ReadString();
+            choice.wasCancelled = br.ReadBoolean();
+
+            int count = br.ReadInt32();
+            if (count > 0)
+            {
+                choice.selectedCardIds = new string[count];
+                for (int i = 0; i < count; i++)
+                {
+                    choice.selectedCardIds[i] = br.ReadString();
+                }
+            }
+            else
+            {
+                choice.selectedCardIds = Array.Empty<string>();
+            }
+
+            return true;
+        }
+        catch
+        {
+            choice = default;
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Serialises a CardChoiceAck payload containing the context ID being acknowledged.
+    /// </summary>
+    public static byte[] SerializeCardChoiceAck(string contextId)
+    {
+        using var ms = new MemoryStream();
+        using var bw = new BinaryWriter(ms);
+        bw.Write(contextId ?? "");
+        return ms.ToArray();
+    }
+
+    /// <summary>
+    /// Deserialises a CardChoiceAck payload.
+    /// </summary>
+    public static bool TryDeserializeCardChoiceAck(byte[] payload, out string contextId)
+    {
+        contextId = null;
+        if (payload == null || payload.Length == 0)
+            return false;
+
+        try
+        {
+            using var ms = new MemoryStream(payload);
+            using var br = new BinaryReader(ms);
+            contextId = br.ReadString();
+            return true;
+        }
+        catch
+        {
+            contextId = null;
+            return false;
+        }
+    }
+
+    // -------------------------------------------------------------------------
     // Private Helpers
     // -------------------------------------------------------------------------
 

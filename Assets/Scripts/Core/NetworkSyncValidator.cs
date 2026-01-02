@@ -9,7 +9,7 @@ using UnityEngine;
 /// 2. Detect and handle player disconnection
 /// 3. Fire events for UI to respond to network issues
 ///
-/// Attach this to a persistent GameObject alongside NetworkMatchManager.
+/// Attach this in the main gameplay scene alongside GameManager and NetworkMatchManager.
 /// </summary>
 public class NetworkSyncValidator : MonoBehaviour
 {
@@ -38,7 +38,12 @@ public class NetworkSyncValidator : MonoBehaviour
         GameStateChecksum.GameStateSnapshot,
         GameStateChecksum.GameStateSnapshot
     > OnDesyncDetected;
-    public event Action OnPeerDisconnected;
+
+    /// <summary>
+    /// Fired when peer appears disconnected (message timeout).
+    /// Bool parameter: true = hard disconnect (transport layer), false = soft (message timeout).
+    /// </summary>
+    public event Action<bool> OnPeerDisconnected;
     public event Action OnPeerReconnected;
     public event Action<float> OnWaitingForPeer; // Passes seconds waited so far
     public event Action OnResyncStarted;
@@ -56,6 +61,8 @@ public class NetworkSyncValidator : MonoBehaviour
     private bool _isPeerDisconnected;
     private bool _isWaitingForPeer;
     private float _waitingStartTime;
+    private bool _isApplicationFocused = true;
+    private float _focusResumeTime; // Time when app regained focus (for grace period)
 
     // Reconnection state
     private int _lastValidatedRound;
@@ -88,27 +95,68 @@ public class NetworkSyncValidator : MonoBehaviour
     private void Start()
     {
         _lastMessageReceivedTime = Time.unscaledTime;
+        _focusResumeTime = Time.unscaledTime;
+    }
 
-        if (GameManager.Instance != null)
+    /// <summary>
+    /// Called by Unity when app focus changes (minimized, alt-tabbed, etc.)
+    /// </summary>
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        bool wasFocused = _isApplicationFocused;
+        _isApplicationFocused = hasFocus;
+
+        if (!wasFocused && hasFocus)
         {
-            GameManager.Instance.OnPhaseChanged += HandlePhaseChanged;
+            // App regained focus - reset message timer to avoid false disconnect
+            _lastMessageReceivedTime = Time.unscaledTime;
+            _focusResumeTime = Time.unscaledTime;
+            Debug.Log("[NetworkSyncValidator] App regained focus - reset disconnect timer.");
+        }
+        else if (wasFocused && !hasFocus)
+        {
+            Debug.Log("[NetworkSyncValidator] App lost focus - pausing disconnect detection.");
+        }
+    }
+
+    /// <summary>
+    /// Called when app is paused (mobile) or truly backgrounded
+    /// </summary>
+    private void OnApplicationPause(bool isPaused)
+    {
+        if (!isPaused)
+        {
+            // App resumed - reset timers
+            _lastMessageReceivedTime = Time.unscaledTime;
+            _focusResumeTime = Time.unscaledTime;
+            Debug.Log("[NetworkSyncValidator] App resumed from pause - reset disconnect timer.");
         }
     }
 
     private void OnEnable()
     {
-        if (GameManager.Instance != null)
+        // In the gameplay scene we expect GameManager to be present; subscribe once
+        // when this component is enabled.
+        var gm = GameManager.Instance;
+        if (gm != null)
         {
-            GameManager.Instance.OnPhaseChanged -= HandlePhaseChanged;
-            GameManager.Instance.OnPhaseChanged += HandlePhaseChanged;
+            gm.OnPhaseChanged -= HandlePhaseChanged;
+            gm.OnPhaseChanged += HandlePhaseChanged;
+        }
+        else
+        {
+            Debug.LogWarning(
+                "[NetworkSyncValidator] GameManager.Instance is null in OnEnable; phase change events will not be received."
+            );
         }
     }
 
     private void OnDisable()
     {
-        if (GameManager.Instance != null)
+        var gm = GameManager.Instance;
+        if (gm != null)
         {
-            GameManager.Instance.OnPhaseChanged -= HandlePhaseChanged;
+            gm.OnPhaseChanged -= HandlePhaseChanged;
         }
     }
 
@@ -116,7 +164,23 @@ public class NetworkSyncValidator : MonoBehaviour
     {
         if (!NetworkSessionStore.IsNetworkedGame)
         {
-            // Uncomment to debug: Debug.Log("[NetworkSyncValidator] Not a networked game, skipping disconnect check.");
+            // Not a networked game – skip disconnect detection and checksum logic.
+            return;
+        }
+
+        // CRITICAL: Skip disconnect detection if app is not focused (minimized/alt-tabbed).
+        // The peer is likely still connected; we just aren't processing messages.
+        if (!_isApplicationFocused)
+        {
+            return;
+        }
+
+        // Grace period after regaining focus - wait a few seconds for messages to arrive
+        // before considering a disconnect, as message processing may be delayed.
+        const float focusGracePeriodSeconds = 5f;
+        float timeSinceFocusResume = Time.unscaledTime - _focusResumeTime;
+        if (timeSinceFocusResume < focusGracePeriodSeconds)
+        {
             return;
         }
 
@@ -131,8 +195,8 @@ public class NetworkSyncValidator : MonoBehaviour
         {
             float timeSinceMessage = SecondsSinceLastMessage;
 
-            // Debug logging - remove after testing
-            if (timeSinceMessage > 5f && !_isPeerDisconnected)
+            // Debug logging - only log occasionally to avoid spam
+            if (timeSinceMessage > disconnectTimeoutSeconds && !_isPeerDisconnected)
             {
                 Debug.Log(
                     $"[NetworkSyncValidator] No message for {timeSinceMessage:F1}s (threshold: {disconnectTimeoutSeconds}s)"
@@ -141,13 +205,8 @@ public class NetworkSyncValidator : MonoBehaviour
 
             if (!_isPeerDisconnected && timeSinceMessage > disconnectTimeoutSeconds)
             {
-                HandlePeerDisconnected();
+                HandlePeerDisconnected(isHardDisconnect: false);
             }
-        }
-        else if (!_isPeerDisconnected)
-        {
-            // Debug: Log why we're not checking (remove after testing)
-            // Debug.Log($"[NetworkSyncValidator] Not checking disconnect - phase is {currentPhase}, need Place");
         }
 
         // Update waiting state
@@ -193,10 +252,16 @@ public class NetworkSyncValidator : MonoBehaviour
             return;
         }
 
-        HandlePeerDisconnected();
+        // Transport-level disconnect is a hard disconnect
+        HandlePeerDisconnected(isHardDisconnect: true);
     }
 
-    private void HandlePeerDisconnected()
+    /// <summary>
+    /// Handles peer disconnection state change.
+    /// </summary>
+    /// <param name="isHardDisconnect">True if transport layer reported disconnect,
+    /// false if just message timeout (peer may still be connected but not responding).</param>
+    private void HandlePeerDisconnected(bool isHardDisconnect)
     {
         if (_isPeerDisconnected)
         {
@@ -210,7 +275,8 @@ public class NetworkSyncValidator : MonoBehaviour
         _isWaitingForPeer = true;
         _waitingStartTime = Time.unscaledTime;
 
-        Debug.LogWarning("[NetworkSyncValidator] Peer appears to have disconnected!");
+        string disconnectType = isHardDisconnect ? "HARD (transport)" : "SOFT (message timeout)";
+        Debug.LogWarning($"[NetworkSyncValidator] Peer disconnected - {disconnectType}");
 
         // Fire event - DisconnectOverlay handles the UI (single source of truth)
         int subscriberCount = OnPeerDisconnected?.GetInvocationList()?.Length ?? 0;
@@ -225,7 +291,7 @@ public class NetworkSyncValidator : MonoBehaviour
             );
         }
 
-        OnPeerDisconnected?.Invoke();
+        OnPeerDisconnected?.Invoke(isHardDisconnect);
         Debug.Log("[NetworkSyncValidator] OnPeerDisconnected event fired.");
     }
 

@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6488147345965801191
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7538064477946490411}
+  - component: {fileID: 5508741837807612512}
+  m_Layer: 5
+  m_Name: CardChoiceOptionUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &7538064477946490411
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6488147345965801191}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 220, y: 320}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5508741837807612512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6488147345965801191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1042c567a87f14edc95f30f1c4e9fd5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CardChoiceOptionUI
+  previewRoot: {fileID: 7538064477946490411}
+  creatureCardPrefab: {fileID: 6378225315708850401, guid: 91ac1c24a6a3b45edba80f553a10afe5, type: 3}
+  effectCardPrefab: {fileID: 3112541818185922300, guid: a6ab56675875b4ef798b95a49967d118, type: 3}
+  faceDownOverlay: {fileID: 3295204001109788752, guid: 761caeb8ba63e48a59f9f26daf194d85, type: 3}
+  selectionScaleTarget: {fileID: 7538064477946490411}
+  normalScale: 1
+  hoverScale: 1.1
+  selectedScale: 1.15
+  scaleAnimDuration: 0.1
+  outlineTarget: {fileID: 0}
+  selectedOutlineColor: {r: 0.2, g: 0.85, b: 1, a: 1}
+  hoverOutlineColor: {r: 1, g: 1, b: 1, a: 0.5}
+  outlineDistance: {x: 4, y: -4}
+  orderBadgeText: {fileID: 0}
+  orderBadgeRoot: {fileID: 0}
+  dimGroup: {fileID: 0}
+  dimmedAlpha: 0.5

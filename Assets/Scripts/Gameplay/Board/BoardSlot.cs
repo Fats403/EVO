@@ -22,12 +22,16 @@ public class BoardSlot : MonoBehaviour
     {
         currentCreature = c;
         occupied = true;
+        // Invalidate the slot cache so subsequent lookups reflect this change
+        DeterministicHelpers.InvalidateSlotCache();
     }
 
     public void Vacate()
     {
         currentCreature = null;
         occupied = false;
+        // Invalidate the slot cache so subsequent lookups reflect this change
+        DeterministicHelpers.InvalidateSlotCache();
     }
 
     // Hover indicator (does not change state)

@@ -52,6 +52,8 @@ public enum NetMessageType : byte
     StateRequest = 6, // Request full game state from peer (for reconnection)
     StateSync = 7, // Full game state response (for reconnection recovery)
     Heartbeat = 8, // Keep-alive message to prevent false disconnect detection
+    CardChoice = 9, // Card choice result (e.g., from effect like "look at top 3, pick 1")
+    CardChoiceAck = 10, // Acknowledgement of card choice receipt
 }
 
 /// <summary>
@@ -112,6 +114,34 @@ public struct StateSyncPayload
 
     /// <summary>Error message if sync failed.</summary>
     public string errorMessage;
+}
+
+/// <summary>
+/// Payload for CardChoice message when a player makes a card selection
+/// (e.g., from "look at top 3, pick 1" effects, mulligan, etc.).
+/// </summary>
+[Serializable]
+public struct CardChoicePayload
+{
+    /// <summary>Which player made the choice.</summary>
+    public SlotOwner owner;
+
+    /// <summary>
+    /// Unique identifier for this choice context (e.g., effect card ID + timestamp).
+    /// Used to match the choice with the pending request on the receiving end.
+    /// </summary>
+    public string choiceContextId;
+
+    /// <summary>
+    /// Card IDs that were selected by the player.
+    /// Empty array means player confirmed with no selection (e.g., mulligan with 0 cards).
+    /// </summary>
+    public string[] selectedCardIds;
+
+    /// <summary>
+    /// True if the player cancelled the choice (if allowed by the request).
+    /// </summary>
+    public bool wasCancelled;
 }
 
 /// <summary>

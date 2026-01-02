@@ -2645,8 +2645,6 @@ GameObject:
   - component: {fileID: 2112003972}
   - component: {fileID: 2112003971}
   - component: {fileID: 2112003970}
-  - component: {fileID: 2112003974}
-  - component: {fileID: 2112003973}
   m_Layer: 0
   m_Name: SteamManager
   m_TagString: Untagged
@@ -2727,37 +2725,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e89b4fe53ed76494391554487ffce133, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SteamLobbyManager
---- !u!114 &2112003973
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2112003967}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b11d6a91fbe5473b984b12ab2ce2d99, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NetworkSyncValidator
-  showDesyncAlert: 1
-  autoSaveDumps: 1
-  pauseOnDesync: 0
-  disconnectTimeoutSeconds: 10
-  reconnectGracePeriodSeconds: 30
---- !u!114 &2112003974
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2112003967}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d02b4b2c429a4fd9b3e643ce0bf1154, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ActionLog
-  maxLogSize: 1000
-  autoSaveOnDesync: 1
 --- !u!1 &2135611976
 GameObject:
   m_ObjectHideFlags: 0

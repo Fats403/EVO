@@ -175,12 +175,13 @@ public class VFXManager : MonoBehaviour
 
         if (!HasMeteorPrefab)
         {
-            // No VFX configured – just kill everything immediately.
+            // No VFX configured – just kill everything immediately, WITHOUT awarding score.
             foreach (var c in creatures)
             {
                 if (c != null && !c.isDying && c.currentHealth > 0)
                 {
-                    c.Kill("Final Extinction");
+                    // Extinction kills should not grant any kill-score to the opponent.
+                    c.Kill("Final Extinction", vfxPrefab: null, awardKillScore: false);
                 }
             }
 
@@ -196,7 +197,8 @@ public class VFXManager : MonoBehaviour
                 {
                     if (target == null || target.isDying || target.currentHealth <= 0)
                         return;
-                    target.Kill("Final Extinction");
+                    // Extinction kills should not grant any kill-score to the opponent.
+                    target.Kill("Final Extinction", vfxPrefab: null, awardKillScore: false);
                 }
             );
         }

@@ -393,7 +393,13 @@ public class FirebaseManager : MonoBehaviour
             return null;
         }
 
-        return Db.Collection("players").Document(CurrentUser.UserId);
+        string uid = CurrentUser.UserId;
+        Debug.Log($"FirebaseManager: GetPlayerDoc using uid=\"{uid}\" (path: players/{uid})");
+        
+        // If you get permission errors, check that this uid matches your Firestore rules.
+        // Rules expect: request.auth.uid == playerId
+        // If your rules expect "steam:{ID}" format but the uid is just "{ID}", you'll get denied.
+        return Db.Collection("players").Document(uid);
     }
 
     /// <summary>Loads the player's root document as a dictionary.</summary>

@@ -522,12 +522,11 @@ public class DeckHubManager : MonoBehaviour
             return;
         }
 
-        // Host picks the RNG seed for this match
-        if (!DeterministicRng.IsInitialized)
-        {
-            int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-            DeterministicRng.Initialize(seed);
-        }
+        // ALWAYS generate a fresh RNG seed for the match. GameSessionBootstrapper
+        // will re-initialize both players from this seed when the game scene loads.
+        int matchSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        DeterministicRng.Initialize(matchSeed);
+        Debug.Log($"DeckHubManager: Generated fresh match seed {matchSeed} for online game.");
 
         // Start lobby creation - UI will be swapped in HandleLobbyEntered when lobby is ready
         SteamLobbyManager.Instance.CreateLobbyForMatch(
@@ -552,6 +551,78 @@ public class DeckHubManager : MonoBehaviour
         }
 
         _ = StartGameWithDeckAsync(_selectedSlot);
+    }
+
+    /// <summary>
+    /// Called by a button in the draft view after a draft completes to start
+    /// a local Quickplay game vs AI using the drafted deck stored in
+    /// SelectedDeckStore.
+    /// </summary>
+    public void OnClick_QuickplayFromDraft()
+    {
+        if (!SelectedDeckStore.HasConstructedDeck)
+        {
+            Debug.LogWarning(
+                "DeckHubManager: QuickplayFromDraft clicked but no drafted deck is available."
+            );
+            return;
+        }
+
+        // Ensure the deterministic RNG is initialised for this run if it has
+        // not already been set (e.g., if the player jumped straight into draft).
+        if (!DeterministicRng.IsInitialized)
+        {
+            int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            DeterministicRng.Initialize(seed);
+        }
+
+        // Hide the draft UI and transition into the main gameplay scene. The
+        // normal constructed flow (GameSessionBootstrapper) will consume the
+        // deck from SelectedDeckStore.
+        if (draftRoot != null)
+            draftRoot.SetActive(false);
+
+        SceneTransitionManager.Instance.LoadScene("MainScene");
+    }
+
+    /// <summary>
+    /// Called by a button in the draft view after a draft completes to host an
+    /// online match using the drafted deck stored in SelectedDeckStore.
+    /// </summary>
+    public void OnClick_CreateLobbyFromDraft()
+    {
+        if (!SelectedDeckStore.HasConstructedDeck)
+        {
+            Debug.LogWarning(
+                "DeckHubManager: CreateLobbyFromDraft clicked but no drafted deck is available."
+            );
+            return;
+        }
+
+        if (SteamLobbyManager.Instance == null)
+        {
+            Debug.LogError("DeckHubManager: SteamLobbyManager instance not found.");
+            return;
+        }
+
+        // ALWAYS generate a fresh RNG seed for the match. The draft phase may have
+        // already initialized/used the RNG for shuffling, but the match needs its
+        // own clean seed. GameSessionBootstrapper will re-initialize both players
+        // from this seed when the game scene loads.
+        int matchSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        DeterministicRng.Initialize(matchSeed);
+        Debug.Log($"DeckHubManager: Generated fresh match seed {matchSeed} for online game.");
+
+        // For drafted decks, use the transient SelectedDeckStore identity for
+        // lobby display. The actual card list is pulled from SelectedDeckStore
+        // when building the NetSessionHeader.
+        if (draftRoot != null)
+            draftRoot.SetActive(false);
+
+        SteamLobbyManager.Instance.CreateLobbyForMatch(
+            SelectedDeckStore.DeckId,
+            SelectedDeckStore.DeckName
+        );
     }
 
     /// <summary>
@@ -604,6 +675,61 @@ public class DeckHubManager : MonoBehaviour
         lobby.SetLocalLobbyDeck(_selectedSlot.DeckId, _selectedSlot.DeckName);
 
         // Swap to lobby UI
+        if (deckHubRoot != null)
+            deckHubRoot.SetActive(false);
+        if (gameLobbyRoot != null)
+            gameLobbyRoot.SetActive(true);
+    }
+
+    /// <summary>
+    /// Called by the Join-from-draft button in the draft view when the player
+    /// has completed a draft and received an invite. Uses the drafted deck in
+    /// SelectedDeckStore instead of a saved slot deck.
+    /// </summary>
+    public async void OnClick_JoinLobbyFromDraft()
+    {
+        if (!SelectedDeckStore.HasConstructedDeck)
+        {
+            Debug.LogWarning(
+                "DeckHubManager: JoinLobbyFromDraft clicked but no drafted deck is available."
+            );
+            return;
+        }
+
+        var lobby = SteamLobbyManager.Instance;
+        if (lobby == null)
+        {
+            Debug.LogError("DeckHubManager: SteamLobbyManager instance not found.");
+            return;
+        }
+
+        // If we have a pending invite but haven't joined yet, join now
+        if (lobby.HasPendingInvite && !lobby.IsInLobby)
+        {
+            Debug.Log("DeckHubManager: Joining pending invite lobby from draft...");
+
+            bool success = await lobby.JoinPendingInviteAsync();
+            if (!success)
+            {
+                Debug.LogError("DeckHubManager: Failed to join lobby from invite (draft).");
+                return;
+            }
+        }
+
+        if (!lobby.IsInLobby)
+        {
+            Debug.LogError(
+                "DeckHubManager: JoinLobbyFromDraft clicked but no active lobby is present."
+            );
+            return;
+        }
+
+        // Set our drafted deck info in the lobby
+        lobby.SetLocalLobbyDeck(SelectedDeckStore.DeckId, SelectedDeckStore.DeckName);
+
+        // Hide the draft UI and show the lobby UI
+        if (draftRoot != null)
+            draftRoot.SetActive(false);
         if (deckHubRoot != null)
             deckHubRoot.SetActive(false);
         if (gameLobbyRoot != null)
@@ -719,8 +845,9 @@ public class DeckHubManager : MonoBehaviour
 
     /// <summary>
     /// Receives a completed drafted or random deck from DraftManager, converts
-    /// it into DeckCardEntry data, stores it in SelectedDeckStore as a
-    /// constructed deck, and then transitions to the main gameplay scene.
+    /// it into DeckCardEntry data, and stores it in SelectedDeckStore as a
+    /// constructed deck. The draft UI is left visible so the player can choose
+    /// between Quickplay (vs AI) or Online Play using the drafted deck.
     /// </summary>
     private void HandleDraftDeckBuilt(List<ScriptableObject> draftedCards)
     {
@@ -766,11 +893,9 @@ public class DeckHubManager : MonoBehaviour
             cards: entries
         );
 
-        // Optionally hide the draft UI before transitioning.
-        if (draftRoot != null)
-            draftRoot.SetActive(false);
-
-        SceneTransitionManager.Instance.LoadScene("MainScene");
+        Debug.Log(
+            $"DeckHubManager: Draft deck built with {entries.Count} unique cards and stored in SelectedDeckStore. Awaiting Quickplay/Online selection."
+        );
     }
 
     public void OnClick_BackToMenu()
@@ -999,6 +1124,15 @@ public class DeckHubManager : MonoBehaviour
             joinLobbyButton.interactable = hasSelectedDeck && showJoinButton;
         }
 
+        // Draft join button uses the same invite/lobby logic, but is managed
+        // by DraftManager (which owns the button in the draft view). We only
+        // toggle its interactable state once a drafted deck exists.
+        if (draftManager != null)
+        {
+            bool hasDraftDeck = SelectedDeckStore.HasConstructedDeck;
+            draftManager.SetJoinFromDraftButtonEnabled(showJoinButton && hasDraftDeck);
+        }
+
         // Resume Match button - show if there's an active match to resume
         bool hasActiveMatch = checkpoint != null && checkpoint.HasActiveMatch;
 
@@ -1037,12 +1171,6 @@ public class DeckHubManager : MonoBehaviour
 
         // Create a lobby like normal - the opponent will need to be invited
         OnClick_CreateLobby();
-
-        // Show a message about inviting opponent
-        FeedbackManager.Instance?.ShowGlobalAlert(
-            $"Invite {checkpoint.ActiveMatch.opponentName} to continue your match!",
-            Color.cyan
-        );
     }
 
     /// <summary>

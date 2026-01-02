@@ -388,4 +388,164 @@ public class DeckManager : MonoBehaviour
             }
         }
     }
+
+    // ----- Card Choice System Helpers -----
+
+    /// <summary>
+    /// Returns the number of cards remaining in the draw pile.
+    /// </summary>
+    public int DrawPileCount => drawPile.Count;
+
+    /// <summary>
+    /// Peek at the top N cards of the draw pile without removing them.
+    /// Returns cards in draw order (first element = next to draw).
+    /// </summary>
+    public List<ScriptableObject> PeekTopCards(int count)
+    {
+        var result = new List<ScriptableObject>();
+        if (drawPile == null || count <= 0)
+            return result;
+
+        int toPeek = Mathf.Min(count, drawPile.Count);
+        // Top of deck is at the end of the list
+        for (int i = 0; i < toPeek; i++)
+        {
+            int idx = drawPile.Count - 1 - i;
+            if (idx >= 0)
+                result.Add(drawPile[idx]);
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Remove a specific card from the draw pile (used by scry/discover effects).
+    /// Returns true if the card was found and removed.
+    /// </summary>
+    public bool RemoveFromDrawPile(ScriptableObject card)
+    {
+        if (card == null || drawPile == null)
+            return false;
+
+        bool removed = drawPile.Remove(card);
+        if (removed)
+            UpdateDeckUI();
+        return removed;
+    }
+
+    /// <summary>
+    /// Add cards to the draw pile and shuffle.
+    /// Used when returning cards to deck (mulligan, effects).
+    /// </summary>
+    public void ShuffleIntoDeck(IEnumerable<ScriptableObject> cards)
+    {
+        if (cards == null)
+            return;
+
+        foreach (var card in cards)
+        {
+            if (card != null)
+                drawPile.Add(card);
+        }
+
+        ShuffleDrawPile();
+        UpdateDeckUI();
+    }
+
+    /// <summary>
+    /// Add a card to the bottom of the draw pile (no shuffle).
+    /// </summary>
+    public void AddToBottomOfDeck(ScriptableObject card)
+    {
+        if (card == null)
+            return;
+
+        drawPile.Insert(0, card);
+        UpdateDeckUI();
+    }
+
+    /// <summary>
+    /// Add a card to the top of the draw pile (next to be drawn).
+    /// </summary>
+    public void AddToTopOfDeck(ScriptableObject card)
+    {
+        if (card == null)
+            return;
+
+        drawPile.Add(card);
+        UpdateDeckUI();
+    }
+
+    /// <summary>
+    /// Get a read-only view of cards currently in the player's hand.
+    /// </summary>
+    public List<ScriptableObject> GetHandCards()
+    {
+        var result = new List<ScriptableObject>();
+        if (handPanel == null)
+            return result;
+
+        var cardUIs = handPanel.GetComponentsInChildren<BaseCardUI>(includeInactive: false);
+        foreach (var cardUI in cardUIs)
+        {
+            if (cardUI == null)
+                continue;
+
+            ScriptableObject data = null;
+
+            if (cardUI is CreatureCardUI creatureUI && creatureUI.Data != null)
+            {
+                data = creatureUI.Data;
+            }
+            else if (cardUI is EffectCardUI effectUI && effectUI.Data != null)
+            {
+                data = effectUI.Data;
+            }
+
+            if (data != null)
+                result.Add(data);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Remove a card from the hand UI (used by discard effects).
+    /// Returns true if the card was found and removed.
+    /// </summary>
+    public bool RemoveCardFromHand(ScriptableObject cardData)
+    {
+        if (cardData == null || handPanel == null)
+            return false;
+
+        var cardUIs = handPanel.GetComponentsInChildren<BaseCardUI>(includeInactive: false);
+        foreach (var cardUI in cardUIs)
+        {
+            if (cardUI == null)
+                continue;
+
+            bool matches = false;
+
+            if (cardUI is CreatureCardUI creatureUI && creatureUI.Data == cardData)
+            {
+                matches = true;
+            }
+            else if (cardUI is EffectCardUI effectUI && effectUI.Data == cardData)
+            {
+                matches = true;
+            }
+
+            if (matches)
+            {
+                Destroy(cardUI.gameObject);
+                UpdateHandUI();
+
+                var layout = handPanel.GetComponentInParent<HandLayoutController>();
+                layout?.RequestLayout();
+
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

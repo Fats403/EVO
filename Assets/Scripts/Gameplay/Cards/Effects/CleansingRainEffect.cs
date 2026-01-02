@@ -7,6 +7,21 @@ public class CleansingRainEffect : EffectTraitBase
     {
         if (self == null)
             return;
+
+        int before = self.currentHealth;
+
+        self.Heal(1);
+
+        int healed = Mathf.Max(0, before - self.currentHealth);
+        if (healed > 0)
+        {
+            FeedbackManager.Instance?.ShowFloatingText(
+                $"+{healed} HP",
+                self.transform.position,
+                GameColorPalette.Heal
+            );
+        }
+
         self.ClearAllNegativeStatuses();
         remainingRounds = 0;
     }

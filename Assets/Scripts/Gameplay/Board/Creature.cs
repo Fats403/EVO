@@ -46,7 +46,6 @@ public class Creature : MonoBehaviour
     public bool traitUsedWhirlwind; // WhirlwindTrait: extra attack used this round
     public bool traitUsedBloodthirsty; // BloodthirstyTrait: extra attack used this round
     public bool traitUsedUndyingSpirit; // UndyingSpiritTrait: resurrection used (persists until death)
-    public bool traitGrantRadiantShield; // RadiantScalesTrait: grant shield next round
     public bool traitGrantEvasiveStealth; // EvasiveTrait: grant stealth next round
     public bool traitGrantBloodRush; // BloodRushTrait: grant rage next round
     public int traitElementalHpBonus; // ElementalTrait: current wildfire HP bonus
@@ -91,7 +90,6 @@ public class Creature : MonoBehaviour
         traitUsedWhirlwind = false;
         traitUsedBloodthirsty = false;
         traitUsedUndyingSpirit = false;
-        traitGrantRadiantShield = false;
         traitGrantEvasiveStealth = false;
         traitGrantBloodRush = false;
         traitElementalHpBonus = 0;
@@ -374,17 +372,22 @@ public class Creature : MonoBehaviour
     /// shields, absorb, reflect, etc. This value is also what contributes to
     /// roundDamageDealt and scoring.
     /// </summary>
+    /// <param name="triggerOnDamageDealt">If false, skips OnDamageDealt callbacks.
+    /// Use false for damage-over-time effects (Infection/Bleed ticks) to prevent
+    /// feedback loops where traits like ToxicBite re-trigger from their own DoT.</param>
     public int ApplyDamage(
         int amount,
         Creature source,
         GameObject vfxPrefab = null,
-        string damageSourceLabel = null
+        string damageSourceLabel = null,
+        bool triggerOnDamageDealt = true
     )
     {
         return ApplyDamageInternal(
             amount,
             source,
             allowReflect: true,
+            triggerOnDamageDealt,
             vfxPrefab,
             damageSourceLabel
         );
@@ -395,10 +398,13 @@ public class Creature : MonoBehaviour
     /// reflecting damage back to an attacker to avoid infinite loops).
     /// Returns the actual HP lost by this creature.
     /// </summary>
+    /// <param name="triggerOnDamageDealt">If false, skips OnDamageDealt callbacks
+    /// (used for DoT damage to prevent feedback loops).</param>
     private int ApplyDamageInternal(
         int amount,
         Creature source,
         bool allowReflect,
+        bool triggerOnDamageDealt,
         GameObject vfxPrefab = null,
         string damageSourceLabel = null
     )
@@ -431,10 +437,12 @@ public class Creature : MonoBehaviour
             {
                 // Apply reflected damage to the attacker; allow their Shielded but not their Reflect to trigger.
                 // Pass null VFX for reflection or maybe a specific one later.
+                // Reflected damage DOES trigger OnDamageDealt since it's still direct combat damage.
                 int reflectedApplied = source.ApplyDamageInternal(
                     reflected,
                     this,
                     allowReflect: false,
+                    triggerOnDamageDealt: true,
                     vfxPrefab: null,
                     damageSourceLabel: null
                 );
@@ -509,10 +517,13 @@ public class Creature : MonoBehaviour
             }
         }
         StartCoroutine(FlashDamage(0.2f));
-        // Trait hooks
-        if (source != null && source.traits != null)
+        // Trait hooks - snapshot trait lists to prevent issues if traits are
+        // added/removed during iteration (e.g., by another trait's callback).
+        // Only trigger OnDamageDealt for direct damage (attacks), not for DoT ticks
+        // to prevent feedback loops (e.g., ToxicBite re-triggering from Infection).
+        if (triggerOnDamageDealt && source != null && source.traits != null)
         {
-            foreach (var tr in source.traits)
+            foreach (var tr in source.traits.ToArray())
             {
                 if (tr != null)
                     tr.OnDamageDealt(source, this, applied);
@@ -520,7 +531,7 @@ public class Creature : MonoBehaviour
         }
         if (traits != null)
         {
-            foreach (var tr in traits)
+            foreach (var tr in traits.ToArray())
             {
                 if (tr != null)
                     tr.OnDamageTaken(this, source, applied);
@@ -719,11 +730,6 @@ public class Creature : MonoBehaviour
         traitUsedWhirlwind = false;
         traitUsedBloodthirsty = false;
         // Process "grant next round" effects before clearing them
-        if (traitGrantRadiantShield)
-        {
-            AddStatus(StatusTag.Shield, 1);
-            traitGrantRadiantShield = false;
-        }
         if (traitGrantEvasiveStealth)
         {
             AddStatus(StatusTag.Stealth, 1);
@@ -963,7 +969,15 @@ public class Creature : MonoBehaviour
             didAny = true;
             // Attribute Infection tick damage to the creature that applied it,
             // if known. If infectionSource is null, this tick is neutral.
-            int applied = ApplyDamage(1, infectionSource, null, "Infected");
+            // triggerOnDamageDealt=false to prevent feedback loops (e.g., ToxicBite
+            // re-triggering from its own Infection ticks).
+            int applied = ApplyDamage(
+                1,
+                infectionSource,
+                null,
+                "Infected",
+                triggerOnDamageDealt: false
+            );
             DecrementStatus(StatusTag.Infection, 1);
             if (applied > 0)
             {
@@ -1031,7 +1045,15 @@ public class Creature : MonoBehaviour
             didAny = true;
             // Attribute Bleed tick damage to the creature that applied it,
             // if known. If bleedSource is null, this tick is neutral.
-            int applied = ApplyDamage(bleed, bleedSource, null, "Bleed");
+            // triggerOnDamageDealt=false to prevent feedback loops (e.g., BleedMaster
+            // re-triggering from its own Bleed ticks).
+            int applied = ApplyDamage(
+                bleed,
+                bleedSource,
+                null,
+                "Bleed",
+                triggerOnDamageDealt: false
+            );
             if (applied > 0)
             {
                 FeedbackManager.Instance?.ShowFloatingText(

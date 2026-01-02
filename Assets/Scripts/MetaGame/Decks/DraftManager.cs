@@ -19,6 +19,21 @@ public class DraftManager : MonoBehaviour
     public UnityEngine.UI.Button confirmButton;
     public TextMeshProUGUI picksRemainingLabel;
 
+    [Header("Completion Buttons")]
+    [Tooltip("Shown only after the draft is complete to start a local Quickplay game.")]
+    public UnityEngine.UI.Button quickplayFromDraftButton;
+
+    [Tooltip(
+        "Shown only after the draft is complete to start an online game from the drafted deck."
+    )]
+    public UnityEngine.UI.Button onlineFromDraftButton;
+
+    [Tooltip(
+        "Join Lobby button in the draft view. Visible after draft completes; "
+            + "starts disabled and is enabled once an invite/lobby is available."
+    )]
+    public UnityEngine.UI.Button joinLobbyFromDraftButton;
+
     [Header("Card Pool")]
     [Tooltip("If empty, falls back to deckManager.allCards as the draftable pool.")]
     public List<ScriptableObject> allDraftableCards = new();
@@ -47,12 +62,34 @@ public class DraftManager : MonoBehaviour
 
     public bool IsDrafting => config != null && picksDone < config.deckSize;
 
+    /// <summary>
+    /// Called by DeckHubManager to enable/disable the Join-from-draft button
+    /// based on lobby/invite state. The button is only visible after the
+    /// draft has completed; this method controls its interactable state.
+    /// </summary>
+    public void SetJoinFromDraftButtonEnabled(bool enabled)
+    {
+        if (joinLobbyFromDraftButton == null)
+            return;
+        joinLobbyFromDraftButton.interactable =
+            enabled && joinLobbyFromDraftButton.gameObject.activeSelf;
+    }
+
     private void Awake()
     {
         if (confirmButton != null)
         {
             confirmButton.onClick.AddListener(OnConfirmClicked);
         }
+
+        // Hide completion buttons at startup; they are only relevant once a
+        // full draft has been completed.
+        if (quickplayFromDraftButton != null)
+            quickplayFromDraftButton.gameObject.SetActive(false);
+        if (onlineFromDraftButton != null)
+            onlineFromDraftButton.gameObject.SetActive(false);
+        if (joinLobbyFromDraftButton != null)
+            joinLobbyFromDraftButton.gameObject.SetActive(false);
     }
 
     private void OnDestroy()
@@ -118,8 +155,19 @@ public class DraftManager : MonoBehaviour
 
         if (confirmButton != null)
         {
+            // Ensure the confirm/create button is visible again when starting a new draft,
+            // even if a previous draft hid it in FinalizeDraft().
+            confirmButton.gameObject.SetActive(true);
             confirmButton.interactable = false;
         }
+
+        // While drafting, the completion/join buttons should be hidden/disabled.
+        if (quickplayFromDraftButton != null)
+            quickplayFromDraftButton.gameObject.SetActive(false);
+        if (onlineFromDraftButton != null)
+            onlineFromDraftButton.gameObject.SetActive(false);
+        if (joinLobbyFromDraftButton != null)
+            joinLobbyFromDraftButton.gameObject.SetActive(false);
 
         if (optionSlots != null)
         {
@@ -348,11 +396,32 @@ public class DraftManager : MonoBehaviour
 
     private void FinalizeDraft()
     {
-        ShowDraftUI(false);
+        // Keep the draft UI visible so the player can see their drafted deck
+        // and choose what to do next (Quickplay / Online).
+        ShowDraftUI(true);
+
+        // Once the draft is complete, the per-pick confirm button is no longer
+        // relevant; hide it so only the completion buttons remain.
+        if (confirmButton != null)
+            confirmButton.gameObject.SetActive(false);
 
         // When we leave the draft and transition into normal play, make sure
         // the in-game preview manager is reset as well.
         CardPreviewManager.Instance?.HideAll();
+
+        // Show completion buttons now that the deck is finalized.
+        if (quickplayFromDraftButton != null)
+            quickplayFromDraftButton.gameObject.SetActive(true);
+        if (onlineFromDraftButton != null)
+            onlineFromDraftButton.gameObject.SetActive(true);
+
+        // Show the join-from-draft button, but leave it disabled until the
+        // DeckHubManager detects a pending invite / lobby and enables it.
+        if (joinLobbyFromDraftButton != null)
+        {
+            joinLobbyFromDraftButton.gameObject.SetActive(true);
+            joinLobbyFromDraftButton.interactable = false;
+        }
 
         // Notify listeners (e.g., DeckHubManager) that a full drafted deck is
         // ready. The listener is responsible for converting this into deck

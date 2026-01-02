@@ -66,6 +66,15 @@ public class GameSessionBootstrapper : MonoBehaviour
         }
 
         var header = NetworkSessionStore.CurrentHeader.Value;
+
+        // CRITICAL: Both host and guest must re-initialize the RNG from the header
+        // seed when the game scene loads. This ensures both start at RNG call #0
+        // with the same seed, regardless of how many RNG calls were made during
+        // draft/lobby phases.
+        Debug.Log(
+            $"GameSessionBootstrapper: Initializing DeterministicRng with seed {header.rngSeed} (resetting call count to 0)"
+        );
+        DeterministicRng.Initialize(header.rngSeed);
         bool isHost = header.localRole == SlotOwner.Player1;
 
         // Determine which deck is ours vs opponent's

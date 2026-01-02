@@ -264,7 +264,25 @@ public class CardPreviewManager : MonoBehaviour
     IEnumerator ForcedTimer()
     {
         float duration = Mathf.Max(0.25f, forcedDisplaySeconds);
-        yield return new WaitForSeconds(duration);
+        float remaining = duration;
+
+        while (true)
+        {
+            // While the game is explicitly waiting for external input (e.g., card choice),
+            // keep the preview visible and do not count down the timer.
+            if (GameManager.Instance != null && GameManager.Instance.IsAwaitingExternalInput)
+            {
+                yield return null;
+                continue;
+            }
+
+            if (remaining <= 0f)
+                break;
+
+            remaining -= Time.deltaTime;
+            yield return null;
+        }
+
         forcedRoutine = null;
         forcedType = ForcedPreviewType.None;
         if (forcedCaptionText != null)

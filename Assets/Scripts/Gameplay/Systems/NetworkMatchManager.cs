@@ -252,6 +252,39 @@ public class NetworkMatchManager : MonoBehaviour
                 // Heartbeat just resets the disconnect timer (already done via OnMessageReceived)
                 break;
 
+            case NetMessageType.CardChoice:
+                if (NetSerialization.TryDeserializeCardChoice(msg.payload, out var cardChoice))
+                {
+                    Debug.Log(
+                        $"NetworkMatchManager: Received CardChoice owner={cardChoice.owner} context={cardChoice.choiceContextId} cards={cardChoice.selectedCardIds?.Length ?? 0}"
+                    );
+
+                    // Send ACK back to confirm receipt
+                    SendCardChoiceAck(cardChoice.choiceContextId);
+
+                    // Route to CardChoiceManager for processing
+                    CardChoiceManager.Instance?.ApplyRemoteChoice(cardChoice);
+                }
+                else
+                {
+                    Debug.LogWarning("NetworkMatchManager: Received malformed CardChoice.");
+                }
+                break;
+
+            case NetMessageType.CardChoiceAck:
+                if (NetSerialization.TryDeserializeCardChoiceAck(msg.payload, out var ackContextId))
+                {
+                    Debug.Log(
+                        $"NetworkMatchManager: Received CardChoiceAck for context={ackContextId}"
+                    );
+                    HandleCardChoiceAck(ackContextId);
+                }
+                else
+                {
+                    Debug.LogWarning("NetworkMatchManager: Received malformed CardChoiceAck.");
+                }
+                break;
+
             default:
                 Debug.LogWarning(
                     $"NetworkMatchManager: Received NetMessage with unknown type {msg.type}."
@@ -629,5 +662,71 @@ public class NetworkMatchManager : MonoBehaviour
     public void CancelStateSyncRequest()
     {
         _awaitingStateSync = false;
+    }
+
+    // -------------------------------------------------------------------------
+    // Card Choice Synchronization
+    // -------------------------------------------------------------------------
+
+    private CardChoicePayload? _pendingCardChoice;
+
+    /// <summary>
+    /// Sends a card choice result to the remote peer.
+    /// Called by CardChoiceManager when the local player confirms their selection.
+    /// </summary>
+    public void SendCardChoice(CardChoicePayload choice)
+    {
+        if (_transport == null || !_transport.IsConnected)
+        {
+            Debug.LogWarning("NetworkMatchManager.SendCardChoice: No active transport.");
+            return;
+        }
+
+        var payload = NetSerialization.SerializeCardChoice(choice);
+        var msg = new NetMessage
+        {
+            type = NetMessageType.CardChoice,
+            sequenceId = _nextSequenceId++,
+            payload = payload,
+        };
+
+        var bytes = NetSerialization.SerializeNetMessage(msg);
+
+        // Track as pending until ACK received
+        _pendingCardChoice = choice;
+
+        _transport.Send(bytes);
+
+        Debug.Log(
+            $"NetworkMatchManager: Sent CardChoice owner={choice.owner} context={choice.choiceContextId} cards={choice.selectedCardIds?.Length ?? 0}"
+        );
+    }
+
+    private void SendCardChoiceAck(string contextId)
+    {
+        if (_transport == null || !_transport.IsConnected)
+            return;
+
+        var payload = NetSerialization.SerializeCardChoiceAck(contextId);
+        var msg = new NetMessage
+        {
+            type = NetMessageType.CardChoiceAck,
+            sequenceId = 0, // ACKs don't need sequence IDs
+            payload = payload,
+        };
+
+        var bytes = NetSerialization.SerializeNetMessage(msg);
+        _transport.Send(bytes);
+
+        Debug.Log($"NetworkMatchManager: Sent CardChoiceAck for context={contextId}");
+    }
+
+    private void HandleCardChoiceAck(string contextId)
+    {
+        if (_pendingCardChoice.HasValue && _pendingCardChoice.Value.choiceContextId == contextId)
+        {
+            Debug.Log($"NetworkMatchManager: CardChoice ACK received for context={contextId}");
+            _pendingCardChoice = null;
+        }
     }
 }

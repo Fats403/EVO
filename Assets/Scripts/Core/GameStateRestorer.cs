@@ -274,7 +274,6 @@ public class GameStateRestorer : MonoBehaviour
         creature.traitUsedWhirlwind = state.traitUsedWhirlwind;
         creature.traitUsedBloodthirsty = state.traitUsedBloodthirsty;
         creature.traitUsedUndyingSpirit = state.traitUsedUndyingSpirit;
-        creature.traitGrantRadiantShield = state.traitGrantRadiantShield;
         creature.traitGrantEvasiveStealth = state.traitGrantEvasiveStealth;
         creature.traitGrantBloodRush = state.traitGrantBloodRush;
         creature.traitElementalHpBonus = state.traitElementalHpBonus;

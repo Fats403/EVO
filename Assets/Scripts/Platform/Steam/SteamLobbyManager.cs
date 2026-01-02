@@ -31,6 +31,7 @@ public class SteamLobbyManager : MonoBehaviour
     private const string KeyHostDeckName = "hostDeckName";
     private const string KeyGuestDeckId = "guestDeckId";
     private const string KeyGuestDeckName = "guestDeckName";
+
     // MemberData keys (per-user data - each player sets their own)
     private const string KeyMemberReady = "ready";
     private const string KeyMemberDeckId = "deckId";
@@ -783,6 +784,7 @@ public class SteamLobbyManager : MonoBehaviour
         if (!HostReady || !GuestReady)
             return;
 
+        // Raw Steam IDs from lobby data (numeric string form)
         string hostId = HostId;
         string guestId = GuestId;
 
@@ -814,14 +816,20 @@ public class SteamLobbyManager : MonoBehaviour
             .ToArray();
 
         // Build the session header with full deck data
+        // For systems like Firestore that key by auth UID (e.g., "steam:{ID}"),
+        // normalise IDs into a "steam:"-prefixed format so they match
+        // request.auth.uid which uses the same convention.
+        string authHostId = $"steam:{hostId}";
+        string authGuestId = $"steam:{guestId}";
+
         var header = new NetSessionHeader
         {
             protocolVersion = 1,
             rngSeed = DeterministicRng.IsInitialized
                 ? DeterministicRng.Seed
                 : UnityEngine.Random.Range(int.MinValue, int.MaxValue),
-            hostId = hostId,
-            guestId = guestId,
+            hostId = authHostId,
+            guestId = authGuestId,
             localRole = SlotOwner.Player1,
             hostDeckId = SelectedDeckStore.DeckId ?? "",
             guestDeckId = lobby.GetData(KeyGuestDeckId) ?? "",

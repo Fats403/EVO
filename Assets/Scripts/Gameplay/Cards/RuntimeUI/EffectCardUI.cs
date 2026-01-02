@@ -7,7 +7,17 @@ using UnityEngine.UI;
 
 public class EffectCardUI : BaseCardUI
 {
-    public EffectCard effectData;
+    /// <summary>
+    /// The effect card data. Use Data property for external access.
+    /// </summary>
+    [SerializeField]
+    private EffectCard effectData;
+
+    /// <summary>
+    /// The EffectCard data for this UI. Matches CreatureCardUI.Data for consistency.
+    /// </summary>
+    public EffectCard Data => effectData;
+
     public SlotOwner owner = SlotOwner.Player1;
     public float targetRadiusPx = 125f;
     public float multiSelectTargetRadiusPx = 250f;

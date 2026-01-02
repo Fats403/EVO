@@ -3,23 +3,24 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Traits/Herbivores/Radiant Scales")]
 public class RadiantScalesTrait : Trait
 {
+    [Tooltip("Minimum damage required to trigger Reflect.")]
+    public int damageThreshold = 2;
+
     public override void OnDamageTaken(Creature self, Creature attacker, int finalDamage)
     {
         if (self == null)
             return;
-        if (finalDamage <= 0)
+        if (finalDamage < damageThreshold)
             return;
         if (self.HasStatus(StatusTag.Suppress))
             return;
 
-        // Flag to gain Shielded next round (using per-creature state for determinism)
-        self.traitGrantRadiantShield = true;
+        // Immediately grant Reflect after taking threshold damage
+        self.AddStatus(StatusTag.Reflect, 1);
         FeedbackManager.Instance?.ShowFloatingText(
             "Radiant Scales",
             self.transform.position,
             GameColorPalette.Shield
         );
     }
-
-    // Shield is granted in Creature.ResetRoundBookkeeping() at next round start
 }

@@ -50,7 +50,6 @@ public static class GameStateSerialization
         public bool traitUsedWhirlwind;
         public bool traitUsedBloodthirsty;
         public bool traitUsedUndyingSpirit;
-        public bool traitGrantRadiantShield;
         public bool traitGrantEvasiveStealth;
         public bool traitGrantBloodRush;
         public int traitElementalHpBonus;
@@ -102,7 +101,9 @@ public static class GameStateSerialization
         var creatures = UnityEngine
             .Object.FindObjectsByType<Creature>(FindObjectsSortMode.None)
             .Where(c => c != null && !c.isDying)
-            .OrderBy(c => GetSlotIndex(c, allSlots))
+            // Order by canonical slot index so both peers produce identical
+            // ordering even if the guest mirrors indices for UI.
+            .OrderBy(c => GetCanonicalSlotIndex(c, allSlots))
             .ToList();
 
         foreach (var c in creatures)
@@ -110,7 +111,8 @@ public static class GameStateSerialization
             var cs = new CreatureState
             {
                 cardId = c.data?.cardId ?? "",
-                slotIndex = GetSlotIndex(c, allSlots),
+                // Store canonical slot index so checksums match between peers.
+                slotIndex = GetCanonicalSlotIndex(c, allSlots),
                 owner = c.owner,
                 currentHealth = c.currentHealth,
                 maxHealth = c.maxHealth,
@@ -125,7 +127,6 @@ public static class GameStateSerialization
                 traitUsedWhirlwind = c.traitUsedWhirlwind,
                 traitUsedBloodthirsty = c.traitUsedBloodthirsty,
                 traitUsedUndyingSpirit = c.traitUsedUndyingSpirit,
-                traitGrantRadiantShield = c.traitGrantRadiantShield,
                 traitGrantEvasiveStealth = c.traitGrantEvasiveStealth,
                 traitGrantBloodRush = c.traitGrantBloodRush,
                 traitElementalHpBonus = c.traitElementalHpBonus,
@@ -160,12 +161,23 @@ public static class GameStateSerialization
         return state;
     }
 
-    private static int GetSlotIndex(Creature c, Dictionary<BoardSlot, int> slotIndices)
+    private static int GetCanonicalSlotIndex(Creature c, Dictionary<BoardSlot, int> slotIndices)
     {
         foreach (var kvp in slotIndices)
         {
             if (kvp.Key.currentCreature == c)
-                return kvp.Value;
+            {
+                int localIndex = kvp.Value;
+
+                if (!NetworkSessionStore.IsNetworkedGame)
+                    return localIndex;
+
+                // Host local index is canonical; guest must invert its mirror
+                // to recover canonical index.
+                return NetworkRoleHelper.IsGuest
+                    ? NetworkRoleHelper.MirrorSlotIndex(localIndex)
+                    : localIndex;
+            }
         }
         return -1;
     }
@@ -231,7 +243,6 @@ public static class GameStateSerialization
                 bw.Write(c.traitUsedWhirlwind);
                 bw.Write(c.traitUsedBloodthirsty);
                 bw.Write(c.traitUsedUndyingSpirit);
-                bw.Write(c.traitGrantRadiantShield);
                 bw.Write(c.traitGrantEvasiveStealth);
                 bw.Write(c.traitGrantBloodRush);
                 bw.Write(c.traitElementalHpBonus);
@@ -318,7 +329,6 @@ public static class GameStateSerialization
             c.traitUsedWhirlwind = br.ReadBoolean();
             c.traitUsedBloodthirsty = br.ReadBoolean();
             c.traitUsedUndyingSpirit = br.ReadBoolean();
-            c.traitGrantRadiantShield = br.ReadBoolean();
             c.traitGrantEvasiveStealth = br.ReadBoolean();
             c.traitGrantBloodRush = br.ReadBoolean();
             c.traitElementalHpBonus = br.ReadInt32();
@@ -343,4 +353,3 @@ public static class GameStateSerialization
         return state;
     }
 }
-

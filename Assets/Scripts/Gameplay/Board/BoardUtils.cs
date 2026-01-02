@@ -80,19 +80,20 @@ public static class BoardUtils
 
     /// <summary>
     /// All board slots for a given owner, optionally only those currently occupied.
-    /// Returns slots in deterministic order (by slot index, which correlates with position.x).
+    /// Returns slots in deterministic order (by CANONICAL slot index).
+    /// In networked games, the guest's local indices are mirrored, so we must
+    /// convert to canonical (host) indices before sorting to ensure both clients
+    /// get the same ordering.
     /// </summary>
     public static List<BoardSlot> GetSlotsForOwner(SlotOwner owner, bool occupiedOnly)
     {
-        // Use the deterministic slot lookup for consistent ordering across clients
-        var slotLookup = DeterministicHelpers.GetSlotIndexLookup();
-        var slots = slotLookup.Keys.Where(s => s != null && s.owner == owner);
+        // Start with the deterministically sorted slots for this owner
+        var slots = DeterministicHelpers.GetSlotsForOwnerSorted(owner);
         if (occupiedOnly)
         {
-            slots = slots.Where(s => s.occupied && s.currentCreature != null);
+            slots = slots.Where(s => s.occupied && s.currentCreature != null).ToList();
         }
-        // Sort by slot index (which is assigned deterministically based on position)
-        return slots.OrderBy(s => slotLookup[s]).ToList();
+        return slots;
     }
 
     // Returns the slot closest to the horizontal center among a side's slots.

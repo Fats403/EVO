@@ -226,6 +226,16 @@ public class DebugManager : MonoBehaviour
 
             string desc = string.IsNullOrEmpty(e.description) ? "(no description)" : e.description;
 
+            // AI evaluation fields (for debugging/tuning)
+            string ai =
+                $"{logPrefix}    AI: "
+                + $"PreferBehind={e.aiPreferWhenBehindOnBoard} | "
+                + $"MinAlliesForBuffGlobal={e.aiMinAlliesForBuffGlobals} | "
+                + $"CleanseSynergy={e.aiCleanseSynergy:0.00} | "
+                + $"AttackSynergy={e.aiAttackSynergy:0.00} | "
+                + $"BodyBuffMult={e.aiBodyBuffMultiplier:0.00} | "
+                + $"RemovalValue={e.aiRemovalValue:0.00}";
+
             // Trait effect descriptions (EffectTraitBase)
             string traitBlock = "";
             if (e.traitsToAttachToTargets != null && e.traitsToAttachToTargets.Length > 0)
@@ -249,6 +259,7 @@ public class DebugManager : MonoBehaviour
             sb.AppendLine(header);
             sb.AppendLine($"{logPrefix}    {targeting}");
             sb.AppendLine($"{logPrefix}    Text: {desc}");
+            sb.AppendLine(ai);
             sb.AppendLine($"{logPrefix}    {traitBlock}");
         }
     }

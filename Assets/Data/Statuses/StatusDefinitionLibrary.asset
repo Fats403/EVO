@@ -103,7 +103,7 @@ MonoBehaviour:
     displayName: Haste
     description: "Each stack increases this creature\u2019s effective speed. One
       stack is removed at the end of the round."
-    icon: {fileID: 21300000, guid: 82817b82cd8a54b6081b9ede973eebb7, type: 3}
+    icon: {fileID: 21300000, guid: 8d1c4b1ec60214ac285346e15b58d487, type: 3}
   - tag: 18
     displayName: Malnourish
     description: "Each stack reduces this creature\u2019s effective body size. One

@@ -87,6 +87,11 @@ public static class BoardMovement
             slotB.Occupy(b);
         }
         // If both died, both slots remain empty.
+
+        // CRITICAL: Invalidate the slot cache after any movement so that subsequent
+        // lookups (e.g., GetAdjacentAllies, GetSlotOf) return fresh data. This prevents
+        // stale slot→creature mappings from causing duplicate or incorrect adjacency checks.
+        DeterministicHelpers.InvalidateSlotCache();
     }
 
     /// <summary>
@@ -140,5 +145,8 @@ public static class BoardMovement
         }
         // If it died during the move, Kill() will already have vacated its last slot;
         // we simply don't re-occupy the destination.
+
+        // CRITICAL: Invalidate the slot cache after any movement.
+        DeterministicHelpers.InvalidateSlotCache();
     }
 }

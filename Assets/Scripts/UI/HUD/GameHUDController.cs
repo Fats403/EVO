@@ -472,6 +472,13 @@ public class GameHUDController : MonoBehaviour
             mainCanvasGroup.blocksRaycasts = false;
         }
 
+        if (worldCanvasGroup != null)
+        {
+            // World-space UI should no longer be interactable once the game is over.
+            worldCanvasGroup.interactable = false;
+            worldCanvasGroup.blocksRaycasts = false;
+        }
+
         if (gameOverCanvasGroup != null)
         {
             gameOverCanvasGroup.interactable = false;
@@ -485,6 +492,7 @@ public class GameHUDController : MonoBehaviour
             float u = Mathf.Clamp01(t / duration);
 
             SetCanvasGroupAlpha(mainCanvasGroup, 1f - u);
+            SetCanvasGroupAlpha(worldCanvasGroup, 1f - u);
             SetCanvasGroupAlpha(gameOverCanvasGroup, u);
 
             yield return null;
@@ -492,7 +500,14 @@ public class GameHUDController : MonoBehaviour
 
         // Final visibility and input states
         SetCanvasGroupAlpha(mainCanvasGroup, 0f);
+        SetCanvasGroupAlpha(worldCanvasGroup, 0f);
         SetCanvasGroupAlpha(gameOverCanvasGroup, 1f);
+
+        if (worldCanvasGroup != null)
+        {
+            // Fully hide the world canvas once the game-over screen is shown.
+            worldCanvasGroup.gameObject.SetActive(false);
+        }
 
         if (gameOverCanvasGroup != null)
         {

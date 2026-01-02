@@ -153,6 +153,7 @@ public class GameManager : MonoBehaviour
     [Tooltip("Global card database used to resolve cardIds when starting a constructed game.")]
     public CardDatabase cardDatabase;
 
+    public int CurrentRound => currentRound;
     private Coroutine placePhaseRoutine;
     private SlotOwner currentPlaceTurnOwner = SlotOwner.Player1;
     private SlotOwner? awaitingTurnOwner;
@@ -164,6 +165,9 @@ public class GameManager : MonoBehaviour
 
     // True once we have chosen firstPlayerForGame for this match.
     private bool startingPlayerDecided;
+
+    // True when waiting for external input (e.g., card choice UI). Blocks turn progression.
+    private bool awaitingExternalInput;
 
     // Controllers
     private IPlayerController player1Controller;
@@ -325,6 +329,10 @@ public class GameManager : MonoBehaviour
         if (isGameOver || currentPhase != GamePhase.Place)
             return;
 
+        // Block turn ending while awaiting external input (card choice, etc.)
+        if (awaitingExternalInput)
+            return;
+
         var localRole = NetworkRoleHelper.LocalRole;
         if (!awaitingTurnOwner.HasValue || awaitingTurnOwner.Value != localRole)
             return;
@@ -342,6 +350,23 @@ public class GameManager : MonoBehaviour
             lastActionReceived = GameAction.CreatePass(localRole);
         }
     }
+
+    /// <summary>
+    /// Set whether the game is waiting for external input (e.g., card choice UI).
+    /// While true, the player cannot end their turn or take other actions.
+    /// </summary>
+    public void SetAwaitingExternalInput(bool waiting)
+    {
+        Debug.Log(
+            $"[GameManager] SetAwaitingExternalInput: {waiting} (was {awaitingExternalInput})"
+        );
+        awaitingExternalInput = waiting;
+    }
+
+    /// <summary>
+    /// Returns true if the game is waiting for external input.
+    /// </summary>
+    public bool IsAwaitingExternalInput => awaitingExternalInput;
 
     void OnToggleLogClicked()
     {
@@ -485,6 +510,13 @@ public class GameManager : MonoBehaviour
             while (lastActionReceived == null)
             {
                 controller.OnTurnUpdate();
+
+                // Don't auto-pass while awaiting external input (card choice UI, etc.)
+                if (awaitingExternalInput)
+                {
+                    yield return null;
+                    continue;
+                }
 
                 // Auto-pass when out of momentum (local player only, AI/network handles this themselves)
                 bool isLocalPlayer = NetworkRoleHelper.IsLocalPlayer(owner);
@@ -877,6 +909,24 @@ public class GameManager : MonoBehaviour
 
         EffectsManager.Instance?.PlayOnTargets(card, targets, owner);
 
+        // If the effect triggered a card choice UI (e.g., "look at top 3, pick 1"),
+        // wait for the player to make their choice before continuing.
+        // This keeps the card preview visible and pauses the game flow.
+        if (awaitingExternalInput)
+        {
+            Debug.Log(
+                "[GameManager] PlayEffectCardRoutine: Waiting for external input (card choice)..."
+            );
+        }
+        while (awaitingExternalInput)
+        {
+            yield return null;
+        }
+        if (!awaitingExternalInput)
+        {
+            Debug.Log("[GameManager] PlayEffectCardRoutine: External input complete, continuing.");
+        }
+
         // Second: keep the preview visible until the total preview time has elapsed.
         // We want the card to stay spotlighted for cardPreviewHoldSeconds from the start,
         // with the effect resolving part-way through at revealDelay.
@@ -997,7 +1047,10 @@ public class GameManager : MonoBehaviour
             foreach (var c in creatures)
             {
                 if (c != null && !c.isDying && c.currentHealth > 0)
-                    c.Kill("Final Extinction");
+                {
+                    // Extinction kills should not grant any kill-score to the opponent.
+                    c.Kill("Final Extinction", vfxPrefab: null, awardKillScore: false);
+                }
             }
         }
 
