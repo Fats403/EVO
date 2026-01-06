@@ -2,9 +2,10 @@ using System.Collections.Generic;
 
 public enum GameActionType
 {
-    Pass,
-    PlayCreature,
-    PlayEffect,
+    Invalid = 0,  // Default value - should never be processed
+    Pass = 1,
+    PlayCreature = 2,
+    PlayEffect = 3,
 }
 
 [System.Serializable]
@@ -19,6 +20,10 @@ public class GameAction
 
     // For Effects/ManualSelection
     public List<int> targetSlotIndices = new(); // Indices of targeted Creature slots
+
+    // For effects with pre-play choices (e.g., "Fight or Flight")
+    // Contains the optionId of the chosen VirtualChoiceOption
+    public string choicePayload;
 
     public static GameAction CreatePass(SlotOwner owner) =>
         new() { type = GameActionType.Pass, owner = owner };

@@ -34,14 +34,14 @@ public class PrimordialAwakeningGlobalEffect : GlobalEffectBase
         int oppScore = ScoreManager.GetScore(NetworkRoleHelper.RemoteRole);
         if (myScore < oppScore)
         {
-            // Only the local player draws cards. In networked games, the remote player
-            // handles their own draw on their client.
+            // Only the local player draws cards via DeckManager. In networked games, the
+            // remote client mirrors this via OpponentDeckTracker so HUD stays in sync.
             if (NetworkRoleHelper.IsLocalPlayer(owner))
             {
                 var dm = DeckManager.Instance;
                 if (dm != null)
                 {
-                    int canDraw = Mathf.Max(0, dm.maxHandSize - dm.CurrentHandCount());
+                    int canDraw = Mathf.Max(0, GameRules.MaxHandSize - dm.CurrentHandCount());
                     if (canDraw > 0)
                     {
                         dm.DrawCard();
@@ -49,12 +49,16 @@ public class PrimordialAwakeningGlobalEffect : GlobalEffectBase
                     }
                 }
             }
+            // Networked remote opponent: only update tracker counts for HUD.
+            else if (NetworkSessionStore.IsNetworkedGame && OpponentDeckTracker.Instance != null)
+            {
+                OpponentDeckTracker.Instance.OnOpponentDrew(1);
+            }
+            // Offline AI: mirror draw behavior using AIManager.
             else if (!NetworkSessionStore.IsNetworkedGame && AIManager.Instance != null)
             {
-                // AI mode only: mirror player draw rules for AI.
                 AIManager.Instance.TryDrawOneCard();
             }
-            // In networked games, the remote player's client handles their own draw.
         }
 
         remainingRounds = 0;

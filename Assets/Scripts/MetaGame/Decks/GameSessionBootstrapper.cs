@@ -127,9 +127,9 @@ public class GameSessionBootstrapper : MonoBehaviour
         {
             OpponentDeckTracker.Instance.Initialize(remoteDeckEntries);
 
-            // Assume the opponent drew their starting hand using the same rules as DeckManager.
+            // Assume the opponent drew their starting hand using the same rules as GameRules.
             // This keeps the opponent hand/deck counts in sync from turn 1.
-            OpponentDeckTracker.Instance.OnOpponentDrew(deckManager.startingHandSize);
+            OpponentDeckTracker.Instance.OnOpponentDrew(GameRules.StartingHandSize);
         }
         else if (OpponentDeckTracker.Instance != null)
         {

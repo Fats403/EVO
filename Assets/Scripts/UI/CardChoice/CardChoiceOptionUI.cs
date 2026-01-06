@@ -26,6 +26,9 @@ public class CardChoiceOptionUI
     [Tooltip("Prefab for effect card previews.")]
     public GameObject effectCardPrefab;
 
+    [Tooltip("Prefab for virtual choice options (non-card choices with title/description).")]
+    public GameObject virtualOptionPrefab;
+
     [Tooltip("Optional: GameObject to show when card is face-down.")]
     public GameObject faceDownOverlay;
 
@@ -179,6 +182,17 @@ public class CardChoiceOptionUI
                 ui.Initialize(effectData);
                 ui.owner = SlotOwner.Player1;
             }
+        }
+        else if (data is VirtualChoiceOption virtualOption)
+        {
+            if (virtualOptionPrefab == null)
+            {
+                Debug.LogError("CardChoiceOptionUI: Virtual option prefab not assigned.");
+                return;
+            }
+            previewObj = Instantiate(virtualOptionPrefab, previewRoot);
+            var ui = previewObj.GetComponent<VirtualChoiceOptionUI>();
+            ui?.Initialize(virtualOption);
         }
         else
         {

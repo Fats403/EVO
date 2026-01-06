@@ -84,6 +84,12 @@ public static class NetSerialization
                 }
             }
 
+            // Pre-play choice payload (for effects like Fight or Flight)
+            bool hasChoicePayload = !string.IsNullOrEmpty(action.choicePayload);
+            bw.Write(hasChoicePayload);
+            if (hasChoicePayload)
+                bw.Write(action.choicePayload);
+
             return ms.ToArray();
         }
     }
@@ -95,29 +101,68 @@ public static class NetSerialization
     public static GameAction DeserializeGameAction(byte[] payload)
     {
         var action = new GameAction();
-        if (payload == null || payload.Length == 0)
-            return action;
 
-        using (var ms = new MemoryStream(payload))
-        using (var br = new BinaryReader(ms))
+        // Minimum valid payload: type(1) + owner(4) + hasCardId(1) + slotIndex(4) + targetCount(4) = 14 bytes
+        if (payload == null || payload.Length < 14)
         {
-            action.type = (GameActionType)br.ReadByte();
-            action.owner = (SlotOwner)br.ReadInt32();
+            UnityEngine.Debug.LogWarning(
+                $"[NetSerialization] DeserializeGameAction received invalid payload (length={payload?.Length ?? 0}). Returning Invalid action."
+            );
+            action.type = GameActionType.Invalid;
+            return action;
+        }
 
-            bool hasCardId = br.ReadBoolean();
-            if (hasCardId)
-                action.cardId = br.ReadString();
-            else
-                action.cardId = null;
-
-            action.slotIndex = br.ReadInt32();
-
-            int targetCount = br.ReadInt32();
-            action.targetSlotIndices.Clear();
-            for (int i = 0; i < targetCount; i++)
+        try
+        {
+            using (var ms = new MemoryStream(payload))
+            using (var br = new BinaryReader(ms))
             {
-                action.targetSlotIndices.Add(br.ReadInt32());
+                action.type = (GameActionType)br.ReadByte();
+                action.owner = (SlotOwner)br.ReadInt32();
+
+                bool hasCardId = br.ReadBoolean();
+                if (hasCardId)
+                    action.cardId = br.ReadString();
+                else
+                    action.cardId = null;
+
+                action.slotIndex = br.ReadInt32();
+
+                int targetCount = br.ReadInt32();
+                action.targetSlotIndices.Clear();
+                for (int i = 0; i < targetCount; i++)
+                {
+                    action.targetSlotIndices.Add(br.ReadInt32());
+                }
+
+                // Pre-play choice payload (may not be present in older payloads)
+                if (ms.Position < ms.Length)
+                {
+                    bool hasChoicePayload = br.ReadBoolean();
+                    if (hasChoicePayload)
+                        action.choicePayload = br.ReadString();
+                }
             }
+
+            // Validate the action type is a known value
+            if (
+                action.type == GameActionType.Invalid
+                || (int)action.type < 0
+                || (int)action.type > (int)GameActionType.PlayEffect
+            )
+            {
+                UnityEngine.Debug.LogWarning(
+                    $"[NetSerialization] DeserializeGameAction received unknown action type: {(int)action.type}. Marking as Invalid."
+                );
+                action.type = GameActionType.Invalid;
+            }
+        }
+        catch (System.Exception ex)
+        {
+            UnityEngine.Debug.LogError(
+                $"[NetSerialization] DeserializeGameAction failed: {ex.Message}. Returning Invalid action."
+            );
+            action.type = GameActionType.Invalid;
         }
 
         return action;
@@ -461,6 +506,49 @@ public static class NetSerialization
         catch
         {
             contextId = null;
+            return false;
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // RetransmitRequest Serialization
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Serialises a RetransmitRequestPayload into a byte array.
+    /// </summary>
+    public static byte[] SerializeRetransmitRequest(RetransmitRequestPayload request)
+    {
+        using var ms = new MemoryStream();
+        using var bw = new BinaryWriter(ms);
+        bw.Write(request.sequenceId);
+        bw.Write(request.reason ?? "");
+        return ms.ToArray();
+    }
+
+    /// <summary>
+    /// Deserialises a RetransmitRequestPayload from a byte array.
+    /// </summary>
+    public static bool TryDeserializeRetransmitRequest(
+        byte[] payload,
+        out RetransmitRequestPayload request
+    )
+    {
+        request = default;
+        if (payload == null || payload.Length < 4) // minimum: sequenceId (int)
+            return false;
+
+        try
+        {
+            using var ms = new MemoryStream(payload);
+            using var br = new BinaryReader(ms);
+            request.sequenceId = br.ReadInt32();
+            request.reason = br.ReadString();
+            return true;
+        }
+        catch
+        {
+            request = default;
             return false;
         }
     }

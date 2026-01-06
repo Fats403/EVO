@@ -58,12 +58,22 @@ public class NetworkMatchManager : MonoBehaviour
     {
         public int sequenceId;
         public byte[] serializedMessage;
+        public GameAction originalAction; // Keep original for retransmit
         public float sentTime;
         public int retryCount;
     }
 
     private PendingAction? _pendingAction;
     private Coroutine _retryCoroutine;
+
+    // Retransmit request tracking
+    [Header("Retransmit Settings")]
+    [Tooltip("Maximum number of retransmit requests before giving up.")]
+    [SerializeField]
+    private int maxRetransmitRequests = 3;
+
+    private int _retransmitRequestCount;
+    private int _lastReceivedSequenceId = -1;
 
     private void Awake()
     {
@@ -149,6 +159,28 @@ public class NetworkMatchManager : MonoBehaviour
 
             case NetMessageType.InputAction:
                 var action = NetSerialization.DeserializeGameAction(msg.payload);
+
+                // Validate the action - reject Invalid or corrupted actions
+                if (action.type == GameActionType.Invalid)
+                {
+                    Debug.LogError(
+                        $"NetworkMatchManager: Received Invalid/corrupted InputAction (seq={msg.sequenceId}). Requesting retransmit."
+                    );
+                    // Request a retransmit instead of just ACKing
+                    SendRetransmitRequest(msg.sequenceId, "Invalid or corrupted action payload");
+                    break;
+                }
+
+                // Track received sequence for duplicate detection
+                if (msg.sequenceId <= _lastReceivedSequenceId && _lastReceivedSequenceId >= 0)
+                {
+                    Debug.LogWarning(
+                        $"NetworkMatchManager: Received duplicate or old InputAction (seq={msg.sequenceId}, last={_lastReceivedSequenceId}). Sending ACK but ignoring."
+                    );
+                    SendInputActionAck(msg.sequenceId);
+                    break;
+                }
+                _lastReceivedSequenceId = msg.sequenceId;
 
                 // Only the guest needs to mirror received slot indices. The host's view
                 // is canonical, so when the guest receives an action from the host, it
@@ -252,36 +284,30 @@ public class NetworkMatchManager : MonoBehaviour
                 // Heartbeat just resets the disconnect timer (already done via OnMessageReceived)
                 break;
 
+            // Note: CardChoice messages are no longer used - pre-play choices are embedded in GameAction
             case NetMessageType.CardChoice:
-                if (NetSerialization.TryDeserializeCardChoice(msg.payload, out var cardChoice))
-                {
-                    Debug.Log(
-                        $"NetworkMatchManager: Received CardChoice owner={cardChoice.owner} context={cardChoice.choiceContextId} cards={cardChoice.selectedCardIds?.Length ?? 0}"
-                    );
-
-                    // Send ACK back to confirm receipt
-                    SendCardChoiceAck(cardChoice.choiceContextId);
-
-                    // Route to CardChoiceManager for processing
-                    CardChoiceManager.Instance?.ApplyRemoteChoice(cardChoice);
-                }
-                else
-                {
-                    Debug.LogWarning("NetworkMatchManager: Received malformed CardChoice.");
-                }
+            case NetMessageType.CardChoiceAck:
+                Debug.LogWarning(
+                    "NetworkMatchManager: Received deprecated CardChoice message. Pre-play choices are now in GameAction."
+                );
                 break;
 
-            case NetMessageType.CardChoiceAck:
-                if (NetSerialization.TryDeserializeCardChoiceAck(msg.payload, out var ackContextId))
+            case NetMessageType.RetransmitRequest:
+                if (
+                    NetSerialization.TryDeserializeRetransmitRequest(
+                        msg.payload,
+                        out var retransmitRequest
+                    )
+                )
                 {
-                    Debug.Log(
-                        $"NetworkMatchManager: Received CardChoiceAck for context={ackContextId}"
+                    Debug.LogWarning(
+                        $"NetworkMatchManager: Received RetransmitRequest for seq={retransmitRequest.sequenceId} reason='{retransmitRequest.reason}'"
                     );
-                    HandleCardChoiceAck(ackContextId);
+                    HandleRetransmitRequest(retransmitRequest);
                 }
                 else
                 {
-                    Debug.LogWarning("NetworkMatchManager: Received malformed CardChoiceAck.");
+                    Debug.LogWarning("NetworkMatchManager: Received malformed RetransmitRequest.");
                 }
                 break;
 
@@ -356,6 +382,7 @@ public class NetworkMatchManager : MonoBehaviour
         {
             sequenceId = sequenceId,
             serializedMessage = bytes,
+            originalAction = action, // Store for potential retransmit
             sentTime = Time.unscaledTime,
             retryCount = 0,
         };
@@ -365,6 +392,9 @@ public class NetworkMatchManager : MonoBehaviour
         Debug.Log(
             $"NetworkMatchManager: Sent InputAction type={action.type} owner={action.owner} seq={sequenceId}"
         );
+
+        // Reset retransmit counter for new action
+        _retransmitRequestCount = 0;
 
         // Start retry coroutine if not already running
         if (_retryCoroutine == null)
@@ -400,6 +430,7 @@ public class NetworkMatchManager : MonoBehaviour
                 $"NetworkMatchManager: Received ACK for seq={acknowledgedSequenceId}, clearing pending action."
             );
             _pendingAction = null;
+            _retransmitRequestCount = 0; // Reset for next action
 
             // Stop the retry coroutine since there's nothing pending
             if (_retryCoroutine != null)
@@ -414,6 +445,100 @@ public class NetworkMatchManager : MonoBehaviour
                 $"NetworkMatchManager: Received ACK for seq={acknowledgedSequenceId}, but no matching pending action."
             );
         }
+    }
+
+    // -------------------------------------------------------------------------
+    // Retransmit Request
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Sends a request to the peer to retransmit a specific action.
+    /// Called when we receive a corrupted/invalid action payload.
+    /// </summary>
+    private void SendRetransmitRequest(int sequenceId, string reason)
+    {
+        if (_transport == null || !_transport.IsConnected)
+            return;
+
+        _retransmitRequestCount++;
+
+        if (_retransmitRequestCount > maxRetransmitRequests)
+        {
+            Debug.LogError(
+                $"NetworkMatchManager: Max retransmit requests ({maxRetransmitRequests}) exceeded for seq={sequenceId}. Triggering state sync recovery."
+            );
+            // Fall back to full state sync as a last resort
+            var currentChecksum = GameStateChecksum.ComputeChecksum();
+            int currentRound = GameManager.Instance?.CurrentRound ?? 0;
+            RequestStateSync(currentRound, currentChecksum.checksum, isReconnecting: false);
+            return;
+        }
+
+        var request = new RetransmitRequestPayload { sequenceId = sequenceId, reason = reason };
+
+        var payload = NetSerialization.SerializeRetransmitRequest(request);
+        var msg = new NetMessage
+        {
+            type = NetMessageType.RetransmitRequest,
+            sequenceId = sequenceId,
+            payload = payload,
+        };
+
+        var bytes = NetSerialization.SerializeNetMessage(msg);
+        _transport.Send(bytes);
+
+        Debug.Log(
+            $"NetworkMatchManager: Sent RetransmitRequest for seq={sequenceId} (attempt {_retransmitRequestCount}/{maxRetransmitRequests})"
+        );
+    }
+
+    /// <summary>
+    /// Handles a retransmit request from the peer by resending the action.
+    /// </summary>
+    private void HandleRetransmitRequest(RetransmitRequestPayload request)
+    {
+        // Check if we have the requested action pending
+        if (!_pendingAction.HasValue)
+        {
+            Debug.LogWarning(
+                $"NetworkMatchManager: Received RetransmitRequest for seq={request.sequenceId}, but no pending action available."
+            );
+            return;
+        }
+
+        var pending = _pendingAction.Value;
+
+        if (pending.sequenceId != request.sequenceId)
+        {
+            Debug.LogWarning(
+                $"NetworkMatchManager: Received RetransmitRequest for seq={request.sequenceId}, but pending action is seq={pending.sequenceId}."
+            );
+            return;
+        }
+
+        // Re-serialize and resend the action with the same sequence ID
+        // This ensures the receiver can properly process it
+        var freshPayload = NetSerialization.SerializeGameAction(pending.originalAction);
+        var msg = new NetMessage
+        {
+            type = NetMessageType.InputAction,
+            sequenceId = pending.sequenceId,
+            payload = freshPayload,
+        };
+
+        var bytes = NetSerialization.SerializeNetMessage(msg);
+
+        // Update pending action with fresh serialization
+        pending.serializedMessage = bytes;
+        pending.sentTime = Time.unscaledTime;
+        pending.retryCount++; // Count this as a retry
+        _pendingAction = pending;
+
+        _transport.Send(bytes);
+
+        Debug.Log(
+            $"NetworkMatchManager: Retransmitted InputAction type={pending.originalAction.type} owner={pending.originalAction.owner} seq={pending.sequenceId}"
+        );
     }
 
     private IEnumerator RetryPendingActionCoroutine()
@@ -662,71 +787,5 @@ public class NetworkMatchManager : MonoBehaviour
     public void CancelStateSyncRequest()
     {
         _awaitingStateSync = false;
-    }
-
-    // -------------------------------------------------------------------------
-    // Card Choice Synchronization
-    // -------------------------------------------------------------------------
-
-    private CardChoicePayload? _pendingCardChoice;
-
-    /// <summary>
-    /// Sends a card choice result to the remote peer.
-    /// Called by CardChoiceManager when the local player confirms their selection.
-    /// </summary>
-    public void SendCardChoice(CardChoicePayload choice)
-    {
-        if (_transport == null || !_transport.IsConnected)
-        {
-            Debug.LogWarning("NetworkMatchManager.SendCardChoice: No active transport.");
-            return;
-        }
-
-        var payload = NetSerialization.SerializeCardChoice(choice);
-        var msg = new NetMessage
-        {
-            type = NetMessageType.CardChoice,
-            sequenceId = _nextSequenceId++,
-            payload = payload,
-        };
-
-        var bytes = NetSerialization.SerializeNetMessage(msg);
-
-        // Track as pending until ACK received
-        _pendingCardChoice = choice;
-
-        _transport.Send(bytes);
-
-        Debug.Log(
-            $"NetworkMatchManager: Sent CardChoice owner={choice.owner} context={choice.choiceContextId} cards={choice.selectedCardIds?.Length ?? 0}"
-        );
-    }
-
-    private void SendCardChoiceAck(string contextId)
-    {
-        if (_transport == null || !_transport.IsConnected)
-            return;
-
-        var payload = NetSerialization.SerializeCardChoiceAck(contextId);
-        var msg = new NetMessage
-        {
-            type = NetMessageType.CardChoiceAck,
-            sequenceId = 0, // ACKs don't need sequence IDs
-            payload = payload,
-        };
-
-        var bytes = NetSerialization.SerializeNetMessage(msg);
-        _transport.Send(bytes);
-
-        Debug.Log($"NetworkMatchManager: Sent CardChoiceAck for context={contextId}");
-    }
-
-    private void HandleCardChoiceAck(string contextId)
-    {
-        if (_pendingCardChoice.HasValue && _pendingCardChoice.Value.choiceContextId == contextId)
-        {
-            Debug.Log($"NetworkMatchManager: CardChoice ACK received for context={contextId}");
-            _pendingCardChoice = null;
-        }
     }
 }

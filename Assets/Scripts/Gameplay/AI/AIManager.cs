@@ -186,7 +186,7 @@ public class AIManager : MonoBehaviour
                 (pool[j], pool[i]) = (pool[i], pool[j]);
             }
 
-            int deckSize = dm.deckSize > 0 ? dm.deckSize : pool.Count;
+            int deckSize = GameRules.DeckSize > 0 ? GameRules.DeckSize : pool.Count;
             var picked = new List<ScriptableObject>(deckSize);
             var seen = new HashSet<ScriptableObject>();
             for (int i = 0; i < pool.Count && picked.Count < deckSize; i++)
@@ -208,32 +208,11 @@ public class AIManager : MonoBehaviour
     public int RemainingDeckCount => drawPile.Count;
     public int HandCount => hand.Count;
 
-    int MaxHandSize
-    {
-        get
-        {
-            var dm = DeckManager.Instance;
-            return dm != null && dm.maxHandSize > 0 ? dm.maxHandSize : 6;
-        }
-    }
+    int MaxHandSize => GameRules.MaxHandSize;
 
-    int StartingHandSize
-    {
-        get
-        {
-            var dm = DeckManager.Instance;
-            return dm != null && dm.startingHandSize > 0 ? dm.startingHandSize : 3;
-        }
-    }
+    int StartingHandSize => GameRules.StartingHandSize;
 
-    int CardsPerRound
-    {
-        get
-        {
-            var dm = DeckManager.Instance;
-            return dm != null && dm.cardsPerRound > 0 ? dm.cardsPerRound : 2;
-        }
-    }
+    int CardsPerRound => GameRules.CardsPerRound;
 
     void DrawStartingHand()
     {

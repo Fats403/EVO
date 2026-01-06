@@ -17,14 +17,6 @@ public class DeckBuilderManager : MonoBehaviour
     [SerializeField]
     private CardDatabase cardDatabase;
 
-    [Tooltip("Optional: used to get the deckSize limit. If null, defaultDeckSize is used instead.")]
-    [SerializeField]
-    private DeckManager deckSizeSource;
-
-    [Tooltip("Fallback deck size if no DeckManager is provided.")]
-    [SerializeField]
-    private int defaultDeckSize = 20;
-
     [Tooltip("Maximum copies of any single card allowed in a deck.")]
     [SerializeField]
     private int maxCopiesPerCard = 2;
@@ -100,7 +92,8 @@ public class DeckBuilderManager : MonoBehaviour
 
     private void Awake()
     {
-        _maxDeckSize = deckSizeSource != null ? deckSizeSource.deckSize : defaultDeckSize;
+        // Always use the central GameRules deck size for consistency
+        _maxDeckSize = GameRules.DeckSize;
 
         // Enforce a hard character limit on the deck name input so users can't type
         // excessively long names. The save logic will still validate min/max length.

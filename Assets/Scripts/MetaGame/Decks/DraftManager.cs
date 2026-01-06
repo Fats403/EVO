@@ -60,7 +60,7 @@ public class DraftManager : MonoBehaviour
     /// </summary>
     public event System.Action<List<ScriptableObject>> DeckBuilt;
 
-    public bool IsDrafting => config != null && picksDone < config.deckSize;
+    public bool IsDrafting => config != null && picksDone < GameRules.DeckSize;
 
     /// <summary>
     /// Called by DeckHubManager to enable/disable the Join-from-draft button
@@ -244,7 +244,7 @@ public class DraftManager : MonoBehaviour
 
         if (picksRemainingLabel != null)
         {
-            picksRemainingLabel.text = $"Pick {picksDone + 1} / {config.deckSize}";
+            picksRemainingLabel.text = $"Pick {picksDone + 1} / {GameRules.DeckSize}";
         }
 
         // Build three independent offer slots. Each slot rolls creature/effect and cost tier

@@ -58,6 +58,13 @@ public class CardChoiceRequest
     [Tooltip("What happens on timeout: confirm with current selection, or cancel.")]
     public CardChoiceTimeoutBehavior timeoutBehavior = CardChoiceTimeoutBehavior.ConfirmCurrent;
 
+    [Header("Game Flow")]
+    [Tooltip(
+        "If true, the game loop is paused (awaitingExternalInput) while choice is shown. "
+            + "Set to false for effects that only affect local hidden state (e.g., draw from your own deck)."
+    )]
+    public bool pauseGameLoop = true;
+
     [Header("Callbacks")]
     /// <summary>
     /// Called when the player confirms their selection.
@@ -197,6 +204,178 @@ public class CardChoiceRequest
             confirmButtonText = "Confirm",
             allowCancel = false,
             onConfirm = onPicked,
+        };
+    }
+
+    // ----- Virtual Choice Factory Methods -----
+
+    /// <summary>
+    /// Creates a virtual choice between two options.
+    /// Example: "Draw 2 Cards" vs "Heal 5 Health"
+    /// </summary>
+    public static CardChoiceRequest VirtualBinaryChoice(
+        string title,
+        VirtualChoiceOption option1,
+        VirtualChoiceOption option2,
+        Action<VirtualChoiceOption> onChosen,
+        string subtitle = null,
+        bool canCancel = false,
+        Action onCancelled = null
+    )
+    {
+        return new CardChoiceRequest
+        {
+            title = title,
+            subtitle = subtitle ?? "Choose one option",
+            cards = new List<ScriptableObject> { option1, option2 },
+            minPicks = 1,
+            maxPicks = 1,
+            confirmButtonText = "Confirm",
+            allowCancel = canCancel,
+            cancelButtonText = "Cancel",
+            onConfirm = (list) =>
+            {
+                var selected = list.Count > 0 ? list[0] as VirtualChoiceOption : null;
+                // Fire the option's own callback if it has one
+                selected?.onSelected?.Invoke();
+                // Fire the main callback
+                onChosen?.Invoke(selected);
+            },
+            onCancel = onCancelled,
+        };
+    }
+
+    /// <summary>
+    /// Creates a virtual choice from a list of options (pick one).
+    /// </summary>
+    public static CardChoiceRequest VirtualPickOne(
+        string title,
+        List<VirtualChoiceOption> options,
+        Action<VirtualChoiceOption> onChosen,
+        string subtitle = null,
+        bool canCancel = false,
+        Action onCancelled = null
+    )
+    {
+        return new CardChoiceRequest
+        {
+            title = title,
+            subtitle = subtitle ?? "Choose one option",
+            cards = new List<ScriptableObject>(options),
+            minPicks = 1,
+            maxPicks = 1,
+            confirmButtonText = "Confirm",
+            allowCancel = canCancel,
+            cancelButtonText = "Cancel",
+            onConfirm = (list) =>
+            {
+                var selected = list.Count > 0 ? list[0] as VirtualChoiceOption : null;
+                selected?.onSelected?.Invoke();
+                onChosen?.Invoke(selected);
+            },
+            onCancel = onCancelled,
+        };
+    }
+
+    /// <summary>
+    /// Creates a virtual choice where multiple options can be selected.
+    /// </summary>
+    public static CardChoiceRequest VirtualPickMultiple(
+        string title,
+        List<VirtualChoiceOption> options,
+        int minPicks,
+        int maxPicks,
+        Action<List<VirtualChoiceOption>> onChosen,
+        string subtitle = null,
+        bool canCancel = false,
+        Action onCancelled = null
+    )
+    {
+        return new CardChoiceRequest
+        {
+            title = title,
+            subtitle = subtitle ?? $"Choose {minPicks}-{maxPicks} options",
+            cards = new List<ScriptableObject>(options),
+            minPicks = minPicks,
+            maxPicks = maxPicks,
+            confirmButtonText = "Confirm",
+            allowCancel = canCancel,
+            cancelButtonText = "Cancel",
+            onConfirm = (list) =>
+            {
+                var selected = new List<VirtualChoiceOption>();
+                foreach (var item in list)
+                {
+                    if (item is VirtualChoiceOption vo)
+                    {
+                        vo.onSelected?.Invoke();
+                        selected.Add(vo);
+                    }
+                }
+                onChosen?.Invoke(selected);
+            },
+            onCancel = onCancelled,
+        };
+    }
+
+    /// <summary>
+    /// Creates simple inline virtual options from title/description pairs.
+    /// Convenient for quick choices without creating VirtualChoiceOption assets.
+    /// </summary>
+    public static CardChoiceRequest QuickChoice(
+        string title,
+        (string optionTitle, string optionDescription)[] options,
+        Action<int> onIndexChosen,
+        string subtitle = null,
+        VirtualChoiceIconType[] iconTypes = null
+    )
+    {
+        var virtualOptions = new List<ScriptableObject>();
+        for (int i = 0; i < options.Length; i++)
+        {
+            var opt = options[i];
+            var iconType =
+                iconTypes != null && i < iconTypes.Length
+                    ? iconTypes[i]
+                    : VirtualChoiceIconType.Default;
+            virtualOptions.Add(
+                VirtualChoiceOption.Create(
+                    opt.optionTitle,
+                    opt.optionDescription,
+                    iconType,
+                    optionId: $"quick_option_{i}"
+                )
+            );
+        }
+
+        return new CardChoiceRequest
+        {
+            title = title,
+            subtitle = subtitle ?? "Choose an option",
+            cards = virtualOptions,
+            minPicks = 1,
+            maxPicks = 1,
+            confirmButtonText = "Confirm",
+            allowCancel = false,
+            onConfirm = (list) =>
+            {
+                if (list.Count > 0 && list[0] is VirtualChoiceOption vo)
+                {
+                    // Parse index from optionId
+                    if (
+                        vo.optionId.StartsWith("quick_option_")
+                        && int.TryParse(
+                            vo.optionId.Substring("quick_option_".Length),
+                            out int index
+                        )
+                    )
+                    {
+                        onIndexChosen?.Invoke(index);
+                        return;
+                    }
+                }
+                onIndexChosen?.Invoke(-1);
+            },
         };
     }
 }

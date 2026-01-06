@@ -118,7 +118,26 @@ public class EffectCardUI : BaseCardUI
         var target = FindNearestValidTarget(eventData.position, out float distPx);
         bool played = false;
 
-        if (effectData != null && effectData.requiresManualSelection)
+        // Pre-play choice cards: show choice UI first (may chain into manual selection after)
+        if (effectData != null && effectData.RequiresPrePlayChoice)
+        {
+            var dz = GlobalEffectDropZone.Instance;
+            if (dz != null && dz.IsPointerInside(eventData.position))
+            {
+                string reason;
+                if (TryRequestEffectCard(Enumerable.Empty<Creature>(), out reason))
+                {
+                    played = true;
+                }
+                else if (!string.IsNullOrEmpty(reason))
+                {
+                    FeedbackManager.Instance?.Log(reason);
+                    FeedbackManager.Instance?.ShowGlobalAlert(reason, GameColorPalette.AlertError);
+                }
+            }
+        }
+        // Manual selection cards (without pre-play choice): start selection directly
+        else if (effectData != null && effectData.requiresManualSelection)
         {
             var dz = GlobalEffectDropZone.Instance;
             if (dz != null && dz.IsPointerInside(eventData.position))
@@ -438,10 +457,107 @@ public class EffectCardUI : BaseCardUI
                     .Where(s => s != null)
                     .Select(s => s.index)
                     .ToList();
+
+                // Check if this effect requires a pre-play choice
+                if (effectData.RequiresPrePlayChoice)
+                {
+                    ShowPrePlayChoice(human, indices);
+                    return true; // Card will be played after choice is made (or cancelled)
+                }
+
                 human.RequestPlayEffect(effectData.cardId, indices);
                 return true;
             }
         }
         return false;
+    }
+
+    /// <summary>
+    /// Shows the pre-play choice UI and plays the effect once a choice is made.
+    /// If the effect also requires manual selection, chains into that flow after the choice.
+    /// </summary>
+    private void ShowPrePlayChoice(LocalHumanController human, List<int> targetIndices)
+    {
+        if (CardChoiceManager.Instance == null)
+        {
+            Debug.LogError("EffectCardUI: CardChoiceManager not found for pre-play choice.");
+            return;
+        }
+
+        // Convert inline PrePlayChoiceDefinitions to VirtualChoiceOptions
+        var options = effectData
+            .prePlayChoices.Select(def => def.ToVirtualChoiceOption() as ScriptableObject)
+            .ToList();
+
+        var request = new CardChoiceRequest
+        {
+            title = effectData.effectName,
+            subtitle = "Choose an option",
+            cards = options,
+            minPicks = 1,
+            maxPicks = 1,
+            confirmButtonText = "Confirm",
+            allowCancel = true,
+            cancelButtonText = "Cancel",
+            onConfirm = (selected) =>
+            {
+                if (selected.Count > 0 && selected[0] is VirtualChoiceOption chosen)
+                {
+                    // Check if we also need manual target selection after the choice
+                    if (effectData.requiresManualSelection)
+                    {
+                        // Chain into manual selection with the choice payload
+                        if (
+                            ManualEffectSelectionController.Instance != null
+                            && ManualEffectSelectionController.Instance.TryBeginSelection(
+                                effectData,
+                                owner,
+                                chosen.optionId,
+                                out string selectionError
+                            )
+                        )
+                        {
+                            // Manual selection started - it will send the action when confirmed
+                            Debug.Log(
+                                $"[EffectCardUI] Pre-play choice '{chosen.optionId}' made, entering manual selection for {effectData.effectName}"
+                            );
+                        }
+                        else
+                        {
+                            // Manual selection failed - return card to hand
+                            Debug.LogWarning(
+                                $"[EffectCardUI] Manual selection failed after choice: ..."
+                            );
+                            ReturnCardToHand();
+                        }
+                    }
+                    else
+                    {
+                        // No manual selection needed - play the effect directly
+                        human.RequestPlayEffect(effectData.cardId, targetIndices, chosen.optionId);
+                    }
+                }
+            },
+            onCancel = () =>
+            {
+                // Cancelled during choice UI - return card to hand
+                Debug.Log($"[EffectCardUI] Pre-play choice cancelled for {effectData.effectName}");
+                ReturnCardToHand();
+            },
+        };
+
+        CardChoiceManager.Instance.ShowChoice(request, owner);
+    }
+
+    /// <summary>
+    /// Returns the effect card to the player's hand (used when cancelling pre-play choice).
+    /// </summary>
+    private void ReturnCardToHand()
+    {
+        if (effectData != null && DeckManager.Instance != null)
+        {
+            DeckManager.Instance.CreateCardUI(effectData, triggerLayoutAndUI: true);
+            FeedbackManager.Instance?.Log($"{effectData.effectName} returned to hand.");
+        }
     }
 }

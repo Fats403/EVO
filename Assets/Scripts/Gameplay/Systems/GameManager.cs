@@ -39,7 +39,9 @@ public class GameManager : MonoBehaviour
 
     [Header("Round & Era")]
     public int currentRound = 1;
-    public int finalRound = 15;
+
+    // Total rounds in the game. Updated to 16 for the new era/momentum curve.
+    public int finalRound = 16;
     public Era currentEra = Era.Triassic;
 
     [Header("Momentum")]
@@ -201,9 +203,27 @@ public class GameManager : MonoBehaviour
         // Only apply action lock for the local player
         if (NetworkRoleHelper.IsLocalPlayer(owner))
         {
+            bool wasLocked = p1ActionLocked;
             p1ActionLocked = locked;
+
+            // Notify listeners if state changed
+            if (wasLocked != locked)
+            {
+                OnPlayerActionLockedChanged?.Invoke(locked);
+            }
         }
     }
+
+    /// <summary>
+    /// Returns true if the local player's actions are currently locked
+    /// (e.g., while a card preview/effect is resolving).
+    /// </summary>
+    public bool IsLocalPlayerActionLocked => p1ActionLocked;
+
+    /// <summary>
+    /// Event fired when the local player's action lock state changes.
+    /// </summary>
+    public event System.Action<bool> OnPlayerActionLockedChanged;
 
     private void Start()
     {
@@ -333,6 +353,10 @@ public class GameManager : MonoBehaviour
         if (awaitingExternalInput)
             return;
 
+        // Block pass while a previous action is still resolving (effect animation, etc.)
+        if (p1ActionLocked)
+            return;
+
         var localRole = NetworkRoleHelper.LocalRole;
         if (!awaitingTurnOwner.HasValue || awaitingTurnOwner.Value != localRole)
             return;
@@ -411,7 +435,7 @@ public class GameManager : MonoBehaviour
                 // tracker can keep their hand/deck counts roughly in sync.
                 if (NetworkSessionStore.IsNetworkedGame && OpponentDeckTracker.Instance != null)
                 {
-                    OpponentDeckTracker.Instance.OnOpponentDrew(dm.cardsPerRound);
+                    OpponentDeckTracker.Instance.OnOpponentDrew(GameRules.CardsPerRound);
                 }
             }
             // Mirror per-round draws for the AI using the same rules from DeckManager (AI mode only).
@@ -560,6 +584,15 @@ public class GameManager : MonoBehaviour
         if (action == null)
             yield break;
 
+        // Reject Invalid/corrupted actions to prevent desync
+        if (action.type == GameActionType.Invalid)
+        {
+            Debug.LogError(
+                "[GameManager] ProcessReceivedAction received Invalid action type. Ignoring to prevent desync."
+            );
+            yield break;
+        }
+
         // Log action for desync debugging
         bool wasLocal = NetworkRoleHelper.IsLocalPlayer(action.owner);
         ActionLog.Instance?.LogAction(action, wasLocal);
@@ -639,7 +672,9 @@ public class GameManager : MonoBehaviour
                     }
 
                     // Wait for the effect routine to complete before ending the turn
-                    yield return StartCoroutine(PlayEffectCardRoutine(ec, action.owner, targets));
+                    yield return StartCoroutine(
+                        PlayEffectCardRoutine(ec, action.owner, targets, action.choicePayload)
+                    );
 
                     // In AI mode, remove from AI hand; in network mode, remote cards are handled by their client
                     if (
@@ -679,7 +714,9 @@ public class GameManager : MonoBehaviour
                 )
                 {
                     // Wait for the effect routine to complete before ending the turn
-                    yield return StartCoroutine(PlayEffectCardRoutine(ec, action.owner, targets));
+                    yield return StartCoroutine(
+                        PlayEffectCardRoutine(ec, action.owner, targets, action.choicePayload)
+                    );
 
                     // In AI mode, remove from AI hand; in network mode, remote cards are handled by their client
                     if (
@@ -703,8 +740,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     Debug.LogWarning($"GameManager: Effect action failed: {failureReason}");
-                    if (NetworkRoleHelper.IsLocalPlayer(action.owner))
-                        p1ActionLocked = false;
+                    SetPlayerActionLocked(action.owner, false);
                     CompleteTurnAction(action.owner); // Unlock turn
                 }
                 break;
@@ -811,8 +847,7 @@ public class GameManager : MonoBehaviour
 
         // Once a local player card has been played, lock out additional actions until
         // its preview/resolution finishes so turns truly alternate actions.
-        if (NetworkRoleHelper.IsLocalPlayer(creature.owner))
-            p1ActionLocked = true;
+        SetPlayerActionLocked(creature.owner, true);
 
         // NOTE: We no longer start the coroutine here because the turn loop (ExecuteTurn)
         // now yield-returns the routine to ensure proper timing.
@@ -830,8 +865,7 @@ public class GameManager : MonoBehaviour
         if (hold > 0f)
             yield return new WaitForSeconds(hold);
 
-        if (NetworkRoleHelper.IsLocalPlayer(creature.owner))
-            p1ActionLocked = false;
+        SetPlayerActionLocked(creature.owner, false);
     }
 
     void AnnounceCardPlay(SlotOwner owner, string cardName)
@@ -885,8 +919,7 @@ public class GameManager : MonoBehaviour
 
         var list = targets != null ? targets.Where(c => c != null).ToList() : new List<Creature>();
 
-        if (NetworkRoleHelper.IsLocalPlayer(owner))
-            p1ActionLocked = true;
+        SetPlayerActionLocked(owner, true);
 
         // NOTE: We no longer start the coroutine here because the turn loop (ExecuteTurn)
         // now yield-returns the routine to ensure proper timing.
@@ -896,7 +929,8 @@ public class GameManager : MonoBehaviour
     public IEnumerator PlayEffectCardRoutine(
         EffectCard card,
         SlotOwner owner,
-        List<Creature> targets
+        List<Creature> targets,
+        string choicePayload = null
     )
     {
         AnnounceCardPlay(owner, card.effectName);
@@ -907,7 +941,7 @@ public class GameManager : MonoBehaviour
         if (revealDelay > 0f)
             yield return new WaitForSeconds(revealDelay);
 
-        EffectsManager.Instance?.PlayOnTargets(card, targets, owner);
+        EffectsManager.Instance?.PlayOnTargets(card, targets, owner, choicePayload);
 
         // If the effect triggered a card choice UI (e.g., "look at top 3, pick 1"),
         // wait for the player to make their choice before continuing.
@@ -935,8 +969,7 @@ public class GameManager : MonoBehaviour
         if (remaining > 0f)
             yield return new WaitForSeconds(remaining);
 
-        if (NetworkRoleHelper.IsLocalPlayer(owner))
-            p1ActionLocked = false;
+        SetPlayerActionLocked(owner, false);
     }
 
     // Manual effect selection flow has been extracted to ManualEffectSelectionController.
@@ -1067,27 +1100,45 @@ public class GameManager : MonoBehaviour
 
     public Era GetEraForRound(int round)
     {
+        // New era schedule:
+        // R1-2  : Early Triassic (Triassic)
+        // R3-4  : Late Triassic  (Triassic)
+        // R5-7  : Early Jurassic (Jurassic)
+        // R8-10 : Late Jurassic  (Jurassic)
+        // R11-13: Cretaceous     (Cretaceous)
+        // R14-16: Extinction     (Extinction)
+
         if (round <= 4)
-            return Era.Triassic;
-        if (round <= 8)
-            return Era.Jurassic;
-        if (round <= 12)
+            return Era.Triassic; // Early/Late Triassic
+        if (round <= 10)
+            return Era.Jurassic; // Early/Late Jurassic
+        if (round <= 13)
             return Era.Cretaceous;
         return Era.Extinction;
     }
 
     public int GetMomentumForEra(Era era)
     {
+        // New momentum curve by era:
+        // Early Triassic (1-2): 2
+        // Late Triassic  (3-4): 3
+        // Early Jurassic (5-7): 4
+        // Late Jurassic  (8-10):5
+        // Cretaceous     (11-13):6
+        // Extinction     (14-16):8
+
         switch (era)
         {
             case Era.Triassic:
-                return 2;
+                // Within Triassic, split early/late by round
+                return currentRound <= 2 ? 2 : 3;
             case Era.Jurassic:
-                return 3;
+                // Within Jurassic, split early/late by round
+                return currentRound <= 7 ? 4 : 5;
             case Era.Cretaceous:
-                return 5;
+                return 6;
             case Era.Extinction:
-                return 7;
+                return 8;
             default:
                 return 2;
         }

@@ -28,6 +28,28 @@ public static class SelectedDeckStore
     public static bool HasConstructedDeck =>
         Mode == GameStartMode.Constructed && Cards != null && Cards.Count > 0;
 
+    /// <summary>
+    /// Total number of cards in the currently selected deck (sum of counts).
+    /// </summary>
+    public static int GetTotalCardCount()
+    {
+        if (Cards == null || Cards.Count == 0)
+            return 0;
+
+        int total = 0;
+        for (int i = 0; i < Cards.Count; i++)
+        {
+            total += Cards[i].count;
+        }
+        return total;
+    }
+
+    /// <summary>
+    /// True if the selected deck has exactly the standard deck size defined in GameRules.
+    /// </summary>
+    public static bool HasValidDeckSize =>
+        HasConstructedDeck && GetTotalCardCount() == GameRules.DeckSize;
+
     public static void SetConstructedDeck(
         string deckId,
         string deckName,

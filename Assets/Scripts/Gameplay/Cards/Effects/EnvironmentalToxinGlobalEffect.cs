@@ -17,7 +17,7 @@ public class EnvironmentalToxinGlobalEffect : GlobalEffectBase
         if (FeedbackManager.Instance != null)
         {
             FeedbackManager.Instance.ShowGlobalAlert(
-                "Environmental Toxin: all creatures take 1 damage.",
+                "Environmental Toxin",
                 GameColorPalette.TextSpecial
             );
             FeedbackManager.Instance.Log(

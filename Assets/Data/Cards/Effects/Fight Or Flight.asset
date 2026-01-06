@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 202a57a4481a04a9f80bc445c4f63d2a, type: 3}
+  m_Name: Fight Or Flight
+  m_EditorClassIdentifier: Assembly-CSharp::EffectCard
+  cardId: EFF_FIGHT_OR_FLIGHT
+  effectName: Fight Or Flight
+  icon: {fileID: 21300000, guid: 490be89d9e4a244eaa4f555585a87b90, type: 3}
+  description: 'Choose: <link="Bulk"><color=#FFD35B><b>+1 Bulk</b></color></link>
+    or <link="Haste"><color=#FFD35B><b>+1 Haste</b></color></link> to all allies'
+  prePlayChoices:
+  - optionId: fight
+    title: Fight
+    description: +1 Bulk to all allies
+    iconType: 0
+  - optionId: flight
+    title: Flight
+    description: +1 Haste to all allies
+    iconType: 0
+  targetSide: 2
+  targetType: 0
+  targetCount: 0
+  maxTargets: 1
+  isGlobal: 1
+  requiresManualSelection: 0
+  minTargets: 0
+  allowFewerThanMax: 0
+  multiSelect: 0
+  traitsToAttachToTargets:
+  - {fileID: 0}
+  globalEffect: {fileID: 11400000, guid: ca5efefa4c49b4a1d9cce8908256cb72, type: 2}
+  runtimeEffect: {fileID: 0}
+  suppressHitBounce: 0
+  momentumCost: 3
+  minEraAllowed: 0
+  allowInClear: 0
+  allowInDrought: 0
+  allowInStorm: 0
+  allowInWildfire: 0
+  aiPreferWhenBehindOnBoard: 0
+  aiMinAlliesForBuffGlobals: 0
+  aiCleanseSynergy: 0
+  aiAttackSynergy: 0
+  aiBodyBuffMultiplier: 1
+  aiRemovalValue: 0

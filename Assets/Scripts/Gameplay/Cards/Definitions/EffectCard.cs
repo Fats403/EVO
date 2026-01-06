@@ -1,4 +1,37 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
+
+/// <summary>
+/// Inline choice definition for pre-play choices.
+/// Define these directly on the EffectCard - no need for separate assets.
+/// </summary>
+[Serializable]
+public class PrePlayChoiceDefinition
+{
+    [Tooltip(
+        "Unique identifier for this choice (e.g., 'fight', 'flight'). Used by the effect to determine which option was picked."
+    )]
+    public string optionId;
+
+    [Tooltip("Display title for this choice.")]
+    public string title;
+
+    [Tooltip("Description explaining what this choice does.")]
+    [TextArea(1, 3)]
+    public string description;
+
+    [Tooltip("Icon type to display for this choice.")]
+    public VirtualChoiceIconType iconType = VirtualChoiceIconType.Default;
+
+    /// <summary>
+    /// Converts this inline definition to a VirtualChoiceOption for use with CardChoiceManager.
+    /// </summary>
+    public VirtualChoiceOption ToVirtualChoiceOption()
+    {
+        return VirtualChoiceOption.Create(title, description, iconType, optionId: optionId);
+    }
+}
 
 [CreateAssetMenu(menuName = "Cards/Effect Card")]
 public class EffectCard : CardDefinition
@@ -9,6 +42,17 @@ public class EffectCard : CardDefinition
 
     [TextArea]
     public string description;
+
+    [Header("Pre-Play Choices")]
+    [Tooltip(
+        "If populated, player must choose one of these options before the card is played. Define choices inline - no separate assets needed."
+    )]
+    public List<PrePlayChoiceDefinition> prePlayChoices;
+
+    /// <summary>
+    /// Returns true if this effect requires the player to make a choice before playing.
+    /// </summary>
+    public bool RequiresPrePlayChoice => prePlayChoices != null && prePlayChoices.Count > 0;
 
     [Header("Targeting")]
     public EffectTargetSide targetSide = EffectTargetSide.Any;

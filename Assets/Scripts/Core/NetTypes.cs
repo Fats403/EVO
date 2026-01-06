@@ -54,6 +54,20 @@ public enum NetMessageType : byte
     Heartbeat = 8, // Keep-alive message to prevent false disconnect detection
     CardChoice = 9, // Card choice result (e.g., from effect like "look at top 3, pick 1")
     CardChoiceAck = 10, // Acknowledgement of card choice receipt
+    RetransmitRequest = 11, // Request peer to resend a specific action (when payload was corrupted)
+}
+
+/// <summary>
+/// Payload for RetransmitRequest message when a corrupted/invalid action is received.
+/// </summary>
+[Serializable]
+public struct RetransmitRequestPayload
+{
+    /// <summary>The sequence ID of the message that needs to be resent.</summary>
+    public int sequenceId;
+
+    /// <summary>Reason for the retransmit request (for debugging/logging).</summary>
+    public string reason;
 }
 
 /// <summary>

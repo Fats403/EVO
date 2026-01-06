@@ -51,6 +51,7 @@ MonoBehaviour:
   previewRoot: {fileID: 7538064477946490411}
   creatureCardPrefab: {fileID: 6378225315708850401, guid: 91ac1c24a6a3b45edba80f553a10afe5, type: 3}
   effectCardPrefab: {fileID: 3112541818185922300, guid: a6ab56675875b4ef798b95a49967d118, type: 3}
+  virtualOptionPrefab: {fileID: 3112541818185922300, guid: 3a84419f07fdd4d4494cc5f089758143, type: 3}
   faceDownOverlay: {fileID: 3295204001109788752, guid: 761caeb8ba63e48a59f9f26daf194d85, type: 3}
   selectionScaleTarget: {fileID: 7538064477946490411}
   normalScale: 1

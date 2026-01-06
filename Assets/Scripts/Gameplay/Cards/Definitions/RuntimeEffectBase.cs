@@ -9,6 +9,12 @@ using UnityEngine;
 public abstract class RuntimeEffectBase : ScriptableObject
 {
     /// <summary>
+    /// Optional payload from pre-play choices. Set by EffectsManager before Apply is called.
+    /// </summary>
+    [HideInInspector]
+    public string choicePayload;
+
+    /// <summary>
     /// Apply this effect's custom logic to the chosen targets.
     /// </summary>
     /// <param name="targets">Final resolved list of targets for this effect play.</param>
@@ -16,10 +22,3 @@ public abstract class RuntimeEffectBase : ScriptableObject
     /// <param name="rm">ResolutionManager in the current scene.</param>
     public abstract void Apply(List<Creature> targets, SlotOwner owner, ResolutionManager rm);
 }
-
-
-
-
-
-
-

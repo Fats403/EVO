@@ -85,7 +85,12 @@ public class EffectsManager : MonoBehaviour
         }
     }
 
-    public void PlayOnTargets(EffectCard card, IEnumerable<Creature> targets, SlotOwner player)
+    public void PlayOnTargets(
+        EffectCard card,
+        IEnumerable<Creature> targets,
+        SlotOwner player,
+        string choicePayload = null
+    )
     {
         if (card == null || targets == null)
             return;
@@ -174,7 +179,13 @@ public class EffectsManager : MonoBehaviour
 
             // Visual feedback: a smooth scale/bob when this effect actually hits the creature,
             // unless this card has explicitly disabled the default hit-bounce.
-            if (!card.suppressHitBounce && c.gameObject.activeInHierarchy)
+            // Skip automatic bounce for cards with a globalEffect - they handle their own feedback
+            // since they may target differently than the card's targetSide suggests.
+            if (
+                !card.suppressHitBounce
+                && card.globalEffect == null
+                && c.gameObject.activeInHierarchy
+            )
             {
                 c.StartCoroutine(c.PlayEffectHitBounce(1.08f, 0.2f, 0.45f));
             }
@@ -194,7 +205,11 @@ public class EffectsManager : MonoBehaviour
                 var ge = ScriptableObject.Instantiate(card.globalEffect);
                 ge.owner = player;
                 ge.suppressHitBounceFromSource = card.suppressHitBounce;
-                Debug.Log($"[EffectsManager] Registering global effect: {ge.name} for {player}");
+                ge.sourceEffectCard = card; // Store reference for refund logic
+                ge.choicePayload = choicePayload; // Pass the pre-play choice (e.g., "fight" or "flight")
+                Debug.Log(
+                    $"[EffectsManager] Registering global effect: {ge.name} for {player} (choice={choicePayload ?? "none"})"
+                );
                 resolutionManager.RegisterGlobalEffect(ge);
             }
         }
@@ -203,6 +218,7 @@ public class EffectsManager : MonoBehaviour
         if (card.runtimeEffect != null && resolutionManager != null)
         {
             var re = ScriptableObject.Instantiate(card.runtimeEffect);
+            re.choicePayload = choicePayload; // Pass choice payload to runtime effect
             re.Apply(targetList, player, resolutionManager);
         }
 

@@ -7,10 +7,6 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Config/Draft Config")]
 public class DraftConfig : ScriptableObject
 {
-    [Header("Deck Size")]
-    [Min(1)]
-    public int deckSize = 20;
-
     [Header("Type Mix Targets")]
     [Range(0f, 1f)]
     [Tooltip("Target fraction of the deck that should be creature cards.")]

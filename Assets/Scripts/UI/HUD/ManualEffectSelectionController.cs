@@ -37,6 +37,7 @@ public class ManualEffectSelectionController : MonoBehaviour
         public int minCount;
         public int maxCount;
         public bool allowFewerThanMax;
+        public string choicePayload; // For pre-play choices that chain into manual selection
     }
 
     private SelectionState _state;
@@ -91,7 +92,19 @@ public class ManualEffectSelectionController : MonoBehaviour
     /// External entry point when the player drops a manual-selection effect
     /// onto the global effect drop zone.
     /// </summary>
-    public bool TryBeginSelection(EffectCard card, SlotOwner owner, out string failureReason)
+    public bool TryBeginSelection(EffectCard card, SlotOwner owner, out string failureReason) =>
+        TryBeginSelection(card, owner, null, out failureReason);
+
+    /// <summary>
+    /// External entry point with optional pre-play choice payload.
+    /// Used when a card has both pre-play choices and manual target selection.
+    /// </summary>
+    public bool TryBeginSelection(
+        EffectCard card,
+        SlotOwner owner,
+        string choicePayload,
+        out string failureReason
+    )
     {
         failureReason = null;
 
@@ -198,6 +211,7 @@ public class ManualEffectSelectionController : MonoBehaviour
             minCount = minCount,
             maxCount = maxCount,
             allowFewerThanMax = allowFewerThanMax,
+            choicePayload = choicePayload,
         };
 
         if (FeedbackManager.Instance != null)
@@ -347,6 +361,7 @@ public class ManualEffectSelectionController : MonoBehaviour
 
         var finalCard = state.card;
         var finalOwner = state.owner;
+        var finalChoicePayload = state.choicePayload;
 
         SetSelectionVisible(false);
 
@@ -363,7 +378,7 @@ public class ManualEffectSelectionController : MonoBehaviour
         // already spent.
         if (gameManager.GetPlayerController(finalOwner) is LocalHumanController human)
         {
-            human.RequestPlayEffect(finalCard.cardId, finalTargetIndices);
+            human.RequestPlayEffect(finalCard.cardId, finalTargetIndices, finalChoicePayload);
         }
         else
         {
@@ -375,6 +390,7 @@ public class ManualEffectSelectionController : MonoBehaviour
                     owner = finalOwner,
                     cardId = finalCard.cardId,
                     targetSlotIndices = finalTargetIndices,
+                    choicePayload = finalChoicePayload,
                 }
             );
         }

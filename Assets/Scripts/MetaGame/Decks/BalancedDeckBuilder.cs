@@ -34,7 +34,7 @@ public static class BalancedDeckBuilder
         int midCount = 0;
         int highCount = 0;
 
-        for (int picksDone = 0; picksDone < config.deckSize; picksDone++)
+        for (int picksDone = 0; picksDone < GameRules.DeckSize; picksDone++)
         {
             bool preferCreature = DraftRules.ChoosePreferredIsCreature(
                 config,

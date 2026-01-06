@@ -72,16 +72,6 @@ public class CardChoiceManager : MonoBehaviour
     [Tooltip("Sound when confirming.")]
     public AudioClip confirmSound;
 
-    [Header("Waiting Overlay")]
-    [Tooltip("CanvasGroup for the 'waiting for opponent' overlay.")]
-    public CanvasGroup waitingOverlayCanvasGroup;
-
-    [Tooltip("Label text for the waiting overlay.")]
-    public TextMeshProUGUI waitingLabel;
-
-    [Tooltip("Default message when waiting for opponent's choice.")]
-    public string waitingMessage = "Waiting for opponent...";
-
     // State
     private CardChoiceRequest currentRequest;
     private readonly List<CardChoiceOptionUI> spawnedOptions = new();
@@ -89,19 +79,11 @@ public class CardChoiceManager : MonoBehaviour
     private readonly List<int> selectionOrder = new(); // indices into selectedCards
     private Coroutine timeoutCoroutine;
     private bool isShowing;
+    private bool didPauseGameLoop;
     private SlotOwner choiceOwner = SlotOwner.Player1;
-    private string currentChoiceContextId;
-
-    // Pending remote choice state (for when we're waiting for remote player's decision)
-    private CardChoiceRequest pendingRemoteRequest;
-    private string pendingRemoteContextId;
-    private bool isWaitingForRemote;
 
     /// <summary>True if a choice prompt is currently displayed.</summary>
     public bool IsShowing => isShowing;
-
-    /// <summary>True if waiting for a remote player's choice.</summary>
-    public bool IsWaitingForRemote => isWaitingForRemote;
 
     /// <summary>The current request being displayed, or null if none.</summary>
     public CardChoiceRequest CurrentRequest => currentRequest;
@@ -129,14 +111,6 @@ public class CardChoiceManager : MonoBehaviour
             panelCanvasGroup.blocksRaycasts = false;
         }
 
-        // Hide waiting overlay
-        if (waitingOverlayCanvasGroup != null)
-        {
-            waitingOverlayCanvasGroup.alpha = 0f;
-            waitingOverlayCanvasGroup.interactable = false;
-            waitingOverlayCanvasGroup.blocksRaycasts = false;
-        }
-
         // Wire up buttons
         if (confirmButton != null)
             confirmButton.onClick.AddListener(OnConfirmClicked);
@@ -157,31 +131,15 @@ public class CardChoiceManager : MonoBehaviour
 
     /// <summary>
     /// Display a card choice prompt with the given configuration.
+    /// Choices are always local - the result is included in the action sent to remote.
     /// </summary>
     /// <param name="request">The choice configuration.</param>
-    /// <param name="owner">Optional: which player is making this choice (for networking).</param>
+    /// <param name="owner">Optional: which player is making this choice.</param>
     public void ShowChoice(CardChoiceRequest request, SlotOwner owner = SlotOwner.Player1)
     {
         if (request == null)
         {
             Debug.LogError("CardChoiceManager.ShowChoice: Request is null.");
-            return;
-        }
-
-        // Generate a unique context ID for this choice (used for network sync)
-        currentChoiceContextId = GenerateContextId(request.title);
-
-        // In networked games, check if this choice is for local player or remote
-        bool isNetworkedGame = NetworkSessionStore.IsNetworkedGame;
-        bool isLocalPlayerChoice = !isNetworkedGame || NetworkRoleHelper.IsLocalPlayer(owner);
-
-        if (!isLocalPlayerChoice)
-        {
-            // This choice is for the remote player - show waiting overlay instead
-            Debug.Log(
-                $"[CardChoiceManager] Remote player ({owner}) is making a choice. Showing waiting overlay."
-            );
-            ShowWaitingForRemote(request, owner);
             return;
         }
 
@@ -194,11 +152,16 @@ public class CardChoiceManager : MonoBehaviour
         currentRequest = request;
         choiceOwner = owner;
         isShowing = true;
+        didPauseGameLoop = false;
         selectedCards.Clear();
         selectionOrder.Clear();
 
-        // Pause game flow while waiting for choice
-        SetGamePaused(true);
+        // Pause game flow while waiting for choice (if requested)
+        if (request.pauseGameLoop)
+        {
+            SetGamePaused(true);
+            didPauseGameLoop = true;
+        }
 
         // Setup UI text
         if (titleLabel != null)
@@ -221,90 +184,6 @@ public class CardChoiceManager : MonoBehaviour
 
         // Fade in
         StartCoroutine(FadePanel(true));
-    }
-
-    /// <summary>
-    /// Generates a unique context ID for tracking choices across network.
-    /// </summary>
-    private string GenerateContextId(string title)
-    {
-        // Combine title, owner, and timestamp for uniqueness
-        int round = GameManager.Instance?.CurrentRound ?? 0;
-        return $"{title ?? "choice"}_{round}_{System.DateTime.UtcNow.Ticks}";
-    }
-
-    /// <summary>
-    /// Shows the "waiting for opponent" overlay while remote player makes a choice.
-    /// </summary>
-    private void ShowWaitingForRemote(CardChoiceRequest request, SlotOwner owner)
-    {
-        pendingRemoteRequest = request;
-        pendingRemoteContextId = currentChoiceContextId;
-        isWaitingForRemote = true;
-
-        // Pause game flow
-        SetGamePaused(true);
-
-        // Show waiting overlay
-        if (waitingOverlayCanvasGroup != null)
-        {
-            StartCoroutine(FadeWaitingOverlay(true));
-        }
-
-        if (waitingLabel != null)
-        {
-            waitingLabel.text = waitingMessage;
-        }
-
-        Debug.Log($"[CardChoiceManager] Waiting for remote player choice: {request.title}");
-    }
-
-    /// <summary>
-    /// Hides the waiting overlay.
-    /// </summary>
-    private void HideWaitingOverlay()
-    {
-        if (waitingOverlayCanvasGroup != null)
-        {
-            StartCoroutine(FadeWaitingOverlay(false));
-        }
-
-        isWaitingForRemote = false;
-        pendingRemoteRequest = null;
-        pendingRemoteContextId = null;
-    }
-
-    private IEnumerator FadeWaitingOverlay(bool fadeIn)
-    {
-        if (waitingOverlayCanvasGroup == null)
-            yield break;
-
-        float start = waitingOverlayCanvasGroup.alpha;
-        float end = fadeIn ? 1f : 0f;
-        float duration = Mathf.Max(0.01f, fadeDuration);
-
-        if (fadeIn)
-        {
-            waitingOverlayCanvasGroup.interactable = true;
-            waitingOverlayCanvasGroup.blocksRaycasts = true;
-        }
-
-        float t = 0f;
-        while (t < duration)
-        {
-            t += Time.unscaledDeltaTime;
-            float u = Mathf.Clamp01(t / duration);
-            waitingOverlayCanvasGroup.alpha = Mathf.Lerp(start, end, u);
-            yield return null;
-        }
-
-        waitingOverlayCanvasGroup.alpha = end;
-
-        if (!fadeIn)
-        {
-            waitingOverlayCanvasGroup.interactable = false;
-            waitingOverlayCanvasGroup.blocksRaycasts = false;
-        }
     }
 
     /// <summary>
@@ -345,8 +224,12 @@ public class CardChoiceManager : MonoBehaviour
             panelCanvasGroup.blocksRaycasts = false;
         }
 
-        // Resume game flow
-        SetGamePaused(false);
+        // Resume game flow (only if we paused it)
+        if (didPauseGameLoop)
+        {
+            SetGamePaused(false);
+            didPauseGameLoop = false;
+        }
 
         currentRequest = null;
         isShowing = false;
@@ -827,16 +710,14 @@ public class CardChoiceManager : MonoBehaviour
         // Fire local event
         OnChoiceConfirmed?.Invoke(choiceOwner, cardIds);
 
-        // Send choice over network if in networked game
-        if (NetworkSessionStore.IsNetworkedGame)
-        {
-            SendChoiceToNetwork(cardIds, wasCancelled: false);
-        }
-
         ClearSpawnedOptions();
 
-        // Resume game flow
-        SetGamePaused(false);
+        // Resume game flow (only if we paused it)
+        if (didPauseGameLoop)
+        {
+            SetGamePaused(false);
+            didPauseGameLoop = false;
+        }
 
         currentRequest = null;
         isShowing = false;
@@ -862,25 +743,6 @@ public class CardChoiceManager : MonoBehaviour
         return null;
     }
 
-    /// <summary>
-    /// Sends the choice result to the remote player.
-    /// </summary>
-    private void SendChoiceToNetwork(List<string> cardIds, bool wasCancelled)
-    {
-        var payload = new CardChoicePayload
-        {
-            owner = choiceOwner,
-            choiceContextId = currentChoiceContextId,
-            selectedCardIds = cardIds.ToArray(),
-            wasCancelled = wasCancelled,
-        };
-
-        NetworkMatchManager.Instance?.SendCardChoice(payload);
-        Debug.Log(
-            $"[CardChoiceManager] Sent choice to network: {cardIds.Count} cards, context={currentChoiceContextId}"
-        );
-    }
-
     private void CancelSelection()
     {
         if (currentRequest == null)
@@ -901,16 +763,17 @@ public class CardChoiceManager : MonoBehaviour
 
         yield return StartCoroutine(FadePanel(false));
 
-        // Send cancel over network if in networked game
-        if (NetworkSessionStore.IsNetworkedGame)
-        {
-            SendChoiceToNetwork(new List<string>(), wasCancelled: true);
-        }
-
         ClearSpawnedOptions();
 
-        // Resume game flow
-        SetGamePaused(false);
+        // Clear any forced card preview immediately on cancel
+        CardPreviewManager.Instance?.ClearForced();
+
+        // Resume game flow (only if we paused it)
+        if (didPauseGameLoop)
+        {
+            SetGamePaused(false);
+            didPauseGameLoop = false;
+        }
 
         currentRequest = null;
         isShowing = false;
@@ -1002,119 +865,5 @@ public class CardChoiceManager : MonoBehaviour
     )
     {
         ShowChoice(CardChoiceRequest.LookAndPick(title, topCards, pickCount, onPicked));
-    }
-
-    // -------------------------------------------------------------------------
-    // Network Integration
-    // -------------------------------------------------------------------------
-
-    /// <summary>
-    /// Called by NetworkMatchManager when a remote player's choice is received.
-    /// Applies the choice locally and triggers the appropriate callbacks.
-    /// </summary>
-    public void ApplyRemoteChoice(CardChoicePayload payload)
-    {
-        Debug.Log(
-            $"[CardChoiceManager] Applying remote choice: owner={payload.owner} context={payload.choiceContextId} cards={payload.selectedCardIds?.Length ?? 0} cancelled={payload.wasCancelled}"
-        );
-
-        // Hide the waiting overlay if showing
-        if (isWaitingForRemote)
-        {
-            HideWaitingOverlay();
-
-            // Resume game flow
-            SetGamePaused(false);
-
-            // If we have a pending request, resolve it with the remote choice
-            if (pendingRemoteRequest != null)
-            {
-                if (payload.wasCancelled)
-                {
-                    // Remote player cancelled
-                    pendingRemoteRequest.onCancel?.Invoke();
-                }
-                else
-                {
-                    // Convert card IDs back to ScriptableObjects
-                    var chosenCards = ResolveCardIds(payload.selectedCardIds);
-                    pendingRemoteRequest.onConfirm?.Invoke(chosenCards);
-                }
-
-                pendingRemoteRequest = null;
-            }
-        }
-        else
-        {
-            // Choice received but we weren't waiting - might be a reconnection scenario
-            Debug.LogWarning(
-                $"[CardChoiceManager] Received remote choice but not waiting for one. Context: {payload.choiceContextId}"
-            );
-        }
-
-        // Fire the event for any other listeners
-        OnChoiceConfirmed?.Invoke(
-            payload.owner,
-            payload.selectedCardIds?.ToList() ?? new List<string>()
-        );
-    }
-
-    /// <summary>
-    /// Resolves card IDs to ScriptableObjects using the CardDatabase.
-    /// </summary>
-    private List<ScriptableObject> ResolveCardIds(string[] cardIds)
-    {
-        var result = new List<ScriptableObject>();
-
-        if (cardIds == null || cardIds.Length == 0)
-            return result;
-
-        // Access CardDatabase through DeckManager
-        var deckManager = DeckManager.Instance;
-        var cardDatabase = deckManager?.cardDatabase;
-
-        if (cardDatabase == null)
-        {
-            Debug.LogWarning(
-                "[CardChoiceManager] CardDatabase not found, cannot resolve card IDs."
-            );
-            return result;
-        }
-
-        foreach (var cardId in cardIds)
-        {
-            if (string.IsNullOrEmpty(cardId))
-                continue;
-
-            // Try to find the card in the database
-            var card = cardDatabase.GetById(cardId);
-            if (card != null)
-            {
-                result.Add(card);
-            }
-            else
-            {
-                Debug.LogWarning($"[CardChoiceManager] Could not resolve card ID: {cardId}");
-            }
-        }
-
-        return result;
-    }
-
-    /// <summary>
-    /// Called when a card effect triggers a choice for a specific player.
-    /// If it's the local player, shows the UI. If it's remote, shows the waiting overlay.
-    /// </summary>
-    public void TriggerEffectChoice(
-        CardChoiceRequest request,
-        SlotOwner owner,
-        string contextId = null
-    )
-    {
-        // Use provided context ID or generate one
-        currentChoiceContextId = contextId ?? GenerateContextId(request.title);
-
-        // ShowChoice already handles local vs remote
-        ShowChoice(request, owner);
     }
 }

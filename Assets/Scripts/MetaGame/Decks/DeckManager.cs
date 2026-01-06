@@ -25,16 +25,17 @@ public class DeckManager : MonoBehaviour
     [Tooltip("Prefab to show as a hover/highlight indicator on a BoardSlot while dragging a card")]
     public GameObject hoverIndicatorPrefab;
 
-    public int startingHandSize = 3;
+    // Core deck/hand configuration is centralised in GameRules.
+    int startingHandSize => GameRules.StartingHandSize;
 
     [Tooltip("Maximum number of cards allowed in hand")]
-    public int maxHandSize = 6;
+    int maxHandSize => GameRules.MaxHandSize;
 
     [Tooltip("Number of cards drawn automatically at the start of each round")]
-    public int cardsPerRound = 2;
+    int cardsPerRound => GameRules.CardsPerRound;
 
     [Tooltip("Size of the deck (used when auto-building a random deck).")]
-    public int deckSize = 20;
+    int deckSize => GameRules.DeckSize;
 
     [Tooltip("UI prefab for creature cards (fallbacks to cardPrefab if null)")]
     public GameObject creatureCardPrefab;

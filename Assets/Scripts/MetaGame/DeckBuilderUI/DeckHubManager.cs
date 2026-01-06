@@ -568,6 +568,16 @@ public class DeckHubManager : MonoBehaviour
             return;
         }
 
+        // Validate drafted deck size before starting a game.
+        if (!SelectedDeckStore.HasValidDeckSize)
+        {
+            int total = SelectedDeckStore.GetTotalCardCount();
+            Debug.LogWarning(
+                $"DeckHubManager: QuickplayFromDraft rejected – drafted deck has {total} cards, expected {GameRules.DeckSize}."
+            );
+            return;
+        }
+
         // Ensure the deterministic RNG is initialised for this run if it has
         // not already been set (e.g., if the player jumped straight into draft).
         if (!DeterministicRng.IsInitialized)
@@ -595,6 +605,20 @@ public class DeckHubManager : MonoBehaviour
         {
             Debug.LogWarning(
                 "DeckHubManager: CreateLobbyFromDraft clicked but no drafted deck is available."
+            );
+            return;
+        }
+
+        // Validate drafted deck size before creating a lobby.
+        if (!SelectedDeckStore.HasValidDeckSize)
+        {
+            int total = SelectedDeckStore.GetTotalCardCount();
+            Debug.LogWarning(
+                $"DeckHubManager: CreateLobbyFromDraft rejected – drafted deck has {total} cards, expected {GameRules.DeckSize}."
+            );
+            FeedbackManager.Instance?.ShowGlobalAlert(
+                $"Drafted deck must contain exactly {GameRules.DeckSize} cards to play online.",
+                GameColorPalette.TextWarning
             );
             return;
         }
@@ -1042,6 +1066,18 @@ public class DeckHubManager : MonoBehaviour
             Debug.Log(
                 $"DeckHubManager: Loaded deck '{name}' with {entries.Count} unique cards into store."
             );
+
+            // Validate deck size against GameRules; disallow mismatched decks.
+            int totalCards = SelectedDeckStore.GetTotalCardCount();
+            if (totalCards != GameRules.DeckSize)
+            {
+                Debug.LogWarning(
+                    $"DeckHubManager: Loaded deck has {totalCards} cards, expected {GameRules.DeckSize}. Rejecting for play."
+                );
+                SelectedDeckStore.Clear();
+                return false;
+            }
+
             return true;
         }
         catch (System.Exception e)

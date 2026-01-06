@@ -23,11 +23,7 @@ public class AncientInstinctEffect : GlobalEffectBase
         if (rm == null)
             return;
 
-        // This effect needs to interact with the card choice UI.
-        // In single-player vs AI, the non-local owner is the AI, so auto-pick.
-        // In networked games, we always run the choice logic on both clients:
-        // - The owner sees the interactive choice UI.
-        // - The remote client shows a waiting overlay and applies the result via network.
+        // For AI in single-player, use simple auto-pick
         if (!NetworkSessionStore.IsNetworkedGame && !NetworkRoleHelper.IsLocalPlayer(owner))
         {
             HandleAIPick();
@@ -35,6 +31,20 @@ public class AncientInstinctEffect : GlobalEffectBase
             return;
         }
 
+        // For networked games where this is the REMOTE player's effect:
+        // We don't show any UI - just track that opponent drew cards.
+        // The opponent's hand/deck contents are hidden from us anyway.
+        if (NetworkSessionStore.IsNetworkedGame && !NetworkRoleHelper.IsLocalPlayer(owner))
+        {
+            if (OpponentDeckTracker.Instance != null)
+            {
+                OpponentDeckTracker.Instance.OnOpponentDrew(pickCount);
+            }
+            remainingRounds = 0;
+            return;
+        }
+
+        // LOCAL player path - show the choice UI
         var dm = DeckManager.Instance;
         if (dm == null)
         {
@@ -87,6 +97,9 @@ public class AncientInstinctEffect : GlobalEffectBase
                 allowCancel = false,
                 timeoutSeconds = 30f,
                 timeoutBehavior = CardChoiceTimeoutBehavior.RandomFill,
+                // Don't pause game loop - this only affects local hidden state (our deck/hand)
+                // The opponent doesn't need to wait for our choice
+                pauseGameLoop = false,
                 onConfirm = (pickedCards) => OnCardsChosen(dm, topCards, pickedCards),
             },
             owner // Pass owner for networking
@@ -101,23 +114,12 @@ public class AncientInstinctEffect : GlobalEffectBase
         List<ScriptableObject> picked
     )
     {
-        if (picked == null)
-            picked = new List<ScriptableObject>();
-
-        // In networked games on the *remote* client (where this effect owner is NOT local),
-        // we should NOT modify the local DeckManager/hand, since this represents the opponent.
-        // Instead, just update the opponent tracker so hand/deck counts stay in sync.
-        if (NetworkSessionStore.IsNetworkedGame && !NetworkRoleHelper.IsLocalPlayer(owner))
-        {
-            if (OpponentDeckTracker.Instance != null && picked.Count > 0)
-            {
-                OpponentDeckTracker.Instance.OnOpponentDrew(picked.Count);
-            }
-            return;
-        }
-
+        // This callback only runs for the LOCAL player (remote path exits early in OnPlay)
         if (dm == null)
             return;
+
+        if (picked == null)
+            picked = new List<ScriptableObject>();
 
         // Add picked cards to hand (local player path)
         foreach (var card in picked)
@@ -129,7 +131,7 @@ public class AncientInstinctEffect : GlobalEffectBase
             dm.RemoveFromDrawPile(card);
 
             // Check hand limit and add to hand
-            if (dm.CurrentHandCount() < dm.maxHandSize)
+            if (dm.CurrentHandCount() < GameRules.MaxHandSize)
             {
                 dm.CreateCardUI(card, triggerLayoutAndUI: true);
 
@@ -174,7 +176,7 @@ public class AncientInstinctEffect : GlobalEffectBase
         // Simple fallback: just draw from deck normally
         for (int i = 0; i < count && i < topCards.Count; i++)
         {
-            if (dm.CurrentHandCount() < dm.maxHandSize)
+            if (dm.CurrentHandCount() < GameRules.MaxHandSize)
             {
                 dm.DrawCard();
             }

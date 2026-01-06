@@ -65,6 +65,7 @@ public class GameHUDController : MonoBehaviour
     private bool _isGameOver;
     private int _p1Momentum;
     private int _p2Momentum;
+    private bool _isActionLocked;
 
     private OpponentDeckTracker _opponentTracker;
 
@@ -90,6 +91,7 @@ public class GameHUDController : MonoBehaviour
         gameManager.OnGameOverChanged += HandleGameOverChanged;
         gameManager.OnMomentumChanged += HandleMomentumChanged;
         gameManager.OnShowGameOverRequested += HandleShowGameOverRequested;
+        gameManager.OnPlayerActionLockedChanged += HandlePlayerActionLockedChanged;
 
         // Wire up buttons
         if (endTurnButton != null)
@@ -141,6 +143,7 @@ public class GameHUDController : MonoBehaviour
             gameManager.OnGameOverChanged -= HandleGameOverChanged;
             gameManager.OnMomentumChanged -= HandleMomentumChanged;
             gameManager.OnShowGameOverRequested -= HandleShowGameOverRequested;
+            gameManager.OnPlayerActionLockedChanged -= HandlePlayerActionLockedChanged;
         }
 
         if (endTurnButton != null)
@@ -164,6 +167,12 @@ public class GameHUDController : MonoBehaviour
     {
         _currentPhase = phase;
         UpdatePhaseStatusText();
+        UpdateEndTurnButtonState();
+    }
+
+    private void HandlePlayerActionLockedChanged(bool locked)
+    {
+        _isActionLocked = locked;
         UpdateEndTurnButtonState();
     }
 
@@ -334,8 +343,41 @@ public class GameHUDController : MonoBehaviour
         if (roundText == null)
             return;
 
-        string eraLabel = _currentEra.ToString();
+        string eraLabel = GetEraStageLabel(_currentRound, _currentEra);
         roundText.text = $"Round {_currentRound} – {eraLabel}";
+    }
+
+    /// <summary>
+    /// Returns a human-friendly label for the current round/era, including
+    /// Early/Late stages where applicable.
+    /// </summary>
+    private string GetEraStageLabel(int round, Era era)
+    {
+        // Keep this logic in sync with GameManager.GetEraForRound and the
+        // momentum curve:
+        //
+        // R1-2  : Early Triassic
+        // R3-4  : Late Triassic
+        // R5-7  : Early Jurassic
+        // R8-10 : Late Jurassic
+        // R11-13: Cretaceous
+        // R14-16: Extinction
+
+        if (round <= 0)
+            return era.ToString();
+
+        if (round <= 2)
+            return "Early Triassic";
+        if (round <= 4)
+            return "Late Triassic";
+        if (round <= 7)
+            return "Early Jurassic";
+        if (round <= 10)
+            return "Late Jurassic";
+        if (round <= 13)
+            return "Cretaceous";
+
+        return "Extinction";
     }
 
     private void UpdatePhaseStatusText()
@@ -396,8 +438,12 @@ public class GameHUDController : MonoBehaviour
         int localMomentum =
             NetworkRoleHelper.LocalRole == SlotOwner.Player1 ? _p1Momentum : _p2Momentum;
 
+        // Also block passing while a previous action is still resolving
         bool playerTurnActive =
-            _currentPhase == GamePhase.Place && isLocalPlayerTurn && localMomentum > 0;
+            _currentPhase == GamePhase.Place
+            && isLocalPlayerTurn
+            && localMomentum > 0
+            && !_isActionLocked;
 
         endTurnButton.interactable = playerTurnActive;
 

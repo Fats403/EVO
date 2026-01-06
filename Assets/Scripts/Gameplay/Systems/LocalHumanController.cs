@@ -43,7 +43,7 @@ public class LocalHumanController : IPlayerController
         BroadcastAction(action);
     }
 
-    public void RequestPlayEffect(string cardId, List<int> targetSlotIndices)
+    public void RequestPlayEffect(string cardId, List<int> targetSlotIndices, string choicePayload = null)
     {
         var action = new GameAction
         {
@@ -51,6 +51,7 @@ public class LocalHumanController : IPlayerController
             owner = Owner,
             cardId = cardId,
             targetSlotIndices = targetSlotIndices,
+            choicePayload = choicePayload,
         };
         BroadcastAction(action);
     }
@@ -87,6 +88,7 @@ public class LocalHumanController : IPlayerController
             cardId = original.cardId,
             slotIndex = NetworkRoleHelper.MirrorSlotIndex(original.slotIndex),
             targetSlotIndices = NetworkRoleHelper.MirrorSlotIndices(original.targetSlotIndices),
+            choicePayload = original.choicePayload,
         };
         return mirrored;
     }
