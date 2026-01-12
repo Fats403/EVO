@@ -1,5 +1,13 @@
 using UnityEngine;
 
+/// <summary>
+/// Pack Leader: When this creature attacks, all other allied carnivores
+/// also attack the same target (if valid). Follow-up attacks are queued
+/// and processed sequentially for clear visual feedback.
+///
+/// Note: Follow-up attacks do NOT trigger other Pack Leaders to prevent
+/// infinite recursion (handled by ResolutionManager.isResolvingFollowUpAttacks).
+/// </summary>
 [CreateAssetMenu(menuName = "Traits/Carnivores/Pack Leader")]
 public class PackLeaderTrait : Trait
 {
@@ -11,6 +19,8 @@ public class PackLeaderTrait : Trait
             return;
         if (self.HasStatus(StatusTag.Suppress))
             return;
+        if (ResolutionManager.Instance == null)
+            return;
 
         // Get allied carnivores (excluding self) in deterministic order
         var allies = DeterministicHelpers.GetCreaturesSorted(c =>
@@ -18,15 +28,19 @@ public class PackLeaderTrait : Trait
             && c.owner == self.owner
             && c.data != null
             && c.data.type == CardType.Carnivore
+            && c.currentHealth > 0
+            && !c.isDying
         );
 
         foreach (var ally in allies)
         {
-            if (ResolutionManager.Instance == null)
-                break;
             if (!ResolutionManager.Instance.IsValidAttackTarget(ally, target))
                 continue;
-            ResolutionManager.Instance.PerformImmediateAttack(
+
+            // Use QueueFollowUpAttack for sequential processing
+            // This prevents all attacks from firing simultaneously
+            var allyRef = ally; // Capture for closure
+            ResolutionManager.Instance.QueueFollowUpAttack(
                 ally,
                 target,
                 ignoreBodyRules: false,
@@ -36,11 +50,12 @@ public class PackLeaderTrait : Trait
                     {
                         FeedbackManager.Instance?.ShowFloatingText(
                             "Pack Leader",
-                            ally.transform.position,
+                            allyRef.transform.position,
                             GameColorPalette.TextWarning
                         );
                     }
-                }
+                },
+                sourceTraitName: "Pack Leader"
             );
         }
     }

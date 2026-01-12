@@ -20,4 +20,20 @@ public static class GameRules
 
     /// <summary>Maximum number of cards allowed in hand.</summary>
     public const int MaxHandSize = 7;
+
+    // --- Apex (5-Cost) Card Restrictions ---
+
+    /// <summary>Minimum momentum cost for a card to be considered "apex" tier.</summary>
+    public const int ApexCostThreshold = 5;
+
+    /// <summary>Maximum number of apex-tier (5+ cost) cards allowed in a single deck.</summary>
+    public const int MaxApexCardsPerDeck = 2;
+
+    /// <summary>Maximum copies of any single apex-tier card allowed in a deck.</summary>
+    public const int MaxCopiesOfApexCard = 1;
+
+    /// <summary>
+    /// Returns true if the given momentum cost qualifies as apex tier.
+    /// </summary>
+    public static bool IsApexCost(int momentumCost) => momentumCost >= ApexCostThreshold;
 }

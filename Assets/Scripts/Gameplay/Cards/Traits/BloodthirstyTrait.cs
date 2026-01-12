@@ -1,6 +1,10 @@
-using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Bloodthirsty: After killing a target, attack another enemy (once per round).
+/// Uses the follow-up attack queue for sequential processing with other
+/// trait-triggered attacks.
+/// </summary>
 [CreateAssetMenu(menuName = "Traits/Carnivores/Bloodthirsty")]
 public class BloodthirstyTrait : Trait
 {
@@ -15,6 +19,7 @@ public class BloodthirstyTrait : Trait
             return;
         if (ResolutionManager.Instance == null)
             return;
+
         var next = ResolutionManager.Instance.FindBestTarget(self);
         if (next == null)
             return;
@@ -22,7 +27,11 @@ public class BloodthirstyTrait : Trait
         if (next == target)
             return; // avoid pointless call if somehow still same reference
 
-        ResolutionManager.Instance.PerformImmediateAttack(
+        self.traitUsedBloodthirsty = true;
+
+        // Use QueueFollowUpAttack for sequential processing with other trait attacks
+        var selfRef = self; // Capture for closure
+        ResolutionManager.Instance.QueueFollowUpAttack(
             self,
             next,
             ignoreBodyRules: false,
@@ -32,13 +41,13 @@ public class BloodthirstyTrait : Trait
                 {
                     FeedbackManager.Instance?.ShowFloatingText(
                         "Bloodthirsty",
-                        self.transform.position,
+                        selfRef.transform.position,
                         GameColorPalette.TextWarning
                     );
                 }
-            }
+            },
+            sourceTraitName: "Bloodthirsty"
         );
-        self.traitUsedBloodthirsty = true;
     }
 
     // Per-creature flag is reset in Creature.ResetRoundBookkeeping() at round start

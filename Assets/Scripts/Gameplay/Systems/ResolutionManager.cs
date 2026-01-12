@@ -15,6 +15,23 @@ public class ResolutionManager : MonoBehaviour
     // reveal step before normal resolution (attacks, etc.) proceeds.
     private readonly Queue<IEnumerator> startOfRoundAnimations = new();
 
+    // Queue for follow-up attacks triggered by traits (e.g., Pack Leader).
+    // These are processed sequentially after the main attack resolves.
+    private readonly Queue<FollowUpAttack> followUpAttackQueue = new();
+
+    // Tracks whether we're currently resolving follow-up attacks to prevent infinite recursion
+    // (e.g., Pack Leader triggering another Pack Leader's effect).
+    private bool isResolvingFollowUpAttacks = false;
+
+    private struct FollowUpAttack
+    {
+        public Creature attacker;
+        public Creature target;
+        public bool ignoreBodyRules;
+        public System.Action<bool> onComplete;
+        public string sourceTraitName; // For debugging
+    }
+
     [Header("Timing")]
     public float eatDelay = 0.4f;
     public float attackWindup = 0.2f;
@@ -135,6 +152,10 @@ public class ResolutionManager : MonoBehaviour
             if (c == null)
                 continue;
 
+            // Check Suppress BEFORE ticking statuses, so traits are properly suppressed
+            // even if this is the last stack of Suppress (which would be decremented to 0)
+            bool wasSuppressed = c.HasStatus(StatusTag.Suppress);
+
             bool thisCreatureDidStatus = c.TickStatusesAtRoundEnd();
             bool thisCreatureDidTrait = false;
 
@@ -144,7 +165,9 @@ public class ResolutionManager : MonoBehaviour
             // A status tick may have killed this creature; skip trait hooks if it's now gone.
             if (c.currentHealth > 0 && !c.isDying && c.traits != null)
             {
-                if (!c.HasStatus(StatusTag.Suppress))
+                // Use the pre-tick suppress check so traits don't fire on the same frame
+                // that suppress wears off
+                if (!wasSuppressed)
                 {
                     var snapshot = c.traits.ToArray();
                     foreach (var t in snapshot)
@@ -586,6 +609,12 @@ public class ResolutionManager : MonoBehaviour
                 }
             }
 
+            // Process any follow-up attacks queued by traits
+            if (followUpAttackQueue.Count > 0)
+            {
+                yield return StartCoroutine(ProcessFollowUpAttackQueue());
+            }
+
             yield return new WaitForSeconds(attackResolvePause * pacingMultiplier);
             onComplete?.Invoke(did);
             yield break;
@@ -689,6 +718,13 @@ public class ResolutionManager : MonoBehaviour
             {
                 tr?.OnAfterAttackResolved(attacker, target, wasNegated: false);
             }
+        }
+
+        // Process any follow-up attacks queued by traits (e.g., Pack Leader)
+        // These are processed sequentially to avoid simultaneous animations.
+        if (followUpAttackQueue.Count > 0)
+        {
+            yield return StartCoroutine(ProcessFollowUpAttackQueue());
         }
 
         yield return new WaitForSeconds(attackResolvePause * pacingMultiplier);
@@ -1055,9 +1091,99 @@ public class ResolutionManager : MonoBehaviour
         return candidates.Count > 0 ? candidates[0] : null;
     }
 
+    /// <summary>
+    /// Queues a follow-up attack to be processed sequentially after the current attack resolves.
+    /// Use this instead of PerformImmediateAttack for trait-triggered attacks (e.g., Pack Leader)
+    /// to ensure they animate one at a time instead of all at once.
+    ///
+    /// Follow-up attacks do NOT trigger further follow-up attacks (prevents infinite recursion).
+    /// </summary>
+    public void QueueFollowUpAttack(
+        Creature attacker,
+        Creature target,
+        bool ignoreBodyRules = false,
+        System.Action<bool> onComplete = null,
+        string sourceTraitName = null
+    )
+    {
+        // If we're already processing follow-up attacks, this is a recursive trigger
+        // (e.g., Pack Leader A triggers B who is also Pack Leader trying to trigger A).
+        // Skip to prevent infinite loops.
+        if (isResolvingFollowUpAttacks)
+        {
+            Debug.Log(
+                $"[ResolutionManager] Skipping recursive follow-up attack from {sourceTraitName ?? "unknown"} (already processing queue)"
+            );
+            onComplete?.Invoke(false);
+            return;
+        }
+
+        followUpAttackQueue.Enqueue(
+            new FollowUpAttack
+            {
+                attacker = attacker,
+                target = target,
+                ignoreBodyRules = ignoreBodyRules,
+                onComplete = onComplete,
+                sourceTraitName = sourceTraitName ?? "Unknown",
+            }
+        );
+    }
+
+    /// <summary>
+    /// Processes all queued follow-up attacks sequentially.
+    /// Called after the main attack's trait callbacks complete.
+    /// </summary>
+    private IEnumerator ProcessFollowUpAttackQueue()
+    {
+        if (followUpAttackQueue.Count == 0)
+            yield break;
+
+        isResolvingFollowUpAttacks = true;
+
+        while (followUpAttackQueue.Count > 0)
+        {
+            var attack = followUpAttackQueue.Dequeue();
+
+            // Validate the attack is still possible
+            if (attack.attacker == null || attack.target == null)
+            {
+                attack.onComplete?.Invoke(false);
+                continue;
+            }
+            if (attack.attacker.currentHealth <= 0 || attack.attacker.isDying)
+            {
+                attack.onComplete?.Invoke(false);
+                continue;
+            }
+            if (attack.target.currentHealth <= 0 || attack.target.isDying)
+            {
+                attack.onComplete?.Invoke(false);
+                continue;
+            }
+
+            // Perform the attack with animation
+            bool attackSuccess = false;
+            yield return StartCoroutine(
+                PerformImmediateAttackRoutine(
+                    attack.attacker,
+                    attack.target,
+                    attack.ignoreBodyRules,
+                    success => attackSuccess = success
+                )
+            );
+
+            // Note: We intentionally do NOT call OnAfterAttackResolved here
+            // to prevent recursive trait triggers (e.g., another Pack Leader)
+        }
+
+        isResolvingFollowUpAttacks = false;
+    }
+
     // Immediate single attack for reactive traits.
     // This now plays a short attack animation + hit flash so that
     // extra attacks are visually readable instead of "instant".
+    // NOTE: For trait-triggered follow-up attacks, prefer QueueFollowUpAttack instead.
     public void PerformImmediateAttack(
         Creature attacker,
         Creature target,

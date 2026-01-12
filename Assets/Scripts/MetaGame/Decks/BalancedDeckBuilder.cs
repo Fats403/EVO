@@ -12,6 +12,7 @@ public static class BalancedDeckBuilder
     /// <summary>
     /// Build a single balanced deck from the given card pool using the
     /// targets and bias strengths from DraftConfig.
+    /// Respects apex card limits (max per deck, max copies per card).
     /// </summary>
     public static List<ScriptableObject> BuildDeck(
         IEnumerable<ScriptableObject> pool,
@@ -33,6 +34,7 @@ public static class BalancedDeckBuilder
         int lowCount = 0;
         int midCount = 0;
         int highCount = 0;
+        int apexCount = 0;
 
         for (int picksDone = 0; picksDone < GameRules.DeckSize; picksDone++)
         {
@@ -45,7 +47,8 @@ public static class BalancedDeckBuilder
                 config,
                 lowCount,
                 midCount,
-                highCount
+                highCount,
+                apexCount
             );
 
             var candidates = DraftRules.BuildCandidates(
@@ -53,7 +56,8 @@ public static class BalancedDeckBuilder
                 config,
                 preferCreature,
                 desiredTier,
-                copiesPerCard
+                copiesPerCard,
+                apexCount
             );
 
             if (candidates.Count == 0)
@@ -77,7 +81,8 @@ public static class BalancedDeckBuilder
                 ref effectCount,
                 ref lowCount,
                 ref midCount,
-                ref highCount
+                ref highCount,
+                ref apexCount
             );
 
             if (!copiesPerCard.ContainsKey(picked))

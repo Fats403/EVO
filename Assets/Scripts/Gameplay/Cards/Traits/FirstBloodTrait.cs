@@ -3,8 +3,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Traits/Carnivores/First Blood")]
 public class FirstBloodTrait : Trait
 {
-    // First Blood: Instead of dealing normal damage, this attack causes Bleeding.
-    // We override final damage to 0, then apply Bleed after the attack resolves.
+    // First Blood: First attack each round deals reduced damage (1) but applies Bleed.
+    // We override final damage to 1, then apply Bleed after the attack resolves.
     public override bool TryOverrideFinalDamage(Creature self, Creature target, out int fixedDamage)
     {
         if (self == null || target == null)
@@ -18,8 +18,8 @@ public class FirstBloodTrait : Trait
             return false;
         }
 
-        // No HP loss from this hit; all value comes from the Bleeding it applies.
-        fixedDamage = 0;
+        // Always deal 1 damage, plus the Bleed applied after.
+        fixedDamage = 1;
         return true;
     }
 

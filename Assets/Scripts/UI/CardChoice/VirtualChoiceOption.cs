@@ -45,8 +45,8 @@ public class VirtualChoiceOption : ScriptableObject
     [Tooltip("Custom icon sprite. Only used when iconType is set to Custom.")]
     public Sprite customIcon;
 
-    [Tooltip("Optional background color tint for this choice.")]
-    public Color backgroundColor = new Color(0.15f, 0.15f, 0.2f, 1f);
+    [Tooltip("Optional background color tint for this choice. White = no tint.")]
+    public Color backgroundColor = Color.white;
 
     [Header("Identification")]
     [Tooltip("Unique identifier for this option. Used for callbacks and networking.")]
@@ -85,7 +85,7 @@ public class VirtualChoiceOption : ScriptableObject
         option.optionId = optionId ?? Guid.NewGuid().ToString();
         option.onSelected = onSelected;
         option.payload = payload;
-        option.backgroundColor = backgroundColor ?? new Color(0.15f, 0.15f, 0.2f, 1f);
+        option.backgroundColor = backgroundColor ?? Color.white;
         return option;
     }
 

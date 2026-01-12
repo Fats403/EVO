@@ -47,6 +47,7 @@ public class DraftManager : MonoBehaviour
     private int lowCount;
     private int midCount;
     private int highCount;
+    private int apexCount;
     private int picksDone;
 
     private DraftCardOptionUI selectedOption;
@@ -150,6 +151,7 @@ public class DraftManager : MonoBehaviour
         lowCount = 0;
         midCount = 0;
         highCount = 0;
+        apexCount = 0;
         picksDone = 0;
         selectedOption = null;
 
@@ -257,7 +259,13 @@ public class DraftManager : MonoBehaviour
         for (int i = 0; i < offerSlots; i++)
         {
             bool wantCreature = DraftRules.RollIsCreature(config, picksDone, creatureCount);
-            int wantTier = DraftRules.RollDesiredCostTier(config, lowCount, midCount, highCount);
+            int wantTier = DraftRules.RollDesiredCostTier(
+                config,
+                lowCount,
+                midCount,
+                highCount,
+                apexCount
+            );
 
             // Build candidate list with progressively relaxed constraints.
             var candidates = DraftRules.BuildCandidates(
@@ -265,7 +273,8 @@ public class DraftManager : MonoBehaviour
                 config,
                 wantCreature,
                 wantTier,
-                copiesPerCard
+                copiesPerCard,
+                apexCount
             );
 
             // Do not offer duplicates within the same 3-card pack.
@@ -276,9 +285,11 @@ public class DraftManager : MonoBehaviour
             if (candidates.Count == 0)
             {
                 // Relax fully: anything under copy cap and not already in this offer.
+                // Respect apex limits: don't offer apex cards if at max.
                 candidates = draftPool
                     .Where(e => e != null && e.data != null)
-                    .Where(e => GetCopies(e.data) < config.maxCopiesPerCard)
+                    .Where(e => !(e.isApex && apexCount >= config.maxApexCardsInDeck))
+                    .Where(e => GetCopies(e.data) < config.GetMaxCopiesForCost(e.momentumCost))
                     .Where(e => !chosenThisOffer.Contains(e.data))
                     .ToList();
             }
@@ -342,7 +353,8 @@ public class DraftManager : MonoBehaviour
             ref effectCount,
             ref lowCount,
             ref midCount,
-            ref highCount
+            ref highCount,
+            ref apexCount
         );
     }
 

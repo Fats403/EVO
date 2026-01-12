@@ -7,16 +7,24 @@ using UnityEngine;
 /// - Converts card assets into typed entries.
 /// - Chooses preferred card type and cost tier based on DraftConfig.
 /// - Builds candidate sets under copy caps.
+/// - Enforces apex-tier (5+ cost) deck restrictions.
 /// Used by both DraftManager (player UI draft) and BalancedDeckBuilder (AI/random decks).
 /// </summary>
 public static class DraftRules
 {
+    /// <summary>Cost tier indices for the 4-tier system.</summary>
+    public const int TierLow = 0;
+    public const int TierMid = 1;
+    public const int TierHigh = 2;
+    public const int TierApex = 3;
+
     public class CardEntry
     {
         public ScriptableObject data;
         public bool isCreature;
         public int momentumCost;
         public int costTier;
+        public bool isApex; // convenience flag for 5+ cost cards
     }
 
     /// <summary>
@@ -56,6 +64,7 @@ public static class DraftRules
             }
 
             entry.costTier = config.GetCostTier(entry.momentumCost);
+            entry.isApex = config.IsApexCost(entry.momentumCost);
             list.Add(entry);
         }
 
@@ -119,23 +128,28 @@ public static class DraftRules
     }
 
     /// <summary>
-    /// Decide which momentum cost tier (low/mid/high) we prefer for this pick,
+    /// Decide which momentum cost tier (low/mid/high/apex) we prefer for this pick,
     /// based on how far each tier is below its target and costBiasStrength.
     /// </summary>
     public static int ChoosePreferredCostTier(
         DraftConfig config,
         int lowCount,
         int midCount,
-        int highCount
+        int highCount,
+        int apexCount = 0
     )
     {
         if (config == null)
-            return 0;
+            return TierLow;
 
         // Compute deficits relative to targets.
         int lowDeficit = config.targetLowCount - lowCount;
         int midDeficit = config.targetMidCount - midCount;
         int highDeficit = config.targetHighCount - highCount;
+
+        // Apex has a hard cap - once we hit maxApexCardsInDeck, deficit becomes 0
+        int effectiveApexTarget = Mathf.Min(config.targetApexCount, config.maxApexCardsInDeck);
+        int apexDeficit = apexCount >= config.maxApexCardsInDeck ? 0 : effectiveApexTarget - apexCount;
 
         float bias = Mathf.Max(0f, config.costBiasStrength);
 
@@ -143,12 +157,18 @@ public static class DraftRules
         float lowScore = Mathf.Pow(Mathf.Max(0, lowDeficit), 1f + bias);
         float midScore = Mathf.Pow(Mathf.Max(0, midDeficit), 1f + bias);
         float highScore = Mathf.Pow(Mathf.Max(0, highDeficit), 1f + bias);
+        float apexScore = Mathf.Pow(Mathf.Max(0, apexDeficit), 1f + bias);
 
-        if (lowScore >= midScore && lowScore >= highScore)
-            return 0;
-        if (midScore >= lowScore && midScore >= highScore)
-            return 1;
-        return 2;
+        // Find the tier with highest deficit score
+        float maxScore = Mathf.Max(Mathf.Max(lowScore, midScore), Mathf.Max(highScore, apexScore));
+
+        if (lowScore >= maxScore)
+            return TierLow;
+        if (midScore >= maxScore)
+            return TierMid;
+        if (highScore >= maxScore)
+            return TierHigh;
+        return TierApex;
     }
 
     /// <summary>
@@ -159,26 +179,35 @@ public static class DraftRules
         DraftConfig config,
         int lowCount,
         int midCount,
-        int highCount
+        int highCount,
+        int apexCount = 0
     )
     {
         if (config == null)
-            return 0;
+            return TierLow;
 
         int lowDeficit = config.targetLowCount - lowCount;
         int midDeficit = config.targetMidCount - midCount;
         int highDeficit = config.targetHighCount - highCount;
 
+        // Apex has a hard cap - once we hit maxApexCardsInDeck, don't offer more
+        int effectiveApexTarget = Mathf.Min(config.targetApexCount, config.maxApexCardsInDeck);
+        int apexDeficit = apexCount >= config.maxApexCardsInDeck ? 0 : effectiveApexTarget - apexCount;
+
         float bias = Mathf.Max(0f, config.costBiasStrength);
         float exponent = 1f + bias;
 
-        // If we are at/above all targets, treat tiers evenly.
+        // If we are at/above all targets, treat tiers evenly (except apex which respects hard cap).
         float baseLow = Mathf.Max(0, lowDeficit);
         float baseMid = Mathf.Max(0, midDeficit);
         float baseHigh = Mathf.Max(0, highDeficit);
-        if (baseLow <= 0 && baseMid <= 0 && baseHigh <= 0)
+        float baseApex = Mathf.Max(0, apexDeficit);
+
+        if (baseLow <= 0 && baseMid <= 0 && baseHigh <= 0 && baseApex <= 0)
         {
             baseLow = baseMid = baseHigh = 1f;
+            // Don't add baseline to apex if we've hit the cap
+            baseApex = apexCount >= config.maxApexCardsInDeck ? 0f : 0.5f;
         }
         else
         {
@@ -186,47 +215,60 @@ public static class DraftRules
             baseLow += 0.35f;
             baseMid += 0.35f;
             baseHigh += 0.35f;
+            // Apex gets smaller baseline to keep them rare, but 0 if at cap
+            baseApex = apexCount >= config.maxApexCardsInDeck ? 0f : baseApex + 0.15f;
         }
 
         float wLow = Mathf.Pow(baseLow, exponent);
         float wMid = Mathf.Pow(baseMid, exponent);
         float wHigh = Mathf.Pow(baseHigh, exponent);
+        float wApex = Mathf.Pow(baseApex, exponent);
 
-        float sum = wLow + wMid + wHigh;
+        float sum = wLow + wMid + wHigh + wApex;
         if (sum <= 0f)
-            return 0;
+            return TierLow;
 
         float roll = NextRandomInt(0, 10000) / 10000f * sum;
         if (roll < wLow)
-            return 0;
+            return TierLow;
         roll -= wLow;
         if (roll < wMid)
-            return 1;
-        return 2;
+            return TierMid;
+        roll -= wMid;
+        if (roll < wHigh)
+            return TierHigh;
+        return TierApex;
     }
 
     /// <summary>
     /// Build a candidate list of CardEntry values under the given copy caps,
     /// preferring the specified type and cost tier but relaxing constraints as needed.
+    /// Respects apex card limits (both per-card copies and total apex count).
     /// </summary>
     public static List<CardEntry> BuildCandidates(
         List<CardEntry> entries,
         DraftConfig config,
         bool preferCreature,
         int desiredTier,
-        Dictionary<ScriptableObject, int> copiesPerCard
+        Dictionary<ScriptableObject, int> copiesPerCard,
+        int currentApexCount = 0
     )
     {
         var result = new List<CardEntry>();
         if (entries == null || entries.Count == 0 || config == null)
             return result;
 
-        int maxCopies = Mathf.Max(1, config.maxCopiesPerCard);
-
         bool UnderCopyCap(CardEntry e)
         {
             if (e == null || e.data == null)
                 return false;
+
+            // Check if we've hit the total apex card limit
+            if (e.isApex && currentApexCount >= config.maxApexCardsInDeck)
+                return false;
+
+            // Use cost-appropriate copy limit (apex cards have stricter limits)
+            int maxCopies = config.GetMaxCopiesForCost(e.momentumCost);
             int count = copiesPerCard.TryGetValue(e.data, out int c) ? c : 0;
             return count < maxCopies;
         }
@@ -240,7 +282,7 @@ public static class DraftRules
         if (result.Count >= 3)
             return result;
 
-        // 2) Relax tier: any tier of desired type
+        // 2) Relax tier: any tier of desired type (but not apex if we're at cap)
         var typeOnly = entries
             .Where(e => e.isCreature == preferCreature && UnderCopyCap(e))
             .ToList();
@@ -262,31 +304,36 @@ public static class DraftRules
     }
 
     /// <summary>
-    /// Increment the low/mid/high counters for a given momentum tier.
+    /// Increment the low/mid/high/apex counters for a given momentum tier.
     /// </summary>
     public static void IncrementTierCount(
         int tier,
         ref int lowCount,
         ref int midCount,
-        ref int highCount
+        ref int highCount,
+        ref int apexCount
     )
     {
         switch (tier)
         {
-            case 0:
+            case TierLow:
                 lowCount++;
                 break;
-            case 1:
+            case TierMid:
                 midCount++;
                 break;
-            default:
+            case TierHigh:
                 highCount++;
+                break;
+            case TierApex:
+            default:
+                apexCount++;
                 break;
         }
     }
 
     /// <summary>
-    /// Advance both creature/effect counts and the low/mid/high tier counts for a picked card.
+    /// Advance both creature/effect counts and the low/mid/high/apex tier counts for a picked card.
     /// </summary>
     public static void IncrementCountersForPicked(
         DraftConfig config,
@@ -295,7 +342,8 @@ public static class DraftRules
         ref int effectCount,
         ref int lowCount,
         ref int midCount,
-        ref int highCount
+        ref int highCount,
+        ref int apexCount
     )
     {
         if (config == null || picked == null)
@@ -305,13 +353,13 @@ public static class DraftRules
         {
             creatureCount++;
             int tier = config.GetCostTier(creature.momentumCost);
-            IncrementTierCount(tier, ref lowCount, ref midCount, ref highCount);
+            IncrementTierCount(tier, ref lowCount, ref midCount, ref highCount, ref apexCount);
         }
         else if (picked is EffectCard effect)
         {
             effectCount++;
             int tier = config.GetCostTier(effect.momentumCost);
-            IncrementTierCount(tier, ref lowCount, ref midCount, ref highCount);
+            IncrementTierCount(tier, ref lowCount, ref midCount, ref highCount, ref apexCount);
         }
     }
 

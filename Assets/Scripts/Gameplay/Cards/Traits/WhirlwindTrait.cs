@@ -1,5 +1,10 @@
 using UnityEngine;
 
+/// <summary>
+/// Whirlwind: After attacking, this avian attacks again (once per round).
+/// Uses the follow-up attack queue for sequential processing with other
+/// trait-triggered attacks (e.g., Pack Leader).
+/// </summary>
 [CreateAssetMenu(menuName = "Traits/Avians/Whirlwind")]
 public class WhirlwindTrait : Trait
 {
@@ -21,7 +26,10 @@ public class WhirlwindTrait : Trait
             return;
 
         self.traitUsedWhirlwind = true;
-        ResolutionManager.Instance.PerformImmediateAttack(
+
+        // Use QueueFollowUpAttack for sequential processing with other trait attacks
+        var selfRef = self; // Capture for closure
+        ResolutionManager.Instance.QueueFollowUpAttack(
             self,
             next,
             ignoreBodyRules: false,
@@ -31,11 +39,12 @@ public class WhirlwindTrait : Trait
                 {
                     FeedbackManager.Instance?.ShowFloatingText(
                         "Whirlwind",
-                        self.transform.position,
+                        selfRef.transform.position,
                         GameColorPalette.TextWarning
                     );
                 }
-            }
+            },
+            sourceTraitName: "Whirlwind"
         );
     }
 
